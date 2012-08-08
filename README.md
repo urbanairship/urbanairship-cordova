@@ -2,7 +2,7 @@
 
 ## Version Requirements
 
-This repo is meant to work against Phonegap 2.0 and above. Please upgrade your phonegap application to use 2.0 if you wish to use this library.
+This repo is meant to work against Phonegap 2.0 and above. Please upgrade your phonegap application to use 2.0 if you wish to use this library. More documentation and integration guides for IOS and Android are availble on our [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap)
 
 ## Basic Example
 
