@@ -1,0 +1,20 @@
+developmentAppKey = Your Development App Key
+developmentAppSecret = Your Development Secret
+productionAppKey = Your Production App Key
+productionAppSecret = Your Production Secret
+
+#transport is "c2dm", "helium" or "hybrid".
+#note: the helium and hybrid transports are premium features.
+#for complete pricing information, see http://urbanairship.com/pricing/
+
+transport = helium
+
+c2dmSender = Your C2DM sender address (required for C2DM: must be an e-mail address)
+inProduction = false
+
+iapEnabled = false
+
+# 2 = Log.VERBOSE; 3 = Log.DEBUG; 4 = Log.INFO;
+# 5 = Log.WARN; 6 = Log.ERROR; 7 = Log.ASSERT;
+developmentLogLevel = 3
+productionLogLevel = 6
