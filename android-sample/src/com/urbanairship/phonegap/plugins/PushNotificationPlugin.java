@@ -49,7 +49,7 @@ public class PushNotificationPlugin extends Plugin {
         JSONObject data = new JSONObject();
         try {
             data.put("message", message);
-            data.put("extras", extras);
+            data.put("extras", new JSONObject(extras));
         } catch (JSONException e) {
             Logger.error("Error constructing notification object", e);
         }
