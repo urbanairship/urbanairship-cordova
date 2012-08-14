@@ -62,7 +62,14 @@ public class PushNotificationPlugin extends Plugin {
                 "window.pushNotification.pushCallback(%s);",
                 data.toString());
         Logger.info("Javascript Calling back: " + js);
-        this.sendJavascript(js);
+
+        try {
+            this.sendJavascript(js);
+        } catch (NullPointerException npe) {
+            Logger.info("unable to send javascript in raisepush");
+        } catch (Exception e) {
+            Logger.error("unexpected exception in raisePush", e);
+        }
     }
 
     public void raiseRegistration(Boolean valid, String pushID) {
@@ -77,7 +84,14 @@ public class PushNotificationPlugin extends Plugin {
                 "window.pushNotification.registrationCallback(%s);",
                 data.toString());
         Logger.info("Javascript Calling back: " + js);
-        this.sendJavascript(js);
+
+        try {
+            this.sendJavascript(js);
+        } catch (NullPointerException npe) {
+            Logger.info("unable to send javascript in raiseRegistration");
+        } catch (Exception e) {
+            Logger.error("unexpected exception in raisePush", e);
+        }
     }
 
     @Override
