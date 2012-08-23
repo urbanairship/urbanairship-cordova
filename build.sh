@@ -1,6 +1,6 @@
 #Do this from a fresh checkout so there are no generated files.
 
-VERSION="1.0"
+VERSION="1.0.1"
 
 mkdir -p build/android
 mkdir -p build/ios
