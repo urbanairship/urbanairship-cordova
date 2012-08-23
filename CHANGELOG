@@ -1,0 +1,7 @@
+Version 1.0.1 - August 23, 2012
+===============================
+- FIXED: Addressed crash in the Android plugin caused by Cordova library bug when push or
+  registration events occur before the web view is initialized.
+- FIXED: Addressed JSON bug resulting in invalid push extras.
+- Removed Urban Airship library from iOS and Android sample projects. See the documentation for
+  updated usage instructions.
