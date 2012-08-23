@@ -5,9 +5,10 @@ VERSION="1.0.1"
 mkdir -p build/android
 mkdir -p build/ios
 
-#Copy the README and COPYING
+#Copy the README, CHANGELOG and COPYING
 cp README.md build/README
 cp COPYING build
+cp CHANGELOG build
 
 #Copy the sample apps
 cp -r android-sample build/android/sample-app
