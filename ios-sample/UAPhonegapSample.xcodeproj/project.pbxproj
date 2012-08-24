@@ -43,7 +43,6 @@
 		30E1352710E2C1420031B30D /* Cordova.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30E1352610E2C1420031B30D /* Cordova.plist */; };
 		30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		49411A2315C3391E007C900E /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B2013715C33801002D42C4 /* libCordova.a */; };
-		49A3429B15D1EFA3009DDEFF /* libUAirshipPush-1.3.1.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49A3429A15D1EFA3009DDEFF /* libUAirshipPush-1.3.1.a */; };
 		49C9B08E15BF673F00E11972 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49C9B08D15BF673F00E11972 /* AirshipConfig.plist */; };
 		49C9B0A115BF6B6300E11972 /* PushNotificationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C9B09E15BF6B6300E11972 /* PushNotificationPlugin.m */; };
 		49C9B0A215BF6B6300E11972 /* UAAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C9B0A015BF6B6300E11972 /* UAAppDelegateSurrogate.m */; };
@@ -126,7 +125,6 @@
 		30E1352610E2C1420031B30D /* Cordova.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Cordova.plist; path = ../Cordova.plist; sourceTree = "<group>"; };
 		30E5649113A7FCAF007403D8 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* UAPhonegapSample-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAPhonegapSample-Prefix.pch"; sourceTree = "<group>"; };
-		49A3429A15D1EFA3009DDEFF /* libUAirshipPush-1.3.1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirshipPush-1.3.1.a"; path = "Airship/libUAirshipPush-1.3.1.a"; sourceTree = "<group>"; };
 		49B2012C15C33801002D42C4 /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CordovaLib.xcodeproj; path = CordovaLib/CordovaLib.xcodeproj; sourceTree = "<group>"; };
 		49C9B08D15BF673F00E11972 /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = AirshipConfig.plist; path = UAPhonegapSample/AirshipConfig.plist; sourceTree = "<group>"; };
 		49C9B09D15BF6B6300E11972 /* PushNotificationPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationPlugin.h; sourceTree = "<group>"; };
@@ -166,7 +164,6 @@
 				301BF5C5109A6A2B0062928A /* SystemConfiguration.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
 				30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */,
-				49A3429B15D1EFA3009DDEFF /* libUAirshipPush-1.3.1.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,7 +255,6 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				49A3429A15D1EFA3009DDEFF /* libUAirshipPush-1.3.1.a */,
 				49FA440C15BE1C93006E7AF0 /* libsqlite3.dylib */,
 				49FA440E15BE1C9C006E7AF0 /* libz.dylib */,
 				49FA441415BE1D1A006E7AF0 /* CoreTelephony.framework */,
