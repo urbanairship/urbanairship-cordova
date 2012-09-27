@@ -43,7 +43,6 @@
 		30E1352710E2C1420031B30D /* Cordova.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30E1352610E2C1420031B30D /* Cordova.plist */; };
 		30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		49411A2315C3391E007C900E /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B2013715C33801002D42C4 /* libCordova.a */; };
-		49C9B08E15BF673F00E11972 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 49C9B08D15BF673F00E11972 /* AirshipConfig.plist */; };
 		49C9B0A115BF6B6300E11972 /* PushNotificationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C9B09E15BF6B6300E11972 /* PushNotificationPlugin.m */; };
 		49C9B0A215BF6B6300E11972 /* UAAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C9B0A015BF6B6300E11972 /* UAAppDelegateSurrogate.m */; };
 		49FA440D15BE1C93006E7AF0 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA440C15BE1C93006E7AF0 /* libsqlite3.dylib */; };
@@ -51,6 +50,35 @@
 		49FA441115BE1CB1006E7AF0 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA441015BE1CB1006E7AF0 /* StoreKit.framework */; };
 		49FA441315BE1CF6006E7AF0 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA441215BE1CF6006E7AF0 /* Security.framework */; };
 		49FA441515BE1D1A006E7AF0 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA441415BE1D1A006E7AF0 /* CoreTelephony.framework */; };
+		BB47551916161D8C00FB22C0 /* NSObject+UASwizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = BB47551816161D8C00FB22C0 /* NSObject+UASwizzle.m */; };
+		BB55EA8C1615130B0094AC4A /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB55EA8B1615130B0094AC4A /* AirshipConfig.plist */; };
+		BB55EA8E161513200094AC4A /* libUAirship-1.3.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB55EA8D161513200094AC4A /* libUAirship-1.3.3.a */; };
+		BB55EA96161515890094AC4A /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB55EA95161515890094AC4A /* SenTestingKit.framework */; };
+		BB55EA97161515890094AC4A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
+		BB55EA98161515890094AC4A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
+		BB55EA9E161515890094AC4A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = BB55EA9C161515890094AC4A /* InfoPlist.strings */; };
+		BB55EAA1161515890094AC4A /* UAPhoneGapSampleTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BB55EAA0161515890094AC4A /* UAPhoneGapSampleTest.m */; };
+		BB55EAA61615160A0094AC4A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
+		BB55EAA7161516130094AC4A /* UAAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C9B0A015BF6B6300E11972 /* UAAppDelegateSurrogate.m */; };
+		BB55EAA81615161D0094AC4A /* PushNotificationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 49C9B09E15BF6B6300E11972 /* PushNotificationPlugin.m */; };
+		BB55EAAA1615167F0094AC4A /* libCordova.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 49B2013715C33801002D42C4 /* libCordova.a */; };
+		BB55EAAB161516A10094AC4A /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; };
+		BB55EAAC161516A90094AC4A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA441215BE1CF6006E7AF0 /* Security.framework */; };
+		BB55EAAD161516BC0094AC4A /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF5B4109A6A2B0062928A /* AddressBook.framework */; };
+		BB55EAAE161516BC0094AC4A /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF5B6109A6A2B0062928A /* AddressBookUI.framework */; };
+		BB55EAAF161516BC0094AC4A /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF5BE109A6A2B0062928A /* CoreLocation.framework */; };
+		BB55EAB0161516C30094AC4A /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA441015BE1CB1006E7AF0 /* StoreKit.framework */; };
+		BB55EAB1161516CE0094AC4A /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF5BC109A6A2B0062928A /* CFNetwork.framework */; };
+		BB55EAB2161516D70094AC4A /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF5C0109A6A2B0062928A /* MediaPlayer.framework */; };
+		BB55EAB3161516DF0094AC4A /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */; };
+		BB55EAB4161516EC0094AC4A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		BB55EAB5161516FA0094AC4A /* libUAirship-1.3.3.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BB55EA8D161513200094AC4A /* libUAirship-1.3.3.a */; };
+		BB55EAB6161517180094AC4A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA440E15BE1C9C006E7AF0 /* libz.dylib */; };
+		BB55EAB7161517200094AC4A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA440C15BE1C93006E7AF0 /* libsqlite3.dylib */; };
+		BB55EAB81615172E0094AC4A /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49FA441415BE1D1A006E7AF0 /* CoreTelephony.framework */; };
+		BB55EAB91615173A0094AC4A /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF5B8109A6A2B0062928A /* AudioToolbox.framework */; };
+		BB55EABA161517500094AC4A /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 301BF5C4109A6A2B0062928A /* SystemConfiguration.framework */; };
+		BB55EABD161517930094AC4A /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 302D95EF14D2391D003F00A1 /* MainViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,7 +154,6 @@
 		30E5649113A7FCAF007403D8 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* UAPhonegapSample-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAPhonegapSample-Prefix.pch"; sourceTree = "<group>"; };
 		49B2012C15C33801002D42C4 /* CordovaLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = CordovaLib.xcodeproj; path = CordovaLib/CordovaLib.xcodeproj; sourceTree = "<group>"; };
-		49C9B08D15BF673F00E11972 /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = AirshipConfig.plist; path = UAPhonegapSample/AirshipConfig.plist; sourceTree = "<group>"; };
 		49C9B09D15BF6B6300E11972 /* PushNotificationPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationPlugin.h; sourceTree = "<group>"; };
 		49C9B09E15BF6B6300E11972 /* PushNotificationPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationPlugin.m; sourceTree = "<group>"; };
 		49C9B09F15BF6B6300E11972 /* UAAppDelegateSurrogate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAppDelegateSurrogate.h; sourceTree = "<group>"; };
@@ -137,6 +164,16 @@
 		49FA441215BE1CF6006E7AF0 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		49FA441415BE1D1A006E7AF0 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		8D1107310486CEB800E47090 /* UAPhonegapSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "UAPhonegapSample-Info.plist"; path = "../UAPhonegapSample-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		BB47551716161D8C00FB22C0 /* NSObject+UASwizzle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+UASwizzle.h"; sourceTree = "<group>"; };
+		BB47551816161D8C00FB22C0 /* NSObject+UASwizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+UASwizzle.m"; sourceTree = "<group>"; };
+		BB55EA8B1615130B0094AC4A /* AirshipConfig.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = AirshipConfig.plist; sourceTree = "<group>"; };
+		BB55EA8D161513200094AC4A /* libUAirship-1.3.3.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libUAirship-1.3.3.a"; path = "Airship/libUAirship-1.3.3.a"; sourceTree = "<group>"; };
+		BB55EA94161515890094AC4A /* UAPhoneGapSampleTest.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UAPhoneGapSampleTest.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BB55EA95161515890094AC4A /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		BB55EA9B161515890094AC4A /* UAPhoneGapSampleTest-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UAPhoneGapSampleTest-Info.plist"; sourceTree = "<group>"; };
+		BB55EA9D161515890094AC4A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		BB55EAA0161515890094AC4A /* UAPhoneGapSampleTest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = UAPhoneGapSampleTest.m; sourceTree = "<group>"; };
+		BB55EAA2161515890094AC4A /* UAPhoneGapSampleTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UAPhoneGapSampleTest-Prefix.pch"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -164,6 +201,34 @@
 				301BF5C5109A6A2B0062928A /* SystemConfiguration.framework in Frameworks */,
 				305D5FD1115AB8F900A74A75 /* MobileCoreServices.framework in Frameworks */,
 				30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */,
+				BB55EA8E161513200094AC4A /* libUAirship-1.3.3.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB55EA90161515890094AC4A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB55EABA161517500094AC4A /* SystemConfiguration.framework in Frameworks */,
+				BB55EAB91615173A0094AC4A /* AudioToolbox.framework in Frameworks */,
+				BB55EAB81615172E0094AC4A /* CoreTelephony.framework in Frameworks */,
+				BB55EAB7161517200094AC4A /* libsqlite3.dylib in Frameworks */,
+				BB55EAB6161517180094AC4A /* libz.dylib in Frameworks */,
+				BB55EAB5161516FA0094AC4A /* libUAirship-1.3.3.a in Frameworks */,
+				BB55EAB4161516EC0094AC4A /* CoreGraphics.framework in Frameworks */,
+				BB55EAB3161516DF0094AC4A /* MobileCoreServices.framework in Frameworks */,
+				BB55EAB2161516D70094AC4A /* MediaPlayer.framework in Frameworks */,
+				BB55EAB1161516CE0094AC4A /* CFNetwork.framework in Frameworks */,
+				BB55EAB0161516C30094AC4A /* StoreKit.framework in Frameworks */,
+				BB55EAAD161516BC0094AC4A /* AddressBook.framework in Frameworks */,
+				BB55EAAE161516BC0094AC4A /* AddressBookUI.framework in Frameworks */,
+				BB55EAAF161516BC0094AC4A /* CoreLocation.framework in Frameworks */,
+				BB55EAAC161516A90094AC4A /* Security.framework in Frameworks */,
+				BB55EAAB161516A10094AC4A /* CoreMedia.framework in Frameworks */,
+				BB55EAAA1615167F0094AC4A /* libCordova.a in Frameworks */,
+				BB55EA96161515890094AC4A /* SenTestingKit.framework in Frameworks */,
+				BB55EA97161515890094AC4A /* UIKit.framework in Frameworks */,
+				BB55EA98161515890094AC4A /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +252,7 @@
 			isa = PBXGroup;
 			children = (
 				1D6058910D05DD3D006BFB54 /* UAPhonegapSample.app */,
+				BB55EA94161515890094AC4A /* UAPhoneGapSampleTest.octest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -210,13 +276,14 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
-				49C9B08D15BF673F00E11972 /* AirshipConfig.plist */,
+				BB55EA8B1615130B0094AC4A /* AirshipConfig.plist */,
 				301BF56E109A69640062928A /* www */,
 				49B2012C15C33801002D42C4 /* CordovaLib.xcodeproj */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				49C9B09B15BF6B4200E11972 /* Plugins */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				BB55EA99161515890094AC4A /* UAPhoneGapSampleTest */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -255,6 +322,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BB55EA8D161513200094AC4A /* libUAirship-1.3.3.a */,
 				49FA440C15BE1C93006E7AF0 /* libsqlite3.dylib */,
 				49FA440E15BE1C9C006E7AF0 /* libz.dylib */,
 				49FA441415BE1D1A006E7AF0 /* CoreTelephony.framework */,
@@ -274,6 +342,7 @@
 				301BF5C4109A6A2B0062928A /* SystemConfiguration.framework */,
 				305D5FD0115AB8F900A74A75 /* MobileCoreServices.framework */,
 				30E5649113A7FCAF007403D8 /* CoreMedia.framework */,
+				BB55EA95161515890094AC4A /* SenTestingKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -347,6 +416,27 @@
 			path = UAPhonegapSample/Plugins/PushNotificationPlugin;
 			sourceTree = "<group>";
 		};
+		BB55EA99161515890094AC4A /* UAPhoneGapSampleTest */ = {
+			isa = PBXGroup;
+			children = (
+				BB55EAA0161515890094AC4A /* UAPhoneGapSampleTest.m */,
+				BB55EA9A161515890094AC4A /* Supporting Files */,
+				BB47551716161D8C00FB22C0 /* NSObject+UASwizzle.h */,
+				BB47551816161D8C00FB22C0 /* NSObject+UASwizzle.m */,
+			);
+			path = UAPhoneGapSampleTest;
+			sourceTree = "<group>";
+		};
+		BB55EA9A161515890094AC4A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				BB55EA9B161515890094AC4A /* UAPhoneGapSampleTest-Info.plist */,
+				BB55EA9C161515890094AC4A /* InfoPlist.strings */,
+				BB55EAA2161515890094AC4A /* UAPhoneGapSampleTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -368,6 +458,24 @@
 			productName = UAPhonegapSample;
 			productReference = 1D6058910D05DD3D006BFB54 /* UAPhonegapSample.app */;
 			productType = "com.apple.product-type.application";
+		};
+		BB55EA93161515890094AC4A /* UAPhoneGapSampleTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BB55EAA3161515890094AC4A /* Build configuration list for PBXNativeTarget "UAPhoneGapSampleTest" */;
+			buildPhases = (
+				BB55EA8F161515890094AC4A /* Sources */,
+				BB55EA90161515890094AC4A /* Frameworks */,
+				BB55EA91161515890094AC4A /* Resources */,
+				BB55EA92161515890094AC4A /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UAPhoneGapSampleTest;
+			productName = UAPhoneGapSampleTest;
+			productReference = BB55EA94161515890094AC4A /* UAPhoneGapSampleTest.octest */;
+			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
 
@@ -402,6 +510,7 @@
 			projectRoot = "";
 			targets = (
 				1D6058900D05DD3D006BFB54 /* UAPhonegapSample */,
+				BB55EA93161515890094AC4A /* UAPhoneGapSampleTest */,
 			);
 		};
 /* End PBXProject section */
@@ -453,7 +562,15 @@
 				3088BBC0154F3926009F9C59 /* Default-Portrait~ipad.png in Resources */,
 				3088BBC1154F3926009F9C59 /* Default@2x~iphone.png in Resources */,
 				3088BBC2154F3926009F9C59 /* Default~iphone.png in Resources */,
-				49C9B08E15BF673F00E11972 /* AirshipConfig.plist in Resources */,
+				BB55EA8C1615130B0094AC4A /* AirshipConfig.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB55EA91161515890094AC4A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB55EA9E161515890094AC4A /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +591,19 @@
 			shellPath = /bin/sh;
 			shellScript = "touch -cm ${PROJECT_DIR}/www";
 		};
+		BB55EA92161515890094AC4A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -486,6 +616,19 @@
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
 				49C9B0A115BF6B6300E11972 /* PushNotificationPlugin.m in Sources */,
 				49C9B0A215BF6B6300E11972 /* UAAppDelegateSurrogate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BB55EA8F161515890094AC4A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB55EABD161517930094AC4A /* MainViewController.m in Sources */,
+				BB55EAA81615161D0094AC4A /* PushNotificationPlugin.m in Sources */,
+				BB55EAA7161516130094AC4A /* UAAppDelegateSurrogate.m in Sources */,
+				BB55EAA61615160A0094AC4A /* AppDelegate.m in Sources */,
+				BB55EAA1161515890094AC4A /* UAPhoneGapSampleTest.m in Sources */,
+				BB47551916161D8C00FB22C0 /* NSObject+UASwizzle.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -532,6 +675,14 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
+		BB55EA9C161515890094AC4A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BB55EA9D161515890094AC4A /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -572,6 +723,72 @@
 				);
 				PRODUCT_NAME = UAPhonegapSample;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		BB55EAA4161515890094AC4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "UAPhoneGapSampleTest/UAPhoneGapSampleTest-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "UAPhoneGapSampleTest/UAPhoneGapSampleTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Airship\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		BB55EAA5161515890094AC4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "UAPhoneGapSampleTest/UAPhoneGapSampleTest-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "UAPhoneGapSampleTest/UAPhoneGapSampleTest-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/Airship\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_PRODUCT = YES;
+				WRAPPER_EXTENSION = octest;
 			};
 			name = Release;
 		};
@@ -657,6 +874,15 @@
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
 				1D6058950D05DD3E006BFB54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BB55EAA3161515890094AC4A /* Build configuration list for PBXNativeTarget "UAPhoneGapSampleTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB55EAA4161515890094AC4A /* Debug */,
+				BB55EAA5161515890094AC4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
