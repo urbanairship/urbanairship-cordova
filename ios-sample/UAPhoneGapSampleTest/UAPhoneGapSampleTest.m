@@ -176,6 +176,12 @@ static NSNumber *pushNotificationPluginMessageReceivedBool = nil;
 
 }
 
+- (void)testAppDelegateSurrogateThrowsExceptionOnNilDelegate {
+    UAAppDelegateSurrogate *surrogate = [UAAppDelegateSurrogate shared];
+    STAssertNil(surrogate.defaultAppDelegate, @"defaultAppDelegate should be nil");
+    STAssertThrowsSpecificNamed([surrogate performSelector:@selector(forwardInvocation:) withObject:nil], NSException, UADefaultDelegateNilException, @"defaultAppDelegate should throw a UADefaultDelegateNilException");
+}
+
 
 #pragma mark -
 #pragma mark Support Methods

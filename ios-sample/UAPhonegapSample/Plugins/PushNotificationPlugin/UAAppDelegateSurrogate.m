@@ -43,14 +43,10 @@ SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
     SEL selector = [invocation selector];
-
-    if ([surrogateDelegate respondsToSelector:selector]) {
-        [invocation invokeWithTarget:surrogateDelegate];
-    }
-    else {
-        [invocation invokeWithTarget:defaultAppDelegate];
-    }
-    // Throw the exception here to make debugging easier
+    // Throw the exception here to make debugging easier. We are going to forward the invocation to the
+    // defaultAppDelegate without checking if it responds for the purpose of crashing the app in the right place
+    // if the delegate does not respond which would be expected behavior. If the defaultAppDelegate is nil, we
+    // need to exception here, and not fail silently.
     if (!defaultAppDelegate) {
         NSString *errorMsg = @"UAAppDelegateSurrogate defaultAppDelegate was nil while forwarding an invocation";
         NSException *defaultAppDelegateNil = [NSException exceptionWithName:UADefaultDelegateNilException
@@ -58,6 +54,13 @@ SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
                                                                    userInfo:nil];
         [defaultAppDelegateNil raise];
     }
+    if ([surrogateDelegate respondsToSelector:selector]) {
+        [invocation invokeWithTarget:surrogateDelegate];
+    }
+    else {
+        [invocation invokeWithTarget:defaultAppDelegate];
+    }
+
 }
 
 
