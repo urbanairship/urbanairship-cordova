@@ -1,6 +1,8 @@
 
 #import "UAAppDelegateSurrogate.h"
 
+NSString * const UADefaultDelegateNilException = @"UADefaultDelegateNilException";
+
 @interface UAAppDelegateSurrogate()
 
 @property (nonatomic, readwrite, copy) NSDictionary *launchOptions;
@@ -10,6 +12,7 @@
 @implementation UAAppDelegateSurrogate
 
 @synthesize surrogateDelegate;
+@synthesize defaultAppDelegate;
 @synthesize launchOptions;
 
 SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
@@ -40,23 +43,24 @@ SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
 
 - (void)forwardInvocation:(NSInvocation *)invocation {
     SEL selector = [invocation selector];
-
-    if ([defaultAppDelegate respondsToSelector:selector] || [surrogateDelegate respondsToSelector:selector]) {
-        //allow the surrogate delegate a chance to respond first
-        if ([surrogateDelegate respondsToSelector:selector]) {
-            [invocation invokeWithTarget:surrogateDelegate];
-        }
-
-        //forward to the default delate if necessary
-        if ([defaultAppDelegate respondsToSelector:selector]) {
-            [invocation invokeWithTarget:defaultAppDelegate];
-        }
+    // Throw the exception here to make debugging easier. We are going to forward the invocation to the
+    // defaultAppDelegate without checking if it responds for the purpose of crashing the app in the right place
+    // if the delegate does not respond which would be expected behavior. If the defaultAppDelegate is nil, we
+    // need to exception here, and not fail silently.
+    if (!defaultAppDelegate) {
+        NSString *errorMsg = @"UAAppDelegateSurrogate defaultAppDelegate was nil while forwarding an invocation";
+        NSException *defaultAppDelegateNil = [NSException exceptionWithName:UADefaultDelegateNilException
+                                                                     reason:errorMsg
+                                                                   userInfo:nil];
+        [defaultAppDelegateNil raise];
     }
-
-    //otherwise trigger default behavior (usually throws NSInvalidArgumentException)
+    if ([surrogateDelegate respondsToSelector:selector]) {
+        [invocation invokeWithTarget:surrogateDelegate];
+    }
     else {
-        [super forwardInvocation:invocation];
+        [invocation invokeWithTarget:defaultAppDelegate];
     }
+
 }
 
 
@@ -76,12 +80,18 @@ SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
 }
 
 - (NSMethodSignature*)methodSignatureForSelector:(SEL)selector {
-    NSMethodSignature* signature = [super methodSignatureForSelector:selector];
-    if (!signature) {
-        signature = [defaultAppDelegate methodSignatureForSelector:selector];
-    } else {
-        signature = [surrogateDelegate methodSignatureForSelector:selector];
-    }
+    NSMethodSignature *signature = nil;
+    // First non nil method signature returns
+    signature = [super methodSignatureForSelector:selector];
+    if (signature) return signature;
+
+    signature = [defaultAppDelegate methodSignatureForSelector:selector];
+    if (signature) return signature;
+
+    signature = [surrogateDelegate methodSignatureForSelector:selector];
+    if (signature) return signature;
+
+    // If none of the above classes return a non nil method signature, this will likely crash
     return signature;
 }
 
@@ -89,6 +99,7 @@ SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
 
 - (void)dealloc {
     RELEASE_SAFELY(launchOptions);
+    [super dealloc];
 }
 
 @end
