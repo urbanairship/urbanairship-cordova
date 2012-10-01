@@ -1,6 +1,7 @@
 //
 //  NSObject+UASwizzle.h
-
+//
+// Copyright 2012 Urban Airship and Contributors
 
 #import <Foundation/Foundation.h>
 

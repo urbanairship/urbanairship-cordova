@@ -2,9 +2,7 @@
 //  UrbanAirshipPlugin.h
 //  urbanairship.richpush
 //
-//  Created by urbanairship on 6/18/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
+// Copyright 2012 Urban Airship and Contributors
 
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPlugin.h>

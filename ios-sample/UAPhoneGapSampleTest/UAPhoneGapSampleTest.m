@@ -2,9 +2,8 @@
 //  UAPhoneGapSampleTest.m
 //  UAPhoneGapSampleTest
 //
-//  Created by Matt Hooge on 9/27/12.
 //
-//
+// Copyright 2012 Urban Airship and Contributors
 
 #import "UAAppDelegateSurrogate.h"
 #import "AppDelegate.h"
