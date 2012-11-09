@@ -54,10 +54,23 @@ SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
                                                                    userInfo:nil];
         [defaultAppDelegateNil raise];
     }
+
+    BOOL responds = NO;
+
+    //give the surrogate and default app delegates an opportunity to handle the message
     if ([surrogateDelegate respondsToSelector:selector]) {
+        responds = YES;
         [invocation invokeWithTarget:surrogateDelegate];
     }
-    else {
+    if ([defaultAppDelegate respondsToSelector:selector]) {
+        responds = YES;
+        [invocation invokeWithTarget:defaultAppDelegate];
+    }
+
+    if (!responds) {
+        //in the off chance that neither app delegate responds, forward the message
+        //to the default app delegate anyway.  this will likely result in a crash,
+        //but that way the exception will come from the expected location
         [invocation invokeWithTarget:defaultAppDelegate];
     }
 
