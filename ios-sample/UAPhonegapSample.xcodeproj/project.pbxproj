@@ -553,6 +553,7 @@
 				);
 				PRODUCT_NAME = UAPhonegapSample;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s armv6 i386";
 			};
 			name = Debug;
 		};
@@ -572,6 +573,7 @@
 				);
 				PRODUCT_NAME = UAPhonegapSample;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7 armv7s armv6 i386";
 			};
 			name = Release;
 		};
@@ -609,6 +611,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "";
+				VALID_ARCHS = "armv7 armv7s armv6 i386";
 			};
 			name = Debug;
 		};
@@ -646,6 +649,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = NO;
 				USER_HEADER_SEARCH_PATHS = "";
+				VALID_ARCHS = "armv7 armv7s armv6 i386";
 			};
 			name = Release;
 		};
