@@ -448,7 +448,14 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 - (void)setAlias:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
     [self performCallbackWithArgs:args expecting:[NSArray arrayWithObjects:[NSString class],nil] withVoidBlock:^(NSArray *args) {
         NSString *alias = [args objectAtIndex:0];
-        [UAPush shared].alias = alias;
+        // If the value passed in is nil or an empty string, set the alias to nil. Empty string will cause registration failures
+        // from the Urban Airship API
+        if ([alias length] == 0) {
+            [UAPush shared].alias = nil;
+        }
+        else{
+            [UAPush shared].alias = alias;
+        }
         [[UAPush shared] updateRegistration];
     }];
 }
