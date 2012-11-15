@@ -742,14 +742,16 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 - (void)getObjects:(id *)objectsPtr range:(NSRange)range
 {
   NSParameterAssert((objects != NULL) && (count <= capacity));
-  if((objectsPtr     == NULL)  && (NSMaxRange(range) > 0UL))   { [NSException raise:NSRangeException format:@"*** -[%@ %@]: pointer to objects array is NULL but range length is %lu", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range)];        }
-  if((range.location >  count) || (NSMaxRange(range) > count)) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",                          NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range), count]; }
-  memcpy(objectsPtr, objects + range.location, range.length * sizeof(id));
+  if((objectsPtr     == NULL)  && (NSMaxRange(range) > 0UL))   { [NSException raise:NSRangeException format:@"*** -[%@ %@]: pointer to objects array is NULL but range length is %u", NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range)];        }
+  if((range.location >  count) || (NSMaxRange(range) > count)) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%u) beyond bounds (%u)",                          NSStringFromClass([self class]), NSStringFromSelector(_cmd), NSMaxRange(range), count]; }
+  if (objectsPtr != NULL) {
+      memcpy(objectsPtr, objects + range.location, range.length * sizeof(id));
+  }
 }
 
 - (id)objectAtIndex:(NSUInteger)objectIndex
 {
-  if(objectIndex >= count) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)", NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
+  if(objectIndex >= count) { [NSException raise:NSRangeException format:@"*** -[%@ %@]: index (%u) beyond bounds (%u)", NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
   NSParameterAssert((objects != NULL) && (count <= capacity) && (objects[objectIndex] != NULL));
   return(objects[objectIndex]);
 }
@@ -770,7 +772,7 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 {
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(anObject    == NULL)  { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil",                    NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
-  if(objectIndex >  count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count + 1UL]; }
+  if(objectIndex >  count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%u) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count + 1UL]; }
 #ifdef __clang_analyzer__
   [anObject retain]; // Stupid clang analyzer...  Issue #19.
 #else
@@ -783,7 +785,7 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 - (void)removeObjectAtIndex:(NSUInteger)objectIndex
 {
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
-  if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
+  if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%u) beyond bounds (%u)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
   _CDVJKArrayRemoveObjectAtIndex(self, objectIndex);
   mutations = (mutations == NSUIntegerMax) ? 1UL : mutations + 1UL;
 }
@@ -792,7 +794,7 @@ static void _CDVJKArrayRemoveObjectAtIndex(CDVJKArray *array, NSUInteger objectI
 {
   if(mutations   == 0UL)   { [NSException raise:NSInternalInconsistencyException format:@"*** -[%@ %@]: mutating method sent to immutable object", NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
   if(anObject    == NULL)  { [NSException raise:NSInvalidArgumentException       format:@"*** -[%@ %@]: attempt to insert nil",                    NSStringFromClass([self class]), NSStringFromSelector(_cmd)]; }
-  if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%lu) beyond bounds (%lu)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
+  if(objectIndex >= count) { [NSException raise:NSRangeException                 format:@"*** -[%@ %@]: index (%u) beyond bounds (%u)",          NSStringFromClass([self class]), NSStringFromSelector(_cmd), objectIndex, count]; }
 #ifdef __clang_analyzer__
   [anObject retain]; // Stupid clang analyzer...  Issue #19.
 #else
@@ -2345,33 +2347,33 @@ exitNow:
   return(returnObject);
 }
 
-- (id)objectFromJSONString
+- (id)cdvjk_objectFromJSONString
 {
-  return([self objectFromJSONStringWithParseOptions:CDVJKParseOptionStrict error:NULL]);
+  return([self cdvjk_objectFromJSONStringWithParseOptions:CDVJKParseOptionStrict error:NULL]);
 }
 
-- (id)objectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
+- (id)cdvjk_objectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
-  return([self objectFromJSONStringWithParseOptions:parseOptionFlags error:NULL]);
+  return([self cdvjk_objectFromJSONStringWithParseOptions:parseOptionFlags error:NULL]);
 }
 
-- (id)objectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
+- (id)cdvjk_objectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
 {
   return(_NSStringObjectFromJSONString(self, parseOptionFlags, error, NO));
 }
 
 
-- (id)mutableObjectFromJSONString
+- (id)cdvjk_mutableObjectFromJSONString
 {
-  return([self mutableObjectFromJSONStringWithParseOptions:CDVJKParseOptionStrict error:NULL]);
+  return([self cdvjk_mutableObjectFromJSONStringWithParseOptions:CDVJKParseOptionStrict error:NULL]);
 }
 
-- (id)mutableObjectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
+- (id)cdvjk_mutableObjectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
-  return([self mutableObjectFromJSONStringWithParseOptions:parseOptionFlags error:NULL]);
+  return([self cdvjk_mutableObjectFromJSONStringWithParseOptions:parseOptionFlags error:NULL]);
 }
 
-- (id)mutableObjectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
+- (id)cdvjk_mutableObjectFromJSONStringWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
 {
   return(_NSStringObjectFromJSONString(self, parseOptionFlags, error, YES));
 }
@@ -2380,17 +2382,17 @@ exitNow:
 
 @implementation NSData (CDVJSONKitDeserializing)
 
-- (id)objectFromJSONData
+- (id)cdvjk_objectFromJSONData
 {
-  return([self objectFromJSONDataWithParseOptions:CDVJKParseOptionStrict error:NULL]);
+  return([self cdvjk_objectFromJSONDataWithParseOptions:CDVJKParseOptionStrict error:NULL]);
 }
 
-- (id)objectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
+- (id)cdvjk_objectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
-  return([self objectFromJSONDataWithParseOptions:parseOptionFlags error:NULL]);
+  return([self cdvjk_objectFromJSONDataWithParseOptions:parseOptionFlags error:NULL]);
 }
 
-- (id)objectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
+- (id)cdvjk_objectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
 {
   CDVJSONDecoder *decoder = NULL;
   id returnObject = [(decoder = [CDVJSONDecoder decoderWithParseOptions:parseOptionFlags]) objectWithData:self error:error];
@@ -2398,17 +2400,17 @@ exitNow:
   return(returnObject);
 }
 
-- (id)mutableObjectFromJSONData
+- (id)cdvjk_mutableObjectFromJSONData
 {
-  return([self mutableObjectFromJSONDataWithParseOptions:CDVJKParseOptionStrict error:NULL]);
+  return([self cdvjk_mutableObjectFromJSONDataWithParseOptions:CDVJKParseOptionStrict error:NULL]);
 }
 
-- (id)mutableObjectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
+- (id)cdvjk_mutableObjectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags
 {
-  return([self mutableObjectFromJSONDataWithParseOptions:parseOptionFlags error:NULL]);
+  return([self cdvjk_mutableObjectFromJSONDataWithParseOptions:parseOptionFlags error:NULL]);
 }
 
-- (id)mutableObjectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
+- (id)cdvjk_mutableObjectFromJSONDataWithParseOptions:(CDVJKParseOptionFlags)parseOptionFlags error:(NSError **)error
 {
   CDVJSONDecoder *decoder = NULL;
   id returnObject = [(decoder = [CDVJSONDecoder decoderWithParseOptions:parseOptionFlags]) mutableObjectWithData:self error:error];
@@ -2595,18 +2597,18 @@ static int cdvjk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *
   BOOL workAroundMacOSXABIBreakingBug = NO;
   if(CDVJK_EXPECT_F(((NSUInteger)object) & 0x1)) { workAroundMacOSXABIBreakingBug = YES; goto slowClassLookup; }
 
-       if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.stringClass))     { isClass = CDVJKClassString;     }
-  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.numberClass))     { isClass = CDVJKClassNumber;     }
-  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.dictionaryClass)) { isClass = CDVJKClassDictionary; }
-  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.arrayClass))      { isClass = CDVJKClassArray;      }
-  else if(CDVJK_EXPECT_T(object->isa == encodeState->fastClassLookup.nullClass))       { isClass = CDVJKClassNull;       }
+       if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.stringClass))     { isClass = CDVJKClassString;     }
+  else if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.numberClass))     { isClass = CDVJKClassNumber;     }
+  else if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.dictionaryClass)) { isClass = CDVJKClassDictionary; }
+  else if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.arrayClass))      { isClass = CDVJKClassArray;      }
+  else if(CDVJK_EXPECT_T(object_getClass(object) == encodeState->fastClassLookup.nullClass))       { isClass = CDVJKClassNull;       }
   else {
   slowClassLookup:
-         if(CDVJK_EXPECT_T([object isKindOfClass:[NSString     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.stringClass     = object->isa; } isClass = CDVJKClassString;     }
-    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNumber     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.numberClass     = object->isa; } isClass = CDVJKClassNumber;     }
-    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSDictionary class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.dictionaryClass = object->isa; } isClass = CDVJKClassDictionary; }
-    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSArray      class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.arrayClass      = object->isa; } isClass = CDVJKClassArray;      }
-    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNull       class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.nullClass       = object->isa; } isClass = CDVJKClassNull;       }
+         if(CDVJK_EXPECT_T([object isKindOfClass:[NSString     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.stringClass     = object_getClass(object); } isClass = CDVJKClassString;     }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNumber     class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.numberClass     = object_getClass(object); } isClass = CDVJKClassNumber;     }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSDictionary class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.dictionaryClass = object_getClass(object); } isClass = CDVJKClassDictionary; }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSArray      class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.arrayClass      = object_getClass(object); } isClass = CDVJKClassArray;      }
+    else if(CDVJK_EXPECT_T([object isKindOfClass:[NSNull       class]])) { if(workAroundMacOSXABIBreakingBug == NO) { encodeState->fastClassLookup.nullClass       = object_getClass(object); } isClass = CDVJKClassNull;       }
     else {
       if((rerunningAfterClassFormatter == NO) && (
 #ifdef __BLOCKS__
@@ -2788,7 +2790,7 @@ static int cdvjk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *
           for(id keyObject in enumerateObject) {
             if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ","))) { return(1); } }
             printComma = 1;
-            if(CDVJK_EXPECT_F((keyObject->isa      != encodeState->fastClassLookup.stringClass)) && CDVJK_EXPECT_F(([keyObject   isKindOfClass:[NSString class]] == NO))) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
+            if(CDVJK_EXPECT_F((object_getClass(keyObject)      != encodeState->fastClassLookup.stringClass)) && CDVJK_EXPECT_F(([keyObject   isKindOfClass:[NSString class]] == NO))) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, keyObject)))                                                        { return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ":")))                                                                      { return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, (void *)CFDictionaryGetValue((CFDictionaryRef)object, keyObject)))) { return(1); }
@@ -2799,7 +2801,7 @@ static int cdvjk_encode_add_atom_to_buffer(CDVJKEncodeState *encodeState, void *
           for(idx = 0L; idx < dictionaryCount; idx++) {
             if(CDVJK_EXPECT_T(printComma)) { if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ","))) { return(1); } }
             printComma = 1;
-            if(CDVJK_EXPECT_F(((id)keys[idx])->isa != encodeState->fastClassLookup.stringClass) && CDVJK_EXPECT_F([(id)keys[idx] isKindOfClass:[NSString class]] == NO)) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
+            if(CDVJK_EXPECT_F(object_getClass(((id)keys[idx])) != encodeState->fastClassLookup.stringClass) && CDVJK_EXPECT_F([(id)keys[idx] isKindOfClass:[NSString class]] == NO)) { cdvjk_encode_error(encodeState, @"Key must be a string object."); return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, keys[idx])))    { return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_write1(encodeState, 0L, ":")))                  { return(1); }
             if(CDVJK_EXPECT_F(cdvjk_encode_add_atom_to_buffer(encodeState, objects[idx]))) { return(1); }
@@ -2924,24 +2926,24 @@ errorExit:
 
 // NSData returning methods...
 
-- (NSData *)JSONData
+- (NSData *)cdvjk_JSONData
 {
-  return([self JSONDataWithOptions:CDVJKSerializeOptionNone includeQuotes:YES error:NULL]);
+  return([self cdvjk_JSONDataWithOptions:CDVJKSerializeOptionNone includeQuotes:YES error:NULL]);
 }
 
-- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error
+- (NSData *)cdvjk_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | ((includeQuotes == NO) ? CDVJKEncodeOptionStringObjTrimQuotes : 0UL) | CDVJKEncodeOptionStringObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
 // NSString returning methods...
 
-- (NSString *)JSONString
+- (NSString *)cdvjk_JSONString
 {
-  return([self JSONStringWithOptions:CDVJKSerializeOptionNone includeQuotes:YES error:NULL]);
+  return([self cdvjk_JSONStringWithOptions:CDVJKSerializeOptionNone includeQuotes:YES error:NULL]);
 }
 
-- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error
+- (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions includeQuotes:(BOOL)includeQuotes error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | ((includeQuotes == NO) ? CDVJKEncodeOptionStringObjTrimQuotes : 0UL) | CDVJKEncodeOptionStringObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
@@ -2952,34 +2954,34 @@ errorExit:
 
 // NSData returning methods...
 
-- (NSData *)JSONData
+- (NSData *)cdvjk_JSONData
 {
   return([CDVJKSerializer serializeObject:self options:CDVJKSerializeOptionNone encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
 }
 
-- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
+- (NSData *)cdvjk_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
-- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (NSData *)cdvjk_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
 }
 
 // NSString returning methods...
 
-- (NSString *)JSONString
+- (NSString *)cdvjk_JSONString
 {
   return([CDVJKSerializer serializeObject:self options:CDVJKSerializeOptionNone encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
 }
 
-- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
+- (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
-- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
 }
@@ -2990,34 +2992,34 @@ errorExit:
 
 // NSData returning methods...
 
-- (NSData *)JSONData
+- (NSData *)cdvjk_JSONData
 {
   return([CDVJKSerializer serializeObject:self options:CDVJKSerializeOptionNone encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
 }
 
-- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
+- (NSData *)cdvjk_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
-- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (NSData *)cdvjk_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
 }
 
 // NSString returning methods...
 
-- (NSString *)JSONString
+- (NSString *)cdvjk_JSONString
 {
   return([CDVJKSerializer serializeObject:self options:CDVJKSerializeOptionNone encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:NULL]);
 }
 
-- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
+- (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:NULL selector:NULL error:error]);
 }
 
-- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
+- (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingDelegate:(id)delegate selector:(SEL)selector error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:NULL delegate:delegate selector:selector error:error]);
 }
@@ -3029,12 +3031,12 @@ errorExit:
 
 @implementation NSArray (CDVJSONKitSerializingBlockAdditions)
 
-- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
+- (NSData *)cdvjk_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
 }
 
-- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
+- (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
 }
@@ -3043,12 +3045,12 @@ errorExit:
 
 @implementation NSDictionary (CDVJSONKitSerializingBlockAdditions)
 
-- (NSData *)JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
+- (NSData *)cdvjk_JSONDataWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsData | CDVJKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
 }
 
-- (NSString *)JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
+- (NSString *)cdvjk_JSONStringWithOptions:(CDVJKSerializeOptionFlags)serializeOptions serializeUnsupportedClassesUsingBlock:(id(^)(id object))block error:(NSError **)error
 {
   return([CDVJKSerializer serializeObject:self options:serializeOptions encodeOption:(CDVJKEncodeOptionAsString | CDVJKEncodeOptionCollectionObj) block:block delegate:NULL selector:NULL error:error]);
 }

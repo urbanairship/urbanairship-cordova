@@ -185,6 +185,7 @@ PushNotification.prototype.getAlias = function (callback) {
 // Setters
 
 PushNotification.prototype.setAlias = function (alias, callback) {
+  console.log("Alias " + alias)
   this.call_native(callback, "setAlias", [alias])
 }
 
