@@ -1,5 +1,14 @@
+=================================
+Version 2.0.2 - November 16, 2012
+=================================
+- Updated to PhoneGap 2.2.0
+- FIXED: setting an alias to an empty string results in subsequent
+  registration failures
+- Updated default value of UAPush to NO in NSUserDefaults on app launch
+
+=================================
 Version 1.0.1 - August 23, 2012
-===============================
+=================================
 - FIXED: Addressed crash in the Android plugin caused by Cordova library bug when push or
   registration events occur before the web view is initialized.
 - FIXED: Addressed JSON bug resulting in invalid push extras.
