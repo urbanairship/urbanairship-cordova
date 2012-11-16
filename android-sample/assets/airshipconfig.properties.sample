@@ -6,7 +6,7 @@ productionAppSecret = Your Production Secret
 #transport is "gcm" or "helium".
 transport = gcm
 
-gcmSender = Your GCM sender ID is your Google API project ID (required for GCM)
+gcmSender = Your GCM sender ID is your Google API project number(required for GCM)
 inProduction = false
 
 iapEnabled = false
