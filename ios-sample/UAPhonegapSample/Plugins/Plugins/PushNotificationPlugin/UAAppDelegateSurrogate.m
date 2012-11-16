@@ -1,5 +1,6 @@
 
 #import "UAAppDelegateSurrogate.h"
+#import "UAPush.h"
 
 NSString * const UADefaultDelegateNilException = @"UADefaultDelegateNilException";
 
@@ -37,6 +38,10 @@ SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
         defaultAppDelegate = [del retain];
         [UIApplication sharedApplication].delegate = self;
     }
+    // Set default value of UAPush to no, this allows a developer to register for notification types at app
+    // app start, and then simply enable push at a later time. This will defer the UIAlertView prompting the user
+    // to accept push until after the developer has a chance to make the case for push
+    [UAPush setDefaultPushEnabledValue:NO];
 }
 
 #pragma mark Message forwarding

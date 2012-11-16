@@ -450,6 +450,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         NSString *alias = [args objectAtIndex:0];
         // If the value passed in is nil or an empty string, set the alias to nil. Empty string will cause registration failures
         // from the Urban Airship API
+        alias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if ([alias length] == 0) {
             [UAPush shared].alias = nil;
         }
