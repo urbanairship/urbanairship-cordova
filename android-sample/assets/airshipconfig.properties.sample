@@ -3,13 +3,10 @@ developmentAppSecret = Your Development Secret
 productionAppKey = Your Production App Key
 productionAppSecret = Your Production Secret
 
-#transport is "c2dm", "helium" or "hybrid".
-#note: the helium and hybrid transports are premium features.
-#for complete pricing information, see http://urbanairship.com/pricing/
+#transport is "gcm" or "helium".
+transport = gcm
 
-transport = helium
-
-c2dmSender = Your C2DM sender address (required for C2DM: must be an e-mail address)
+gcmSender = Your GCM sender ID is your Google API project number(required for GCM)
 inProduction = false
 
 iapEnabled = false

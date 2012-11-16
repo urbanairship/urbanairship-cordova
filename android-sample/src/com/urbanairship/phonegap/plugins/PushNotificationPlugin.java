@@ -214,6 +214,9 @@ public class PushNotificationPlugin extends Plugin {
                 result = new PluginResult(Status.ERROR);
                 return result;
             }
+            if(alias.equals("")) {
+                alias = null;
+            }
             Logger.debug("Settings alias: " + alias);
             PushManager.shared().setAlias(alias);
             result = new PluginResult(Status.OK);

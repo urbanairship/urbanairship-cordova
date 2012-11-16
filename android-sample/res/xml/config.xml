@@ -33,6 +33,7 @@
 
     <log level="DEBUG"/>
     <preference name="useBrowserHistory" value="false" />
+    <preference name="exit-on-suspend" value="false" />
 <plugins>
     <plugin name="App" value="org.apache.cordova.App"/>
     <plugin name="Geolocation" value="org.apache.cordova.GeoBroker"/>
