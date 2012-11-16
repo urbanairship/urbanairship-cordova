@@ -4,7 +4,9 @@ Version 2.0.2 - November 16, 2012
 - Updated to PhoneGap 2.2.0
 - FIXED: setting an alias to an empty string results in subsequent
   registration failures
-- Updated default value of UAPush to NO in NSUserDefaults on app launch
+- Updated default value of UAPush to NO in NSUserDefaults on app launch, 
+  this only affects the iOS plugin. This feature requires v1.3.5 of
+  libUAirship.a or greater. 
 
 =================================
 Version 1.0.1 - August 23, 2012
