@@ -14,7 +14,7 @@ For a more complete example, check out the sample app [index.html](https://githu
     // https://docs.urbanairship.com/display/DOCS/Server%3A+Android+Push+API#ServerAndroidPushAPI-Registration
     push.registerEvent('registration', function (id) {
         console.log("Registered with ID: " + id);
-    };
+    });
 
     // Callback for when the app is running, and recieves a push.
     push.registerEvent('push', function (push) {
