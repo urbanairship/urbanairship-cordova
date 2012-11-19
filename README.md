@@ -105,7 +105,7 @@ Enable background location updates on the device.
 
 Disable background location updates on the device.
 
-## registerForNotificationTypes(bitmask)
+### registerForNotificationTypes(bitmask)
 **Note::** iOS Only
 
 On iOS, registration for push requires specifying what combination of badges, sound and
