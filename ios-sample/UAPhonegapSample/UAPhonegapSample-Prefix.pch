@@ -17,7 +17,7 @@
  under the License.
  */
 //
-// Prefix header for all source files of the 'UAPhonegapSample' target in the 'UAPhonegapSample' project
+// Prefix header for all source files of the 'UAPhoneGapSample' target in the 'UAPhoneGapSample' project
 //
 
 #ifdef __OBJC__

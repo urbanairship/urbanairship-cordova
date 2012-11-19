@@ -1,5 +1,21 @@
+=================================
+Version 1.0.2 - November 16, 2012
+=================================
+- Updated to PhoneGap 2.2.0
+- FIXED: setting an alias to an empty string results in subsequent
+  registration failures in the iOS plugin
+- Updated default value of UAPush to NO in NSUserDefaults on app launch, 
+  this only affects the iOS plugin. This feature requires v1.3.5 of
+  libUAirship.a or greater, this implementation is not backwards compatible
+  with previous versions of the Urban Airship push library without modifying 
+  the Objective C code. Previous behavior caused registration for push when 
+  registerForRemoteNotifications was called, the current behavior will record 
+  preferred remote notification types and defer push registration until the
+  pushEnabled value is set to YES.
+
+=================================
 Version 1.0.1 - August 23, 2012
-===============================
+=================================
 - FIXED: Addressed crash in the Android plugin caused by Cordova library bug when push or
   registration events occur before the web view is initialized.
 - FIXED: Addressed JSON bug resulting in invalid push extras.

@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,113 +17,94 @@
  under the License.
  */
 
-
 #import <Foundation/Foundation.h>
 #import <AudioToolbox/AudioServices.h>
 #import <AVFoundation/AVFoundation.h>
 
 #import "CDVPlugin.h"
 
-
-
-
 enum CDVMediaError {
-	MEDIA_ERR_ABORTED = 1,
-	MEDIA_ERR_NETWORK = 2,
-	MEDIA_ERR_DECODE = 3,
-	MEDIA_ERR_NONE_SUPPORTED = 4
+    MEDIA_ERR_ABORTED = 1,
+    MEDIA_ERR_NETWORK = 2,
+    MEDIA_ERR_DECODE = 3,
+    MEDIA_ERR_NONE_SUPPORTED = 4
 };
 typedef NSUInteger CDVMediaError;
 
 enum CDVMediaStates {
-	MEDIA_NONE = 0,
-	MEDIA_STARTING = 1,
-	MEDIA_RUNNING = 2,
-	MEDIA_PAUSED = 3,
-	MEDIA_STOPPED = 4
+    MEDIA_NONE = 0,
+    MEDIA_STARTING = 1,
+    MEDIA_RUNNING = 2,
+    MEDIA_PAUSED = 3,
+    MEDIA_STOPPED = 4
 };
 typedef NSUInteger CDVMediaStates;
 
 enum CDVMediaMsg {
-	MEDIA_STATE = 1,
-	MEDIA_DURATION = 2,
+    MEDIA_STATE = 1,
+    MEDIA_DURATION = 2,
     MEDIA_POSITION = 3,
-	MEDIA_ERROR = 9
+    MEDIA_ERROR = 9
 };
 typedef NSUInteger CDVMediaMsg;
 
 @interface CDVAudioPlayer : AVAudioPlayer
 {
-	NSString* mediaId;
+    NSString* mediaId;
 }
-@property (nonatomic,copy) NSString* mediaId;
+@property (nonatomic, copy) NSString* mediaId;
 @end
 
 @interface CDVAudioRecorder : AVAudioRecorder
 {
-	NSString* mediaId;
+    NSString* mediaId;
 }
-@property (nonatomic,copy) NSString* mediaId;
+@property (nonatomic, copy) NSString* mediaId;
 @end
-	
+
 @interface CDVAudioFile : NSObject
 {
-	NSString* resourcePath;
-	NSURL* resourceURL;
-	CDVAudioPlayer* player;
-	CDVAudioRecorder* recorder;
+    NSString* resourcePath;
+    NSURL* resourceURL;
+    CDVAudioPlayer* player;
+    CDVAudioRecorder* recorder;
     NSNumber* volume;
 }
 
-@property (nonatomic, retain) NSString* resourcePath;
-@property (nonatomic, retain) NSURL* resourceURL;
-@property (nonatomic, retain) CDVAudioPlayer* player;
-@property (nonatomic, retain) NSNumber* volume;
+@property (nonatomic, strong) NSString* resourcePath;
+@property (nonatomic, strong) NSURL* resourceURL;
+@property (nonatomic, strong) CDVAudioPlayer* player;
+@property (nonatomic, strong) NSNumber* volume;
 
-@property (nonatomic, retain) CDVAudioRecorder* recorder;
+@property (nonatomic, strong) CDVAudioRecorder* recorder;
 
 @end
 
 @interface CDVSound : CDVPlugin <AVAudioPlayerDelegate, AVAudioRecorderDelegate>
 {
-	NSMutableDictionary* soundCache;
+    NSMutableDictionary* soundCache;
     AVAudioSession* avSession;
 }
-@property (nonatomic, retain) NSMutableDictionary* soundCache;
-@property (nonatomic, retain) AVAudioSession* avSession;
-//DEPRECATED
-- (void) play:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));	  	
-- (void) pause:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
-- (void) stop:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
-// DEPRECATED
+@property (nonatomic, strong) NSMutableDictionary* soundCache;
+@property (nonatomic, strong) AVAudioSession* avSession;
 
-- (void) startPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) pausePlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) stopPlayingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) seekToAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) release:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) getCurrentPositionAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)startPlayingAudio:(CDVInvokedUrlCommand*)command;
+- (void)pausePlayingAudio:(CDVInvokedUrlCommand*)command;
+- (void)stopPlayingAudio:(CDVInvokedUrlCommand*)command;
+- (void)seekToAudio:(CDVInvokedUrlCommand*)command;
+- (void)release:(CDVInvokedUrlCommand*)command;
+- (void)getCurrentPositionAudio:(CDVInvokedUrlCommand*)command;
 
-// DEPRECATED
-- (void) getCurrentPosition:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
-- (void) prepare:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
-// DEPRECATED
-
-- (BOOL) hasAudioSession;
+- (BOOL)hasAudioSession;
 
 // helper methods
-- (CDVAudioFile*) audioFileForResource:(NSString*) resourcePath withId: (NSString*)mediaId;
-- (BOOL) prepareToPlay: (CDVAudioFile*) audioFile withId: (NSString*)mediaId;
-- (NSString*) createMediaErrorWithCode: (CDVMediaError) code message: (NSString*) message;
+- (CDVAudioFile*)audioFileForResource:(NSString*)resourcePath withId:(NSString*)mediaId;
+- (BOOL)prepareToPlay:(CDVAudioFile*)audioFile withId:(NSString*)mediaId;
+- (NSString*)createMediaErrorWithCode:(CDVMediaError)code message:(NSString*)message;
 
-// DEPRECATED
-- (void) startAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
-- (void) stopAudioRecord:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options __attribute__((deprecated));
-// DEPRECATED
+- (void)startRecordingAudio:(CDVInvokedUrlCommand*)command;
+- (void)stopRecordingAudio:(CDVInvokedUrlCommand*)command;
 
-- (void) startRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-- (void) stopRecordingAudio:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
-
-- (void) setVolume:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void)setVolume:(CDVInvokedUrlCommand*)command;
 
 @end
