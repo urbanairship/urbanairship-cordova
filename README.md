@@ -105,6 +105,20 @@ Enable background location updates on the device.
 
 Disable background location updates on the device.
 
+## registerForNotificationTypes(bitmask)
+**Note::** iOS Only
+
+On iOS, registration for push requires specifying what combination of badges, sound and
+alerts are desired.  This function must be explicitly called in order to begin the
+registration process.  For example:
+
+    push.registerForNotificationTypes(push.notificationType.sound | push.notificationType.alert)
+
+*Available notification types:*
+
+* notificationType.sound
+* notificationType.alert
+* notificationType.badge
 
 ## Status Functions
 
