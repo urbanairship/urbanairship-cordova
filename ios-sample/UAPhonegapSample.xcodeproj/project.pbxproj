@@ -556,7 +556,7 @@
 					"\"$(TARGET_BUILD_DIR)/usr/local/lib/include\"",
 					"\"$(OBJROOT)/UninstalledProducts/include\"",
 					"\"$(BUILT_PRODUCTS_DIR)\"",
-					"../Airship/**",
+					"./Airship/**",
 				);
 				INFOPLIST_FILE = "UAPhoneGapSample/UAPhoneGapSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
