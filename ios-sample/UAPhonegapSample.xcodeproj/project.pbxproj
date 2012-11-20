@@ -529,8 +529,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Airship\"",
-					"\"$(SRCROOT)/../../dev-ios-library/Airship\"",
-					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/AirshipLib-drxxzexkdjzwtzdbobeowgblzgsd/Build/Products/Debug-iphoneos\"",
 				);
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = UAPhoneGapSample;
@@ -563,8 +561,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Airship\"",
-					"\"$(SRCROOT)/../../dev-ios-library/Airship\"",
-					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/AirshipLib-drxxzexkdjzwtzdbobeowgblzgsd/Build/Products/Debug-iphoneos\"",
 				);
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = UAPhoneGapSample;
