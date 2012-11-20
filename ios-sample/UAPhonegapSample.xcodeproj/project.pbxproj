@@ -529,8 +529,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Airship\"",
-					"\"$(SRCROOT)/../../dev-ios-library/Airship\"",
-					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/AirshipLib-drxxzexkdjzwtzdbobeowgblzgsd/Build/Products/Debug-iphoneos\"",
 				);
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = UAPhoneGapSample;
@@ -556,15 +554,13 @@
 					"\"$(TARGET_BUILD_DIR)/usr/local/lib/include\"",
 					"\"$(OBJROOT)/UninstalledProducts/include\"",
 					"\"$(BUILT_PRODUCTS_DIR)\"",
-					"../Airship/**",
+					"./Airship/**",
 				);
 				INFOPLIST_FILE = "UAPhoneGapSample/UAPhoneGapSample-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Airship\"",
-					"\"$(SRCROOT)/../../dev-ios-library/Airship\"",
-					"\"$(SRCROOT)/../../../Library/Developer/Xcode/DerivedData/AirshipLib-drxxzexkdjzwtzdbobeowgblzgsd/Build/Products/Debug-iphoneos\"",
 				);
 				OTHER_CFLAGS = "-DDEBUG";
 				PRODUCT_NAME = UAPhoneGapSample;
