@@ -42,9 +42,9 @@
 		30A0434914DC770100060A13 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 30A0434614DC770100060A13 /* Localizable.strings */; };
 		30E1352710E2C1420031B30D /* Cordova.plist in Resources */ = {isa = PBXBuildFile; fileRef = 30E1352610E2C1420031B30D /* Cordova.plist */; };
 		30E5649213A7FCAF007403D8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30E5649113A7FCAF007403D8 /* CoreMedia.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		496DDE22165B0BF300136CFB /* PushNotificationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 496DDE1F165B0BF300136CFB /* PushNotificationPlugin.m */; };
+		496DDE23165B0BF300136CFB /* UAAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = 496DDE21165B0BF300136CFB /* UAAppDelegateSurrogate.m */; };
 		4999A506165AF76100E59432 /* AirshipConfig.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4999A505165AF76100E59432 /* AirshipConfig.plist */; };
-		BB1A4EFD165471370010D07E /* PushNotificationPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = BB1A4EF9165471370010D07E /* PushNotificationPlugin.m */; };
-		BB1A4EFE165471370010D07E /* UAAppDelegateSurrogate.m in Sources */ = {isa = PBXBuildFile; fileRef = BB1A4EFB165471370010D07E /* UAAppDelegateSurrogate.m */; };
 		BB1A4EFF165471370010D07E /* README in Resources */ = {isa = PBXBuildFile; fileRef = BB1A4EFC165471370010D07E /* README */; };
 		BB1A4F04165475880010D07E /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BB1A4F03165475880010D07E /* libz.dylib */; };
 		BB1A4F06165475910010D07E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = BB1A4F05165475910010D07E /* libsqlite3.dylib */; };
@@ -111,12 +111,12 @@
 		30E1352610E2C1420031B30D /* Cordova.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Cordova.plist; path = ../Cordova.plist; sourceTree = "<group>"; };
 		30E5649113A7FCAF007403D8 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		32CA4F630368D1EE00C91783 /* UAPhoneGapSample-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UAPhoneGapSample-Prefix.pch"; sourceTree = "<group>"; };
+		496DDE1E165B0BF300136CFB /* PushNotificationPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PushNotificationPlugin.h; path = UAPhonegapSample/Plugins/PushNotificationPlugin/PushNotificationPlugin.h; sourceTree = SOURCE_ROOT; };
+		496DDE1F165B0BF300136CFB /* PushNotificationPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PushNotificationPlugin.m; path = UAPhonegapSample/Plugins/PushNotificationPlugin/PushNotificationPlugin.m; sourceTree = SOURCE_ROOT; };
+		496DDE20165B0BF300136CFB /* UAAppDelegateSurrogate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UAAppDelegateSurrogate.h; path = UAPhonegapSample/Plugins/PushNotificationPlugin/UAAppDelegateSurrogate.h; sourceTree = SOURCE_ROOT; };
+		496DDE21165B0BF300136CFB /* UAAppDelegateSurrogate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UAAppDelegateSurrogate.m; path = UAPhonegapSample/Plugins/PushNotificationPlugin/UAAppDelegateSurrogate.m; sourceTree = SOURCE_ROOT; };
 		4999A505165AF76100E59432 /* AirshipConfig.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = AirshipConfig.plist; path = UAPhonegapSample/AirshipConfig.plist; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* UAPhoneGapSample-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "UAPhoneGapSample-Info.plist"; path = "../UAPhoneGapSample-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
-		BB1A4EF8165471370010D07E /* PushNotificationPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PushNotificationPlugin.h; sourceTree = "<group>"; };
-		BB1A4EF9165471370010D07E /* PushNotificationPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PushNotificationPlugin.m; sourceTree = "<group>"; };
-		BB1A4EFA165471370010D07E /* UAAppDelegateSurrogate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UAAppDelegateSurrogate.h; sourceTree = "<group>"; };
-		BB1A4EFB165471370010D07E /* UAAppDelegateSurrogate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UAAppDelegateSurrogate.m; sourceTree = "<group>"; };
 		BB1A4EFC165471370010D07E /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = Plugins/README; sourceTree = "<group>"; };
 		BB1A4F03165475880010D07E /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		BB1A4F05165475910010D07E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
@@ -274,8 +274,8 @@
 		307C750510C5A3420062BCA9 /* Plugins */ = {
 			isa = PBXGroup;
 			children = (
+				496DDE1D165B0BD000136CFB /* PushNotificationPlugin */,
 				BB1A4EFC165471370010D07E /* README */,
-				BB1A4EF7165471370010D07E /* PushNotificationPlugin */,
 			);
 			name = Plugins;
 			path = UAPhoneGapSample/Plugins;
@@ -321,16 +321,15 @@
 			path = se.lproj;
 			sourceTree = "<group>";
 		};
-		BB1A4EF7165471370010D07E /* PushNotificationPlugin */ = {
+		496DDE1D165B0BD000136CFB /* PushNotificationPlugin */ = {
 			isa = PBXGroup;
 			children = (
-				BB1A4EF8165471370010D07E /* PushNotificationPlugin.h */,
-				BB1A4EF9165471370010D07E /* PushNotificationPlugin.m */,
-				BB1A4EFA165471370010D07E /* UAAppDelegateSurrogate.h */,
-				BB1A4EFB165471370010D07E /* UAAppDelegateSurrogate.m */,
+				496DDE1E165B0BF300136CFB /* PushNotificationPlugin.h */,
+				496DDE1F165B0BF300136CFB /* PushNotificationPlugin.m */,
+				496DDE20165B0BF300136CFB /* UAAppDelegateSurrogate.h */,
+				496DDE21165B0BF300136CFB /* UAAppDelegateSurrogate.m */,
 			);
 			name = PushNotificationPlugin;
-			path = Plugins/PushNotificationPlugin;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -457,8 +456,8 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* AppDelegate.m in Sources */,
 				302D95F114D2391D003F00A1 /* MainViewController.m in Sources */,
-				BB1A4EFD165471370010D07E /* PushNotificationPlugin.m in Sources */,
-				BB1A4EFE165471370010D07E /* UAAppDelegateSurrogate.m in Sources */,
+				496DDE22165B0BF300136CFB /* PushNotificationPlugin.m in Sources */,
+				496DDE23165B0BF300136CFB /* UAAppDelegateSurrogate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
