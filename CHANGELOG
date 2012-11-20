@@ -6,14 +6,10 @@ Version 1.0.2 - November 16, 2012
   with iOS 6 and certain plugin combinations
 - FIXED: setting an alias to an empty string results in subsequent
   registration failures
-- Updated default value of UAPush to NO in NSUserDefaults on app launch, 
-  this only affects the iOS plugin. This feature requires v1.3.5 of
-  libUAirship.a or greater, this implementation is not backwards compatible
-  with previous versions of the Urban Airship push library without modifying 
-  the Objective C code. Previous behavior caused registration for push when 
-  registerForRemoteNotifications was called, the current behavior will record 
-  preferred remote notification types and defer push registration until the
-  pushEnabled value is set to YES.
+- Changed default value of UAPushEnabled to NO in NSUserDefaults on app launch. 
+  This only affects the iOS plugin using v1.3.5 of libUAirship.a or greater.
+  If you have used previous versions of the plugin, you should update your
+  app in order to reflect this change, in order to see the same behavior.
 
 =================================
 Version 1.0.1 - August 23, 2012
