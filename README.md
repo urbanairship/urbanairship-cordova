@@ -290,4 +290,4 @@ This event is trigerred when your application recieves a registration response f
 
     push.registerEvent('registration', function (id) {
         console.log("Registered with ID: " + id);
-    };
+    });
