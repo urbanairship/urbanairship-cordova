@@ -81,7 +81,7 @@ public class IntentReceiver extends BroadcastReceiver {
             Intent launch = new Intent(Intent.ACTION_MAIN);
             launch.setClass(UAirship.shared().getApplicationContext(),
                     UAPhonegapSample.class);
-            launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             PushNotificationPlugin.incomingAlert = alert;
             PushNotificationPlugin.incomingExtras = extras;

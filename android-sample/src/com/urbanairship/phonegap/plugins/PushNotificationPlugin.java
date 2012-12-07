@@ -146,6 +146,9 @@ public class PushNotificationPlugin extends Plugin {
             Map<String, String> extras = PushNotificationPlugin.incomingExtras;
             JSONObject obj = notificationObject(alert, extras);
             result = new PluginResult(Status.OK, obj);
+            //reset incoming push data until the next background push comes in
+            PushNotificationPlugin.incomingAlert = "";
+            PushNotificationPlugin.incomingExtras = new HashMap<String,String>();
         } else if (action.equals("getPushID")) {
             String pushID = PushManager.shared().getAPID();
             pushID = pushID != null ? pushID : "";

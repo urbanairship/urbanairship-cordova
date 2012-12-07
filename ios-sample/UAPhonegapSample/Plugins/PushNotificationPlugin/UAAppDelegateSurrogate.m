@@ -44,6 +44,10 @@ SINGLETON_IMPLEMENTATION(UAAppDelegateSurrogate);
     [UAPush setDefaultPushEnabledValue:NO];
 }
 
+- (void)clearLaunchOptions {
+    self.launchOptions = nil;
+}
+
 #pragma mark Message forwarding
 
 - (void)forwardInvocation:(NSInvocation *)invocation {

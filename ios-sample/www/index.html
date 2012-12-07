@@ -21,23 +21,19 @@
 
         // Reset Badge on resume
         document.addEventListener("resume", function() {
-            push.resetBadge()
+          push.resetBadge()
         })
 
         push.getIncoming(function (incoming) {
-
           if(incoming.message) {
-            console.log("In INCOMING function")
-            navigator.notification.alert(incoming.message, function () {}, "Incoming Message", "OK")
+            console.log("Incoming push: " + incoming.message)
           } else {
             console.log("No incoming message")
           }
         })
 
         function on_push(data) {
-          navigator.notification.alert(
-          data.message,
-          function () {}, "Hello from Urban Airship!", "OK")
+          console.log("Received push: " + data.message)
         }
 
         function on_reg(error, pushID) {
@@ -224,7 +220,6 @@
           $("#vibrateEnabledSection").hide();
         }
       })
-        
     }
     </script>
 </head>

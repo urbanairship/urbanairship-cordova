@@ -21,4 +21,6 @@ SINGLETON_INTERFACE(UAAppDelegateSurrogate);
 @property(nonatomic, assign) NSObject<UIApplicationDelegate> *defaultAppDelegate;
 @property(nonatomic, readonly, copy) NSDictionary *launchOptions;
 
+- (void)clearLaunchOptions;
+
 @end
