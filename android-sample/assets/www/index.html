@@ -21,17 +21,16 @@
 
         // Reset Badge on resume
         document.addEventListener("resume", function() {
-            push.resetBadge()
-        })
+          push.resetBadge()
+          push.getIncoming(function (incoming) {
 
-        push.getIncoming(function (incoming) {
-
-          if(incoming.message) {
-            console.log("In INCOMING function")
-            navigator.notification.alert(incoming.message, function () {}, "Incoming Message", "OK")
-          } else {
-            console.log("No incoming message")
-          }
+            if(incoming.message) {
+              console.log("In INCOMING function")
+              navigator.notification.alert(incoming.message, function () {}, "Incoming Message", "OK")
+            } else {
+              console.log("No incoming message")
+            }
+          })
         })
 
         function on_push(data) {
