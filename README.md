@@ -33,7 +33,7 @@ For a more complete example, check out the sample app [index.html](https://githu
 
     // Set an alias, this lets you tie a device to a user in your system
     // https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Alias
-    push.setAlias(["awesomeuser22"], function () {
+    push.setAlias("awesomeuser22", function () {
         push.getAlias(function (alias) {
             console.log("The user formerly known as " + alias)
         });
