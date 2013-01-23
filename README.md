@@ -288,7 +288,7 @@ This event is trigerred when your application is open, and a push comes in.
 
 ## Registration
 
-*Callback arguments:* (String id)
+*Callback arguments:* (Boolean error, String id)
 
 This event is trigerred when your application recieves a registration response from Urban Airship.
 
