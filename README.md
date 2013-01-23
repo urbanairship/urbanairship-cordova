@@ -12,8 +12,13 @@ For a more complete example, check out the sample app [index.html](https://githu
 
     // Callback for when a device has registered with Urban Airship.
     // https://docs.urbanairship.com/display/DOCS/Server%3A+Android+Push+API#ServerAndroidPushAPI-Registration
-    push.registerEvent('registration', function (id) {
-        console.log("Registered with ID: " + id);
+    push.registerEvent('registration', function (error, id) {
+        if (error) {
+            console.log('there was an error registering for push notifications');
+        } else {
+
+            console.log("Registered with ID: " + id);
+        } 
     });
 
     // Callback for when the app is running, and recieves a push.
@@ -287,7 +292,11 @@ This event is trigerred when your application is open, and a push comes in.
 *Callback arguments:* (String id)
 
 This event is trigerred when your application recieves a registration response from Urban Airship.
+    push.registerEvent('registration', function (error, id) {
+        if (error) {
+            console.log('there was an error registering for push notifications');
+        } else {
 
-    push.registerEvent('registration', function (id) {
-        console.log("Registered with ID: " + id);
-    };
+            console.log("Registered with ID: " + id);
+        } 
+    });
