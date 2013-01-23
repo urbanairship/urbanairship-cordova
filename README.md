@@ -290,11 +290,13 @@ This event is trigerred when your application is open, and a push comes in.
 
 *Callback arguments:* (String id)
 
-This event is trigerred when your application recieves a registration response from Urban Airship. 
+This event is trigerred when your application recieves a registration response from Urban Airship.
+
     push.registerEvent('registration', function (error, id) {
-		if (error) {
+        if (error) {
             console.log('there was an error registering for push notifications');
         } else {
             console.log("Registered with ID: " + id);
         } 
     });
+	
