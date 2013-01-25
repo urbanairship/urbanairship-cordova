@@ -1,22 +1,22 @@
 package com.urbanairship.phonegap.sample;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
 
+import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.location.UALocationManager;
-import com.urbanairship.Logger;
 import com.urbanairship.phonegap.plugins.PushNotificationPlugin;
 import com.urbanairship.push.PushManager;
 import com.urbanairship.util.ServiceNotBoundException;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class IntentReceiver extends BroadcastReceiver {
 
@@ -33,9 +33,9 @@ public class IntentReceiver extends BroadcastReceiver {
                     "collapse_key",// c2dm collapse key
                     "from",// c2dm sender
                     PushManager.EXTRA_NOTIFICATION_ID,// int id of generated
-                                                      // notification
-                                                      // (ACTION_PUSH_RECEIVED
-                                                      // only)
+                    // notification
+                    // (ACTION_PUSH_RECEIVED
+                    // only)
                     PushManager.EXTRA_PUSH_ID,// internal UA push id
                     PushManager.EXTRA_ALERT);// ignore aler
             if (ignoredKeys.contains(key)) {
@@ -97,14 +97,14 @@ public class IntentReceiver extends BroadcastReceiver {
             Boolean valid = intent.getBooleanExtra(
                     PushManager.EXTRA_REGISTRATION_VALID, false);
             Logger.info("Registration complete. APID:"
-                            + intent.getStringExtra(PushManager.EXTRA_APID)
-                            + ". Valid: "
-                            + intent.getBooleanExtra(
-                                    PushManager.EXTRA_REGISTRATION_VALID, false));
+                    + intent.getStringExtra(PushManager.EXTRA_APID)
+                    + ". Valid: "
+                    + intent.getBooleanExtra(
+                            PushManager.EXTRA_REGISTRATION_VALID, false));
             plugin.raiseRegistration(valid, apid);
 
         } else if (action
-                .equals(UALocationManager.ACTION_LOCATION_SERVICE_BOUND)) {
+                .equals(UALocationManager.getLocationIntentAction(UALocationManager.ACTION_SUFFIX_LOCATION_SERVICE_BOUND))) {
             try {
                 UALocationManager.shared().recordCurrentLocation();
                 Logger.info("Location successfully recorded on Intent");
