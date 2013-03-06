@@ -87,7 +87,7 @@ PushNotification.prototype.call_native = function (callback, name, args) {
 }
 
 PushNotification.prototype.isPlatformIOS = function () {
-  return device.platform == "iPhone" || device.platform == "iPad" || device.platform == "iPod touch"
+  return device.platform == "iPhone" || device.platform == "iPad" || device.platform == "iPod touch" || device.platform == "iOS"
 }
 
 // Core API
@@ -95,7 +95,7 @@ PushNotification.prototype.isPlatformIOS = function () {
 // Registration
 
 PushNotification.prototype.registerForNotificationTypes = function (types, callback) {
-  if(device.platform == "iPhone" || device.platform == "iPad" || device.platform == "iPod touch") {
+  if(device.platform == "iPhone" || device.platform == "iPad" || device.platform == "iPod touch" || device.platform == "iOS") {
     this.call_native(callback, "registerForNotificationTypes", [types])
   }
 }
