@@ -59,6 +59,10 @@
             </intent-filter>
         </activity>
 
+
+        <!-- REQUIRED for PhoneGap plugin callback support --> 
+        <receiver android:name="com.urbanairship.phonegap.plugins.PushNotificationPluginIntentReceiver" />
+
         <!-- REQUIRED for Urban Airship GCM-->
         <receiver android:name="com.urbanairship.CoreReceiver" />
         
@@ -86,10 +90,6 @@
         
         <!-- OPTIONAL (for segments support) -->
         <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
-
-        <!-- OPTIONAL, if you want to receive push, push opened and registration completed intents -->
-        <!-- Replace the receiver below with your package and class name -->
-        <receiver android:name="com.urbanairship.phonegap.sample.IntentReceiver" />
 
     </application>
 

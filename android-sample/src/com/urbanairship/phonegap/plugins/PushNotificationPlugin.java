@@ -1,12 +1,13 @@
 package com.urbanairship.phonegap.plugins;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import android.os.RemoteException;
+
+import com.urbanairship.Logger;
+import com.urbanairship.location.LocationPreferences;
+import com.urbanairship.location.UALocationManager;
+import com.urbanairship.push.PushManager;
+import com.urbanairship.push.PushPreferences;
+import com.urbanairship.util.ServiceNotBoundException;
 
 import org.apache.cordova.api.Plugin;
 import org.apache.cordova.api.PluginResult;
@@ -15,15 +16,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.RemoteException;
-
-import com.urbanairship.location.LocationPreferences;
-import com.urbanairship.location.UALocationManager;
-import com.urbanairship.Logger;
-import com.urbanairship.phonegap.sample.IntentReceiver;
-import com.urbanairship.push.PushManager;
-import com.urbanairship.push.PushPreferences;
-import com.urbanairship.util.ServiceNotBoundException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class PushNotificationPlugin extends Plugin {
     final static String TAG = PushNotificationPlugin.class.getSimpleName();
@@ -105,7 +104,7 @@ public class PushNotificationPlugin extends Plugin {
 
         if (action.equals("enablePush")) {
             PushManager.enablePush();
-            PushManager.shared().setIntentReceiver(IntentReceiver.class);
+            PushManager.shared().setIntentReceiver(PushNotificationPluginIntentReceiver.class);
             result = new PluginResult(Status.OK);
         } else if (action.equals("disablePush")) {
             PushManager.disablePush();
