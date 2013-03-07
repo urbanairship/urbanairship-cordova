@@ -1,4 +1,4 @@
-package com.urbanairship.phonegap.sample;
+package com.urbanairship.phonegap.plugins;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,7 +8,7 @@ import android.os.RemoteException;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.location.UALocationManager;
-import com.urbanairship.phonegap.plugins.PushNotificationPlugin;
+import com.urbanairship.phonegap.sample.UAPhonegapSample;
 import com.urbanairship.push.PushManager;
 import com.urbanairship.util.ServiceNotBoundException;
 
@@ -18,9 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class IntentReceiver extends BroadcastReceiver {
-
-    private static final String TAG = IntentReceiver.class.getSimpleName();
+public class PushNotificationPluginIntentReceiver extends BroadcastReceiver {
 
     private Map<String, String> getNotificationExtras(Intent intent) {
         Map<String, String> extrasMap = new HashMap<String, String>();
@@ -37,7 +35,7 @@ public class IntentReceiver extends BroadcastReceiver {
                     // (ACTION_PUSH_RECEIVED
                     // only)
                     PushManager.EXTRA_PUSH_ID,// internal UA push id
-                    PushManager.EXTRA_ALERT);// ignore aler
+                    PushManager.EXTRA_ALERT);// ignore alert
             if (ignoredKeys.contains(key)) {
                 continue;
             }
