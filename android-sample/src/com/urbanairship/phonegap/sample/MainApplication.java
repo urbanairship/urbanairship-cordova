@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
+import com.urbanairship.phonegap.plugins.PushNotificationPluginIntentReceiver;
 import com.urbanairship.push.PushManager;
 
 public class MainApplication extends Application {
@@ -26,7 +27,7 @@ public class MainApplication extends Application {
         super.onCreate();
         UAirship.takeOff(this);
         PushManager.enablePush();
-        PushManager.shared().setIntentReceiver(IntentReceiver.class);
+        PushManager.shared().setIntentReceiver(PushNotificationPluginIntentReceiver.class);
     }
 
     public void onStop() {
