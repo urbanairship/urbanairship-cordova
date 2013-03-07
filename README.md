@@ -2,7 +2,7 @@
 
 ## Version Requirements
 
-This repo is meant to work with Phonegap 2.2.0 and above and the latest version of the Urban Airship library. Please upgrade your phonegap application to use 2.2 if you wish to use this library. More documentation and integration guides for IOS and Android are availble on our [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap)
+This repo is meant to work with PhoneGap 2.2.0+ and the latest version of the Urban Airship library. Please upgrade your PhoneGap application to use 2.2 if you wish to use this library. More documentation and integration guides for IOS and Android are availble on our [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap)
 
 ## Basic Example
 
@@ -294,7 +294,7 @@ This event is trigerred when your application recieves a registration response f
 
     push.registerEvent('registration', function (error, id) {
         if (error) {
-            console.log('there was an error registering for push notifications');
+            console.log('There was an error registering for push notifications.');
         } else {
             console.log("Registered with ID: " + id);
         } 
