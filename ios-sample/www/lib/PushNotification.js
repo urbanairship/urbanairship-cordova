@@ -1,1 +1,1 @@
-../../../plugin/PushNotification.js
+../../../plugin-common/PushNotification.js
