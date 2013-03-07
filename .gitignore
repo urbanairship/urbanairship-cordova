@@ -2,3 +2,5 @@
 build
 *.zip
 urbanairship-phonegap-*
+urbanairship-lib-*.jar
+Airship/
