@@ -1,3 +1,9 @@
+=============================
+Version 1.0.5 - March 8, 2013
+=============================
+- Moved the plugin intent receiver into the plugin package (Android)
+- Properly handle the Cordova 2.3 changes to the iOS platform value
+
 =================================
 Version 1.0.4 - February 19, 2013
 =================================
