@@ -39,11 +39,11 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 - (void)failWithCallbackID:(NSString *)callbackID {
     CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    [self writeJavascript: [result toErrorCallbackString:callbackID]];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackID];
 }
 
 - (void)succeedWithPluginResult:(CDVPluginResult *)result withCallbackID:(NSString *)callbackID {
-    [self writeJavascript: [result toSuccessCallbackString:callbackID]];
+    [self.commandDelegate sendPluginResult:result callbackId:callbackID];
 }
 
 - (BOOL)validateArguments:(NSArray *)args forExpectedTypes:(NSArray *)types {
@@ -101,43 +101,32 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     return result;
 }
 
-- (void)performCallbackWithArgs:(NSMutableArray *)args expecting:(NSArray *)expected withBlock:(UACordovaCallbackBlock)block {
-    if (!args.count) {
-        UALOG(@"cordova callback must contain at least a callbackID parameter, bailing");
-        return;
-    }
-    //pop the callback ID off the array. we should now have the expected number of arguments
-    id callbackID = [args pop];
-
-    if (![callbackID isKindOfClass:[NSString class]]) {
-        UALOG(@"cordova callback ID must be an NSString, bailing");
-        return;
-    }
-
+- (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command expecting:(NSArray *)expected withBlock:(UACordovaCallbackBlock)block {
     //if we're expecting any arguments
     if (expected) {
-        if (![self validateArguments:args forExpectedTypes:expected]) {
-            [self failWithCallbackID:callbackID];
+        if (![self validateArguments:command.arguments forExpectedTypes:expected]) {
+            [self failWithCallbackID:command.callbackId];
             return;
         }
-    } else if(args.count) {
-        UALOG(@"paramter number mismatch: expected 0 and received %d", args.count);
-        [self failWithCallbackID:callbackID];
+    } else if(command.arguments.count) {
+        UALOG(@"paramter number mismatch: expected 0 and received %d", command.arguments.count);
+        [self failWithCallbackID:command.callbackId];
         return;
     }
 
     //execute the block. the return value should be an obj-c object holding what we want to pass back to cordova.
-    id returnValue = block(args);
+    id returnValue = block(command.arguments);
+    
     CDVPluginResult *result = [self pluginResultForValue:returnValue];
     if (result) {
-        [self succeedWithPluginResult:result withCallbackID:callbackID];
+        [self succeedWithPluginResult:result withCallbackID:command.callbackId];
     } else {
-        [self failWithCallbackID:callbackID];
+        [self failWithCallbackID:command.callbackId];
     }
 }
 
-- (void)performCallbackWithArgs:(NSMutableArray *)args expecting:(NSArray *)expected withVoidBlock:(UACordovaVoidCallbackBlock)block {
-    [self performCallbackWithArgs:args expecting:expected withBlock:^(NSArray *args) {
+- (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command expecting:(NSArray *)expected withVoidBlock:(UACordovaVoidCallbackBlock)block {
+    [self performCallbackWithCommand:command expecting:expected withBlock:^(NSArray *args) {
         block(args);
         return [NSNull null];
     }];
@@ -224,90 +213,89 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 //registration
 
-- (void)registerForNotificationTypes:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
+- (void)registerForNotificationTypes:(CDVInvokedUrlCommand*)command {
     UALOG(@"PushNotificationPlugin: register for notification types");
-    NSString *callbackID = [args pop];
 
-    if (args.count >= 1) {
-        id obj = [args objectAtIndex:0];
+    if (command.arguments.count >= 1) {
+        id obj = [command.arguments objectAtIndex:0];
 
         if ([obj isKindOfClass:[NSNumber class]]) {
             UIRemoteNotificationType bitmask = [obj intValue];
             UALOG(@"bitmask value: %d", [obj intValue]);
             [[UAPush shared] registerForRemoteNotificationTypes:bitmask];
             CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self writeJavascript: [result toSuccessCallbackString:callbackID]];
+            [self writeJavascript: [result toSuccessCallbackString:command.callbackId]];
         } else {
             CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-            [self writeJavascript: [result toErrorCallbackString:callbackID]];
+            [self writeJavascript: [result toErrorCallbackString:command.callbackId]];
         }
 
     } else {
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        [self writeJavascript: [result toErrorCallbackString:callbackID]];
+        [self writeJavascript: [result toErrorCallbackString:command.callbackId]];
     }
 }
 
 //general enablement
 
-- (void)enablePush:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withVoidBlock:^(NSArray *args){
+- (void)enablePush:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UAPush shared].pushEnabled = YES;
         //forces a reregistration
         [[UAPush shared] updateRegistration];
     }];
 }
 
-- (void)disablePush:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withVoidBlock:^(NSArray *args){
+- (void)disablePush:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UAPush shared].pushEnabled = NO;
         //forces a reregistration
         [[UAPush shared] updateRegistration];
     }];
 }
 
-- (void)enableLocation:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withVoidBlock:^(NSArray *args){
+- (void)enableLocation:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UALocationService setAirshipLocationServiceEnabled:YES];
     }];
 }
 
-- (void)disableLocation:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withVoidBlock:^(NSArray *args){
+- (void)disableLocation:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UALocationService setAirshipLocationServiceEnabled:NO];
     }];
 }
 
-- (void)enableBackgroundLocation:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withVoidBlock:^(NSArray *args){
+- (void)enableBackgroundLocation:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UAirship shared].locationService.backgroundLocationServiceEnabled = YES;
     }];
 }
 
-- (void)disableBackgroundLocation:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withVoidBlock:^(NSArray *args){
+- (void)disableBackgroundLocation:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UAirship shared].locationService.backgroundLocationServiceEnabled = NO;
     }];
 }
 
 //getters
 
-- (void)isPushEnabled:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)isPushEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         BOOL enabled = [UAPush shared].pushEnabled;
         return [NSNumber numberWithBool:enabled];
     }];
 }
 
-- (void)isQuietTimeEnabled:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)isQuietTimeEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         BOOL enabled = [UAPush shared].quietTimeEnabled;
         return [NSNumber numberWithBool:enabled];
     }];
 }
 
-- (void)isInQuietTime:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)isInQuietTime:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         BOOL inQuietTime;
         NSDictionary *quietTimeDictionary = [UAPush shared].quietTime;
         if (quietTimeDictionary) {
@@ -332,22 +320,22 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }];
 }
 
-- (void)isLocationEnabled:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)isLocationEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         BOOL enabled = [UALocationService airshipLocationServiceEnabled];
         return [NSNumber numberWithBool:enabled];
     }];
 }
 
-- (void)isBackgroundLocationEnabled:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)isBackgroundLocationEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         BOOL enabled = [UAirship shared].locationService.backgroundLocationServiceEnabled;
         return [NSNumber numberWithBool:enabled];
     }];
 }
 
-- (void)getIncoming:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)getIncoming:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         NSString *incomingAlert = @"";
         NSMutableDictionary *incomingExtras = [NSMutableDictionary dictionary];
 
@@ -370,15 +358,15 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }];
 }
 
-- (void)getPushID:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)getPushID:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         NSString *pushID = [UAirship shared].deviceToken ?: @"";
         return pushID;
     }];
 }
 
-- (void)getQuietTime:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)getQuietTime:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         NSDictionary *quietTimeDictionary = [UAPush shared].quietTime;
         //initialize the returned dictionary with zero values
         NSNumber *zero = [NSNumber numberWithInt:0];
@@ -420,16 +408,16 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }];
 }
 
-- (void)getTags:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)getTags:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         NSArray *tags = [UAPush shared].tags? : [NSArray array];
         NSDictionary *returnDictionary = [NSDictionary dictionaryWithObjectsAndKeys:tags, @"tags", nil];
         return returnDictionary;
     }];
 }
 
-- (void)getAlias:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withBlock:^(NSArray *args){
+- (void)getAlias:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         NSString *alias = [UAPush shared].alias ?: @"";
         return alias;
     }];
@@ -437,16 +425,16 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 //setters
 
-- (void)setTags:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:[NSArray arrayWithObjects:[NSArray class],nil] withVoidBlock:^(NSArray *args) {
+- (void)setTags:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSArray class],nil] withVoidBlock:^(NSArray *args) {
         NSMutableArray *tags = [NSMutableArray arrayWithArray:[args objectAtIndex:0]];
         [UAPush shared].tags = tags;
         [[UAPush shared] updateRegistration];
     }];
 }
 
-- (void)setAlias:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:[NSArray arrayWithObjects:[NSString class],nil] withVoidBlock:^(NSArray *args) {
+- (void)setAlias:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSString class],nil] withVoidBlock:^(NSArray *args) {
         NSString *alias = [args objectAtIndex:0];
         // If the value passed in is nil or an empty string, set the alias to nil. Empty string will cause registration failures
         // from the Urban Airship API
@@ -461,8 +449,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }];
 }
 
-- (void)setQuietTimeEnabled:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+- (void)setQuietTimeEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
         NSNumber *value = [args objectAtIndex:0];
         BOOL enabled = [value boolValue];
         [UAPush shared].quietTimeEnabled = enabled;
@@ -470,9 +458,9 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }];
 }
 
-- (void)setQuietTime:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
+- (void)setQuietTime:(CDVInvokedUrlCommand*)command {
     Class c = [NSNumber class];
-    [self performCallbackWithArgs:args expecting:[NSArray arrayWithObjects:c,c,c,c,nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:c,c,c,c,nil] withVoidBlock:^(NSArray *args) {
         id startHr = [args objectAtIndex:0];
         id startMin = [args objectAtIndex:1];
         id endHr = [args objectAtIndex:2];
@@ -498,16 +486,16 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }];
 }
 
-- (void)setAutobadgeEnabled:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+- (void)setAutobadgeEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
         NSNumber *number = [args objectAtIndex:0];
         BOOL enabled = [number boolValue];
         [UAPush shared].autobadgeEnabled = enabled;
     }];
 }
 
-- (void)setBadgeNumber:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+- (void)setBadgeNumber:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
         id number = [args objectAtIndex:0];
         NSInteger badgeNumber = [number intValue];
         [[UAPush shared] setBadgeNumber:badgeNumber];
@@ -516,8 +504,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 //reset badge
 
-- (void)resetBadge:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withVoidBlock:^(NSArray *args) {
+- (void)resetBadge:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args) {
         [[UAPush shared] resetBadge];
         [[UAPush shared] updateRegistration];
     }];
@@ -525,8 +513,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 //location recording
 
-- (void)recordCurrentLocation:(NSMutableArray *)args withDict:(NSMutableDictionary *)options {
-    [self performCallbackWithArgs:args expecting:nil withVoidBlock:^(NSArray *args) {
+- (void)recordCurrentLocation:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args) {
         [[UAirship shared].locationService reportCurrentLocation];
     }];
 }

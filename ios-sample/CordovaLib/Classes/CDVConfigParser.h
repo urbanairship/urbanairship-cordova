@@ -17,24 +17,12 @@
  under the License.
  */
 
-#import <Foundation/Foundation.h>
+@interface CDVConfigParser : NSObject <NSXMLParserDelegate>{}
 
-@class CDVInvokedUrlCommand;
-@class CDVViewController;
-
-@interface CDVCommandQueue : NSObject
-
-@property (nonatomic, readonly) BOOL currentlyExecuting;
-
-- (id)initWithViewController:(CDVViewController*)viewController;
-- (void)dispose;
-
-- (void)resetRequestId;
-- (void)enqueCommandBatch:(NSString*)batchJSON;
-
-- (void)maybeFetchCommandsFromJs:(NSNumber*)requestId;
-- (void)fetchCommandsFromJs;
-- (void)executePending;
-- (BOOL)execute:(CDVInvokedUrlCommand*)command;
+@property (nonatomic, readonly, strong) NSMutableDictionary* pluginsDict;
+@property (nonatomic, readonly, strong) NSMutableDictionary* settings;
+@property (nonatomic, readonly, strong) NSMutableArray* whitelistHosts;
+@property (nonatomic, readonly, strong) NSMutableArray* startupPluginNames;
+@property (nonatomic, readonly, strong) NSString* startPage;
 
 @end

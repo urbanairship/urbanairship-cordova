@@ -20,8 +20,11 @@
 #import "CDVFile.h"
 #import "NSArray+Comparisons.h"
 #import "NSDictionary+Extensions.h"
-#import "JSONKit.h"
+#import "CDVJSON.h"
 #import "NSData+Base64.h"
+#import <AssetsLibrary/ALAsset.h>
+#import <AssetsLibrary/ALAssetRepresentation.h>
+#import <AssetsLibrary/ALAssetsLibrary.h>
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "CDVAvailability.h"
 #import "sys/xattr.h"
@@ -31,6 +34,8 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 #ifndef __IPHONE_5_1
     NSString* const NSURLIsExcludedFromBackupKey = @"NSURLIsExcludedFromBackupKey";
 #endif
+
+NSString* const kCDVAssetsLibraryPrefix = @"assets-library://";
 
 @implementation CDVFile
 
@@ -47,7 +52,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
         self.appLibraryPath = [paths objectAtIndex:0];
 
-        self.appTempPath = [NSTemporaryDirectory ()stringByStandardizingPath];  // remove trailing slash from NSTemporaryDirectory()
+        self.appTempPath = [NSTemporaryDirectory()stringByStandardizingPath];   // remove trailing slash from NSTemporaryDirectory()
 
         self.persistentPath = [NSString stringWithFormat:@"/%@", [self.appDocsPath lastPathComponent]];
         self.temporaryPath = [NSString stringWithFormat:@"/%@", [self.appTempPath lastPathComponent]];
@@ -159,7 +164,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:QUOTA_EXCEEDED_ERR];
         } else {
             NSMutableDictionary* fileSystem = [NSMutableDictionary dictionaryWithCapacity:2];
-            [fileSystem setObject:(type == TEMPORARY ? kW3FileTemporary:kW3FilePersistent) forKey:@"name"];
+            [fileSystem setObject:(type == TEMPORARY ? kW3FileTemporary : kW3FilePersistent) forKey:@"name"];
             NSDictionary* dirEntry = [self getDirectoryEntry:fullPath isDirectory:YES];
             [fileSystem setObject:dirEntry forKey:@"root"];
             result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileSystem];
@@ -329,6 +334,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     NSString* requestedPath = [command.arguments objectAtIndex:1];
     NSDictionary* options = [command.arguments objectAtIndex:2 withDefault:nil];
 
+    // return unsupported result for assets-library URLs
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"getFile not supported for assets-library URLs."];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
+
     CDVPluginResult* result = nil;
     BOOL bDirRequest = NO;
     BOOL create = NO;
@@ -425,6 +437,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     // arguments are URL encoded
     NSString* fullPath = [command.arguments objectAtIndex:0];
 
+    // we don't (yet?) support getting the parent of an asset
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_READABLE_ERR];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
+
     CDVPluginResult* result = nil;
     NSString* newPath = nil;
 
@@ -461,11 +480,40 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 {
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
+    __block CDVPluginResult* result = nil;
+
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        // In this case, we need to use an asynchronous method to retrieve the file.
+        // Because of this, we can't just assign to `result` and send it at the end of the method.
+        // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+            if (asset) {
+                // We have the asset!  Retrieve the metadata and send it off.
+                NSDate* date = [asset valueForProperty:ALAssetPropertyDate];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:[date timeIntervalSince1970] * 1000];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            } else {
+                // We couldn't find the asset.  Send the appropriate error.
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            }
+        };
+        // TODO(maxw): Consider making this a class variable since it's the same every time.
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+            // Retrieving the asset failed for some reason.  Send the appropriate error.
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        };
+
+        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:[NSURL URLWithString:argPath] resultBlock:resultBlock failureBlock:failureBlock];
+        return;
+    }
+
     NSString* testPath = argPath; // [self getFullPath: argPath];
 
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
     NSError* __autoreleasing error = nil;
-    CDVPluginResult* result = nil;
 
     NSDictionary* fileAttribs = [fileMgr attributesOfItemAtPath:testPath error:&error];
 
@@ -500,27 +548,29 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     // arguments
     NSString* filePath = [command.arguments objectAtIndex:0];
     NSDictionary* options = [command.arguments objectAtIndex:1 withDefault:nil];
-
     CDVPluginResult* result = nil;
     BOOL ok = NO;
 
-    // we only care about this iCloud key for now.
-    // set to 1/true to skip backup, set to 0/false to back it up (effectively removing the attribute)
-    NSString* iCloudBackupExtendedAttributeKey = @"com.apple.MobileBackup";
-    id iCloudBackupExtendedAttributeValue = [options objectForKey:iCloudBackupExtendedAttributeKey];
+    // setMetadata doesn't make sense for asset library files
+    if (![filePath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        // we only care about this iCloud key for now.
+        // set to 1/true to skip backup, set to 0/false to back it up (effectively removing the attribute)
+        NSString* iCloudBackupExtendedAttributeKey = @"com.apple.MobileBackup";
+        id iCloudBackupExtendedAttributeValue = [options objectForKey:iCloudBackupExtendedAttributeKey];
 
-    if ((iCloudBackupExtendedAttributeValue != nil) && [iCloudBackupExtendedAttributeValue isKindOfClass:[NSNumber class]]) {
-        if (IsAtLeastiOSVersion(@"5.1")) {
-            NSURL* url = [NSURL fileURLWithPath:filePath];
-            NSError* __autoreleasing error = nil;
+        if ((iCloudBackupExtendedAttributeValue != nil) && [iCloudBackupExtendedAttributeValue isKindOfClass:[NSNumber class]]) {
+            if (IsAtLeastiOSVersion(@"5.1")) {
+                NSURL* url = [NSURL fileURLWithPath:filePath];
+                NSError* __autoreleasing error = nil;
 
-            ok = [url setResourceValue:[NSNumber numberWithBool:[iCloudBackupExtendedAttributeValue boolValue]] forKey:NSURLIsExcludedFromBackupKey error:&error];
-        } else { // below 5.1 (deprecated - only really supported in 5.01)
-            u_int8_t value = [iCloudBackupExtendedAttributeValue intValue];
-            if (value == 0) { // remove the attribute (allow backup, the default)
-                ok = (removexattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], 0) == 0);
-            } else { // set the attribute (skip backup)
-                ok = (setxattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], &value, sizeof(value), 0, 0) == 0);
+                ok = [url setResourceValue:[NSNumber numberWithBool:[iCloudBackupExtendedAttributeValue boolValue]] forKey:NSURLIsExcludedFromBackupKey error:&error];
+            } else { // below 5.1 (deprecated - only really supported in 5.01)
+                u_int8_t value = [iCloudBackupExtendedAttributeValue intValue];
+                if (value == 0) { // remove the attribute (allow backup, the default)
+                    ok = (removexattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], 0) == 0);
+                } else { // set the attribute (skip backup)
+                    ok = (setxattr([filePath fileSystemRepresentation], [iCloudBackupExtendedAttributeKey cStringUsingEncoding:NSUTF8StringEncoding], &value, sizeof(value), 0, 0) == 0);
+                }
             }
         }
     }
@@ -539,19 +589,21 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
  *	0 - NSString* fullPath
  *
  * returns NO_MODIFICATION_ALLOWED_ERR  if is top level directory or no permission to delete dir
- * returns INVALID_MODIFICATION_ERR if is dir and is not empty
+ * returns INVALID_MODIFICATION_ERR if is non-empty dir or asset library file
  * returns NOT_FOUND_ERR if file or dir is not found
 */
 - (void)remove:(CDVInvokedUrlCommand*)command
 {
     // arguments
     NSString* fullPath = [command.arguments objectAtIndex:0];
-
     CDVPluginResult* result = nil;
     CDVFileError errorCode = 0;  // !! 0 not currently defined
 
-    // error if try to remove top level (documents or tmp) dir
-    if ([fullPath isEqualToString:self.appDocsPath] || [fullPath isEqualToString:self.appTempPath]) {
+    // return error for assets-library URLs
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        errorCode = INVALID_MODIFICATION_ERR;
+    } else if ([fullPath isEqualToString:self.appDocsPath] || [fullPath isEqualToString:self.appTempPath]) {
+        // error if try to remove top level (documents or tmp) dir
         errorCode = NO_MODIFICATION_ALLOWED_ERR;
     } else {
         NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -586,6 +638,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 {
     // arguments
     NSString* fullPath = [command.arguments objectAtIndex:0];
+
+    // return unsupported result for assets-library URLs
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"removeRecursively not supported for assets-library URLs."];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
 
     CDVPluginResult* result = nil;
 
@@ -693,7 +752,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     // optional argument
     NSString* newName = ([arguments count] > 2) ? [arguments objectAtIndex:2] : [srcFullPath lastPathComponent];          // use last component from appPath if new name not provided
 
-    CDVPluginResult* result = nil;
+    __block CDVPluginResult* result = nil;
     CDVFileError errCode = 0;  // !! Currently 0 is not defined, use this to signal error !!
 
     /*NSString* destRootPath = nil;
@@ -710,12 +769,59 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
         errCode = ENCODING_ERR;
     } else {
         NSString* newFullPath = [destRootPath stringByAppendingPathComponent:newName];
+        NSFileManager* fileMgr = [[NSFileManager alloc] init];
         if ([newFullPath isEqualToString:srcFullPath]) {
             // source and destination can not be the same
             errCode = INVALID_MODIFICATION_ERR;
-        } else {
-            NSFileManager* fileMgr = [[NSFileManager alloc] init];
+        } else if ([srcFullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+            if (bCopy) {
+                // Copying (as opposed to moving) an assets library file is okay.
+                // In this case, we need to use an asynchronous method to retrieve the file.
+                // Because of this, we can't just assign to `result` and send it at the end of the method.
+                // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+                ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+                    if (asset) {
+                        // We have the asset!  Get the data and try to copy it over.
+                        if (![fileMgr fileExistsAtPath:destRootPath]) {
+                            // The destination directory doesn't exist.
+                            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                            return;
+                        } else if ([fileMgr fileExistsAtPath:newFullPath]) {
+                            // A file already exists at the destination path.
+                            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:PATH_EXISTS_ERR];
+                            [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                            return;
+                        }
 
+                        // We're good to go!  Write the file to the new destination.
+                        ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                        Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                        NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
+                        NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                        [data writeToFile:newFullPath atomically:YES];
+                        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self getDirectoryEntry:newFullPath isDirectory:NO]];
+                        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                    } else {
+                        // We couldn't find the asset.  Send the appropriate error.
+                        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                    }
+                };
+                ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+                    // Retrieving the asset failed for some reason.  Send the appropriate error.
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+                    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                };
+
+                ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+                [assetsLibrary assetForURL:[NSURL URLWithString:srcFullPath] resultBlock:resultBlock failureBlock:failureBlock];
+                return;
+            } else {
+                // Moving an assets library file is not doable, since we can't remove it.
+                errCode = INVALID_MODIFICATION_ERR;
+            }
+        } else {
             BOOL bSrcIsDir = NO;
             BOOL bDestIsDir = NO;
             BOOL bNewIsDir = NO;
@@ -838,30 +944,67 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
 
-    CDVPluginResult* result = nil;
+    __block CDVPluginResult* result = nil;
 
     NSString* fullPath = argPath; // [self getFullPath: argPath];
 
     if (fullPath) {
-        NSFileManager* fileMgr = [[NSFileManager alloc] init];
-        BOOL bIsDir = NO;
-        // make sure it exists and is not a directory
-        BOOL bExists = [fileMgr fileExistsAtPath:fullPath isDirectory:&bIsDir];
-        if (!bExists || bIsDir) {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+        if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+            // In this case, we need to use an asynchronous method to retrieve the file.
+            // Because of this, we can't just assign to `result` and send it at the end of the method.
+            // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+            ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+                if (asset) {
+                    // We have the asset!  Populate the dictionary and send it off.
+                    NSMutableDictionary* fileInfo = [NSMutableDictionary dictionaryWithCapacity:5];
+                    ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                    [fileInfo setObject:[NSNumber numberWithUnsignedLongLong:[assetRepresentation size]] forKey:@"size"];
+                    [fileInfo setObject:argPath forKey:@"fullPath"];
+                    NSString* filename = [assetRepresentation filename];
+                    [fileInfo setObject:filename forKey:@"name"];
+                    [fileInfo setObject:[self getMimeTypeFromPath:filename] forKey:@"type"];
+                    NSDate* creationDate = [asset valueForProperty:ALAssetPropertyDate];
+                    NSNumber* msDate = [NSNumber numberWithDouble:[creationDate timeIntervalSince1970] * 1000];
+                    [fileInfo setObject:msDate forKey:@"lastModifiedDate"];
+
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileInfo];
+                    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                } else {
+                    // We couldn't find the asset.  Send the appropriate error.
+                    result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+                    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                }
+            };
+            ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+                // Retrieving the asset failed for some reason.  Send the appropriate error.
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsString:[error localizedDescription]];
+                [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+            };
+
+            ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+            [assetsLibrary assetForURL:[NSURL URLWithString:argPath] resultBlock:resultBlock failureBlock:failureBlock];
+            return;
         } else {
-            // create dictionary of file info
-            NSError* __autoreleasing error = nil;
-            NSDictionary* fileAttrs = [fileMgr attributesOfItemAtPath:fullPath error:&error];
-            NSMutableDictionary* fileInfo = [NSMutableDictionary dictionaryWithCapacity:5];
-            [fileInfo setObject:[NSNumber numberWithUnsignedLongLong:[fileAttrs fileSize]] forKey:@"size"];
-            [fileInfo setObject:argPath forKey:@"fullPath"];
-            [fileInfo setObject:@"" forKey:@"type"];  // can't easily get the mimetype unless create URL, send request and read response so skipping
-            [fileInfo setObject:[argPath lastPathComponent] forKey:@"name"];
-            NSDate* modDate = [fileAttrs fileModificationDate];
-            NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970] * 1000];
-            [fileInfo setObject:msDate forKey:@"lastModifiedDate"];
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileInfo];
+            NSFileManager* fileMgr = [[NSFileManager alloc] init];
+            BOOL bIsDir = NO;
+            // make sure it exists and is not a directory
+            BOOL bExists = [fileMgr fileExistsAtPath:fullPath isDirectory:&bIsDir];
+            if (!bExists || bIsDir) {
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
+            } else {
+                // create dictionary of file info
+                NSError* __autoreleasing error = nil;
+                NSDictionary* fileAttrs = [fileMgr attributesOfItemAtPath:fullPath error:&error];
+                NSMutableDictionary* fileInfo = [NSMutableDictionary dictionaryWithCapacity:5];
+                [fileInfo setObject:[NSNumber numberWithUnsignedLongLong:[fileAttrs fileSize]] forKey:@"size"];
+                [fileInfo setObject:argPath forKey:@"fullPath"];
+                [fileInfo setObject:@"" forKey:@"type"];  // can't easily get the mimetype unless create URL, send request and read response so skipping
+                [fileInfo setObject:[argPath lastPathComponent] forKey:@"name"];
+                NSDate* modDate = [fileAttrs fileModificationDate];
+                NSNumber* msDate = [NSNumber numberWithDouble:[modDate timeIntervalSince1970] * 1000];
+                [fileInfo setObject:msDate forKey:@"lastModifiedDate"];
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:fileInfo];
+            }
         }
     }
     if (!result) {
@@ -874,6 +1017,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
 {
     // arguments
     NSString* fullPath = [command.arguments objectAtIndex:0];
+
+    // return unsupported result for assets-library URLs
+    if ([fullPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_MALFORMED_URL_EXCEPTION messageAsString:@"readEntries not supported for assets-library URLs."];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
 
     CDVPluginResult* result = nil;
 
@@ -903,81 +1053,181 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
+- (void)readFileWithPath:(NSString*)path start:(NSInteger)start end:(NSInteger)end callback:(void (^)(NSData*, NSString* mimeType, CDVFileError))callback
+{
+    if (path == nil) {
+        callback(nil, nil, SYNTAX_ERR);
+    } else {
+        [self.commandDelegate runInBackground:^ {
+            if ([path hasPrefix:kCDVAssetsLibraryPrefix]) {
+                // In this case, we need to use an asynchronous method to retrieve the file.
+                // Because of this, we can't just assign to `result` and send it at the end of the method.
+                // Instead, we return after calling the asynchronous method and send `result` in each of the blocks.
+                ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+                    if (asset) {
+                        // We have the asset!  Get the data and send it off.
+                        ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                        Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                        NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
+                        NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                        NSString* MIMEType = (__bridge_transfer NSString*)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)[assetRepresentation UTI], kUTTagClassMIMEType);
+
+                        callback(data, MIMEType, NO_ERROR);
+                    } else {
+                        callback(nil, nil, NOT_FOUND_ERR);
+                    }
+                };
+                ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+                    // Retrieving the asset failed for some reason.  Send the appropriate error.
+                    NSLog(@"Error: %@", error);
+                    callback(nil, nil, SECURITY_ERR);
+                };
+
+                ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+                [assetsLibrary assetForURL:[NSURL URLWithString:path] resultBlock:resultBlock failureBlock:failureBlock];
+            } else {
+                NSString* mimeType = [self getMimeTypeFromPath:path];
+                if (mimeType == nil) {
+                    mimeType = @"*/*";
+                }
+                NSFileHandle* file = [NSFileHandle fileHandleForReadingAtPath:path];
+                if (start > 0) {
+                    [file seekToFileOffset:start];
+                }
+
+                NSData* readData;
+                if (end < 0) {
+                    readData = [file readDataToEndOfFile];
+                } else {
+                    readData = [file readDataOfLength:(end - start)];
+                }
+
+                [file closeFile];
+
+                callback(readData, mimeType, readData != nil ? NO_ERROR : NOT_FOUND_ERR);
+            }
+        }];
+    }
+}
+
 /* read and return file data
  * IN:
  * NSArray* arguments
  *	0 - NSString* fullPath
- *	1 - NSString* encoding - NOT USED,  iOS reads and writes using UTF8!
+ *	1 - NSString* encoding
+ *	2 - NSString* start
+ *	3 - NSString* end
  */
 - (void)readAsText:(CDVInvokedUrlCommand*)command
 {
     // arguments
-    NSString* argPath = [command.arguments objectAtIndex:0];
-    // NSString* encoding = [command.arguments objectAtIndex:2];   // not currently used
-    CDVPluginResult* result = nil;
+    NSString* path = [command argumentAtIndex:0];
+    NSString* encoding = [command argumentAtIndex:1];
+    NSInteger start = [[command argumentAtIndex:2] integerValue];
+    NSInteger end = [[command argumentAtIndex:3] integerValue];
 
-    NSFileHandle* file = [NSFileHandle fileHandleForReadingAtPath:argPath];
+    // TODO: implement
+    if (![@"UTF-8" isEqualToString : encoding]) {
+        NSLog(@"Only UTF-8 encodings are currently supported by readAsText");
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:ENCODING_ERR];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
 
-    if (!file) {
-        // invalid path entry
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NOT_FOUND_ERR];
-    } else {
-        NSData* readData = [file readDataToEndOfFile];
-
-        [file closeFile];
-        NSString* pNStrBuff = nil;
-        if (readData) {
-            pNStrBuff = [[NSString alloc] initWithBytes:[readData bytes] length:[readData length] encoding:NSUTF8StringEncoding];
-        } else {
-            // return empty string if no data
-            pNStrBuff = @"";
+    [self readFileWithPath:path start:start end:end callback:^(NSData* data, NSString* mimeType, CDVFileError errorCode) {
+        CDVPluginResult* result = nil;
+        if (data != nil) {
+            NSString* str = [[NSString alloc] initWithBytesNoCopy:(void*)[data bytes] length:[data length] encoding:NSUTF8StringEncoding freeWhenDone:NO];
+            // Check that UTF8 conversion did not fail.
+            if (str != nil) {
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:str];
+                result.associatedObject = data;
+            } else {
+                errorCode = ENCODING_ERR;
+            }
+        }
+        if (result == nil) {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:errorCode];
         }
 
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:[pNStrBuff stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    }
-    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }];
 }
 
 /* Read content of text file and return as base64 encoded data url.
  * IN:
  * NSArray* arguments
  *	0 - NSString* fullPath
+ *	1 - NSString* start
+ *	2 - NSString* end
  *
  * Determines the mime type from the file extension, returns ENCODING_ERR if mimetype can not be determined.
  */
 
 - (void)readAsDataURL:(CDVInvokedUrlCommand*)command
 {
-    // arguments
-    NSString* argPath = [command.arguments objectAtIndex:0];
+    NSString* path = [command argumentAtIndex:0];
+    NSInteger start = [[command argumentAtIndex:1] integerValue];
+    NSInteger end = [[command argumentAtIndex:2] integerValue];
 
-    CDVFileError errCode = ABORT_ERR;
-    CDVPluginResult* result = nil;
-
-    if (!argPath) {
-        errCode = SYNTAX_ERR;
-    } else {
-        NSString* mimeType = [self getMimeTypeFromPath:argPath];
-        if (!mimeType) {
-            // can't return as data URL if can't figure out the mimeType
-            errCode = ENCODING_ERR;
+    [self readFileWithPath:path start:start end:end callback:^(NSData* data, NSString* mimeType, CDVFileError errorCode) {
+        CDVPluginResult* result = nil;
+        if (data != nil) {
+            // TODO: Would be faster to base64 encode directly to the final string.
+            NSString* output = [NSString stringWithFormat:@"data:%@;base64,%@", mimeType, [data base64EncodedString]];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:output];
         } else {
-            NSFileHandle* file = [NSFileHandle fileHandleForReadingAtPath:argPath];
-            NSData* readData = [file readDataToEndOfFile];
-            [file closeFile];
-            if (readData) {
-                NSString* output = [NSString stringWithFormat:@"data:%@;base64,%@", mimeType, [readData base64EncodedString]];
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:output];
-            } else {
-                errCode = NOT_FOUND_ERR;
-            }
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:errorCode];
         }
-    }
-    if (!result) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsInt:errCode];
-    }
-    // NSLog(@"readAsDataURL return: %@", jsString);
-    [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }];
+}
+
+/* Read content of text file and return as an arraybuffer
+ * IN:
+ * NSArray* arguments
+ *	0 - NSString* fullPath
+ *	1 - NSString* start
+ *	2 - NSString* end
+ */
+
+- (void)readAsArrayBuffer:(CDVInvokedUrlCommand*)command
+{
+    NSString* path = [command argumentAtIndex:0];
+    NSInteger start = [[command argumentAtIndex:1] integerValue];
+    NSInteger end = [[command argumentAtIndex:2] integerValue];
+
+    [self readFileWithPath:path start:start end:end callback:^(NSData* data, NSString* mimeType, CDVFileError errorCode) {
+        CDVPluginResult* result = nil;
+        if (data != nil) {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArrayBuffer:data];
+        } else {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:errorCode];
+        }
+
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }];
+}
+
+- (void)readAsBinaryString:(CDVInvokedUrlCommand*)command
+{
+    NSString* path = [command argumentAtIndex:0];
+    NSInteger start = [[command argumentAtIndex:1] integerValue];
+    NSInteger end = [[command argumentAtIndex:2] integerValue];
+
+    [self readFileWithPath:path start:start end:end callback:^(NSData* data, NSString* mimeType, CDVFileError errorCode) {
+        CDVPluginResult* result = nil;
+        if (data != nil) {
+            NSString* payload = [[NSString alloc] initWithBytesNoCopy:(void*)[data bytes] length:[data length] encoding:NSASCIIStringEncoding freeWhenDone:NO];
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:payload];
+            result.associatedObject = data;
+        } else {
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:errorCode];
+        }
+
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+    }];
 }
 
 /* helper function to get the mimeType from the file extension
@@ -996,7 +1246,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
             mimeType = (__bridge_transfer NSString*)UTTypeCopyPreferredTagWithClass(typeId, kUTTagClassMIMEType);
             if (!mimeType) {
                 // special case for m4a
-                if ([(__bridge NSString*) typeId rangeOfString:@"m4a-audio"].location != NSNotFound) {
+                if ([(__bridge NSString*)typeId rangeOfString : @"m4a-audio"].location != NSNotFound) {
                     mimeType = @"audio/mp4";
                 } else if ([[fullPath pathExtension] rangeOfString:@"wav"].location != NSNotFound) {
                     mimeType = @"audio/wav";
@@ -1013,6 +1263,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     // arguments
     NSString* argPath = [command.arguments objectAtIndex:0];
     unsigned long long pos = (unsigned long long)[[command.arguments objectAtIndex:1] longLongValue];
+
+    // assets-library files can't be truncated
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NO_MODIFICATION_ALLOWED_ERR];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
 
     NSString* appFile = argPath; // [self getFullPath:argPath];
 
@@ -1053,6 +1310,13 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     NSString* argPath = [arguments objectAtIndex:0];
     NSString* argData = [arguments objectAtIndex:1];
     unsigned long long pos = (unsigned long long)[[arguments objectAtIndex:2] longLongValue];
+
+    // text can't be written into assets-library files
+    if ([argPath hasPrefix:kCDVAssetsLibraryPrefix]) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_IO_EXCEPTION messageAsInt:NO_MODIFICATION_ALLOWED_ERR];
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+        return;
+    }
 
     NSString* fullPath = argPath; // [self getFullPath:argPath];
 
@@ -1106,7 +1370,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     NSString* appFile = argPath; // [ self getFullPath: argPath];
 
     BOOL bExists = [fMgr fileExistsAtPath:appFile];
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(bExists ? 1:0)];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:(bExists ? 1 : 0)];
 
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
@@ -1122,7 +1386,7 @@ extern NSString * const NSURLIsExcludedFromBackupKey __attribute__((weak_import)
     BOOL bIsDir = NO;
     BOOL bExists = [fMgr fileExistsAtPath:appFile isDirectory:&bIsDir];
 
-    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:((bExists && bIsDir) ? 1:0)];
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:((bExists && bIsDir) ? 1 : 0)];
 
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }

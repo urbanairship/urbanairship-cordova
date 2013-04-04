@@ -19,6 +19,11 @@
 
 #import "CDVPlugin.h"
 
+NSString* const CDVPageDidLoadNotification = @"CDVPageDidLoadNotification";
+NSString* const CDVPluginHandleOpenURLNotification = @"CDVPluginHandleOpenURLNotification";
+NSString* const CDVPluginResetNotification = @"CDVPluginResetNotification";
+NSString* const CDVLocalNotification = @"CDVLocalNotification";
+
 @interface CDVPlugin ()
 
 @property (readwrite, assign) BOOL hasPendingOperation;
@@ -26,16 +31,12 @@
 @end
 
 @implementation CDVPlugin
-@synthesize webView, settings, viewController, commandDelegate, hasPendingOperation;
+@synthesize webView, viewController, commandDelegate, hasPendingOperation;
 
+// Do not override these methods. Use pluginInitialize instead.
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings
 {
-    self = [self initWithWebView:theWebView];
-    if (self) {
-        self.settings = classSettings;
-        self.hasPendingOperation = NO;
-    }
-    return self;
+    return [self initWithWebView:theWebView];
 }
 
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView
@@ -45,23 +46,30 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onAppTerminate) name:UIApplicationWillTerminateNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onMemoryWarning) name:UIApplicationDidReceiveMemoryWarningNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleOpenURL:) name:CDVPluginHandleOpenURLNotification object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onReset) name:CDVPluginResetNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onReset) name:CDVPluginResetNotification object:theWebView];
 
         self.webView = theWebView;
-
-        // You can listen to more app notifications, see:
-        // http://developer.apple.com/library/ios/#DOCUMENTATION/UIKit/Reference/UIApplication_Class/Reference/Reference.html#//apple_ref/doc/uid/TP40006728-CH3-DontLinkElementID_4
-
-        /*
-         // NOTE: if you want to use these, make sure you uncomment the corresponding notification handler
-
-         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
-         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
-         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationWillChange) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
-         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationDidChange) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
-         */
     }
     return self;
+}
+
+- (void)pluginInitialize
+{
+    // You can listen to more app notifications, see:
+    // http://developer.apple.com/library/ios/#DOCUMENTATION/UIKit/Reference/UIApplication_Class/Reference/Reference.html#//apple_ref/doc/uid/TP40006728-CH3-DontLinkElementID_4
+
+    // NOTE: if you want to use these, make sure you uncomment the corresponding notification handler
+
+    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onPause) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onResume) name:UIApplicationWillEnterForegroundNotification object:nil];
+    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationWillChange) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
+    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onOrientationDidChange) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+
+    // Added in 2.3.0
+    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
+
+    // Added in 2.5.0
+    // [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pageDidLoad:) name:CDVPageDidLoadNotification object:self.webView];
 }
 
 - (void)dispose
@@ -134,5 +142,11 @@
     [self.commandDelegate evalJs:[pluginResult toErrorCallbackString:callbackId]];
     return @"";
 }
+
+// default implementation does nothing, ideally, we are not registered for notification if we aren't going to do anything.
+// - (void)didReceiveLocalNotification:(NSNotification *)notification
+// {
+//    // UILocalNotification* localNotification = [notification object]; // get the payload as a LocalNotification
+// }
 
 @end
