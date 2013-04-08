@@ -75,8 +75,8 @@ The Urban Airship javascript API provides standard instances for some of our dat
 ## Push
 
     Push = {
-        message = "Your team just scored!";
-        extras = {
+        message: "Your team just scored!",
+        extras: {
             "url": "/game/5555"
         }
     }
@@ -85,10 +85,10 @@ The Urban Airship javascript API provides standard instances for some of our dat
 
     // Quiet time set to 10PM - 6AM
     QuietTime = {
-        startHour = 22
-        startMinute = 0
-        endHour = 6
-        endMinute = 0
+        startHour: 22,
+        startMinute: 0,
+        endHour: 6,
+        endMinute: 0
     }
 
 A push is an object that contains the data associated with a Push. The extras dictionary can contain arbitrary key and value data, that you can use inside your application.
