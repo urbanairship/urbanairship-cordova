@@ -3,6 +3,7 @@ package com.urbanairship.phonegap.plugins;
 import android.os.RemoteException;
 
 import com.urbanairship.Logger;
+import com.urbanairship.UAirship;
 import com.urbanairship.location.LocationPreferences;
 import com.urbanairship.location.UALocationManager;
 import com.urbanairship.push.PushManager;
@@ -424,7 +425,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     // Helpers
 
     private boolean requirePushServiceEnabled(CallbackContext callbackContext) {
-        if (this.pushPrefs == null) {
+        if (!UAirship.shared().getAirshipConfigOptions().pushServiceEnabled) {
             Logger.warn("pushServiceEnabled must be enabled in the airshipconfig.properties file");
             callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
             return false;
@@ -434,7 +435,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     private boolean requireLocationServiceEnabled(CallbackContext callbackContext) {
-        if (this.locationPrefs == null) {
+        if (!UAirship.shared().getAirshipConfigOptions().locationOptions.locationServiceEnabled) {
             Logger.warn("locationServiceEnabled must be enabled in the location.properties file");
             callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
             return false;
