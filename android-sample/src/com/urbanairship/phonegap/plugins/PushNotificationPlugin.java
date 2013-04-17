@@ -3,28 +3,37 @@ package com.urbanairship.phonegap.plugins;
 import android.os.RemoteException;
 
 import com.urbanairship.Logger;
+import com.urbanairship.UAirship;
 import com.urbanairship.location.LocationPreferences;
 import com.urbanairship.location.UALocationManager;
 import com.urbanairship.push.PushManager;
 import com.urbanairship.push.PushPreferences;
 import com.urbanairship.util.ServiceNotBoundException;
 
-import org.apache.cordova.api.Plugin;
-import org.apache.cordova.api.PluginResult;
-import org.apache.cordova.api.PluginResult.Status;
+import org.apache.cordova.api.CallbackContext;
+import org.apache.cordova.api.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class PushNotificationPlugin extends Plugin {
+public class PushNotificationPlugin extends CordovaPlugin {
+
+    final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
+            "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
+            "getIncoming", "getPushID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
+            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation");
+
     final static String TAG = PushNotificationPlugin.class.getSimpleName();
 
     static PushNotificationPlugin instance = new PushNotificationPlugin();
@@ -63,7 +72,7 @@ public class PushNotificationPlugin extends Plugin {
         Logger.info("Javascript Calling back: " + js);
 
         try {
-            this.sendJavascript(js);
+            this.webView.sendJavascript(js);
         } catch (NullPointerException npe) {
             Logger.info("unable to send javascript in raisepush");
         } catch (Exception e) {
@@ -85,7 +94,7 @@ public class PushNotificationPlugin extends Plugin {
         Logger.info("Javascript Calling back: " + js);
 
         try {
-            this.sendJavascript(js);
+            this.webView.sendJavascript(js);
         } catch (NullPointerException npe) {
             Logger.info("unable to send javascript in raiseRegistration");
         } catch (Exception e) {
@@ -93,229 +102,345 @@ public class PushNotificationPlugin extends Plugin {
         }
     }
 
+
     @Override
-    public PluginResult execute(String action, JSONArray data, String callbackId) {
-        Logger.debug("Plugin Execute: " + action + " passed");
-        PluginResult result = null;
+    public boolean execute(String action, JSONArray data, CallbackContext callbackContext) {
+        if (!knownActions.contains(action)) {
+            Logger.debug("Invalid action: " + action);
+            return false;
+        }
 
-        // Core API
+        try {
+            Logger.debug("Plugin Execute: " + action);
+            Method method = PushNotificationPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
+            method.invoke(this, data, callbackContext);
+            return true;
+        } catch (Exception e) {
+            Logger.error(e);
+        }
 
-        // Top level enabling/disabling
+        return false;
+    }
 
-        if (action.equals("enablePush")) {
+    // Actions
+
+    void enablePush(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
             PushManager.enablePush();
             PushManager.shared().setIntentReceiver(PushNotificationPluginIntentReceiver.class);
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("disablePush")) {
+            callbackContext.success();
+        }
+    }
+
+    void disablePush(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
             PushManager.disablePush();
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("enableLocation")) {
+            callbackContext.success();
+        }
+    }
+
+    void enableLocation(JSONArray data, CallbackContext callbackContext) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             UALocationManager.enableLocation();
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("disableLocation")) {
+            callbackContext.success();
+        }
+    }
+
+    void disableLocation(JSONArray data, CallbackContext callbackContext) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             UALocationManager.disableLocation();
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("enableBackgroundLocation")) {
+            callbackContext.success();
+        }
+    }
+
+    void enableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             UALocationManager.enableBackgroundLocation();
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("disableBackgroundLocation")) {
+            callbackContext.success();
+        }
+    }
+
+    void disableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             UALocationManager.disableBackgroundLocation();
-            result = new PluginResult(Status.OK);
+            callbackContext.success();
+        }
+    }
 
-            // is* Functions
+    void isPushEnabled(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
+            int value = this.pushPrefs.isPushEnabled() ? 1 : 0;
+            callbackContext.success(value);
+        }
+    }
 
-        } else if (action.equals("isPushEnabled")) {
-            result = new PluginResult(Status.OK, this.pushPrefs.isPushEnabled());
-        } else if (action.equals("isSoundEnabled")) {
-            result = new PluginResult(Status.OK, this.pushPrefs.isSoundEnabled());
-        } else if (action.equals("isVibrateEnabled")) {
-            result = new PluginResult(Status.OK, this.pushPrefs.isVibrateEnabled());
-        } else if (action.equals("isQuietTimeEnabled")) {
-            result = new PluginResult(Status.OK,
-                    this.pushPrefs.isQuietTimeEnabled());
-        } else if (action.equals("isInQuietTime")) {
-            result = new PluginResult(Status.OK, this.pushPrefs.isInQuietTime());
-        } else if (action.equals("isLocationEnabled")) {
-            result = new PluginResult(Status.OK, this.locationPrefs.isLocationEnabled());
+    void isSoundEnabled(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
+            int value = this.pushPrefs.isSoundEnabled() ? 1 : 0;
+            callbackContext.success(value);
+        }
+    }
 
-            // Getters
+    void isVibrateEnabled(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
+            int value = this.pushPrefs.isVibrateEnabled() ? 1 : 0;
+            callbackContext.success(value);
+        }
+    }
 
-        } else if (action.equals("getIncoming")) {
-            String alert = PushNotificationPlugin.incomingAlert;
-            Map<String, String> extras = PushNotificationPlugin.incomingExtras;
-            JSONObject obj = notificationObject(alert, extras);
-            result = new PluginResult(Status.OK, obj);
-            //reset incoming push data until the next background push comes in
-            PushNotificationPlugin.incomingAlert = "";
-            PushNotificationPlugin.incomingExtras = new HashMap<String,String>();
-        } else if (action.equals("getPushID")) {
+    void isQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
+            int value = this.pushPrefs.isQuietTimeEnabled() ? 1 : 0;
+            callbackContext.success(value);
+        }
+    }
+
+    void isInQuietTime(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
+            int value = this.pushPrefs.isInQuietTime() ? 1 : 0;
+            callbackContext.success(value);
+        }
+    }
+
+    void isLocationEnabled(JSONArray data, CallbackContext callbackContext) {
+        if (requireLocationServiceEnabled(callbackContext)) {
+            int value = this.locationPrefs.isLocationEnabled() ? 1 : 0;
+            callbackContext.success(value);
+        }
+    }
+
+    void getIncoming(JSONArray data, CallbackContext callbackContext) {
+        String alert = PushNotificationPlugin.incomingAlert;
+        Map<String, String> extras = PushNotificationPlugin.incomingExtras;
+        JSONObject obj = notificationObject(alert, extras);
+
+        callbackContext.success(obj);
+
+        //reset incoming push data until the next background push comes in
+        PushNotificationPlugin.incomingAlert = "";
+        PushNotificationPlugin.incomingExtras = new HashMap<String,String>();
+    }
+
+    void getPushID(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
             String pushID = PushManager.shared().getAPID();
             pushID = pushID != null ? pushID : "";
-            result = new PluginResult(Status.OK, pushID);
-        } else if (action.equals("getQuietTime")) {
-            Date[] quietTime = this.pushPrefs.getQuietTimeInterval();
+            callbackContext.success(pushID);
+        }
+    }
 
-            int startHour = 0;
-            int startMinute = 0;
-            int endHour = 0;
-            int endMinute = 0;
+    void getQuietTime(JSONArray data, CallbackContext callbackContext) {
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
 
-            if (quietTime != null) {
+        Date[] quietTime = this.pushPrefs.getQuietTimeInterval();
 
-                Calendar start = new GregorianCalendar();
-                Calendar end = new GregorianCalendar();
-                start.setTime(quietTime[0]);
-                end.setTime(quietTime[1]);
+        int startHour = 0;
+        int startMinute = 0;
+        int endHour = 0;
+        int endMinute = 0;
 
-                startHour = start.get(Calendar.HOUR_OF_DAY);
-                startMinute = start.get(Calendar.MINUTE);
-                endHour = end.get(Calendar.HOUR_OF_DAY);
-                endMinute = end.get(Calendar.MINUTE);
-            }
-
-            JSONObject returnObject = new JSONObject();
-
-            try {
-                returnObject.put("startHour", startHour);
-                returnObject.put("startMinute", startMinute);
-                returnObject.put("endHour", endHour);
-                returnObject.put("endMinute", endMinute);
-            } catch (JSONException e) {
-                Logger.error("Error building quietTime JSON", e);
-                result = new PluginResult(Status.ERROR);
-                return result;
-            }
-            Logger.debug("Returning start time");
-            result = new PluginResult(Status.OK, returnObject);
-
-        } else if (action.equals("getTags")) {
-            Set<String> tags = PushManager.shared().getTags();
-            JSONObject returnObject = new JSONObject();
-            try {
-                returnObject.put("tags", new JSONArray(tags));
-            } catch (JSONException e) {
-                Logger.error("Error buidling tags JSON", e);
-                result = new PluginResult(Status.ERROR);
-                return result;
-            }
-            Logger.debug("Returning tags");
-            result = new PluginResult(Status.OK, returnObject);
-        } else if (action.equals("getAlias")) {
-            String alias = PushManager.shared().getAlias();
-            alias = alias != null ? alias : "";
-            result = new PluginResult(Status.OK, alias);
-
-            // Setters
-
-        } else if (action.equals("setAlias")) {
-            String alias = "";
-            try {
-                alias = data.getString(0);
-            } catch (JSONException e) {
-                Logger.error("Error reading alias in callback", e);
-                result = new PluginResult(Status.ERROR);
-                return result;
-            }
-            if(alias.equals("")) {
-                alias = null;
-            }
-            Logger.debug("Settings alias: " + alias);
-            PushManager.shared().setAlias(alias);
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("setTags")) {
-            HashSet<String> tagSet = new HashSet<String>();
-            try {
-                JSONArray tagsArray = data.getJSONArray(0);
-                for (int i = 0; i < tagsArray.length(); ++i) {
-                    tagSet.add(tagsArray.getString(i));
-                }
-            } catch (JSONException e) {
-                Logger.error("Error reading tags JSON", e);
-                result = new PluginResult(Status.ERROR);
-                return result;
-            }
-            PushManager.shared().setTags(tagSet);
-            Logger.debug("Settings tags: " + tagSet);
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("setSoundEnabled")) {
-            boolean pref;
-            try {
-                pref = data.getBoolean(0);
-            } catch (JSONException e) {
-                Logger.error("Error reading soundEnabled in callback", e);
-                result = new PluginResult(Status.ERROR);
-                return result;
-            }
-            Logger.debug("Settings Sound: " + pref);
-            this.pushPrefs.setSoundEnabled(pref);
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("setVibrateEnabled")) {
-            boolean pref;
-            try {
-                pref = data.getBoolean(0);
-            } catch (JSONException e) {
-                Logger.error("Error reading vibrateEnabled in callback", e);
-                result = new PluginResult(Status.ERROR);
-                return result;
-            }
-            Logger.debug("Settings Vibrate: " + pref);
-            this.pushPrefs.setVibrateEnabled(pref);
-            result = new PluginResult(Status.OK);
-        } else if (action.equals("setQuietTimeEnabled")) {
-            boolean pref;
-            try {
-                pref = data.getBoolean(0);
-            } catch (JSONException e) {
-                Logger.error("Error reading quietTimeEnabled in callback", e);
-                result = new PluginResult(Status.ERROR);
-                return result;
-            }
-            Logger.debug("Settings QuietTime: " + pref);
-            this.pushPrefs.setQuietTimeEnabled(pref);
-            result = new PluginResult(Status.OK);
-
-        } else if (action.equals("setQuietTime")) {
+        if (quietTime != null) {
             Calendar start = new GregorianCalendar();
             Calendar end = new GregorianCalendar();
-            try {
-                int startHour = data.getInt(0);
-                int startMinute = data.getInt(1);
-                int endHour = data.getInt(2);
-                int endMinute = data.getInt(3);
-                start.set(Calendar.HOUR_OF_DAY, startHour);
-                start.set(Calendar.MINUTE, startMinute);
-                end.set(Calendar.HOUR_OF_DAY, endHour);
-                end.set(Calendar.MINUTE, endMinute);
-            } catch (JSONException e) {
-                Logger.error("Error reading quietTime JSON", e);
-                result = new PluginResult(Status.ERROR);
-                return result;
-            }
-            Logger.debug("Settings QuietTime. Start: " + start + ", End: " + end);
-            this.pushPrefs.setQuietTimeInterval(start.getTime(), end.getTime());
-            result = new PluginResult(Status.OK);
+            start.setTime(quietTime[0]);
+            end.setTime(quietTime[1]);
 
-            // Location
-
-        } else if (action.equals("recordCurrentLocation")) {
-            try {
-                Logger.debug("LOGGING LOCATION");
-                UALocationManager.shared().recordCurrentLocation();
-            } catch (ServiceNotBoundException e) {
-                Logger.debug("Location not bound, binding now");
-                UALocationManager.bindService();
-            } catch (RemoteException e) {
-                Logger.error("Caught RemoteException in recordCurrentLocation", e);
-            }
-            result = new PluginResult(Status.OK);
-
-            // Invalid action, send back an error
-
-        } else {
-            Logger.debug("Invalid action: " + action + " passed");
-            result = new PluginResult(Status.INVALID_ACTION);
+            startHour = start.get(Calendar.HOUR_OF_DAY);
+            startMinute = start.get(Calendar.MINUTE);
+            endHour = end.get(Calendar.HOUR_OF_DAY);
+            endMinute = end.get(Calendar.MINUTE);
         }
-        // Logger.debug("Exec done on " + action);
-        return result;
+
+        try {
+            JSONObject returnObject = new JSONObject();
+            returnObject.put("startHour", startHour);
+            returnObject.put("startMinute", startMinute);
+            returnObject.put("endHour", endHour);
+            returnObject.put("endMinute", endMinute);
+
+            Logger.debug("Returning quiet time");
+            callbackContext.success(returnObject);
+        } catch (JSONException e) {
+            callbackContext.error("Error building quietTime JSON");
+        }
+    }
+
+    void getTags(JSONArray data, CallbackContext callbackContext) {
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
+
+        Set<String> tags = PushManager.shared().getTags();
+        try {
+            JSONObject returnObject = new JSONObject();
+            returnObject.put("tags", new JSONArray(tags));
+
+            Logger.debug("Returning tags");
+            callbackContext.success(returnObject);
+        } catch (JSONException e) {
+            Logger.error("Error building tags JSON", e);
+            callbackContext.error("Error building tags JSON");
+        }
+    }
+
+    void getAlias(JSONArray data, CallbackContext callbackContext) {
+        if (requirePushServiceEnabled(callbackContext)) {
+            String alias = PushManager.shared().getAlias();
+            alias = alias != null ? alias : "";
+            callbackContext.success(alias);
+        }
+    }
+
+    void setAlias(JSONArray data, CallbackContext callbackContext) {
+        try {
+            String alias = data.getString(0);
+            if (alias.equals("")) {
+                alias = null;
+            }
+
+            Logger.debug("Settings alias: " + alias);
+            callbackContext.success();
+
+        } catch (JSONException e) {
+            Logger.error("Error reading alias in callback", e);
+            callbackContext.error("Error reading alias in callback");
+        }
+    }
+
+    void setTags(JSONArray data, CallbackContext callbackContext) {
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
+
+        try {
+            HashSet<String> tagSet = new HashSet<String>();
+            JSONArray tagsArray = data.getJSONArray(0);
+            for (int i = 0; i < tagsArray.length(); ++i) {
+                tagSet.add(tagsArray.getString(i));
+            }
+
+            PushManager.shared().setTags(tagSet);
+            Logger.debug("Settings tags: " + tagSet);;
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading tags JSON", e);
+            callbackContext.error("Error reading tags JSON");
+        }
+    }
+
+    void setSoundEnabled(JSONArray data, CallbackContext callbackContext) {
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
+
+        try {
+            boolean soundPreference = data.getBoolean(0);
+            this.pushPrefs.setSoundEnabled(soundPreference);
+            Logger.debug("Settings Sound: " + soundPreference);
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading soundEnabled in callback", e);
+            callbackContext.error("Error reading soundEnabled in callback");
+        }
+    }
+
+    void setVibrateEnabled(JSONArray data, CallbackContext callbackContext) {
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
+
+        try {
+            boolean vibrationPreference = data.getBoolean(0);
+            this.pushPrefs.setVibrateEnabled(vibrationPreference);
+            Logger.debug("Settings Vibrate: " + vibrationPreference);
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading vibrateEnabled in callback", e);
+            callbackContext.error("Error reading vibrateEnabled in callback");
+        }
+    }
+
+    void setQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) {
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
+
+        try {
+            boolean quietPreference = data.getBoolean(0);
+            this.pushPrefs.setQuietTimeEnabled(quietPreference);
+            Logger.debug("Settings QuietTime: " + quietPreference);
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading quietTimeEnabled in callback", e);
+            callbackContext.error("Error reading quietTimeEnabled in callback");
+        }
+    }
+
+    void setQuietTime(JSONArray data, CallbackContext callbackContext) {
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
+
+        try {
+            Calendar start = new GregorianCalendar();
+            Calendar end = new GregorianCalendar();
+            int startHour = data.getInt(0);
+            int startMinute = data.getInt(1);
+            int endHour = data.getInt(2);
+            int endMinute = data.getInt(3);
+
+            start.set(Calendar.HOUR_OF_DAY, startHour);
+            start.set(Calendar.MINUTE, startMinute);
+            end.set(Calendar.HOUR_OF_DAY, endHour);
+            end.set(Calendar.MINUTE, endMinute);
+
+            Logger.debug("Settings QuietTime. Start: " + start.getTime() + ", End: " + end.getTime());
+            this.pushPrefs.setQuietTimeInterval(start.getTime(), end.getTime());
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading quietTime JSON", e);
+            callbackContext.error("Error reading quietTime JSON");
+        }
+    }
+
+    void recordCurrentLocation(JSONArray data, CallbackContext callbackContext) {
+        if (!requireLocationServiceEnabled(callbackContext)) {
+            return;
+        }
+
+        try {
+            Logger.debug("LOGGING LOCATION");
+            UALocationManager.shared().recordCurrentLocation();
+        } catch (ServiceNotBoundException e) {
+            Logger.debug("Location not bound, binding now");
+            UALocationManager.bindService();
+        } catch (RemoteException e) {
+            Logger.error("Caught RemoteException in recordCurrentLocation", e);
+        }
+        callbackContext.success();
+    }
+
+    // Helpers
+
+    private boolean requirePushServiceEnabled(CallbackContext callbackContext) {
+        if (!UAirship.shared().getAirshipConfigOptions().pushServiceEnabled) {
+            Logger.warn("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean requireLocationServiceEnabled(CallbackContext callbackContext) {
+        if (!UAirship.shared().getAirshipConfigOptions().locationOptions.locationServiceEnabled) {
+            Logger.warn("locationServiceEnabled must be enabled in the location.properties file");
+            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
+            return false;
+        }
+
+        return true;
     }
 }

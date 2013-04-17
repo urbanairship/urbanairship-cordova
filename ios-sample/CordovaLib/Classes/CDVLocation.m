@@ -18,7 +18,6 @@
  */
 
 #import "CDVLocation.h"
-#import "CDVViewController.h"
 #import "NSArray+Comparisons.h"
 
 #pragma mark Constants
@@ -477,17 +476,8 @@
 // helper method to check the orientation and start updating headings
 - (void)startHeadingWithFilter:(CLLocationDegrees)filter
 {
-    if ([self.locationManager respondsToSelector:@selector(headingOrientation)]) {
-        UIDeviceOrientation currentOrientation = [[UIDevice currentDevice] orientation];
-        if (currentOrientation != UIDeviceOrientationUnknown) {
-            CDVViewController* cdvViewController = (CDVViewController*)self.viewController;
-
-            if ([cdvViewController supportsOrientation:currentOrientation]) {
-                self.locationManager.headingOrientation = (CLDeviceOrientation)currentOrientation;
-                // FYI UIDeviceOrientation and CLDeviceOrientation enums are currently the same
-            }
-        }
-    }
+    // FYI UIDeviceOrientation and CLDeviceOrientation enums are currently the same
+    self.locationManager.headingOrientation = (CLDeviceOrientation)self.viewController.interfaceOrientation;
     self.locationManager.headingFilter = filter;
     [self.locationManager startUpdatingHeading];
     self.headingData.headingStatus = HEADINGSTARTING;
@@ -601,17 +591,17 @@
 - (NSString*)JSONRepresentation
 {
     return [NSString stringWithFormat:
-        @"{ timestamp: %.00f, \
+           @"{ timestamp: %.00f, \
             coords: { latitude: %f, longitude: %f, altitude: %.02f, heading: %.02f, speed: %.02f, accuracy: %.02f, altitudeAccuracy: %.02f } \
             }",
-        [self.timestamp timeIntervalSince1970] * 1000.0,
-        self.coordinate.latitude,
-        self.coordinate.longitude,
-        self.altitude,
-        self.course,
-        self.speed,
-        self.horizontalAccuracy,
-        self.verticalAccuracy
+           [self.timestamp timeIntervalSince1970] * 1000.0,
+           self.coordinate.latitude,
+           self.coordinate.longitude,
+           self.altitude,
+           self.course,
+           self.speed,
+           self.horizontalAccuracy,
+           self.verticalAccuracy
     ];
 }
 
@@ -624,9 +614,9 @@
 - (NSString*)JSONRepresentation
 {
     return [NSString stringWithFormat:
-        @"{ code: %d, message: '%@'}",
-        self.code,
-        [self localizedDescription]
+           @"{ code: %d, message: '%@'}",
+           self.code,
+           [self localizedDescription]
     ];
 }
 

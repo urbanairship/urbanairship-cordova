@@ -18,7 +18,8 @@
  */
 
 #import "CDVInvokedUrlCommand.h"
-#import "JSONKit.h"
+#import "CDVJSON.h"
+#import "NSData+Base64.h"
 
 @implementation CDVInvokedUrlCommand
 
@@ -58,7 +59,34 @@
         _className = className;
         _methodName = methodName;
     }
+    [self massageArguments];
     return self;
+}
+
+- (void)massageArguments
+{
+    NSMutableArray* newArgs = nil;
+
+    for (NSUInteger i = 0, count = [_arguments count]; i < count; ++i) {
+        id arg = [_arguments objectAtIndex:i];
+        if (![arg isKindOfClass:[NSDictionary class]]) {
+            continue;
+        }
+        NSDictionary* dict = arg;
+        NSString* type = [dict objectForKey:@"CDVType"];
+        if (!type || ![type isEqualToString:@"ArrayBuffer"]) {
+            continue;
+        }
+        NSString* data = [dict objectForKey:@"data"];
+        if (!data) {
+            continue;
+        }
+        if (newArgs == nil) {
+            newArgs = [NSMutableArray arrayWithArray:_arguments];
+            _arguments = newArgs;
+        }
+        [newArgs replaceObjectAtIndex:i withObject:[NSData dataFromBase64String:data]];
+    }
 }
 
 - (void)legacyArguments:(NSMutableArray**)legacyArguments andDict:(NSMutableDictionary**)legacyDict
@@ -82,6 +110,31 @@
     if (legacyArguments != NULL) {
         *legacyArguments = newArguments;
     }
+}
+
+- (id)argumentAtIndex:(NSUInteger)index
+{
+    return [self argumentAtIndex:index withDefault:nil];
+}
+
+- (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue
+{
+    return [self argumentAtIndex:index withDefault:defaultValue andClass:nil];
+}
+
+- (id)argumentAtIndex:(NSUInteger)index withDefault:(id)defaultValue andClass:(Class)aClass
+{
+    if (index >= [_arguments count]) {
+        return defaultValue;
+    }
+    id ret = [_arguments objectAtIndex:index];
+    if (ret == [NSNull null]) {
+        ret = defaultValue;
+    }
+    if ((aClass != nil) && ![ret isKindOfClass:aClass]) {
+        ret = defaultValue;
+    }
+    return ret;
 }
 
 @end

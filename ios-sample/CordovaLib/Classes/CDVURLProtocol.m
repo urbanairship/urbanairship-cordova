@@ -17,21 +17,55 @@
  under the License.
  */
 
+#import <AssetsLibrary/ALAsset.h>
+#import <AssetsLibrary/ALAssetRepresentation.h>
+#import <AssetsLibrary/ALAssetsLibrary.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #import "CDVURLProtocol.h"
 #import "CDVCommandQueue.h"
 #import "CDVWhitelist.h"
 #import "CDVViewController.h"
+#import "CDVFile.h"
 
 @interface CDVHTTPURLResponse : NSHTTPURLResponse
-- (id)initWithUnauthorizedURL:(NSURL*)url;
-- (id)initWithBlankResponse:(NSURL*)url;
 @property (nonatomic) NSInteger statusCode;
 @end
 
-static CDVWhitelist * gWhitelist = nil;
+static CDVWhitelist* gWhitelist = nil;
 // Contains a set of NSNumbers of addresses of controllers. It doesn't store
 // the actual pointer to avoid retaining.
 static NSMutableSet* gRegisteredControllers = nil;
+
+// Returns the registered view controller that sent the given request.
+// If the user-agent is not from a UIWebView, or if it's from an unregistered one,
+// then nil is returned.
+static CDVViewController *viewControllerForRequest(NSURLRequest* request)
+{
+    // The exec bridge explicitly sets the VC address in a header.
+    // This works around the User-Agent not being set for file: URLs.
+    NSString* addrString = [request valueForHTTPHeaderField:@"vc"];
+
+    if (addrString == nil) {
+        NSString* userAgent = [request valueForHTTPHeaderField:@"User-Agent"];
+        if (userAgent == nil) {
+            return nil;
+        }
+        NSUInteger bracketLocation = [userAgent rangeOfString:@"(" options:NSBackwardsSearch].location;
+        if (bracketLocation == NSNotFound) {
+            return nil;
+        }
+        addrString = [userAgent substringFromIndex:bracketLocation + 1];
+    }
+
+    long long viewControllerAddress = [addrString longLongValue];
+    @synchronized(gRegisteredControllers) {
+        if (![gRegisteredControllers containsObject:[NSNumber numberWithLongLong:viewControllerAddress]]) {
+            return nil;
+        }
+    }
+
+    return (__bridge CDVViewController*)(void*)viewControllerAddress;
+}
 
 @implementation CDVURLProtocol
 
@@ -57,6 +91,7 @@ static NSMutableSet* gRegisteredControllers = nil;
             NSLog(@"WARNING: NO whitelist has been set in CDVURLProtocol.");
         }
     }
+
     @synchronized(gRegisteredControllers) {
         [gRegisteredControllers addObject:[NSNumber numberWithLongLong:(long long)viewController]];
     }
@@ -64,55 +99,46 @@ static NSMutableSet* gRegisteredControllers = nil;
 
 + (void)unregisterViewController:(CDVViewController*)viewController
 {
-    [gRegisteredControllers removeObject:[NSNumber numberWithLongLong:(long long)viewController]];
+    @synchronized(gRegisteredControllers) {
+        [gRegisteredControllers removeObject:[NSNumber numberWithLongLong:(long long)viewController]];
+    }
 }
 
 + (BOOL)canInitWithRequest:(NSURLRequest*)theRequest
 {
     NSURL* theUrl = [theRequest URL];
-    NSString* theScheme = [theUrl scheme];
+    CDVViewController* viewController = viewControllerForRequest(theRequest);
 
-    if ([[theUrl path] isEqualToString:@"/!gap_exec"]) {
-        NSString* viewControllerAddressStr = [theRequest valueForHTTPHeaderField:@"vc"];
-        if (viewControllerAddressStr == nil) {
-            NSLog(@"!cordova request missing vc header");
-            return NO;
-        }
-        long long viewControllerAddress = [viewControllerAddressStr longLongValue];
-        // Ensure that the CDVViewController has not been dealloc'ed.
-        CDVViewController* viewController = nil;
-        @synchronized(gRegisteredControllers) {
-            if (![gRegisteredControllers containsObject:[NSNumber numberWithLongLong:viewControllerAddress]]) {
+    if ([[theUrl absoluteString] hasPrefix:kCDVAssetsLibraryPrefix]) {
+        return YES;
+    } else if (viewController != nil) {
+        if ([[theUrl path] isEqualToString:@"/!gap_exec"]) {
+            NSString* queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
+            NSString* requestId = [theRequest valueForHTTPHeaderField:@"rc"];
+            if (requestId == nil) {
+                NSLog(@"!cordova request missing rc header");
                 return NO;
             }
-            viewController = (__bridge CDVViewController*)(void*)viewControllerAddress;
+            BOOL hasCmds = [queuedCommandsJSON length] > 0;
+            if (hasCmds) {
+                SEL sel = @selector(enqueCommandBatch:);
+                [viewController.commandQueue performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
+            } else {
+                SEL sel = @selector(maybeFetchCommandsFromJs:);
+                [viewController.commandQueue performSelectorOnMainThread:sel withObject:[NSNumber numberWithInteger:[requestId integerValue]] waitUntilDone:NO];
+            }
+            // Returning NO here would be 20% faster, but it spams WebInspector's console with failure messages.
+            // If JS->Native bridge speed is really important for an app, they should use the iframe bridge.
+            // Returning YES here causes the request to come through canInitWithRequest two more times.
+            // For this reason, we return NO when cmds exist.
+            return !hasCmds;
         }
-
-        NSString* queuedCommandsJSON = [theRequest valueForHTTPHeaderField:@"cmds"];
-        NSString* requestId = [theRequest valueForHTTPHeaderField:@"rc"];
-        if (requestId == nil) {
-            NSLog(@"!cordova request missing rc header");
-            return NO;
+        // we only care about http and https connections.
+        // CORS takes care of http: trying to access file: URLs.
+        if ([gWhitelist schemeIsAllowed:[theUrl scheme]]) {
+            // if it FAILS the whitelist, we return TRUE, so we can fail the connection later
+            return ![gWhitelist URLIsAllowed:theUrl];
         }
-        BOOL hasCmds = [queuedCommandsJSON length] > 0;
-        if (hasCmds) {
-            SEL sel = @selector(enqueCommandBatch:);
-            [viewController.commandQueue performSelectorOnMainThread:sel withObject:queuedCommandsJSON waitUntilDone:NO];
-        } else {
-            SEL sel = @selector(maybeFetchCommandsFromJs:);
-            [viewController.commandQueue performSelectorOnMainThread:sel withObject:[NSNumber numberWithInteger:[requestId integerValue]] waitUntilDone:NO];
-        }
-        // Returning NO here would be 20% faster, but it spams WebInspector's console with failure messages.
-        // If JS->Native bridge speed is really important for an app, they should use the iframe bridge.
-        // Returning YES here causes the request to come through canInitWithRequest two more times.
-        // For this reason, we return NO when cmds exist.
-        return !hasCmds;
-    }
-
-    // we only care about http and https connections
-    if ([gWhitelist schemeIsAllowed:theScheme]) {
-        // if it FAILS the whitelist, we return TRUE, so we can fail the connection later
-        return ![gWhitelist URLIsAllowed:theUrl];
     }
 
     return NO;
@@ -130,21 +156,35 @@ static NSMutableSet* gRegisteredControllers = nil;
     NSURL* url = [[self request] URL];
 
     if ([[url path] isEqualToString:@"/!gap_exec"]) {
-        CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithBlankResponse:url];
-        [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-        [[self client] URLProtocolDidFinishLoading:self];
+        [self sendResponseWithResponseCode:200 data:nil mimeType:nil];
+        return;
+    } else if ([[url absoluteString] hasPrefix:kCDVAssetsLibraryPrefix]) {
+        ALAssetsLibraryAssetForURLResultBlock resultBlock = ^(ALAsset* asset) {
+            if (asset) {
+                // We have the asset!  Get the data and send it along.
+                ALAssetRepresentation* assetRepresentation = [asset defaultRepresentation];
+                NSString* MIMEType = (__bridge_transfer NSString*)UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)[assetRepresentation UTI], kUTTagClassMIMEType);
+                Byte* buffer = (Byte*)malloc([assetRepresentation size]);
+                NSUInteger bufferSize = [assetRepresentation getBytes:buffer fromOffset:0.0 length:[assetRepresentation size] error:nil];
+                NSData* data = [NSData dataWithBytesNoCopy:buffer length:bufferSize freeWhenDone:YES];
+                [self sendResponseWithResponseCode:200 data:data mimeType:MIMEType];
+            } else {
+                // Retrieving the asset failed for some reason.  Send an error.
+                [self sendResponseWithResponseCode:404 data:nil mimeType:nil];
+            }
+        };
+        ALAssetsLibraryAccessFailureBlock failureBlock = ^(NSError* error) {
+            // Retrieving the asset failed for some reason.  Send an error.
+            [self sendResponseWithResponseCode:401 data:nil mimeType:nil];
+        };
+
+        ALAssetsLibrary* assetsLibrary = [[ALAssetsLibrary alloc] init];
+        [assetsLibrary assetForURL:url resultBlock:resultBlock failureBlock:failureBlock];
         return;
     }
 
     NSString* body = [gWhitelist errorStringForURL:url];
-
-    CDVHTTPURLResponse* response = [[CDVHTTPURLResponse alloc] initWithUnauthorizedURL:url];
-
-    [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
-
-    [[self client] URLProtocol:self didLoadData:[body dataUsingEncoding:NSASCIIStringEncoding]];
-
-    [[self client] URLProtocolDidFinishLoading:self];
+    [self sendResponseWithResponseCode:401 data:[body dataUsingEncoding:NSASCIIStringEncoding] mimeType:nil];
 }
 
 - (void)stopLoading
@@ -157,28 +197,30 @@ static NSMutableSet* gRegisteredControllers = nil;
     return NO;
 }
 
+- (void)sendResponseWithResponseCode:(NSInteger)statusCode data:(NSData*)data mimeType:(NSString*)mimeType
+{
+    if (mimeType == nil) {
+        mimeType = @"text/plain";
+    }
+    NSString* encodingName = [@"text/plain" isEqualToString : mimeType] ? @"UTF-8" : nil;
+    CDVHTTPURLResponse* response =
+        [[CDVHTTPURLResponse alloc] initWithURL:[[self request] URL]
+                                       MIMEType:mimeType
+                          expectedContentLength:[data length]
+                               textEncodingName:encodingName];
+    response.statusCode = statusCode;
+
+    [[self client] URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
+    if (data != nil) {
+        [[self client] URLProtocol:self didLoadData:data];
+    }
+    [[self client] URLProtocolDidFinishLoading:self];
+}
+
 @end
 
 @implementation CDVHTTPURLResponse
 @synthesize statusCode;
-
-- (id)initWithUnauthorizedURL:(NSURL*)url
-{
-    self = [super initWithURL:url MIMEType:@"text/plain" expectedContentLength:-1 textEncodingName:@"UTF-8"];
-    if (self) {
-        self.statusCode = 401;
-    }
-    return self;
-}
-
-- (id)initWithBlankResponse:(NSURL*)url
-{
-    self = [super initWithURL:url MIMEType:@"text/plain" expectedContentLength:-1 textEncodingName:@"UTF-8"];
-    if (self) {
-        self.statusCode = 200;
-    }
-    return self;
-}
 
 - (NSDictionary*)allHeaderFields
 {

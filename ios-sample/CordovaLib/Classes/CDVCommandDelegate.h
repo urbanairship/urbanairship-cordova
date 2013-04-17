@@ -22,12 +22,14 @@
 
 @class CDVPlugin;
 @class CDVPluginResult;
+@class CDVWhitelist;
 
 @protocol CDVCommandDelegate <NSObject>
 
+@property (nonatomic, readonly) NSDictionary* settings;
+
 - (NSString*)pathForResource:(NSString*)resourcepath;
 - (id)getCommandInstance:(NSString*)pluginName;
-- (void)registerPlugin:(CDVPlugin*)plugin withClassName:(NSString*)className CDV_DEPRECATED(2.2, "Use CDVViewController to register plugins, or use Cordova.plist.");
 
 // Plugins should not be using this interface to call other plugins since it
 // will result in bogus callbacks being made.
@@ -44,5 +46,9 @@
 - (void)evalJs:(NSString*)js scheduledOnRunLoop:(BOOL)scheduledOnRunLoop;
 // Runs the given block on a background thread using a shared thread-pool.
 - (void)runInBackground:(void (^)())block;
+// Returns the User-Agent of the associated UIWebView.
+- (NSString*)userAgent;
+// Returns whether the given URL passes the white-list.
+- (BOOL)URLIsWhitelisted:(NSURL*)url;
 
 @end

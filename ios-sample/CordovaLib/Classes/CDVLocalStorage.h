@@ -22,7 +22,7 @@
 #define kCDVLocalStorageErrorDomain @"kCDVLocalStorageErrorDomain"
 #define kCDVLocalStorageFileOperationError 1
 
-@interface CDVLocalStorage : CDVPlugin <UIWebViewDelegate>
+@interface CDVLocalStorage : CDVPlugin
 
 @property (nonatomic, readonly, strong) NSMutableArray* backupInfo;
 
@@ -34,8 +34,8 @@
 + (void)__fixupDatabaseLocationsWithBackupType:(NSString*)backupType;
 // Visible for testing.
 + (BOOL)__verifyAndFixDatabaseLocationsWithAppPlistDict:(NSMutableDictionary*)appPlistDict
-    bundlePath                                          :(NSString*)bundlePath
-   fileManager                                         :(NSFileManager*)fileManager;
+                                             bundlePath:(NSString*)bundlePath
+                                            fileManager:(NSFileManager*)fileManager;
 @end
 
 @interface CDVBackupInfo : NSObject
