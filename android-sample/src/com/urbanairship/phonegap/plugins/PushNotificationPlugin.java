@@ -104,7 +104,6 @@ public class PushNotificationPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) {
-
         if (!knownActions.contains(action)) {
             Logger.debug("Invalid action: " + action);
             return false;
@@ -115,8 +114,6 @@ public class PushNotificationPlugin extends CordovaPlugin {
             Method method = PushNotificationPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
             method.invoke(this, data, callbackContext);
             return true;
-        } catch (NoSuchMethodException e) {
-            Logger.error(e);
         } catch (Exception e) {
             Logger.error(e);
         }
@@ -127,120 +124,88 @@ public class PushNotificationPlugin extends CordovaPlugin {
     // Actions
 
     void enablePush(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             PushManager.enablePush();
             PushManager.shared().setIntentReceiver(PushNotificationPluginIntentReceiver.class);
             callbackContext.success();
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
     }
 
     void disablePush(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             PushManager.disablePush();
             callbackContext.success();
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
-
     }
 
     void enableLocation(JSONArray data, CallbackContext callbackContext) {
-        if (this.locationPrefs != null) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             UALocationManager.enableLocation();
             callbackContext.success();
-        } else {
-            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
         }
-
     }
 
     void disableLocation(JSONArray data, CallbackContext callbackContext) {
-        if (this.locationPrefs != null) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             UALocationManager.disableLocation();
             callbackContext.success();
-        } else {
-            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
         }
     }
 
     void enableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
-        if (this.locationPrefs != null) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             UALocationManager.enableBackgroundLocation();
             callbackContext.success();
-        } else {
-            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
         }
-
     }
 
     void disableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
-        if (this.locationPrefs != null) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             UALocationManager.disableBackgroundLocation();
             callbackContext.success();
-        } else {
-            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
         }
-
     }
 
     void isPushEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             int value = this.pushPrefs.isPushEnabled() ? 1 : 0;
             callbackContext.success(value);
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
     }
 
     void isSoundEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             int value = this.pushPrefs.isSoundEnabled() ? 1 : 0;
             callbackContext.success(value);
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
     }
 
     void isVibrateEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             int value = this.pushPrefs.isVibrateEnabled() ? 1 : 0;
             callbackContext.success(value);
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
-
     }
 
     void isQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             int value = this.pushPrefs.isQuietTimeEnabled() ? 1 : 0;
             callbackContext.success(value);
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
-
     }
 
     void isInQuietTime(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             int value = this.pushPrefs.isInQuietTime() ? 1 : 0;
             callbackContext.success(value);
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
-
     }
 
     void isLocationEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (this.locationPrefs != null) {
+        if (requireLocationServiceEnabled(callbackContext)) {
             int value = this.locationPrefs.isLocationEnabled() ? 1 : 0;
             callbackContext.success(value);
-        } else {
-            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
         }
-
     }
 
     void getIncoming(JSONArray data, CallbackContext callbackContext) {
@@ -253,85 +218,77 @@ public class PushNotificationPlugin extends CordovaPlugin {
         //reset incoming push data until the next background push comes in
         PushNotificationPlugin.incomingAlert = "";
         PushNotificationPlugin.incomingExtras = new HashMap<String,String>();
-
     }
 
     void getPushID(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             String pushID = PushManager.shared().getAPID();
             pushID = pushID != null ? pushID : "";
             callbackContext.success(pushID);
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
-
     }
 
     void getQuietTime(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null ) {
-            Logger.debug("Returning quiet time");
-            try {
-                Date[] quietTime = this.pushPrefs.getQuietTimeInterval();
-
-                int startHour = 0;
-                int startMinute = 0;
-                int endHour = 0;
-                int endMinute = 0;
-
-                if (quietTime != null) {
-
-                    Calendar start = new GregorianCalendar();
-                    Calendar end = new GregorianCalendar();
-                    start.setTime(quietTime[0]);
-                    end.setTime(quietTime[1]);
-
-                    startHour = start.get(Calendar.HOUR_OF_DAY);
-                    startMinute = start.get(Calendar.MINUTE);
-                    endHour = end.get(Calendar.HOUR_OF_DAY);
-                    endMinute = end.get(Calendar.MINUTE);
-                }
-
-                JSONObject returnObject = new JSONObject();
-                returnObject.put("startHour", startHour);
-                returnObject.put("startMinute", startMinute);
-                returnObject.put("endHour", endHour);
-                returnObject.put("endMinute", endMinute);
-                callbackContext.success(returnObject);
-            } catch (JSONException e) {
-                callbackContext.error("Error building quietTime JSON");
-            }
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
         }
 
+        Date[] quietTime = this.pushPrefs.getQuietTimeInterval();
+
+        int startHour = 0;
+        int startMinute = 0;
+        int endHour = 0;
+        int endMinute = 0;
+
+        if (quietTime != null) {
+            Calendar start = new GregorianCalendar();
+            Calendar end = new GregorianCalendar();
+            start.setTime(quietTime[0]);
+            end.setTime(quietTime[1]);
+
+            startHour = start.get(Calendar.HOUR_OF_DAY);
+            startMinute = start.get(Calendar.MINUTE);
+            endHour = end.get(Calendar.HOUR_OF_DAY);
+            endMinute = end.get(Calendar.MINUTE);
+        }
+
+        try {
+            JSONObject returnObject = new JSONObject();
+            returnObject.put("startHour", startHour);
+            returnObject.put("startMinute", startMinute);
+            returnObject.put("endHour", endHour);
+            returnObject.put("endMinute", endMinute);
+
+            Logger.debug("Returning quiet time");
+            callbackContext.success(returnObject);
+        } catch (JSONException e) {
+            callbackContext.error("Error building quietTime JSON");
+        }
     }
 
     void getTags(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
-            Logger.debug("Returning tags");
-            Set<String> tags = PushManager.shared().getTags();
-
-            try {
-                JSONObject returnObject = new JSONObject();
-                returnObject.put("tags", new JSONArray(tags));
-                callbackContext.success(returnObject);
-            } catch (JSONException e) {
-                Logger.error("Error building tags JSON", e);
-                callbackContext.error("Error building tags JSON");
-            }
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
         }
 
+        Set<String> tags = PushManager.shared().getTags();
+        try {
+            JSONObject returnObject = new JSONObject();
+            returnObject.put("tags", new JSONArray(tags));
+
+            Logger.debug("Returning tags");
+            callbackContext.success(returnObject);
+        } catch (JSONException e) {
+            Logger.error("Error building tags JSON", e);
+            callbackContext.error("Error building tags JSON");
+        }
     }
 
     void getAlias(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
+        if (requirePushServiceEnabled(callbackContext)) {
             String alias = PushManager.shared().getAlias();
             alias = alias != null ? alias : "";
             callbackContext.success(alias);
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
         }
     }
 
@@ -349,123 +306,140 @@ public class PushNotificationPlugin extends CordovaPlugin {
             Logger.error("Error reading alias in callback", e);
             callbackContext.error("Error reading alias in callback");
         }
-
     }
 
     void setTags(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
-            try {
-                HashSet<String> tagSet = new HashSet<String>();
-                JSONArray tagsArray = data.getJSONArray(0);
-                for (int i = 0; i < tagsArray.length(); ++i) {
-                    tagSet.add(tagsArray.getString(i));
-                }
-
-                PushManager.shared().setTags(tagSet);
-                Logger.debug("Settings tags: " + tagSet);;
-                callbackContext.success();
-            } catch (JSONException e) {
-                Logger.error("Error reading tags JSON", e);
-                callbackContext.error("Error reading tags JSON");
-            }
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
         }
 
+        try {
+            HashSet<String> tagSet = new HashSet<String>();
+            JSONArray tagsArray = data.getJSONArray(0);
+            for (int i = 0; i < tagsArray.length(); ++i) {
+                tagSet.add(tagsArray.getString(i));
+            }
+
+            PushManager.shared().setTags(tagSet);
+            Logger.debug("Settings tags: " + tagSet);;
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading tags JSON", e);
+            callbackContext.error("Error reading tags JSON");
+        }
     }
 
     void setSoundEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
-            try {
-                boolean soundPreference = data.getBoolean(0);
-                this.pushPrefs.setSoundEnabled(soundPreference);
-                Logger.debug("Settings Sound: " + soundPreference);
-                callbackContext.success();
-            } catch (JSONException e) {
-                Logger.error("Error reading soundEnabled in callback", e);
-                callbackContext.error("Error reading soundEnabled in callback");
-            }
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
         }
 
+        try {
+            boolean soundPreference = data.getBoolean(0);
+            this.pushPrefs.setSoundEnabled(soundPreference);
+            Logger.debug("Settings Sound: " + soundPreference);
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading soundEnabled in callback", e);
+            callbackContext.error("Error reading soundEnabled in callback");
+        }
     }
 
     void setVibrateEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
-            try {
-                boolean vibrationPreference = data.getBoolean(0);
-                this.pushPrefs.setVibrateEnabled(vibrationPreference);
-                Logger.debug("Settings Vibrate: " + vibrationPreference);
-                callbackContext.success();
-            } catch (JSONException e) {
-                Logger.error("Error reading vibrateEnabled in callback", e);
-                callbackContext.error("Error reading vibrateEnabled in callback");
-            }
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
         }
 
+        try {
+            boolean vibrationPreference = data.getBoolean(0);
+            this.pushPrefs.setVibrateEnabled(vibrationPreference);
+            Logger.debug("Settings Vibrate: " + vibrationPreference);
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading vibrateEnabled in callback", e);
+            callbackContext.error("Error reading vibrateEnabled in callback");
+        }
     }
 
     void setQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null) {
-            try {
-                boolean quietPreference = data.getBoolean(0);
-                this.pushPrefs.setQuietTimeEnabled(quietPreference);
-                Logger.debug("Settings QuietTime: " + quietPreference);
-                callbackContext.success();
-            } catch (JSONException e) {
-                Logger.error("Error reading quietTimeEnabled in callback", e);
-                callbackContext.error("Error reading quietTimeEnabled in callback");
-            }
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
+
+        try {
+            boolean quietPreference = data.getBoolean(0);
+            this.pushPrefs.setQuietTimeEnabled(quietPreference);
+            Logger.debug("Settings QuietTime: " + quietPreference);
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading quietTimeEnabled in callback", e);
+            callbackContext.error("Error reading quietTimeEnabled in callback");
         }
     }
 
     void setQuietTime(JSONArray data, CallbackContext callbackContext) {
-        if (this.pushPrefs != null ) {
-            try {
-                Calendar start = new GregorianCalendar();
-                Calendar end = new GregorianCalendar();
-                int startHour = data.getInt(0);
-                int startMinute = data.getInt(1);
-                int endHour = data.getInt(2);
-                int endMinute = data.getInt(3);
+        if (!requirePushServiceEnabled(callbackContext)) {
+            return;
+        }
 
-                start.set(Calendar.HOUR_OF_DAY, startHour);
-                start.set(Calendar.MINUTE, startMinute);
-                end.set(Calendar.HOUR_OF_DAY, endHour);
-                end.set(Calendar.MINUTE, endMinute);
+        try {
+            Calendar start = new GregorianCalendar();
+            Calendar end = new GregorianCalendar();
+            int startHour = data.getInt(0);
+            int startMinute = data.getInt(1);
+            int endHour = data.getInt(2);
+            int endMinute = data.getInt(3);
 
-                Logger.debug("Settings QuietTime. Start: " + start + ", End: " + end);
-                this.pushPrefs.setQuietTimeInterval(start.getTime(), end.getTime());
-                callbackContext.success();
-            } catch (JSONException e) {
-                Logger.error("Error reading quietTime JSON", e);
-                callbackContext.error("Error reading quietTime JSON");
-            }
-        } else {
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+            start.set(Calendar.HOUR_OF_DAY, startHour);
+            start.set(Calendar.MINUTE, startMinute);
+            end.set(Calendar.HOUR_OF_DAY, endHour);
+            end.set(Calendar.MINUTE, endMinute);
+
+            Logger.debug("Settings QuietTime. Start: " + start.getTime() + ", End: " + end.getTime());
+            this.pushPrefs.setQuietTimeInterval(start.getTime(), end.getTime());
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading quietTime JSON", e);
+            callbackContext.error("Error reading quietTime JSON");
         }
     }
 
     void recordCurrentLocation(JSONArray data, CallbackContext callbackContext) {
-        if (this.locationPrefs != null) {
-            try {
-                Logger.debug("LOGGING LOCATION");
-                UALocationManager.shared().recordCurrentLocation();
-            } catch (ServiceNotBoundException e) {
-                Logger.debug("Location not bound, binding now");
-                UALocationManager.bindService();
-            } catch (RemoteException e) {
-                Logger.error("Caught RemoteException in recordCurrentLocation", e);
-            }
-            callbackContext.success();
-        } else {
-            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
+        if (!requireLocationServiceEnabled(callbackContext)) {
+            return;
         }
 
+        try {
+            Logger.debug("LOGGING LOCATION");
+            UALocationManager.shared().recordCurrentLocation();
+        } catch (ServiceNotBoundException e) {
+            Logger.debug("Location not bound, binding now");
+            UALocationManager.bindService();
+        } catch (RemoteException e) {
+            Logger.error("Caught RemoteException in recordCurrentLocation", e);
+        }
+        callbackContext.success();
+    }
+
+    // Helpers
+
+    private boolean requirePushServiceEnabled(CallbackContext callbackContext) {
+        if (this.pushPrefs == null) {
+            Logger.warn("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean requireLocationServiceEnabled(CallbackContext callbackContext) {
+        if (this.locationPrefs == null) {
+            Logger.warn("locationServiceEnabled must be enabled in the location.properties file");
+            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
+            return false;
+        }
+
+        return true;
     }
 }
