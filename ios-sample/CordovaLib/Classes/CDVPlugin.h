@@ -23,21 +23,21 @@
 #import "NSMutableArray+QueueAdditions.h"
 #import "CDVCommandDelegate.h"
 
-#define CDVPluginHandleOpenURLNotification @"CDVPluginHandleOpenURLNotification"
-#define CDVPluginResetNotification @"CDVPluginResetNotification"
+NSString* const CDVPageDidLoadNotification;
+NSString* const CDVPluginHandleOpenURLNotification;
+NSString* const CDVPluginResetNotification;
+NSString* const CDVLocalNotification;
 
 @interface CDVPlugin : NSObject {}
 
-// TODO(agrieve): Make these zeroing weak refs once we drop support for 4.3.
-@property (nonatomic, unsafe_unretained) UIWebView* webView;
-@property (nonatomic, strong) NSDictionary* settings;
-@property (nonatomic, unsafe_unretained) UIViewController* viewController;
-@property (nonatomic, unsafe_unretained) id <CDVCommandDelegate> commandDelegate;
+@property (nonatomic, weak) UIWebView* webView;
+@property (nonatomic, weak) UIViewController* viewController;
+@property (nonatomic, weak) id <CDVCommandDelegate> commandDelegate;
 
 @property (readonly, assign) BOOL hasPendingOperation;
 
-- (CDVPlugin*)initWithWebView:(UIWebView*)theWebView settings:(NSDictionary*)classSettings;
 - (CDVPlugin*)initWithWebView:(UIWebView*)theWebView;
+- (void)pluginInitialize;
 
 - (void)handleOpenURL:(NSNotification*)notification;
 - (void)onAppTerminate;
@@ -51,6 +51,7 @@
  - (void) onResume {}
  - (void) onOrientationWillChange {}
  - (void) onOrientationDidChange {}
+ - (void)didReceiveLocalNotification:(NSNotification *)notification;
  */
 
 - (id)appDelegate;

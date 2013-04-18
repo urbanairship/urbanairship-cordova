@@ -18,9 +18,8 @@
  */
 
 #import "CDVCapture.h"
-#import "JSONKit.h"
+#import "CDVJSON.h"
 #import "CDVAvailability.h"
-#import "CDVViewController.h"
 
 #define kW3CMediaFormatHeight @"height"
 #define kW3CMediaFormatWidth @"width"
@@ -170,7 +169,7 @@
     }
 
     // write to temp directory and return URI
-    NSString* docsPath = [NSTemporaryDirectory ()stringByStandardizingPath];  // use file system temporary directory
+    NSString* docsPath = [NSTemporaryDirectory()stringByStandardizingPath];   // use file system temporary directory
     NSError* err = nil;
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
 
@@ -251,7 +250,7 @@
         // iOS 4.0
         if ([pickerController respondsToSelector:@selector(cameraCaptureMode)]) {
             pickerController.cameraCaptureMode = UIImagePickerControllerCameraCaptureModeVideo;
-            pickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+            // pickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
             // pickerController.cameraDevice = UIImagePickerControllerCameraDeviceRear;
             // pickerController.cameraFlashMode = UIImagePickerControllerCameraFlashModeAuto;
         }
@@ -329,7 +328,7 @@
         movieArray ? (NSObject*)                          movieArray:[NSNull null], @"video",
         audioArray ? (NSObject*)                          audioArray:[NSNull null], @"audio",
         nil];
-    NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes cdvjk_JSONString]];
+    NSString* jsString = [NSString stringWithFormat:@"navigator.device.capture.setSupportedModes(%@);", [modes JSONString]];
     [self.commandDelegate evalJs:jsString];
 }
 
@@ -383,12 +382,20 @@
             AVURLAsset* movieAsset = [[AVURLAsset alloc] initWithURL:movieURL options:nil];
             CMTime duration = [movieAsset duration];
             [formatData setObject:[NSNumber numberWithFloat:CMTimeGetSeconds(duration)]  forKey:kW3CMediaFormatDuration];
-            CGSize size = [movieAsset naturalSize];
-            [formatData setObject:[NSNumber numberWithFloat:size.height] forKey:kW3CMediaFormatHeight];
-            [formatData setObject:[NSNumber numberWithFloat:size.width] forKey:kW3CMediaFormatWidth];
-            // not sure how to get codecs or bitrate???
-            // AVMetadataItem
-            // AudioFile
+
+            NSArray* allVideoTracks = [movieAsset tracksWithMediaType:AVMediaTypeVideo];
+            if ([allVideoTracks count] > 0) {
+                AVAssetTrack* track = [[movieAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+                CGSize size = [track naturalSize];
+
+                [formatData setObject:[NSNumber numberWithFloat:size.height] forKey:kW3CMediaFormatHeight];
+                [formatData setObject:[NSNumber numberWithFloat:size.width] forKey:kW3CMediaFormatWidth];
+                // not sure how to get codecs or bitrate???
+                // AVMetadataItem
+                // AudioFile
+            } else {
+                NSLog(@"No video tracks found for %@", fullPath);
+            }
         } else if ([mimeType rangeOfString:@"audio/"].location != NSNotFound) {
             if (NSClassFromString(@"AVAudioPlayer") != nil) {
                 NSURL* fileURL = [NSURL fileURLWithPath:fullPath];
@@ -432,7 +439,7 @@
         if ([command isKindOfClass:[CDVFile class]]) {
             CDVFile* cdvFile = (CDVFile*)command;
             NSString* mimeType = [cdvFile getMimeTypeFromPath:fullPath];
-            [fileDict setObject:(mimeType != nil ? (NSObject*)mimeType:[NSNull null]) forKey:@"type"];
+            [fileDict setObject:(mimeType != nil ? (NSObject*)mimeType : [NSNull null]) forKey:@"type"];
         }
     }
     NSDictionary* fileAttrs = [fileMgr attributesOfItemAtPath:fullPath error:nil];
@@ -521,11 +528,11 @@
 @implementation CDVAudioNavigationController
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
-- (NSUInteger)supportedInterfaceOrientations
-{
-    // delegate to CVDAudioRecorderViewController
-    return [self.topViewController supportedInterfaceOrientations];
-}
+    - (NSUInteger)supportedInterfaceOrientations
+    {
+        // delegate to CVDAudioRecorderViewController
+        return [self.topViewController supportedInterfaceOrientations];
+    }
 #endif
 
 @end
@@ -655,7 +662,7 @@
 
     // create file to record to in temporary dir
 
-    NSString* docsPath = [NSTemporaryDirectory ()stringByStandardizingPath];  // use file system temporary directory
+    NSString* docsPath = [NSTemporaryDirectory()stringByStandardizingPath];   // use file system temporary directory
     NSError* err = nil;
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
 
@@ -685,14 +692,14 @@
 }
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 60000
-- (NSUInteger)supportedInterfaceOrientations
-{
-    NSUInteger orientation = UIInterfaceOrientationMaskPortrait; // must support portrait
-    NSUInteger supported = [captureCommand.viewController supportedInterfaceOrientations];
+    - (NSUInteger)supportedInterfaceOrientations
+    {
+        NSUInteger orientation = UIInterfaceOrientationMaskPortrait; // must support portrait
+        NSUInteger supported = [captureCommand.viewController supportedInterfaceOrientations];
 
-    orientation = orientation | (supported & UIInterfaceOrientationMaskPortraitUpsideDown);
-    return orientation;
-}
+        orientation = orientation | (supported & UIInterfaceOrientationMaskPortraitUpsideDown);
+        return orientation;
+    }
 #endif
 
 - (void)viewDidUnload
@@ -757,7 +764,7 @@
         BOOL isUIAccessibilityAnnouncementNotification = (&UIAccessibilityAnnouncementNotification != NULL);
         if (isUIAccessibilityAnnouncementNotification) {
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 500ull * NSEC_PER_MSEC), dispatch_get_main_queue(), ^{
-                    UIAccessibilityPostNotification (UIAccessibilityAnnouncementNotification, NSLocalizedString (@"timed recording complete", nil));
+                    UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, NSLocalizedString(@"timed recording complete", nil));
                 });
         }
     } else {

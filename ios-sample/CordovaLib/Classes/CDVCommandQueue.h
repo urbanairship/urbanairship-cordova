@@ -22,13 +22,7 @@
 @class CDVInvokedUrlCommand;
 @class CDVViewController;
 
-@interface CDVCommandQueue : NSObject {
-    @private
-    NSInteger _lastCommandQueueFlushRequestId;
-    __unsafe_unretained CDVViewController* _viewController;
-    NSMutableArray* _queue;
-    BOOL _currentlyExecuting;
-}
+@interface CDVCommandQueue : NSObject
 
 @property (nonatomic, readonly) BOOL currentlyExecuting;
 

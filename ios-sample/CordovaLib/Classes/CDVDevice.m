@@ -17,7 +17,27 @@
  under the License.
  */
 
+#include <sys/types.h>
+#include <sys/sysctl.h>
+
 #import "CDV.h"
+
+@implementation UIDevice (ModelVersion)
+
+- (NSString*)modelVersion
+{
+    size_t size;
+
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    char* machine = malloc(size);
+    sysctlbyname("hw.machine", machine, &size, NULL, 0);
+    NSString* platform = [NSString stringWithUTF8String:machine];
+    free(machine);
+
+    return platform;
+}
+
+@end
 
 @interface CDVDevice () {}
 @end
@@ -38,7 +58,8 @@
     NSDictionary* temp = [CDVViewController getBundlePlist:@"Settings"];
 
     if ([temp respondsToSelector:@selector(JSONString)]) {
-        NSString* js = [NSString stringWithFormat:@"window.Settings = %@;", [temp cdvjk_JSONString]];
+        NSLog(@"Deprecation warning: window.Setting will be removed Aug 2013. Refer to https://issues.apache.org/jira/browse/CB-2433");
+        NSString* js = [NSString stringWithFormat:@"window.Settings = %@;", [temp JSONString]];
         [self.commandDelegate evalJs:js];
     }
 
@@ -50,10 +71,11 @@
     UIDevice* device = [UIDevice currentDevice];
     NSMutableDictionary* devProps = [NSMutableDictionary dictionaryWithCapacity:4];
 
-    [devProps setObject:[device model] forKey:@"platform"];
+    [devProps setObject:[device modelVersion] forKey:@"model"];
+    [devProps setObject:@"iOS" forKey:@"platform"];
     [devProps setObject:[device systemVersion] forKey:@"version"];
     [devProps setObject:[device uniqueAppInstanceIdentifier] forKey:@"uuid"];
-    [devProps setObject:[device name] forKey:@"name"];
+    [devProps setObject:[device model] forKey:@"name"];
     [devProps setObject:[[self class] cordovaVersion] forKey:@"cordova"];
 
     NSDictionary* devReturn = [NSDictionary dictionaryWithDictionary:devProps];

@@ -17,7 +17,12 @@
  under the License.
  */
 
-#import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
 
-@interface CDVCordovaView : UIWebView {}
+@protocol CDVScreenOrientationDelegate <NSObject>
+
+- (NSUInteger)supportedInterfaceOrientations;
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
+- (BOOL)shouldAutorotate;
+
 @end

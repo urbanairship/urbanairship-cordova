@@ -2,9 +2,7 @@ package com.urbanairship.phonegap.sample;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
 
-import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.phonegap.plugins.PushNotificationPluginIntentReceiver;
 import com.urbanairship.push.PushManager;
@@ -26,8 +24,10 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
         UAirship.takeOff(this);
-        PushManager.enablePush();
-        PushManager.shared().setIntentReceiver(PushNotificationPluginIntentReceiver.class);
+        if (UAirship.shared().getAirshipConfigOptions().pushServiceEnabled) {
+            PushManager.enablePush();
+            PushManager.shared().setIntentReceiver(PushNotificationPluginIntentReceiver.class);
+        }
     }
 
     public void onStop() {

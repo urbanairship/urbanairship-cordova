@@ -18,8 +18,9 @@
  */
 
 #import "CDVPluginResult.h"
-#import "JSONKit.h"
+#import "CDVJSON.h"
 #import "CDVDebug.h"
+#import "NSData+Base64.h"
 
 @interface CDVPluginResult ()
 
@@ -28,9 +29,39 @@
 @end
 
 @implementation CDVPluginResult
-@synthesize status, message, keepCallback;
+@synthesize status, message, keepCallback, associatedObject;
 
 static NSArray* org_apache_cordova_CommandStatusMsgs;
+
+id messageFromArrayBuffer(NSData* data)
+{
+    return @{
+               @"CDVType" : @"ArrayBuffer",
+               @"data" :[data base64EncodedString]
+    };
+}
+
+id massageMessage(id message)
+{
+    if ([message isKindOfClass:[NSData class]]) {
+        return messageFromArrayBuffer(message);
+    }
+    return message;
+}
+
+id messageFromMultipart(NSArray* theMessages)
+{
+    NSMutableArray* messages = [NSMutableArray arrayWithArray:theMessages];
+
+    for (NSUInteger i = 0; i < messages.count; ++i) {
+        [messages replaceObjectAtIndex:i withObject:massageMessage([messages objectAtIndex:i])];
+    }
+
+    return @{
+               @"CDVType" : @"MultiPart",
+               @"messages" : messages
+    };
+}
 
 + (void)initialize
 {
@@ -88,14 +119,29 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
     return [[self alloc] initWithStatus:statusOrdinal message:[NSNumber numberWithDouble:theMessage]];
 }
 
++ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsBool:(BOOL)theMessage
+{
+    return [[self alloc] initWithStatus:statusOrdinal message:[NSNumber numberWithBool:theMessage]];
+}
+
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsDictionary:(NSDictionary*)theMessage
 {
     return [[self alloc] initWithStatus:statusOrdinal message:theMessage];
 }
 
++ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsArrayBuffer:(NSData*)theMessage
+{
+    return [[self alloc] initWithStatus:statusOrdinal message:messageFromArrayBuffer(theMessage)];
+}
+
++ (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageAsMultipart:(NSArray*)theMessages
+{
+    return [[self alloc] initWithStatus:statusOrdinal message:messageFromMultipart(theMessages)];
+}
+
 + (CDVPluginResult*)resultWithStatus:(CDVCommandStatus)statusOrdinal messageToErrorObject:(int)errorCode
 {
-    NSDictionary* errDict = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:errorCode] forKey:@"code"];
+    NSDictionary* errDict = @{@"code" :[NSNumber numberWithInt:errorCode]};
 
     return [[self alloc] initWithStatus:statusOrdinal message:errDict];
 }
@@ -105,13 +151,38 @@ static NSArray* org_apache_cordova_CommandStatusMsgs;
     [self setKeepCallback:[NSNumber numberWithBool:bKeepCallback]];
 }
 
+- (NSString*)argumentsAsJSON
+{
+    id arguments = (self.message == nil ? [NSNull null] : self.message);
+    NSArray* argumentsWrappedInArray = [NSArray arrayWithObject:arguments];
+
+    NSString* argumentsJSON = [argumentsWrappedInArray JSONString];
+
+    argumentsJSON = [argumentsJSON substringWithRange:NSMakeRange(1, [argumentsJSON length] - 2)];
+
+    return argumentsJSON;
+}
+
+// These methods are used by the legacy plugin return result method
 - (NSString*)toJSONString
 {
-    NSString* resultString = [[NSDictionary dictionaryWithObjectsAndKeys:
-            self.status, @"status",
-            self.message ? self.                                 message:[NSNull null], @"message",
-            self.keepCallback, @"keepCallback",
-            nil] cdvjk_JSONString];
+    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+        self.status, @"status",
+        self.message ? self.                                message:[NSNull null], @"message",
+        self.keepCallback, @"keepCallback",
+        nil];
+
+    NSError* error = nil;
+    NSData* jsonData = [NSJSONSerialization dataWithJSONObject:dict
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:&error];
+    NSString* resultString = nil;
+
+    if (error != nil) {
+        NSLog(@"toJSONString error: %@", [error localizedDescription]);
+    } else {
+        resultString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    }
 
     if ([[self class] isVerbose]) {
         NSLog(@"PluginResult:toJSONString - %@", resultString);
