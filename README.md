@@ -34,7 +34,7 @@ For a more complete example, check out the sample app [index.html](https://githu
         } 
     });
 
-    // Callback for when the app is running, and recieves a push.
+    // Callback for when the app is running, and receives a push.
     push.registerEvent('push', function (push) {
         console.log("Got push: " + push.message)
     });
