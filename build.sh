@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="1.0.5"
+VERSION="1.0.6"
 
 mkdir -p archive
 mkdir -p build/android
