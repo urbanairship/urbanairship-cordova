@@ -57,7 +57,7 @@
         <plugin name="Battery" value="CDVBattery" />
         <plugin name="Globalization" value="CDVGlobalization" />
         <plugin name="InAppBrowser" value="CDVInAppBrowser" />
-        <plugin name="PushNotificationPlugin" value="PushNotificationPlugin" />
+        <plugin name="PushNotificationPlugin" value="PushNotificationPlugin" onload="true"/>
     </plugins>
 
     <access origin="http://127.0.0.1*"/> <!-- allow local pages -->
