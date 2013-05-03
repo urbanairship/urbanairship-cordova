@@ -1,4 +1,3 @@
-
 #import "PushNotificationPlugin.h"
 #import "UAPush.h"
 #import "UAirship.h"
@@ -470,8 +469,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         NSDate *endDate;
 
         NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-        NSDateComponents *startComponents = [[[NSDateComponents alloc] init] autorelease];
-        NSDateComponents *endComponents = [[[NSDateComponents alloc] init] autorelease];
+        NSDateComponents *startComponents = [[gregorian components:NSYearCalendarUnit fromDate:[NSDate date]] autorelease];
+        NSDateComponents *endComponents = [[gregorian components:NSYearCalendarUnit fromDate:[NSDate date]] autorelease];
 
         startComponents.hour = [startHr intValue];
         startComponents.minute =[startMin intValue];
