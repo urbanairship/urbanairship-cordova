@@ -547,7 +547,9 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     NSString *alert = [self alertForUserInfo:userInfo];
     NSMutableDictionary *extras = [self extrasForUserInfo:userInfo];
 
-    [self raisePush:alert withExtras:extras];
+    
+    if (application.applicationState == UIApplicationStateActive)
+        [self raisePush:alert withExtras:extras];
 }
 
 #pragma mark Other stuff
