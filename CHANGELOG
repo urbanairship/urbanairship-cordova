@@ -1,4 +1,10 @@
 ==============================
+Version 1.0.7 - June 12, 2013
+==============================
+- Fix: setAlias on Android to actually set the alias.
+- Fix: setQuietTime on iOS now sets the correct time.
+
+==============================
 Version 1.0.6 - April 22, 2013
 ==============================
 - Updated to Cordova 2.6
