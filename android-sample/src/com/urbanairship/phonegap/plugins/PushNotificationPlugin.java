@@ -301,8 +301,9 @@ public class PushNotificationPlugin extends CordovaPlugin {
             }
 
             Logger.debug("Settings alias: " + alias);
-            callbackContext.success();
+            PushManager.shared().setAlias(alias);
 
+            callbackContext.success();
         } catch (JSONException e) {
             Logger.error("Error reading alias in callback", e);
             callbackContext.error("Error reading alias in callback");
@@ -321,8 +322,9 @@ public class PushNotificationPlugin extends CordovaPlugin {
                 tagSet.add(tagsArray.getString(i));
             }
 
+            Logger.debug("Settings tags: " + tagSet);
             PushManager.shared().setTags(tagSet);
-            Logger.debug("Settings tags: " + tagSet);;
+
             callbackContext.success();
         } catch (JSONException e) {
             Logger.error("Error reading tags JSON", e);
