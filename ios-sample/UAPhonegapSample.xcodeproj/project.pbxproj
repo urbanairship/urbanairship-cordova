@@ -331,9 +331,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1D6058900D05DD3D006BFB54 /* UAPhoneGapSample */ = {
+		1D6058900D05DD3D006BFB54 /* UAPhonegapSample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "UAPhoneGapSample" */;
+			buildConfigurationList = 1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "UAPhonegapSample" */;
 			buildPhases = (
 				304B58A110DAC018002A0835 /* Touch www folder */,
 				1D60588D0D05DD3D006BFB54 /* Resources */,
@@ -345,7 +345,7 @@
 			dependencies = (
 				301BF551109A68C00062928A /* PBXTargetDependency */,
 			);
-			name = UAPhoneGapSample;
+			name = UAPhonegapSample;
 			productName = UAPhoneGapSample;
 			productReference = 1D6058910D05DD3D006BFB54 /* UAPhoneGapSample.app */;
 			productType = "com.apple.product-type.application";
@@ -382,7 +382,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				1D6058900D05DD3D006BFB54 /* UAPhoneGapSample */,
+				1D6058900D05DD3D006BFB54 /* UAPhonegapSample */,
 			);
 		};
 /* End PBXProject section */
@@ -648,7 +648,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "UAPhoneGapSample" */ = {
+		1D6058960D05DD3E006BFB54 /* Build configuration list for PBXNativeTarget "UAPhonegapSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1D6058940D05DD3E006BFB54 /* Debug */,
