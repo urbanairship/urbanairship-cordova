@@ -2,38 +2,38 @@
 #import "UAPush.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
-#import "UAAppDelegateSurrogate.h"
 #import "UALocationService.h"
 #import "UA_SBJsonWriter.h"
+#import "UAConfig.h"
 
 typedef id (^UACordovaCallbackBlock)(NSArray *args);
 typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 @interface PushNotificationPlugin()
 - (void)takeOff;
+@property (nonatomic, copy) NSDictionary *incomingNotification;
 @end
 
 @implementation PushNotificationPlugin
 
 - (id)initWithWebView:(UIWebView *)theWebView {
     if (self = [super initWithWebView:theWebView]) {
-        [UAAppDelegateSurrogate shared].surrogateDelegate = self;
         [self takeOff];
     }
+    
     return self;
 }
 
 - (void)takeOff {
     //Init Airship launch options
-    NSMutableDictionary *takeOffOptions = [[[NSMutableDictionary alloc] init] autorelease];
-
-    [takeOffOptions setValue:[UAAppDelegateSurrogate shared].launchOptions forKey:UAirshipTakeOffOptionsLaunchOptionsKey];
+    UAConfig *config = [UAConfig defaultConfig];
 
     // Create Airship singleton that's used to talk to Urban Airship servers.
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
-    [UAirship takeOff:takeOffOptions];
+    [UAirship takeOff:config];
 
     [[UAPush shared] resetBadge];//zero badge on startup
+    [UAPush shared].delegate = self;
 }
 
 - (void)failWithCallbackID:(NSString *)callbackID {
@@ -338,11 +338,9 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         NSString *incomingAlert = @"";
         NSMutableDictionary *incomingExtras = [NSMutableDictionary dictionary];
 
-        NSDictionary *launchOptions = [UAAppDelegateSurrogate shared].launchOptions;
-        if ([[launchOptions allKeys]containsObject:@"UIApplicationLaunchOptionsRemoteNotificationKey"]) {
-            NSDictionary *payload = [launchOptions objectForKey:@"UIApplicationLaunchOptionsRemoteNotificationKey"];
-            incomingAlert = [self alertForUserInfo:payload];
-            [incomingExtras setDictionary:[self extrasForUserInfo:payload]];
+        if (self.incomingNotification) {
+            incomingAlert = [self alertForUserInfo:self.incomingNotification];
+            [incomingExtras setDictionary:[self extrasForUserInfo:self.incomingNotification]];
         }
 
         NSMutableDictionary *returnDictionary = [NSMutableDictionary dictionary];
@@ -351,7 +349,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         [returnDictionary setObject:incomingExtras forKey:@"extras"];
         
         //reset incoming push data until the next background push comes in
-        [[UAAppDelegateSurrogate shared] clearLaunchOptions];
+        self.incomingNotification = nil;
+        UA_LDEBUG(@"The application was launched or resumed from a notification %@", [returnDictionary description]);
 
         return returnDictionary;
     }];
@@ -469,8 +468,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         NSDate *endDate;
 
         NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-        NSDateComponents *startComponents = [[gregorian components:NSYearCalendarUnit fromDate:[NSDate date]] autorelease];
-        NSDateComponents *endComponents = [[gregorian components:NSYearCalendarUnit fromDate:[NSDate date]] autorelease];
+        NSDateComponents *startComponents = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
+        NSDateComponents *endComponents = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
 
         startComponents.hour = [startHr intValue];
         startComponents.minute =[startMin intValue];
@@ -520,11 +519,6 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 
 #pragma mark UIApplicationDelegate callbacks
-
-- (void)applicationWillTerminate:(UIApplication *)application {
-     [UAirship land];
-}
-
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
      // Updates the device token and registers the token with UA
     UALOG(@"PushNotificationPlugin: registered for remote notifications");
@@ -549,10 +543,18 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [self raisePush:alert withExtras:extras];
 }
 
+#pragma mark 
+- (void)launchedFromNotification:(NSDictionary *)notification {
+    UA_LDEBUG(@"The application was launched or resumed from a notification %@", [notification description]);
+    self.incomingNotification = notification;
+}
+
 #pragma mark Other stuff
 
 - (void)dealloc {
-    [UAAppDelegateSurrogate shared].surrogateDelegate = nil;
+    self.incomingNotification = nil;
+    [UAPush shared].delegate = nil;
+
     [super dealloc];
 }
 
