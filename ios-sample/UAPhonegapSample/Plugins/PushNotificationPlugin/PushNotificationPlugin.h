@@ -10,7 +10,7 @@
 #import <Cordova/CDVPlugin.h>
 #import "UAPush.h"
 
-@interface PushNotificationPlugin : CDVPlugin <UIApplicationDelegate, UAPushNotificationDelegate> {
+@interface PushNotificationPlugin : CDVPlugin <UARegistrationObserver, UAPushNotificationDelegate> {
 
 }
 

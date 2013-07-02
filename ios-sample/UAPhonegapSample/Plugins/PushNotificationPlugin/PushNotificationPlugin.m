@@ -34,6 +34,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
     [[UAPush shared] resetBadge];//zero badge on startup
     [UAPush shared].delegate = self;
+    [[UAPush shared] addObserver:self];
 }
 
 - (void)failWithCallbackID:(NSString *)callbackID {
@@ -518,35 +519,34 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 }
 
 
-#pragma mark UIApplicationDelegate callbacks
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-     // Updates the device token and registers the token with UA
+#pragma mark UARegistrationObservers
+- (void)registerDeviceTokenSucceeded {
     UALOG(@"PushNotificationPlugin: registered for remote notifications");
-    [[UAPush shared] registerDeviceToken:deviceToken];
+    
     [self raiseRegistration:YES withpushID:[UAirship shared].deviceToken];
 }
 
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *) error {
-    UALOG(@"PushNotificationPlugin: Failed To Register For Remote Notifications With Error: %@", error);
+- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request {
+    UALOG(@"PushNotificationPlugin: Failed to register for remote notifications with request: %@", request);
+    
     [self raiseRegistration:NO withpushID:@""]; 
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo {
-     UALOG(@"PushNotificationPlugin: Received remote notification: %@", userInfo);
-
-     [[UAPush shared] handleNotification:userInfo applicationState:application.applicationState];
-     [[UAPush shared] setBadgeNumber:0]; // zero badge after push received
-
-    NSString *alert = [self alertForUserInfo:userInfo];
-    NSMutableDictionary *extras = [self extrasForUserInfo:userInfo];
-
-    [self raisePush:alert withExtras:extras];
-}
-
-#pragma mark 
+#pragma mark UAPushNotificationDelegate
 - (void)launchedFromNotification:(NSDictionary *)notification {
     UA_LDEBUG(@"The application was launched or resumed from a notification %@", [notification description]);
     self.incomingNotification = notification;
+}
+
+- (void)receivedForegroundNotification:(NSDictionary *)notification {
+    UA_LDEBUG(@"Received a notification while the app was already in the foreground %@", [notification description]);
+
+    [[UAPush shared] setBadgeNumber:0]; // zero badge after push received
+
+    NSString *alert = [self alertForUserInfo:notification];
+    NSMutableDictionary *extras = [self extrasForUserInfo:notification];
+
+    [self raisePush:alert withExtras:extras];
 }
 
 #pragma mark Other stuff
@@ -554,6 +554,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 - (void)dealloc {
     self.incomingNotification = nil;
     [UAPush shared].delegate = nil;
+    [[UAPush shared] removeObserver:self];
 
     [super dealloc];
 }
