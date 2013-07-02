@@ -51,14 +51,14 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         for (int i = 0; i < args.count; i++) {
             if (![[args objectAtIndex:i] isKindOfClass:[types objectAtIndex:i]]) {
                 //fail when when there is a type mismatch an expected and passed parameter
-                UALOG(@"type mismatch in cordova callback: expected %@ and received %@", 
+                UA_LERR(@"type mismatch in cordova callback: expected %@ and received %@",
                       [types description], [args description]);
                 return NO;
             }
         }
     } else {
         //fail when there is a number mismatch
-        UALOG(@"parameter number mismatch in cordova callback: expected %d and received %d", types.count, args.count);
+        UA_LERR(@"parameter number mismatch in cordova callback: expected %d and received %d", types.count, args.count);
         return NO;
     }
     
@@ -94,7 +94,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     } else if ([value isKindOfClass:[NSNull class]]) {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else {
-        UALOG(@"cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
+        UA_LERR(@"cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
         return nil;
     }
     
@@ -109,7 +109,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
             return;
         }
     } else if(command.arguments.count) {
-        UALOG(@"paramter number mismatch: expected 0 and received %d", command.arguments.count);
+        UA_LERR(@"paramter number mismatch: expected 0 and received %d", command.arguments.count);
         [self failWithCallbackID:command.callbackId];
         return;
     }
@@ -171,7 +171,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 - (void)raisePush:(NSString *)message withExtras:(NSDictionary *)extras {
 
     if (!message || !extras) {
-        UALOG(@"PushNotificationPlugin: attempted to raise push with nil message or extras");
+        UA_LDEBUG(@"PushNotificationPlugin: attempted to raise push with nil message or extras");
         message = @"";
         extras = [NSMutableDictionary dictionary];
     }
@@ -187,13 +187,13 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
     [self writeJavascript:js];
 
-    UALOG(@"js callback: %@", js);
+    UA_LTRACE(@"js callback: %@", js);
 }
 
 - (void)raiseRegistration:(BOOL)valid withpushID:(NSString *)pushID {
 
     if (!pushID) {
-        UALOG(@"PushNotificationPlugin: attempted to raise registration with nil pushID");
+        UA_LDEBUG(@"PushNotificationPlugin: attempted to raise registration with nil pushID");
         pushID = @"";
         valid = NO;
     }
@@ -208,13 +208,13 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
     [self writeJavascript:js];
 
-    UALOG(@"js callback: %@", js);
+    UA_LTRACE(@"js callback: %@", js);
 }
 
 //registration
 
 - (void)registerForNotificationTypes:(CDVInvokedUrlCommand*)command {
-    UALOG(@"PushNotificationPlugin: register for notification types");
+    UA_LDEBUG(@"PushNotificationPlugin: register for notification types");
 
     if (command.arguments.count >= 1) {
         id obj = [command.arguments objectAtIndex:0];
@@ -351,8 +351,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         
         //reset incoming push data until the next background push comes in
         self.incomingNotification = nil;
-        UA_LDEBUG(@"The application was launched or resumed from a notification %@", [returnDictionary description]);
-
+        
         return returnDictionary;
     }];
 }
@@ -373,6 +372,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
                                           zero,@"startMinute",
                                           zero,@"endHour",
                                           zero,@"endMinute",nil];
+        
         //this can be nil if quiet time is not set
         if (quietTimeDictionary) {
 
@@ -521,13 +521,13 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 #pragma mark UARegistrationObservers
 - (void)registerDeviceTokenSucceeded {
-    UALOG(@"PushNotificationPlugin: registered for remote notifications");
+    UA_LINFO(@"PushNotificationPlugin: registered for remote notifications");
     
     [self raiseRegistration:YES withpushID:[UAirship shared].deviceToken];
 }
 
 - (void)registerDeviceTokenFailed:(UAHTTPRequest *)request {
-    UALOG(@"PushNotificationPlugin: Failed to register for remote notifications with request: %@", request);
+    UA_LINFO(@"PushNotificationPlugin: Failed to register for remote notifications with request: %@", request);
     
     [self raiseRegistration:NO withpushID:@""]; 
 }
