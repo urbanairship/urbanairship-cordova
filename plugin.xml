@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.urbanairship.plugins.PushNotification"
+    version="1.0.7">
+
+    <name>Urban Airship Push Plugin</name>
+    
+    <description>Urban Airship cordova plugin</description>
+    
+    <license>Apache 2.0</license>
+    
+    <asset src="www/cdv-plugin-fb-connect.js" target="cdv-plugin-fb-connect.js" />
+    <asset src="www/facebook-js-sdk.js" target="facebook-js-sdk.js" />
+    
+    <config-file target="config.xml" parent="/*">
+      <access origin="https://*.combine.urbanairship.com" />
+    </config-file>
+    
+    <engines>
+      <engine name="cordova" version=">=2.6.0" />
+    </engines>
+    
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="plugins">
+            <plugin name="PushNotificationPlugin" value="com.urbanairship.plugins.PushNotification" onload="true"/>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.VIBRATE" />
+            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+            <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+            <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="com.urbanairship.phonegap.plugins.PushNotificationPluginIntentReceiver" />
+            <receiver android:name="com.urbanairship.CoreReceiver" />
+            <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
+              <intent-filter>
+                  <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                  <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                  <category android:name="$PACKAGE_NAME" />
+              </intent-filter>
+            </receiver>
+
+            <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
+            <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
+            <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
+            
+            <provider android:name="com.urbanairship.UrbanAirshipProvider"
+                android:authorities="$PACKAGE_NAME.urbanairship.provider"
+                android:exported="false"
+                android:multiprocess="true" />
+
+            <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+        </config-file>
+        
+        <!-- cordova plugin src files -->
+        <source-file src="src/android/PushNotificationPlugin.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/PushNotificationPluginReceiver.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/libs/urbanairship-lib-3.0.0.jar" target-dir="libs/" />
+    </platform>
+    
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="plugins">
+            <plugin name="com.urbanairship.plugins.PushNotification" value="PushNotificationPlugin" onload="true"/>
+        </config-file>
+        
+        <header-file src="src/ios/PushNotificationPlugin.h" />
+        <source-file src="src/ios/PushNotificationPlugin.m" />
+
+        <source-file src="src/ios/frameworks/libUAirship-2.0.0.a" framework="true" />
+
+        <!-- Common header files -->
+        <header-file src="src/ios/Airship/Common/UAAnalytics.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAAnalyticsDBManager.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAAutoAppDelegate.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UABaseAppDelegateSurrogate.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UABaseLocationProvider.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAConfig.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UADelayOperation.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAEvent.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAGlobal.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAHTTPConnection.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAHTTPConnectionOperation.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAHTTPRequest.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAHTTPRequestEngine.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAKeychainUtils.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UALocationCommonValues.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UALocationEvent.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UALocationProviderDelegate.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UALocationProviderProtocol.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UALocationService.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UASQLite.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UASignificantChangeProvider.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAStandardLocationProvider.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UATagUtils.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAUser.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAUserAPIClient.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAUserData.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAUtils.h" target-dir="Airship/Common" />
+        <header-file src="src/ios/Airship/Common/UAirship.h" target-dir="Airship/Common" />
+
+        <!-- Push header files -->
+        <header-file src="src/ios/Airship/Common/UADeviceAPIClient.h" target-dir="Airship/Push" />
+        <header-file src="src/ios/Airship/Common/UADeviceRegistrationData.h" target-dir="Airship/Push" />
+        <header-file src="src/ios/Airship/Common/UADeviceRegistrationPayload.h" target-dir="Airship/Push" />
+        <header-file src="src/ios/Airship/Common/UAPush.h" target-dir="Airship/Push" />
+
+        <!-- External header files -->
+        <header-file src="src/ios/Airship/Common/UA_Base64.h" target-dir="Airship/External" />
+        <header-file src="src/ios/Airship/Common/UA_Reachability.h" target-dir="Airship/External" />
+        <header-file src="src/ios/Airship/Common/UA_fmdb/UA_FMDatabase.h" target-dir="Airship/External/UA_fmdb" />
+        <header-file src="src/ios/Airship/Common/UA_fmdb/UA_FMResultSet.h" target-dir="Airship/External/UA_fmdb" />
+        <header-file src="src/ios/Airship/Common/UA_json-framework/UA_SBJSON.h" target-dir="Airship/External/UA_json-framework" />
+        <header-file src="src/ios/Airship/Common/UA_json-framework/UA_SBJsonBase.h" target-dir="Airship/External/UA_json-framework" />
+        <header-file src="src/ios/Airship/Common/UA_json-framework/UA_SBJsonParser.h" target-dir="Airship/External/UA_json-framework" />
+        <header-file src="src/ios/Airship/Common/UA_json-framework/UA_SBJsonWriter.h" target-dir="Airship/External/UA_json-framework" />
+    </platform>
+</plugin>
