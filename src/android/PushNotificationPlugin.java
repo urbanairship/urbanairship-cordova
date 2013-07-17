@@ -32,21 +32,19 @@ import java.util.Set;
 
 public class PushNotificationPlugin extends CordovaPlugin {
 
-    final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
+    private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
             "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
             "getIncoming", "getPushID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation");
 
-    final static String TAG = PushNotificationPlugin.class.getSimpleName();
-
-    PushPreferences pushPrefs = PushManager.shared().getPreferences();
-    LocationPreferences locationPrefs = UALocationManager.shared().getPreferences();
-
-    static public String incomingAlert = "";
-    static public Map<String, String> incomingExtras = new HashMap<String, String>();
+    public static  String incomingAlert = "";
+    public static Map<String, String> incomingExtras = new HashMap<String, String>();
 
     // Used to raise pushes and registration from the PushReceiver
     private static PushNotificationPlugin instance;
+
+    private PushPreferences pushPrefs;
+    private LocationPreferences locationPrefs;
 
     public PushNotificationPlugin() {
         instance = this;
@@ -57,6 +55,8 @@ public class PushNotificationPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         Logger.info("Initializing PushNotificationPlugin");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
+        pushPrefs = PushManager.shared().getPreferences();
+        locationPrefs = UALocationManager.shared().getPreferences();
     }
 
     private static JSONObject notificationObject(String message,
@@ -78,7 +78,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
 
         JSONObject data = notificationObject(message, extras);
         String js = String.format(
-                "window.pushNotification.pushCallback(%s);",
+                "window.plugins.pushNotification.pushCallback(%s);",
                 data.toString());
         Logger.info("Javascript Calling back: " + js);
 
@@ -104,7 +104,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
             Logger.error("Error In raiseRegistration", e);
         }
         String js = String.format(
-                "window.pushNotification.registrationCallback(%s);",
+                "window.plugins.pushNotification.registrationCallback(%s);",
                 data.toString());
         Logger.info("Javascript Calling back: " + js);
 

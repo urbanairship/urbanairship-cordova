@@ -183,7 +183,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
     UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
     NSString *json = [writer stringWithObject:data];
-    NSString *js = [NSString stringWithFormat:@"window.pushNotification.pushCallback(%@);", json];
+    NSString *js = [NSString stringWithFormat:@"window.plugins.pushNotification.pushCallback(%@);", json];
 
     [self writeJavascript:js];
 
@@ -204,7 +204,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
     UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
     NSString *json = [writer stringWithObject:data];
-    NSString *js = [NSString stringWithFormat:@"window.pushNotification.registrationCallback(%@);", json];
+    NSString *js = [NSString stringWithFormat:@"window.plugins.pushNotification.registrationCallback(%@);", json];
 
     [self writeJavascript:js];
 
