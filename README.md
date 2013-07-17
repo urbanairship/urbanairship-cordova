@@ -1,25 +1,25 @@
 # Urban Airship PhoneGap/Cordova Plugin
 
-## Platform Support
+### Platform Support
 
 This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
 
-## Version Requirements
+### Version Requirements
 
 This repo is meant to work with PhoneGap 2.8.0+ and the latest version of the Urban Airship library.
 Please upgrade your PhoneGap application to use 2.8 if you wish to use this library. More documentation and
 integration guides for IOS and Android are availble on our
 [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap).
 
-## Contributing Code
+### Contributing Code
 
 We accept pull requests! If you would like to submit a pull request, please fill out and submit a
 Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreement/).
 
 
-# Installation
+## Installation
 
-## Automatic Installation using plugman
+#### Automatic Installation using plugman
 ```
 plugman --platform <platform> --project <project-directory> --plugin <plugin-path>
 
@@ -31,7 +31,7 @@ plugin-path is the patht to this plugin
 
 Note:  Configuring Airship is NOT automatic and still needs to be done. 
 
-## iOS manual installation
+#### iOS manual installation
 1. Copy src/ios/Airship to your projects directory
 1. Add Airship to the Project -> Build Settings -> Header Search Path
 1. Add Airship/lib-UAirship-2.0.0.a as a framework in Target -> Build Phases -> Link Binary With Libraries
@@ -39,80 +39,77 @@ Note:  Configuring Airship is NOT automatic and still needs to be done.
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
 
-	    <feature name="PushNotificationPlugin">
-	        <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
-	    </feature>
+        <feature name="PushNotificationPlugin">
+            <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+        </feature>
 
-## Android manual installation
+#### Android manual installation
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
 1. Copy src/Android/urbanairship-lib-3.0.0 to your projects lib directory
 
 1. Modify the AndroidManifest.xml to include these permissions:
 
-	    <uses-permission android:name="android.permission.INTERNET" />
-	    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	    <uses-permission android:name="android.permission.VIBRATE" />
-	    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-	    <uses-permission android:name="android.permission.WAKE_LOCK" />
-	    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-	    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	
-	    <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
-	    <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
-	
-	    <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
-	    <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+        <uses-permission android:name="android.permission.INTERNET" />
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        <uses-permission android:name="android.permission.VIBRATE" />
+        <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+        <uses-permission android:name="android.permission.WAKE_LOCK" />
+        <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    
+        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+        <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+    
+        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+        <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
 
 1. Modify the AndroidManifest.xml Application section to include:
 
-		<receiver android:name="com.urbanairship.phonegap.PushReceiver" />
-		<receiver android:name="com.urbanairship.CoreReceiver" />
-		<receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
-			<intent-filter>
-				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
-				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-				<!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
-				<category android:name="$PACKAGE_NAME" /> 
-			</intent-filter>
-		</receiver>
-		
-		<meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" /> 
-		
-		<service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
-		<service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
-		<service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
-		
-		<provider android:name="com.urbanairship.UrbanAirshipProvider"
-			<!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
-			android:authorities="$PACKAGE_NAME.urbanairship.provider" 
-			android:exported="false"
-			android:multiprocess="true" />
-		
-		<service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+        <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
+        <receiver android:name="com.urbanairship.CoreReceiver" />
+        <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+                <category android:name="$PACKAGE_NAME" /> 
+            </intent-filter>
+        </receiver>
+        
+        <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" /> 
+        
+        <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
+        <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
+        <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
+        
+        <provider android:name="com.urbanairship.UrbanAirshipProvider"
+            <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+            android:authorities="$PACKAGE_NAME.urbanairship.provider" 
+            android:exported="false"
+            android:multiprocess="true" />
+        
+        <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
 ** A full android manifest example can be found in Examples/Android/Example_AndroidManifest.xml
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
-		
-		<feature name="PushNotificationPlugin">
-			<param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
-		</feature>
+        
+        <feature name="PushNotificationPlugin">
+            <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+        </feature>
 
-# Airship Configuration
+## Airship Configuration
 
-## iOS
+#### iOS
 Create an AirshipConfig.plist file in your project.  An example one can be found in Examples/iOS/AirshipConfig.plist, make sure to update
 it with the correct app keys and secrets.
 
-## Android
+#### Android
 Create an AirshipConfig.xml file in your projects assets directory.  An example can be found in Examples/Android/Assets/AirshipConfig.xml, make sure to update it with your app key, secrets, and gcm sender id.
 
-# Example app
+## Example
 A full example can be found in the Examples/www directory. It contains an index.html, css files, and the necessary js files.  Copy them to your apps www directory to run it.
 
-
-# Javascript API
-
-## Basic Example
+#### Basic Example
 
     push = window.plugins.pushNotification;
 
@@ -156,15 +153,11 @@ A full example can be found in the Examples/www directory. It contains an index.
         }
     })
 
-This module is for using Urban Airship within a javascript environment.
-
-It follows an async callback-based approach to Javascript libraries. Anyone familiar with this style of programming should be immediately able to use the library to full effect.
-
-# Data objects
+## Data objects
 
 The Urban Airship javascript API provides standard instances for some of our data. This allows us to clearly explain what kind of data we're working with when we pass it around throughout the API.
 
-## Push
+#### Push
 
     Push = {
         message: "Your team just scored!",
@@ -173,7 +166,7 @@ The Urban Airship javascript API provides standard instances for some of our dat
         }
     }
 
-## Quiet Time
+#### Quiet Time
 
     // Quiet time set to 10PM - 6AM
     QuietTime = {
@@ -185,37 +178,37 @@ The Urban Airship javascript API provides standard instances for some of our dat
 
 A push is an object that contains the data associated with a Push. The extras dictionary can contain arbitrary key and value data, that you can use inside your application.
 
-# API
+## API
 
 **All methods without a return value return undefined**
 
-## Top-level calls
+### Top-level calls
 
-### enablePush()
+#### enablePush()
 
 Enable push on the device. This sends a registration to the backend server.
 
-### disablePush()
+#### disablePush()
 
 Disable push on the device. You will no longer be able to recieve push notifications.
 
-### enableLocation()
+#### enableLocation()
 
 Enable location updates on the device.
 
-### disableLocation()
+#### disableLocation()
 
 Disable location updates on the device.
 
-### enableBackgroundLocation()
+#### enableBackgroundLocation()
 
 Enable background location updates on the device.
 
-### disableBackgroundLocation()
+#### disableBackgroundLocation()
 
 Disable background location updates on the device.
 
-### registerForNotificationTypes(bitmask)
+#### registerForNotificationTypes(bitmask)
 **Note::** iOS Only
 
 On iOS, registration for push requires specifying what combination of badges, sound and
@@ -230,7 +223,7 @@ registration process.  For example:
 * notificationType.alert
 * notificationType.badge
 
-## Status Functions
+### Status Functions
 
 *Callback arguments:* (Boolean status)
 
@@ -242,53 +235,53 @@ All status callbacks are passed a boolean indicating the result of the request:
         }
     })
 
-### isPushEnabled(callback)
+#### isPushEnabled(callback)
 
 *Callback arguments* (Boolean enabled)
 
 Indicates whether push is enabled.
 
-### isSoundEnabled(callback)
+#### isSoundEnabled(callback)
 **Note:** Android Only
 
 *Callback arguments:* (Boolean enabled)
 
 Indicates whether sound is enabled.
 
-### isVibrateEnabled(callback)
+#### isVibrateEnabled(callback)
 **Note:** Android Only
 
 *Callback arguments:* (Boolean enabled)
 
 Indicates whether vibration is enabled.
 
-### isQuietTimeEnabled(callback)
+#### isQuietTimeEnabled(callback)
 
 *Callback arguments:* (Boolean enabled)
 
 Indicates whether Quiet Time is enabled.
 
-### isLocationEnabled(callback)
+#### isLocationEnabled(callback)
 
 *Callback arguments:* (Boolean enabled)
 
 Indicates whether location is enabled.
 
-### isBackgroundLocationEnabled(callback)
+#### isBackgroundLocationEnabled(callback)
 
 *Callback arguments:* (Boolean enabled)
 
 Indicates whether background location updates are enabled.
 
-### isInQuietTime(callback)
+#### isInQuietTime(callback)
 
 *Callback arguments:* (Boolean inQuietTime)
 
 Indicates whether Quiet Time is currently in effect.
 
-## Getters
+### Getters
 
-### getIncoming(callback)
+#### getIncoming(callback)
 
 *Callback arguments:* (Push incomingPush)
 
@@ -304,7 +297,7 @@ Get information about the push that caused the application to be launched. When 
         }
     })
 
-### getPushID(callback)
+#### getPushID(callback)
 
 *Callback arguments:* (String id)
 
@@ -312,76 +305,76 @@ Get the push identifier for the device. The push ID is used to send messages to 
 
 **Note:** iOS will always have a push identifier. Android will always have one once the application has had a successful registration.
 
-### getQuietTime(callback)
+#### getQuietTime(callback)
 
 *Callback arguments:* (QuietTime currentQuietTime)
 
 Get the current quiet time.
 
-### getTags(callback)
+#### getTags(callback)
 
 *Callback arguments:* (Array currentTags)
 
 Get the current tags.
 
-### getAlias(callback)
+#### getAlias(callback)
 
 *Callback arguments:* (String currentAlias)
 
 Get the current tags.
 
-## Setters
+### Setters
 
-### setTags(Array tags, callback)
+#### setTags(Array tags, callback)
 
 Set tags for the device.
 
-### setAlias(String alias, callback)
+#### setAlias(String alias, callback)
 
 Set alias for the device.
 
-### setSoundEnabled(Boolean enabled, callback)
+#### setSoundEnabled(Boolean enabled, callback)
 **Note:** Android Only, iOS sound settings come in the push
 
 Set whether the device makes sound on push.
 
-### setVibrateEnabled(Boolean enabled, callback)
+#### setVibrateEnabled(Boolean enabled, callback)
 **Note:** Android Only
 
 Set whether the device vibrates on push.
 
-### setQuietTimeEnabled(Boolean enabled, callback)
+#### setQuietTimeEnabled(Boolean enabled, callback)
 
 Set whether quiet time is on.
 
-### setQuietTime(QuietTime newQuietTime, callback)
+#### setQuietTime(QuietTime newQuietTime, callback)
 
 Set the quiet time for the device.
 
-### setAutobadgeEnabled(Boolean enabled, callback)
+#### setAutobadgeEnabled(Boolean enabled, callback)
 **Note:** iOS only
 
 Set whether the UA Autobadge feature is enabled.
 
-### setBadgeNumber(Int badge, callback)
+#### setBadgeNumber(Int badge, callback)
 **Note:** iOS only
 
 Set the current application badge number
 
-### resetBadge(callback)
+#### resetBadge(callback)
 **Note:** iOS only
 
 Reset the badge number to zero
 
-## Location
+### Location
 
-### recordCurrentLocation(callback)
+#### recordCurrentLocation(callback)
 
 Report the location of the device.
 
-# Events
+### Events
 
-## Incoming Push
+### Incoming Push
 
 *Callback arguments:* (Push push)
 
@@ -392,7 +385,7 @@ This event is trigerred when your application is open, and a push comes in.
     });
 
 
-## Registration
+### Registration
 
 *Callback arguments:* (Boolean error, String id)
 
@@ -405,4 +398,4 @@ This event is trigerred when your application recieves a registration response f
             console.log("Registered with ID: " + id);
         } 
     });
-	
+    
