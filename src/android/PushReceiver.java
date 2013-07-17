@@ -1,4 +1,4 @@
-package com.urbanairship.phonegap.plugins;
+package com.urbanairship.phonegap;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,7 +8,6 @@ import android.os.RemoteException;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.location.UALocationManager;
-import com.urbanairship.phonegap.sample.UAPhonegapSample;
 import com.urbanairship.push.PushManager;
 import com.urbanairship.util.ServiceNotBoundException;
 
@@ -18,16 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class PushNotificationPluginIntentReceiver extends BroadcastReceiver {
+public class PushReceiver extends BroadcastReceiver {
 
     private Map<String, String> getNotificationExtras(Intent intent) {
         Map<String, String> extrasMap = new HashMap<String, String>();
-
         Set<String> keys = intent.getExtras().keySet();
         for (String key : keys) {
 
             // ignore standard C2DM extra key
-            List<String> ignoredKeys = (List<String>) Arrays.asList(
+            List<String> ignoredKeys = Arrays.asList(
                     "collapse_key",// c2dm collapse key
                     "from",// c2dm sender
                     PushManager.EXTRA_NOTIFICATION_ID,// int id of generated
@@ -61,12 +59,10 @@ public class PushNotificationPluginIntentReceiver extends BroadcastReceiver {
                     + ". Payload: " + extras.toString() + ". NotificationID="
                     + id);
 
-            PushNotificationPlugin plugin = PushNotificationPlugin
-                    .getInstance();
             Logger.info("Got Extras: " + extras);
             Logger.info("Got Alert: " + alert);
 
-            plugin.raisePush(alert, extras);
+            PushNotificationPlugin.raisePush(alert, extras);
 
         } else if (action.equals(PushManager.ACTION_NOTIFICATION_OPENED)) {
 
@@ -76,9 +72,8 @@ public class PushNotificationPluginIntentReceiver extends BroadcastReceiver {
             Logger.info("User clicked notification. Message: " + alert
                     + ". Payload: " + extras.toString());
 
-            Intent launch = new Intent(Intent.ACTION_MAIN);
-            launch.setClass(UAirship.shared().getApplicationContext(),
-                    UAPhonegapSample.class);
+            Intent launch = context.getPackageManager().getLaunchIntentForPackage(UAirship.getPackageName());
+            launch.addCategory(Intent.CATEGORY_LAUNCHER);
             launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             PushNotificationPlugin.incomingAlert = alert;
@@ -89,8 +84,6 @@ public class PushNotificationPluginIntentReceiver extends BroadcastReceiver {
             UAirship.shared().getApplicationContext().startActivity(launch);
 
         } else if (action.equals(PushManager.ACTION_REGISTRATION_FINISHED)) {
-            PushNotificationPlugin plugin = PushNotificationPlugin
-                    .getInstance();
             String apid = intent.getStringExtra(PushManager.EXTRA_APID);
             Boolean valid = intent.getBooleanExtra(
                     PushManager.EXTRA_REGISTRATION_VALID, false);
@@ -99,7 +92,7 @@ public class PushNotificationPluginIntentReceiver extends BroadcastReceiver {
                     + ". Valid: "
                     + intent.getBooleanExtra(
                             PushManager.EXTRA_REGISTRATION_VALID, false));
-            plugin.raiseRegistration(valid, apid);
+            PushNotificationPlugin.raiseRegistration(valid, apid);
 
         } else if (action
                 .equals(UALocationManager.getLocationIntentAction(UALocationManager.ACTION_SUFFIX_LOCATION_SERVICE_BOUND))) {

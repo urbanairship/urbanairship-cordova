@@ -1,7 +1,8 @@
-package com.urbanairship.phonegap.plugins;
+package com.urbanairship.phonegap;
 
 import android.os.RemoteException;
 
+import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.location.LocationPreferences;
@@ -10,7 +11,9 @@ import com.urbanairship.push.PushManager;
 import com.urbanairship.push.PushPreferences;
 import com.urbanairship.util.ServiceNotBoundException;
 
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.api.CallbackContext;
+import org.apache.cordova.api.CordovaInterface;
 import org.apache.cordova.api.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,23 +39,27 @@ public class PushNotificationPlugin extends CordovaPlugin {
 
     final static String TAG = PushNotificationPlugin.class.getSimpleName();
 
-    static PushNotificationPlugin instance = new PushNotificationPlugin();
     PushPreferences pushPrefs = PushManager.shared().getPreferences();
     LocationPreferences locationPrefs = UALocationManager.shared().getPreferences();
 
-
     static public String incomingAlert = "";
     static public Map<String, String> incomingExtras = new HashMap<String, String>();
+
+    // Used to raise pushes and registration from the PushReceiver
+    private static PushNotificationPlugin instance;
 
     public PushNotificationPlugin() {
         instance = this;
     }
 
-    public static PushNotificationPlugin getInstance() {
-        return instance;
+    @Override
+    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
+        super.initialize(cordova, webView);
+        Logger.info("Initializing PushNotificationPlugin");
+        Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
     }
 
-    private JSONObject notificationObject(String message,
+    private static JSONObject notificationObject(String message,
             Map<String, String> extras) {
         JSONObject data = new JSONObject();
         try {
@@ -64,7 +71,11 @@ public class PushNotificationPlugin extends CordovaPlugin {
         return data;
     }
 
-    public void raisePush(String message, Map<String, String> extras) {
+    static void raisePush(String message, Map<String, String> extras) {
+        if (instance == null) {
+            return;
+        }
+
         JSONObject data = notificationObject(message, extras);
         String js = String.format(
                 "window.pushNotification.pushCallback(%s);",
@@ -72,7 +83,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
         Logger.info("Javascript Calling back: " + js);
 
         try {
-            this.webView.sendJavascript(js);
+            instance.webView.sendJavascript(js);
         } catch (NullPointerException npe) {
             Logger.info("unable to send javascript in raisepush");
         } catch (Exception e) {
@@ -80,7 +91,11 @@ public class PushNotificationPlugin extends CordovaPlugin {
         }
     }
 
-    public void raiseRegistration(Boolean valid, String pushID) {
+    static void raiseRegistration(Boolean valid, String pushID) {
+        if (instance == null) {
+            return;
+        }
+
         JSONObject data = new JSONObject();
         try {
             data.put("valid", valid);
@@ -94,7 +109,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
         Logger.info("Javascript Calling back: " + js);
 
         try {
-            this.webView.sendJavascript(js);
+            instance.webView.sendJavascript(js);
         } catch (NullPointerException npe) {
             Logger.info("unable to send javascript in raiseRegistration");
         } catch (Exception e) {
@@ -127,7 +142,6 @@ public class PushNotificationPlugin extends CordovaPlugin {
     void enablePush(JSONArray data, CallbackContext callbackContext) {
         if (requirePushServiceEnabled(callbackContext)) {
             PushManager.enablePush();
-            PushManager.shared().setIntentReceiver(PushNotificationPluginIntentReceiver.class);
             callbackContext.success();
         }
     }
