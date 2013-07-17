@@ -6,8 +6,8 @@ This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
 
 ## Version Requirements
 
-This repo is meant to work with PhoneGap 2.6.0+ and the latest version of the Urban Airship library.
-Please upgrade your PhoneGap application to use 2.6 if you wish to use this library. More documentation and
+This repo is meant to work with PhoneGap 2.8.0+ and the latest version of the Urban Airship library.
+Please upgrade your PhoneGap application to use 2.8 if you wish to use this library. More documentation and
 integration guides for IOS and Android are availble on our
 [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap).
 
@@ -16,13 +16,100 @@ integration guides for IOS and Android are availble on our
 We accept pull requests! If you would like to submit a pull request, please fill out and submit a
 Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreement/).
 
+
+# Installation
+
+## Automatic Installation using plugman
+plugman --platform <platform> --project <project-directory> --plugin <plugin-path>
+
+where:
+platform is ios or android
+project-directory is the path to your android or iOS project
+plugin-path is the patht to this plugin
+
+Note:  Configuring Airship is NOT automatic.
+
+## iOS manual installation
+1. Copy src/ios/Airship to your projects directory
+1. Add Airship to the Project -> Build Settings -> Header Search Path
+1. Add Airship/lib-UAirship-2.0.0.a as a framework in Target -> Build Phases -> Link Binary With Libraries
+1. Add src/ios/UAPushPlugin to your project
+
+1. Modify the cordova config.xml file to include the PushNotificationPlugin:
+    <feature name="PushNotificationPlugin">
+        <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+    </feature>
+
+## Android manual installation
+1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
+1. Copy src/Android/urbanairship-lib-3.0.0 to your projects lib directory
+
+1. Modify the AndroidManifest.xml to include these permissions:
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+    <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+
+    <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+    <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+
+1. Modify the AndroidManifest.xml Application section to include:
+
+    <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
+    <receiver android:name="com.urbanairship.CoreReceiver" />
+    <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
+    <intent-filter>
+        <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+        <category android:name="$PACKAGE_NAME" /> 
+    </intent-filter>
+    </receiver>
+
+    <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" /> 
+
+    <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
+    <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
+    <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
+
+    <provider android:name="com.urbanairship.UrbanAirshipProvider"
+        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+        android:authorities="$PACKAGE_NAME.urbanairship.provider" 
+        android:exported="false"
+        android:multiprocess="true" />
+
+    <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+
+1. Modify the cordova config.xml file to include the PushNotificationPlugin:
+    <feature name="PushNotificationPlugin">
+        <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+    </feature>
+
+# Airship Configuration
+
+## iOS
+Create an AirshipConfig.plist file in your project.  An example one can be found in Examples/iOS/AirshipConfig.plist, make sure to update
+it with the correct app keys and secrets.
+
+## Android
+Create an AirshipConfig.xml file in your projects assets directory.  An example can be found in Examples/Android/Assets/AirshipConfig.xml, make sure to update it with your app key, secrets, and gcm sender id.
+
+# Example app
+A full example can be found in the Examples/www directory. It contains an index.html, css files, and the necessary js files.  Copy them to your apps www directory to run it.
+
+
 # Javascript API
 
 ## Basic Example
 
-For a more complete example, check out the sample app [index.html](https://github.com/urbanairship/phonegap-ua-push/blob/master/ios-sample/www/index.html#L18-227)
-
-    push = window.pushNotification;
+    push = window.plugins.pushNotification;
 
     // Callback for when a device has registered with Urban Airship.
     // https://docs.urbanairship.com/display/DOCS/Server%3A+Android+Push+API#ServerAndroidPushAPI-Registration
