@@ -19,7 +19,9 @@
     <!-- android -->
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="plugins">
-            <plugin name="PushNotificationPlugin" value="PushNotificationPlugin" onload="true"/>
+            <feature name="PushNotificationPlugin">
+                <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+            </feature>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
@@ -32,57 +34,50 @@
             <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
             <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-            <application android:icon="@drawable/icon" android:label="@string/app_name"
-                android:name="com.urbanairship.phonegap.PushApplication">
-                <activity android:name="com.urbanairship.phonegap.PushActivity" android:label="@string/app_name"
-                          android:configChanges="orientation|keyboardHidden">
-                    <intent-filter>
-                        <action android:name="android.intent.action.MAIN" />
-                        <category android:name="android.intent.category.LAUNCHER" />
-                    </intent-filter>
-                </activity>
-
-                <receiver android:name="com.urbanairship.phonegap.PushNotificationPluginIntentReceiver" />
-                <receiver android:name="com.urbanairship.CoreReceiver" />
-                <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
-                  <intent-filter>
-                      <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                      <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                      <category android:name="$PACKAGE_NAME" />
-                  </intent-filter>
-                </receiver>
-
-                <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
-                <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
-                <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
-                
-                <provider android:name="com.urbanairship.UrbanAirshipProvider"
-                    android:authorities="$PACKAGE_NAME.urbanairship.provider"
-                    android:exported="false"
-                    android:multiprocess="true" />
-
-                <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
-            </application>
         </config-file>
 
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
+            <receiver android:name="com.urbanairship.CoreReceiver" />
+            <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
+              <intent-filter>
+                  <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                  <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                  <category android:name="$PACKAGE_NAME" />
+              </intent-filter>
+            </receiver>
+
+            <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" /> 
+
+            <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
+            <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
+            <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
+            
+            <provider android:name="com.urbanairship.UrbanAirshipProvider"
+                android:authorities="$PACKAGE_NAME.urbanairship.provider"
+                android:exported="false"
+                android:multiprocess="true" />
+
+            <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+        </config-file>
+
+
         <source-file src="src/android/PushNotificationPlugin.java" target-dir="src/com/urbanairship/phonegap" />
-        <source-file src="src/android/PushNotificationPluginIntentReceiver.java" target-dir="src/com/urbanairship/phonegap" />
-        <source-file src="src/android/PushActivity.java" target-dir="src/com/urbanairship/phonegap" />
-        <source-file src="src/android/PushApplication.java" target-dir="src/com/urbanairship/phonegap" />
+        <source-file src="src/android/PushReceiver.java" target-dir="src/com/urbanairship/phonegap" />
+        <source-file src="src/android/PushAutopilot.java" target-dir="src/com/urbanairship/phonegap" />
         <source-file src="src/android/urbanairship-lib-3.0.0.jar" target-dir="libs/" />
     </platform>
     
     <!-- ios -->
     <platform name="ios">
         <config-file target="config.xml" parent="plugins">
-            <plugin name="PushNotificationPlugin" value="PushNotificationPlugin" onload="true"/>
+             <feature name="PushNotificationPlugin">
+                <param name="ios-package" value="PushNotificationPlugin" onload="true" />
+            </feature>
         </config-file>
         
         <header-file src="src/ios/PushNotificationPlugin.h" />
         <source-file src="src/ios/PushNotificationPlugin.m" />
-
-        <resource-file src="src/ios/AirshipConfig.plist" />
 
         <!-- Common header files -->
         <header-file src="src/ios/Airship/Common/UAAnalytics.h"  />

@@ -55,8 +55,7 @@
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
 
-    <application android:icon="@drawable/icon" android:label="@string/app_name"
-        android:debuggable="true" android:name=".MainApplication">
+    <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
         <activity android:name="UAPhonegapSample" android:label="@string/app_name"
                   android:configChanges="orientation|keyboardHidden">
             <intent-filter>
@@ -65,9 +64,11 @@
             </intent-filter>
         </activity>
 
+        <!-- REQUIRED for PhoneGap plugin -->
+        <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" />
 
         <!-- REQUIRED for PhoneGap plugin callback support --> 
-        <receiver android:name="com.urbanairship.phonegap.plugins.PushNotificationPluginIntentReceiver" />
+        <receiver android:name="com.urbanairship.phonegap.plugins.PushReceiver" />
 
         <!-- REQUIRED for Urban Airship GCM-->
         <receiver android:name="com.urbanairship.CoreReceiver" />
