@@ -20,14 +20,16 @@ Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreemen
 # Installation
 
 ## Automatic Installation using plugman
+```
 plugman --platform <platform> --project <project-directory> --plugin <plugin-path>
 
 where:
 platform is ios or android
 project-directory is the path to your android or iOS project
 plugin-path is the patht to this plugin
+```
 
-Note:  Configuring Airship is NOT automatic.
+Note:  Configuring Airship is NOT automatic and still needs to be done. 
 
 ## iOS manual installation
 1. Copy src/ios/Airship to your projects directory
@@ -36,9 +38,10 @@ Note:  Configuring Airship is NOT automatic.
 1. Add src/ios/UAPushPlugin to your project
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
-    <feature name="PushNotificationPlugin">
-        <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
-    </feature>
+
+	    <feature name="PushNotificationPlugin">
+	        <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+	    </feature>
 
 ## Android manual installation
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
@@ -46,51 +49,53 @@ Note:  Configuring Airship is NOT automatic.
 
 1. Modify the AndroidManifest.xml to include these permissions:
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
-    <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
-
-    <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
-    <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	    <uses-permission android:name="android.permission.INTERNET" />
+	    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	    <uses-permission android:name="android.permission.VIBRATE" />
+	    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+	    <uses-permission android:name="android.permission.WAKE_LOCK" />
+	    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	
+	    <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+	    <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+	
+	    <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+	    <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
 
 1. Modify the AndroidManifest.xml Application section to include:
 
-    <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
-    <receiver android:name="com.urbanairship.CoreReceiver" />
-    <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
-    <intent-filter>
-        <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-        <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
-        <category android:name="$PACKAGE_NAME" /> 
-    </intent-filter>
-    </receiver>
-
-    <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" /> 
-
-    <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
-    <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
-    <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
-
-    <provider android:name="com.urbanairship.UrbanAirshipProvider"
-        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
-        android:authorities="$PACKAGE_NAME.urbanairship.provider" 
-        android:exported="false"
-        android:multiprocess="true" />
-
-    <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+		<receiver android:name="com.urbanairship.phonegap.PushReceiver" />
+		<receiver android:name="com.urbanairship.CoreReceiver" />
+		<receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
+			<intent-filter>
+				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+				<!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+				<category android:name="$PACKAGE_NAME" /> 
+			</intent-filter>
+		</receiver>
+		
+		<meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" /> 
+		
+		<service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
+		<service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
+		<service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
+		
+		<provider android:name="com.urbanairship.UrbanAirshipProvider"
+			<!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+			android:authorities="$PACKAGE_NAME.urbanairship.provider" 
+			android:exported="false"
+			android:multiprocess="true" />
+		
+		<service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+** A full android manifest example can be found in Examples/Android/Example_AndroidManifest.xml
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
-    <feature name="PushNotificationPlugin">
-        <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
-    </feature>
+		
+		<feature name="PushNotificationPlugin">
+			<param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+		</feature>
 
 # Airship Configuration
 
