@@ -19,17 +19,28 @@ Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreemen
 
 ## Installation
 
-#### Automatic Installation using plugman
+#### Automatic Installation using plugman (iOS and Android)
+``` 
+plugman --platform <platform> --project <project-directory> --plugin <plugin-path> \
+--variable PRODUCTION_APP_KEY=<production-app-key> \
+--variable PRODUCTION_APP_SECRET=<production-app-secret> \
+--variable DEVELOPMENT_APP_KEY=<development-app-key> \
+--variable DEVELOPMENT_APP_SECRET=<development-app-secret> \
+--variable GCM_SENDER=<gcm-sender-id> \
+--variable IN_PRODUCTION=<in-production> \
+--variable LOCATION_ENABLED=<location-enabled>
 ```
-plugman --platform <platform> --project <project-directory> --plugin <plugin-path>
 
-where:
-platform is ios or android
-project-directory is the path to your android or iOS project
-plugin-path is the patht to this plugin
-```
+- platform: ios or android
+- project-directory: the path to your android or iOS project
+- plugin-path: the patht to this plugin
+- production-app-key: the Urban Airship production app key
+- production-app-secret: the Urban Airship production app secret
+- development-app-key: the Urban Airship development app key
+- development-app-secret: the Urban Airship development app secret
+- gcm-sender-id: Android only - your gcm sender id
+- location-enabled: Android only - if you want to use location
 
-Note:  Configuring Airship is NOT automatic and still needs to be done. 
 
 #### iOS manual installation
 1. Copy src/ios/Airship to your projects directory
@@ -39,15 +50,41 @@ Note:  Configuring Airship is NOT automatic and still needs to be done.
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
 
+.. code:: xml
+
         <feature name="PushNotificationPlugin">
-            <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+            <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" />
+            <param name="onload" value="true" />
         </feature>
+
+1. Add AirshipConfig.plist to your project
+
+.. code:: xml
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+    <dict>
+      <key>inProduction</key>
+      <false/>
+      <key>developmentAppKey</key>
+      <string>Your Development App Key</string>
+      <key>developmentAppSecret</key>
+      <string>Your Development App Secret</string>
+      <key>productionAppKey</key>
+      <string>Your Production App Key</string>
+      <key>productionAppSecret</key>
+      <string>Your Production App Secret</string>
+    </dict>
+    </plist>
 
 #### Android manual installation
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
 1. Copy src/Android/urbanairship-lib-3.0.0 to your projects lib directory
 
 1. Modify the AndroidManifest.xml to include these permissions:
+
+.. code:: xml
 
         <uses-permission android:name="android.permission.INTERNET" />
         <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -64,6 +101,8 @@ Note:  Configuring Airship is NOT automatic and still needs to be done.
         <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
 
 1. Modify the AndroidManifest.xml Application section to include:
+
+.. code:: xml
 
         <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
         <receiver android:name="com.urbanairship.CoreReceiver" />
@@ -89,22 +128,44 @@ Note:  Configuring Airship is NOT automatic and still needs to be done.
             android:multiprocess="true" />
         
         <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
-** A full android manifest example can be found in Examples/Android/Example_AndroidManifest.xml
+
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
-        
+
+.. code:: xml
+
         <feature name="PushNotificationPlugin">
-            <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+            <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" />
+            <param name="onload" value="true" />
         </feature>
 
-## Airship Configuration
+1. Add airshipconfig.properties to the android assets directory:
 
-#### iOS
-Create an AirshipConfig.plist file in your project.  An example one can be found in Examples/iOS/AirshipConfig.plist, make sure to update
-it with the correct app keys and secrets.
+```
+    developmentAppKey = Your Development App Key
+    developmentAppSecret = Your Development Secret
+    productionAppKey = Your Production App Key
+    productionAppSecret = Your Production Secret
 
-#### Android
-Create an AirshipConfig.xml file in your projects assets directory.  An example can be found in Examples/Android/Assets/AirshipConfig.xml, make sure to update it with your app key, secrets, and gcm sender id.
+    #transport, only gcm is supported for now
+    transport = gcm
+
+    gcmSender = Your GCM sender ID is your Google API project number (required for GCM)
+    inProduction = false
+
+    # LogLevel is "VERBOSE", "DEBUG", "INFO", "WARN", "ERROR" or "ASSERT"
+    developmentLogLevel = DEBUG
+    productionLogLevel = ERROR
+    minSdkVersion = 4
+```
+
+1. Optional - Enable location by adding location.properties to the android assets directory:
+
+```
+#enable location services. defaults to false
+locationServiceEnabled = true
+```
+
 
 ## Example
 A full example can be found in the Examples/www directory. It contains an index.html, css files, and the necessary js files.  Copy them to your apps www directory to run it.
