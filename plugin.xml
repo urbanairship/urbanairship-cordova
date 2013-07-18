@@ -16,11 +16,22 @@
 
     <asset src="www/PushNotification.js" target="js/PushNotification.js" />
 
+    <preference name="PRODUCTION_APP_KEY" />
+    <preference name="PRODUCTION_APP_SECRET" />
+    <preference name="DEVELOPMENT_APP_KEY" />
+    <preference name="DEVELOPMENT_APP_SECRET" />
+
     <!-- android -->
     <platform name="android">
-        <config-file target="res/xml/config.xml" parent="plugins">
+       
+        <preference name="GCM_SENDER_ID" />
+        <preference name="LOCATION_ENABLED" />
+        <preference name="IN_PRODUCTION" />
+
+        <config-file target="res/xml/config.xml" parent="/widget">
             <feature name="PushNotificationPlugin">
-                <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" onload="true" />
+                <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin"/>
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 
@@ -48,6 +59,15 @@
             </receiver>
 
             <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" /> 
+            
+            <meta-data android:name="com.urbanairship.production_app_key" android:value="\ $PRODUCTION_APP_KEY" /> 
+            <meta-data android:name="com.urbanairship.production_app_secret" android:value="\ $PRODUCTION_APP_SECRET" /> 
+            <meta-data android:name="com.urbanairship.development_app_key" android:value="\ $DEVELOPMENT_APP_KEY" /> 
+            <meta-data android:name="com.urbanairship.development_app_secret" android:value="\ $DEVELOPMENT_APP_SECRET" /> 
+            <meta-data android:name="com.urbanairship.in_production" android:value="$IN_PRODUCTION" /> 
+            <meta-data android:name="com.urbanairship.gcm_sender" android:value="\ $GCM_SENDER_ID" /> 
+            <meta-data android:name="com.urbanairship.location_enabled" android:value="$LOCATION_ENABLED" /> 
+
 
             <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
             <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
@@ -61,7 +81,6 @@
             <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
         </config-file>
 
-
         <source-file src="src/android/PushNotificationPlugin.java" target-dir="src/com/urbanairship/phonegap" />
         <source-file src="src/android/PushReceiver.java" target-dir="src/com/urbanairship/phonegap" />
         <source-file src="src/android/PushAutopilot.java" target-dir="src/com/urbanairship/phonegap" />
@@ -70,11 +89,31 @@
     
     <!-- ios -->
     <platform name="ios">
-        <config-file target="config.xml" parent="plugins">
+        <config-file target="config.xml" parent="/widget">
              <feature name="PushNotificationPlugin">
-                <param name="ios-package" value="PushNotificationPlugin" onload="true" />
+                <param name="ios-package" value="PushNotificationPlugin" />
+                <param name="onload" value="true" />
             </feature>
         </config-file>
+
+        <resource-file src="src/ios/AirshipConfig.plist" />
+
+        <config-file target="*/AirshipConfig.plist" parent="developmentAppKey">
+           <string>$DEVELOPMENT_APP_KEY</string>
+        </config-file>
+
+         <config-file target="*/AirshipConfig.plist" parent="developmentAppSecret">
+           <string>$DEVELOPMENT_APP_SECRET</string>
+        </config-file>
+
+         <config-file target="*/AirshipConfig.plist" parent="productionAppKey">
+           <string>$PRODUCTION_APP_KEY</string>
+        </config-file>
+
+         <config-file target="*/AirshipConfig.plist" parent="productionAppSecret">
+           <string>$PRODUCTION_APP_SECRET</string>
+        </config-file>
+
         
         <header-file src="src/ios/PushNotificationPlugin.h" />
         <source-file src="src/ios/PushNotificationPlugin.m" />
