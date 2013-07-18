@@ -50,7 +50,6 @@ plugman --platform <platform> --project <project-directory> --plugin <plugin-pat
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
 
-.. code:: xml
 
         <feature name="PushNotificationPlugin">
             <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" />
@@ -59,24 +58,23 @@ plugman --platform <platform> --project <project-directory> --plugin <plugin-pat
 
 1. Add AirshipConfig.plist to your project
 
-.. code:: xml
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version="1.0">
-    <dict>
-      <key>inProduction</key>
-      <false/>
-      <key>developmentAppKey</key>
-      <string>Your Development App Key</string>
-      <key>developmentAppSecret</key>
-      <string>Your Development App Secret</string>
-      <key>productionAppKey</key>
-      <string>Your Production App Key</string>
-      <key>productionAppSecret</key>
-      <string>Your Production App Secret</string>
-    </dict>
-    </plist>
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+                <dict>
+                        <key>inProduction</key>
+                        <false/>
+                        <key>developmentAppKey</key>
+                        <string>Your Development App Key</string>
+                        <key>developmentAppSecret</key>
+                        <string>Your Development App Secret</string>
+                        <key>productionAppKey</key>
+                        <string>Your Production App Key</string>
+                        <key>productionAppSecret</key>
+                        <string>Your Production App Secret</string>
+                </dict>
+        </plist>
 
 #### Android manual installation
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
@@ -84,7 +82,6 @@ plugman --platform <platform> --project <project-directory> --plugin <plugin-pat
 
 1. Modify the AndroidManifest.xml to include these permissions:
 
-.. code:: xml
 
         <uses-permission android:name="android.permission.INTERNET" />
         <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -102,7 +99,6 @@ plugman --platform <platform> --project <project-directory> --plugin <plugin-pat
 
 1. Modify the AndroidManifest.xml Application section to include:
 
-.. code:: xml
 
         <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
         <receiver android:name="com.urbanairship.CoreReceiver" />
@@ -132,7 +128,6 @@ plugman --platform <platform> --project <project-directory> --plugin <plugin-pat
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
 
-.. code:: xml
 
         <feature name="PushNotificationPlugin">
             <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" />
@@ -141,30 +136,29 @@ plugman --platform <platform> --project <project-directory> --plugin <plugin-pat
 
 1. Add airshipconfig.properties to the android assets directory:
 
-```
-    developmentAppKey = Your Development App Key
-    developmentAppSecret = Your Development Secret
-    productionAppKey = Your Production App Key
-    productionAppSecret = Your Production Secret
 
-    #transport, only gcm is supported for now
-    transport = gcm
+        developmentAppKey = Your Development App Key
+        developmentAppSecret = Your Development Secret
+        productionAppKey = Your Production App Key
+        productionAppSecret = Your Production Secret
+        
+        #transport, only gcm is supported for now
+        transport = gcm
+        
+        gcmSender = Your GCM sender ID is your Google API project number (required for GCM)
+        inProduction = false
+        
+        # LogLevel is "VERBOSE", "DEBUG", "INFO", "WARN", "ERROR" or "ASSERT"
+        developmentLogLevel = DEBUG
+        productionLogLevel = ERROR
+        minSdkVersion = 4
 
-    gcmSender = Your GCM sender ID is your Google API project number (required for GCM)
-    inProduction = false
-
-    # LogLevel is "VERBOSE", "DEBUG", "INFO", "WARN", "ERROR" or "ASSERT"
-    developmentLogLevel = DEBUG
-    productionLogLevel = ERROR
-    minSdkVersion = 4
-```
 
 1. Optional - Enable location by adding location.properties to the android assets directory:
 
-```
-#enable location services. defaults to false
-locationServiceEnabled = true
-```
+
+        #enable location services. defaults to false
+        locationServiceEnabled = true
 
 
 ## Example
