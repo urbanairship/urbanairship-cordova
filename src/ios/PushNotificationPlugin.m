@@ -16,18 +16,25 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 @implementation PushNotificationPlugin
 
-- (id)initWithWebView:(UIWebView *)theWebView {
-    if (self = [super initWithWebView:theWebView]) {
-        [self takeOff];
-    }
-    
-    return self;
+- (void)pluginInitialize {
+    [self takeOff];
 }
 
 - (void)takeOff {
     //Init Airship launch options
     UAConfig *config = [UAConfig defaultConfig];
+    
+    NSDictionary *settings = self.commandDelegate.settings;
 
+    config.productionAppKey = [settings valueForKey:@"com.urbanairship.production_app_key"] ?: config.productionAppKey;
+    config.productionAppSecret = [settings valueForKey:@"com.urbanairship.production_app_secret"] ?: config.productionAppSecret;
+    config.developmentAppKey = [settings valueForKey:@"com.urbanairship.development_app_key"] ?: config.developmentAppKey;
+    config.developmentAppSecret = [settings valueForKey:@"com.urbanairship.development_app_secret"] ?: config.developmentAppSecret;
+
+    if ([settings valueForKey:@"com.urbanairship.in_production"]) {
+        config.inProduction = [[settings valueForKey:@"com.urbanairship.in_production"] boolValue];
+    }
+    
     // Create Airship singleton that's used to talk to Urban Airship servers.
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:config];
@@ -181,7 +188,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [data setObject:message forKey:@"message"];
     [data setObject:extras forKey:@"extras"];
 
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     NSString *json = [writer stringWithObject:data];
     NSString *js = [NSString stringWithFormat:@"window.plugins.pushNotification.pushCallback(%@);", json];
 
@@ -202,7 +209,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [data setObject:[NSNumber numberWithBool:valid] forKey:@"valid"];
     [data setObject:pushID forKey:@"pushID"];
 
-    UA_SBJsonWriter *writer = [[[UA_SBJsonWriter alloc] init] autorelease];
+    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
     NSString *json = [writer stringWithObject:data];
     NSString *js = [NSString stringWithFormat:@"window.plugins.pushNotification.registrationCallback(%@);", json];
 
@@ -302,8 +309,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
             NSString *start = [quietTimeDictionary valueForKey:@"start"];
             NSString *end = [quietTimeDictionary valueForKey:@"end"];
 
-            NSDateFormatter *df = [[NSDateFormatter new] autorelease];
-            df.locale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+            NSDateFormatter *df = [NSDateFormatter new];
+            df.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
             df.dateFormat = @"HH:mm";
 
             NSDate *startDate = [df dateFromString:start];
@@ -379,8 +386,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
             NSString *start = [quietTimeDictionary objectForKey:@"start"];
             NSString *end = [quietTimeDictionary objectForKey:@"end"];
 
-            NSDateFormatter *df = [[NSDateFormatter new] autorelease];
-            df.locale = [[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"] autorelease];
+            NSDateFormatter *df = [NSDateFormatter new];
+            df.locale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"];
             df.dateFormat = @"HH:mm";
 
             NSDate *startDate = [df dateFromString:start];
@@ -389,7 +396,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
             //these will be nil if the dateformatter can't make sense of either string
             if (startDate && endDate) {
 
-                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+                NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
 
                 NSDateComponents *startComponents = [gregorian components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:startDate];
                 NSDateComponents *endComponents = [gregorian components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:endDate];
@@ -468,7 +475,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         NSDate *startDate;
         NSDate *endDate;
 
-        NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+        NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
         NSDateComponents *startComponents = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
         NSDateComponents *endComponents = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
 
@@ -552,11 +559,9 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 #pragma mark Other stuff
 
 - (void)dealloc {
-    self.incomingNotification = nil;
     [UAPush shared].delegate = nil;
     [[UAPush shared] removeObserver:self];
 
-    [super dealloc];
 }
 
 - (void)failIfSimulator {
@@ -568,7 +573,6 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
                                                   otherButtonTitles:nil];
 
         [someError show];
-        [someError release];
     }
 }
 
