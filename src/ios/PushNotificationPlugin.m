@@ -17,6 +17,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 @implementation PushNotificationPlugin
 
 - (void)pluginInitialize {
+    dispatchQueue =  dispatch_queue_create("com.urbanairship.push_plugin", DISPATCH_QUEUE_SERIAL);
     [self takeOff];
 }
 
@@ -109,27 +110,30 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 }
 
 - (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command expecting:(NSArray *)expected withBlock:(UACordovaCallbackBlock)block {
-    //if we're expecting any arguments
-    if (expected) {
-        if (![self validateArguments:command.arguments forExpectedTypes:expected]) {
+
+    dispatch_async(dispatchQueue, ^{
+        //if we're expecting any arguments
+        if (expected) {
+            if (![self validateArguments:command.arguments forExpectedTypes:expected]) {
+                [self failWithCallbackID:command.callbackId];
+                return;
+            }
+        } else if(command.arguments.count) {
+            UA_LERR(@"Parameter number mismatch: expected 0 and received %d", command.arguments.count);
             [self failWithCallbackID:command.callbackId];
             return;
         }
-    } else if(command.arguments.count) {
-        UA_LERR(@"Parameter number mismatch: expected 0 and received %d", command.arguments.count);
-        [self failWithCallbackID:command.callbackId];
-        return;
-    }
 
-    //execute the block. the return value should be an obj-c object holding what we want to pass back to cordova.
-    id returnValue = block(command.arguments);
+        //execute the block. the return value should be an obj-c object holding what we want to pass back to cordova.
+        id returnValue = block(command.arguments);
     
-    CDVPluginResult *result = [self pluginResultForValue:returnValue];
-    if (result) {
-        [self succeedWithPluginResult:result withCallbackID:command.callbackId];
-    } else {
-        [self failWithCallbackID:command.callbackId];
-    }
+        CDVPluginResult *result = [self pluginResultForValue:returnValue];
+        if (result) {
+            [self succeedWithPluginResult:result withCallbackID:command.callbackId];
+        } else {
+            [self failWithCallbackID:command.callbackId];
+        }
+    });
 }
 
 - (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command expecting:(NSArray *)expected withVoidBlock:(UACordovaVoidCallbackBlock)block {
