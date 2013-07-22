@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PushNotificationPlugin extends CordovaPlugin {
 
@@ -45,6 +47,8 @@ public class PushNotificationPlugin extends CordovaPlugin {
 
     private PushPreferences pushPrefs;
     private LocationPreferences locationPrefs;
+
+    private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
     public PushNotificationPlugin() {
         instance = this;
@@ -119,22 +123,26 @@ public class PushNotificationPlugin extends CordovaPlugin {
 
 
     @Override
-    public boolean execute(String action, JSONArray data, CallbackContext callbackContext) {
+    public boolean execute(final String action, final JSONArray data, final CallbackContext callbackContext) {
         if (!knownActions.contains(action)) {
             Logger.debug("Invalid action: " + action);
             return false;
         }
 
-        try {
-            Logger.debug("Plugin Execute: " + action);
-            Method method = PushNotificationPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
-            method.invoke(this, data, callbackContext);
-            return true;
-        } catch (Exception e) {
-            Logger.error(e);
-        }
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Logger.debug("Plugin Execute: " + action);
+                    Method method = PushNotificationPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
+                    method.invoke(PushNotificationPlugin.this, data, callbackContext);
+                } catch (Exception e) {
+                    Logger.error(e);
+                }
+            }
+        });
 
-        return false;
+        return true;
     }
 
     // Actions
