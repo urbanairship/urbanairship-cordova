@@ -3,46 +3,24 @@ package com.urbanairship.phonegap;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.RemoteException;
 
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
-import com.urbanairship.location.UALocationManager;
 import com.urbanairship.push.PushManager;
-import com.urbanairship.util.ServiceNotBoundException;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class PushReceiver extends BroadcastReceiver {
 
-    private Map<String, String> getNotificationExtras(Intent intent) {
-        Map<String, String> extrasMap = new HashMap<String, String>();
-        Set<String> keys = intent.getExtras().keySet();
-        for (String key : keys) {
-
-            // ignore standard C2DM extra key
-            List<String> ignoredKeys = Arrays.asList(
-                    "collapse_key",// c2dm collapse key
-                    "from",// c2dm sender
-                    PushManager.EXTRA_NOTIFICATION_ID,// int id of generated
-                    // notification
-                    // (ACTION_PUSH_RECEIVED
-                    // only)
-                    PushManager.EXTRA_PUSH_ID,// internal UA push id
-                    PushManager.EXTRA_ALERT);// ignore alert
-            if (ignoredKeys.contains(key)) {
-                continue;
-            }
-
-            extrasMap.put(key, intent.getStringExtra(key));
-        }
-
-        return extrasMap;
-    }
+    private static final List<String> IGNORED_EXTRAS_KEYS = Arrays.asList(
+            "collapse_key",// c2dm collapse key
+            "from", // c2dm sender
+            PushManager.EXTRA_NOTIFICATION_ID, // int id of generated
+            PushManager.EXTRA_PUSH_ID, // internal UA push id
+            PushManager.EXTRA_ALERT); // ignore alert
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -50,63 +28,64 @@ public class PushReceiver extends BroadcastReceiver {
         String action = intent.getAction();
 
         if (action.equals(PushManager.ACTION_PUSH_RECEIVED)) {
-            int id = intent.getIntExtra(PushManager.EXTRA_NOTIFICATION_ID, 0);
-
-            String alert = intent.getStringExtra(PushManager.EXTRA_ALERT);
-            Map<String, String> extras = getNotificationExtras(intent);
-
-            Logger.info("Received push notification. Alert: " + alert
-                    + ". Payload: " + extras.toString() + ". NotificationID="
-                    + id);
-
-            Logger.info("Got Extras: " + extras);
-            Logger.info("Got Alert: " + alert);
-
-            PushNotificationPlugin.raisePush(alert, extras);
-
+            handlePushReceived(intent);
         } else if (action.equals(PushManager.ACTION_NOTIFICATION_OPENED)) {
-
-            String alert = intent.getStringExtra(PushManager.EXTRA_ALERT);
-            Map<String, String> extras = getNotificationExtras(intent);
-
-            Logger.info("User clicked notification. Message: " + alert
-                    + ". Payload: " + extras.toString());
-
-            Intent launch = context.getPackageManager().getLaunchIntentForPackage(UAirship.getPackageName());
-            launch.addCategory(Intent.CATEGORY_LAUNCHER);
-            launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-            PushNotificationPlugin.incomingAlert = alert;
-            PushNotificationPlugin.incomingExtras = extras;
-
-            Logger.info("Plugin Awesome user clicked!");
-
-            UAirship.shared().getApplicationContext().startActivity(launch);
-
+            handleNotificationOpened(context, intent);
         } else if (action.equals(PushManager.ACTION_REGISTRATION_FINISHED)) {
-            String apid = intent.getStringExtra(PushManager.EXTRA_APID);
-            Boolean valid = intent.getBooleanExtra(
-                    PushManager.EXTRA_REGISTRATION_VALID, false);
-            Logger.info("Registration complete. APID:"
-                    + intent.getStringExtra(PushManager.EXTRA_APID)
-                    + ". Valid: "
-                    + intent.getBooleanExtra(
-                            PushManager.EXTRA_REGISTRATION_VALID, false));
-            PushNotificationPlugin.raiseRegistration(valid, apid);
+            handleRegistrationFinished(intent);
+        }
+    }
 
-        } else if (action
-                .equals(UALocationManager.getLocationIntentAction(UALocationManager.ACTION_SUFFIX_LOCATION_SERVICE_BOUND))) {
-            try {
-                UALocationManager.shared().recordCurrentLocation();
-                Logger.info("Location successfully recorded on Intent");
-            } catch (ServiceNotBoundException e) {
-                Logger.error("Recording current location on Intent failed");
-                e.printStackTrace();
-            } catch (RemoteException e) {
-                Logger.error("zomg flailsauce");
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+    private void handlePushReceived(Intent intent) {
+        int id = intent.getIntExtra(PushManager.EXTRA_NOTIFICATION_ID, 0);
+        String alert = intent.getStringExtra(PushManager.EXTRA_ALERT);
+        Map<String, String> extras = getNotificationExtras(intent);
+
+        Logger.info("Received push notification. Alert: " + alert +
+                ". Payload: " + extras + ". NotificationID=" + id);
+
+        PushNotificationPlugin.raisePush(alert, extras);
+    }
+
+    private void handleNotificationOpened(Context context, Intent intent) {
+        String alert = intent.getStringExtra(PushManager.EXTRA_ALERT);
+        Map<String, String> extras = getNotificationExtras(intent);
+
+        Logger.info("User clicked notification. Message: " + alert
+                + ". Payload: " + extras.toString());
+
+        Intent launch = context.getPackageManager().getLaunchIntentForPackage(UAirship.getPackageName());
+        launch.addCategory(Intent.CATEGORY_LAUNCHER);
+        launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        PushNotificationPlugin.incomingAlert = alert;
+        PushNotificationPlugin.incomingExtras = extras;
+
+        context.startActivity(launch);
+    }
+
+    private void handleRegistrationFinished(Intent intent) {
+        String apid = intent.getStringExtra(PushManager.EXTRA_APID);
+        Boolean valid = intent.getBooleanExtra(PushManager.EXTRA_REGISTRATION_VALID, false);
+
+        Logger.info("Registration complete. APID:"
+                + intent.getStringExtra(PushManager.EXTRA_APID)
+                + ". Valid: "
+                + intent.getBooleanExtra(PushManager.EXTRA_REGISTRATION_VALID, false));
+
+        PushNotificationPlugin.raiseRegistration(valid, apid);
+    }
+
+
+    private Map<String, String> getNotificationExtras(Intent intent) {
+        Map<String, String> extrasMap = new HashMap<String, String>();
+
+        for (String key : intent.getExtras().keySet()) {
+            if (!IGNORED_EXTRAS_KEYS.contains(key)) {
+                extrasMap.put(key, intent.getStringExtra(key));
             }
         }
+
+        return extrasMap;
     }
 }
