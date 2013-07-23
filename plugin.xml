@@ -11,7 +11,7 @@
     <license>Apache 2.0</license>
     
     <engines>
-      <engine name="cordova" version=">=2.6.0" />
+      <engine name="cordova" version=">=3.0.0" />
     </engines>
 
     <asset src="www/PushNotification.js" target="js/PushNotification.js" />
