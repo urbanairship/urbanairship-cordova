@@ -19,27 +19,22 @@ Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreemen
 
 ## Installation
 
-#### Automatic Installation using plugman (iOS and Android)
-``` 
-plugman --platform <platform> --project <project-directory> --plugin <plugin-path> \
---variable PRODUCTION_APP_KEY=<production-app-key> \
---variable PRODUCTION_APP_SECRET=<production-app-secret> \
---variable DEVELOPMENT_APP_KEY=<development-app-key> \
---variable DEVELOPMENT_APP_SECRET=<development-app-secret> \
---variable GCM_SENDER=<gcm-sender-id> \
---variable IN_PRODUCTION=<in-production> \
---variable LOCATION_ENABLED=<location-enabled>
+#### Automatic Installation using phonegap cli (iOS and Android)
+1. Install this plugin using phonegap/cordova cli:
 ```
+cordova plugin add <path>
+``` 
 
-- platform: ios or android
-- project-directory: the path to your android or iOS project
-- plugin-path: the patht to this plugin
-- production-app-key: the Urban Airship production app key
-- production-app-secret: the Urban Airship production app secret
-- development-app-key: the Urban Airship development app key
-- development-app-secret: the Urban Airship development app secret
-- gcm-sender-id: Android only - your gcm sender id
-- location-enabled: Android only - if you want to use location
+2. Modify the www/config.xml directory to contain (replacing with your configuration settings):
+
+        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
+        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
+        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
+        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
+        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
+
+        <preference name="com.urbanairship.gcm_sender_id" value="Android only: Your GCM sender id" />
+        <preference name="com.urbanairship.location_enabled" value="Android only: If the app uses location services" />
 
 
 #### iOS manual installation
@@ -56,25 +51,11 @@ plugman --platform <platform> --project <project-directory> --plugin <plugin-pat
             <param name="onload" value="true" />
         </feature>
 
-1. Add AirshipConfig.plist to your project
-
-
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-                <dict>
-                        <key>inProduction</key>
-                        <false/>
-                        <key>developmentAppKey</key>
-                        <string>Your Development App Key</string>
-                        <key>developmentAppSecret</key>
-                        <string>Your Development App Secret</string>
-                        <key>productionAppKey</key>
-                        <string>Your Production App Key</string>
-                        <key>productionAppSecret</key>
-                        <string>Your Production App Secret</string>
-                </dict>
-        </plist>
+        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
+        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
+        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
+        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
+        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
 
 #### Android manual installation
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
@@ -134,31 +115,13 @@ plugman --platform <platform> --project <project-directory> --plugin <plugin-pat
             <param name="onload" value="true" />
         </feature>
 
-1. Add airshipconfig.properties to the android assets directory:
-
-
-        developmentAppKey = Your Development App Key
-        developmentAppSecret = Your Development Secret
-        productionAppKey = Your Production App Key
-        productionAppSecret = Your Production Secret
-        
-        #transport, only gcm is supported for now
-        transport = gcm
-        
-        gcmSender = Your GCM sender ID is your Google API project number (required for GCM)
-        inProduction = false
-        
-        # LogLevel is "VERBOSE", "DEBUG", "INFO", "WARN", "ERROR" or "ASSERT"
-        developmentLogLevel = DEBUG
-        productionLogLevel = ERROR
-        minSdkVersion = 4
-
-
-1. Optional - Enable location by adding location.properties to the android assets directory:
-
-
-        #enable location services. defaults to false
-        locationServiceEnabled = true
+        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
+        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
+        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
+        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
+        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
+        <preference name="com.urbanairship.gcm_sender_id" value="Android only: Your GCM sender id" />
+        <preference name="com.urbanairship.location_enabled" value="Android only: If the app uses location services" />
 
 
 ## Example
