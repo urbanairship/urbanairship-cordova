@@ -6,9 +6,8 @@ This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
 
 ### Version Requirements
 
-This repo is meant to work with PhoneGap 2.8.0+ and the latest version of the Urban Airship library.
-Please upgrade your PhoneGap application to use 2.8 if you wish to use this library. More documentation and
-integration guides for IOS and Android are availble on our
+This plugin is meant to work with PhoneGap 3.0.0+ and the latest version of the Urban Airship library.
+More documentation and integration guides for IOS and Android are availble on our
 [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap).
 
 ### Contributing Code
