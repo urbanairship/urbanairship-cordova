@@ -51,14 +51,14 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         for (int i = 0; i < args.count; i++) {
             if (![[args objectAtIndex:i] isKindOfClass:[types objectAtIndex:i]]) {
                 //fail when when there is a type mismatch an expected and passed parameter
-                UA_LERR(@"type mismatch in cordova callback: expected %@ and received %@",
+                UA_LERR(@"Type mismatch in cordova callback: expected %@ and received %@",
                       [types description], [args description]);
                 return NO;
             }
         }
     } else {
         //fail when there is a number mismatch
-        UA_LERR(@"parameter number mismatch in cordova callback: expected %d and received %d", types.count, args.count);
+        UA_LERR(@"Parameter number mismatch in cordova callback: expected %d and received %d", types.count, args.count);
         return NO;
     }
     
@@ -94,7 +94,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     } else if ([value isKindOfClass:[NSNull class]]) {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else {
-        UA_LERR(@"cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
+        UA_LERR(@"Cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
         return nil;
     }
     
@@ -109,7 +109,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
             return;
         }
     } else if(command.arguments.count) {
-        UA_LERR(@"paramter number mismatch: expected 0 and received %d", command.arguments.count);
+        UA_LERR(@"Parameter number mismatch: expected 0 and received %d", command.arguments.count);
         [self failWithCallbackID:command.callbackId];
         return;
     }
