@@ -19,18 +19,21 @@
 
         push = window.pushNotification
 
-        // Reset Badge on resume
-        document.addEventListener("resume", function() {
-          push.resetBadge()
-        })
-
-        push.getIncoming(function (incoming) {
+        var handleIncomingPush = function (incoming) {
           if(incoming.message) {
             console.log("Incoming push: " + incoming.message)
           } else {
             console.log("No incoming message")
           }
+        }
+
+        // Reset Badge on resume
+        document.addEventListener("resume", function() {
+          push.resetBadge()
+          push.getIncoming(handleIncomingPush)
         })
+
+        push.getIncoming(handleIncomingPush)
 
         function on_push(data) {
           console.log("Received push: " + data.message)
