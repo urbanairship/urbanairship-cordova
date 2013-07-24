@@ -8,8 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPlugin.h>
+#import "UAPush.h"
 
-@interface PushNotificationPlugin : CDVPlugin <UIApplicationDelegate> {
+@interface PushNotificationPlugin : CDVPlugin <UARegistrationObserver, UAPushNotificationDelegate> {
 
 }
 

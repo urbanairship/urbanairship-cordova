@@ -1,4 +1,10 @@
 ==============================
+Version 1.0.8 - July 23, 2013
+==============================
+- Update iOS plugin to latest UAirship release (2.0.0)
+- Fix: Fix possible crash with setQuietTime on iOS
+
+==============================
 Version 1.0.7 - June 12, 2013
 ==============================
 - Fix: setAlias on Android to actually set the alias.
