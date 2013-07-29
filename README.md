@@ -37,19 +37,35 @@ cordova plugin add <path>
 
 
 #### iOS manual installation (unnecessary if installed automatically)
+1. Add src/ios/PushNotificationPlugin to your project
 1. Copy src/ios/Airship to your projects directory
-1. Add Airship to the Project -> Build Settings -> Header Search Path
-1. Add Airship/lib-UAirship-2.0.0.a as a framework in Target -> Build Phases -> Link Binary With Libraries
-1. Add src/ios/UAPushPlugin to your project
+1. Add Airship as a Header search path (Project -> Build Settings -> Header Search Path)
+1. Add Airship/libUAirship-<version>.a as a library (Target -> Build Phases -> Link Binary With Libraries)
+1. Make sure the following frameworks are linked (Target -> Build Phases -> Link Binary With Libraries):
 
-1. Modify the cordova config.xml file to include the PushNotificationPlugin:
+
+        CFNetwork.framework
+        CoreGraphics.framework
+        Foundation.framework
+        MobileCoreServices.framework
+        Security.framework
+        SystemConfiguration.framework
+        UIKit.framework
+        libz.dylib
+        libsqlite3.dylib
+        CoreTelephony.framework
+        CoreLocation.framework
+        AudioToolbox.framework
+        StoreKit.framework
+
+1. Modify the cordova config.xml file to include the PushNotificationPlugin and preferences:
 
 
         <feature name="PushNotificationPlugin">
             <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" />
             <param name="onload" value="true" />
         </feature>
-
+        
         <preference name="com.urbanairship.production_app_key" value="Your production app key" />
         <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
         <preference name="com.urbanairship.development_app_key" value="Your development app key" />
@@ -58,7 +74,7 @@ cordova plugin add <path>
 
 #### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
-1. Copy src/Android/urbanairship-lib-3.0.0 to your projects lib directory
+1. Copy src/Android/urbanairship-lib-<version>.jar to your projects lib directory
 
 1. Modify the AndroidManifest.xml to include these permissions:
 
