@@ -2,11 +2,11 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.urbanairship.phonegap.PushNotification"
-    version="1.0.7">
+    version="2.0.0">
 
-    <name>Urban Airship Push Plugin</name>
+    <name>Urban Airship Push Notification Plugin</name>
     
-    <description>Urban Airship phonegap plugin</description>
+    <description>Urban Airship Push Notification Plugin for PhoneGap/Cordova</description>
     
     <license>Apache 2.0</license>
     
