@@ -8,7 +8,7 @@ This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
 
 This plugin is meant to work with PhoneGap 3.0.0+ and the latest version of the Urban Airship library.
 More documentation and integration guides for IOS and Android are availble on our
-[website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap).
+[website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap). 
 
 ### Contributing Code
 
@@ -36,7 +36,7 @@ cordova plugin add <path>
         <preference name="com.urbanairship.location_enabled" value="Android only: If the app uses location services" />
 
 
-#### iOS manual installation
+#### iOS manual installation (unnecessary if installed automatically)
 1. Copy src/ios/Airship to your projects directory
 1. Add Airship to the Project -> Build Settings -> Header Search Path
 1. Add Airship/lib-UAirship-2.0.0.a as a framework in Target -> Build Phases -> Link Binary With Libraries
@@ -56,7 +56,7 @@ cordova plugin add <path>
         <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
         <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
 
-#### Android manual installation
+#### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
 1. Copy src/Android/urbanairship-lib-3.0.0 to your projects lib directory
 
@@ -124,7 +124,10 @@ cordova plugin add <path>
 
 
 ## Example
-A full example can be found in the Examples/www directory. It contains an index.html, css files, and the necessary js files.  Copy them to your apps www directory to run it.
+A full example can be found in Examples.  To run it, copy the files:
+- Examples/index.html to www/index.html
+- Examples/css/* to www/css
+- Examples/js/* to www/js
 
 #### Basic Example
 
