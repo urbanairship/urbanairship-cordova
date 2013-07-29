@@ -10,6 +10,10 @@ This plugin is meant to work with PhoneGap 3.0.0+ and the latest version of the 
 More documentation and integration guides for IOS and Android are availble on our
 [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap). 
 
+### Older PhoneGap versions
+
+A older version of the plugin for Phonegap 2.6 - 2.9 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/1.0.8). 
+
 ### Contributing Code
 
 We accept pull requests! If you would like to submit a pull request, please fill out and submit a
