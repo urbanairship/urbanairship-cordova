@@ -26,14 +26,13 @@ cordova plugin add <path>
 
 2. Modify the www/config.xml directory to contain (replacing with your configuration settings):
 
-        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
-        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
-        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
-        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
-        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
+        <preference name="com.urbanairship.productionAppKey" value="Your production app key" />
+        <preference name="com.urbanairship.productionAppSecret" value="Your production app secret" />
+        <preference name="com.urbanairship.developmentAppKey" value="Your development app key" />
+        <preference name="com.urbanairship.developmentAppSecret" value="Your development app secret" />
+        <preference name="com.urbanairship.inProduction" value="If the app is in production or not" />
 
-        <preference name="com.urbanairship.gcm_sender_id" value="Android only: Your GCM sender id" />
-        <preference name="com.urbanairship.location_enabled" value="Android only: If the app uses location services" />
+        <preference name="com.urbanairship.gcmSender" value="Android only: Your GCM sender id" />
 
 
 #### iOS manual installation (unnecessary if installed automatically)
@@ -66,11 +65,11 @@ cordova plugin add <path>
             <param name="onload" value="true" />
         </feature>
         
-        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
-        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
-        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
-        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
-        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
+        <preference name="com.urbanairship.productionAppKey" value="Your production app key" />
+        <preference name="com.urbanairship.productionAppSecret" value="Your production app secret" />
+        <preference name="com.urbanairship.developmentAppKey" value="Your development app key" />
+        <preference name="com.urbanairship.developmentAppSecret" value="Your development app secret" />
+        <preference name="com.urbanairship.inProduction" value="If the app is in production or not" />
 
 #### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
@@ -130,14 +129,12 @@ cordova plugin add <path>
             <param name="onload" value="true" />
         </feature>
 
-        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
-        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
-        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
-        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
-        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
-        <preference name="com.urbanairship.gcm_sender_id" value="Android only: Your GCM sender id" />
-        <preference name="com.urbanairship.location_enabled" value="Android only: If the app uses location services" />
-
+        <preference name="com.urbanairship.productionAppKey" value="Your production app key" />
+        <preference name="com.urbanairship.productionAppSecret" value="Your production app secret" />
+        <preference name="com.urbanairship.developmentAppKey" value="Your development app key" />
+        <preference name="com.urbanairship.developmentAppSecret" value="Your development app secret" />
+        <preference name="com.urbanairship.inProduction" value="If the app is in production or not" />
+        <preference name="com.urbanairship.gcmSender" value="Android only: Your GCM sender id" />
 
 ## Example
 A full example can be found in Examples.  To run it, copy the files:

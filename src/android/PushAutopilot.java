@@ -14,13 +14,12 @@ import java.util.Map;
 
 public class PushAutopilot extends Autopilot {
     static final String UA_PREFIX = "com.urbanairship";
-    static final String PRODUCTION_KEY = "com.urbanairship.production_app_key";
-    static final String PRODUCTION_SECRET = "com.urbanairship.production_app_secret";
-    static final String DEVELOPMENT_KEY = "com.urbanairship.development_app_key";
-    static final String DEVELOPMENT_SECRET = "com.urbanairship.development_app_secret";
-    static final String IN_PRODUCTION = "com.urbanairship.in_production";
-    static final String GCM_SENDER = "com.urbanairship.gcm_sender_id";
-    static final String LOCATION_ENABLED = "com.urbanairship.location_enabled";
+    static final String PRODUCTION_KEY = "com.urbanairship.productionAppKey";
+    static final String PRODUCTION_SECRET = "com.urbanairship.productionAppSecret";
+    static final String DEVELOPMENT_KEY = "com.urbanairship.developmentAppKey";
+    static final String DEVELOPMENT_SECRET = "com.urbanairship.developmentAppSecret";
+    static final String IN_PRODUCTION = "com.urbanairship.inProduction";
+    static final String GCM_SENDER = "com.urbanairship.gcmSender";
 
     @Override
     public void execute(Application application) {
@@ -31,7 +30,6 @@ public class PushAutopilot extends Autopilot {
             PushManager.enablePush();
         }
     }
-
 
     private AirshipConfigOptions getAirshipConfig(Application application) {
         // Create the default options, will pull any config from the usual place - assets/airshipconfig.properties
@@ -47,7 +45,13 @@ public class PushAutopilot extends Autopilot {
         options.developmentAppSecret = configOptions.getString(DEVELOPMENT_SECRET, options.productionAppKey);
         options.gcmSender = configOptions.getString(GCM_SENDER, options.gcmSender);
         options.inProduction = configOptions.getBoolean(IN_PRODUCTION, options.inProduction);
-        options.locationOptions.locationServiceEnabled = configOptions.getBoolean(LOCATION_ENABLED, options.locationOptions.locationServiceEnabled);
+
+        // Always enable the use of the location service.  This does not mean
+        // that location is enabled.  Still need to call enableLocation for that.
+        options.locationOptions.locationServiceEnabled = true;
+
+        // Set the minSDK to 14.  It just controls logging error messages for different platform features.
+        options.minSDK = 14;
 
         return options;
     }
