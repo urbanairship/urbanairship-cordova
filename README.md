@@ -40,7 +40,7 @@ cordova plugin add <path>
 1. Add src/ios/PushNotificationPlugin to your project
 1. Copy src/ios/Airship to your projects directory
 1. Add Airship as a Header search path (Project -> Build Settings -> Header Search Path)
-1. Add Airship/libUAirship-<version>.a as a library (Target -> Build Phases -> Link Binary With Libraries)
+1. Add Airship/libUAirship-*.a as a library (Target -> Build Phases -> Link Binary With Libraries)
 1. Make sure the following frameworks are linked (Target -> Build Phases -> Link Binary With Libraries):
 
 
@@ -74,7 +74,7 @@ cordova plugin add <path>
 
 #### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
-1. Copy src/Android/urbanairship-lib-<version>.jar to your projects lib directory
+1. Copy src/Android/urbanairship-lib-*.jar to your projects lib directory
 
 1. Modify the AndroidManifest.xml to include these permissions:
 
