@@ -34,6 +34,9 @@ cordova plugin add <path>
 
         <preference name="com.urbanairship.gcmSender" value="Android only: Your GCM sender id" />
 
+3. If your app supports Android API < 14, then you have to manually instrument any Android Activities to 
+have proper analytics.  
+See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required). 
 
 #### iOS manual installation (unnecessary if installed automatically)
 1. Add src/ios/PushNotificationPlugin to your project
@@ -135,6 +138,10 @@ cordova plugin add <path>
         <preference name="com.urbanairship.developmentAppSecret" value="Your development app secret" />
         <preference name="com.urbanairship.inProduction" value="If the app is in production or not" />
         <preference name="com.urbanairship.gcmSender" value="Android only: Your GCM sender id" />
+
+1. If your app supports Android API < 14 (pre ICS), then need to manually instrument any Android Activities
+to get proper analytics.  
+See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required).
 
 ## Example
 A full example can be found in Examples.  To run it, copy the files:
