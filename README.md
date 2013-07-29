@@ -18,7 +18,7 @@ Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreemen
 
 ## Installation
 
-#### Automatic Installation using phonegap cli (iOS and Android)
+#### Automatic Installation using PhoneGap/Cordova CLI (iOS and Android)
 1. Install this plugin using phonegap/cordova cli:
 ```
 cordova plugin add <path>
