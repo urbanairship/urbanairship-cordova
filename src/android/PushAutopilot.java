@@ -42,7 +42,7 @@ public class PushAutopilot extends Autopilot {
         options.productionAppKey = configOptions.getString(PRODUCTION_KEY, options.productionAppKey);
         options.productionAppSecret = configOptions.getString(PRODUCTION_SECRET, options.productionAppSecret);
         options.developmentAppKey = configOptions.getString(DEVELOPMENT_KEY, options.developmentAppKey);
-        options.developmentAppSecret = configOptions.getString(DEVELOPMENT_SECRET, options.productionAppKey);
+        options.developmentAppSecret = configOptions.getString(DEVELOPMENT_SECRET, options.developmentAppSecret);
         options.gcmSender = configOptions.getString(GCM_SENDER, options.gcmSender);
         options.inProduction = configOptions.getBoolean(IN_PRODUCTION, options.inProduction);
 
@@ -51,7 +51,7 @@ public class PushAutopilot extends Autopilot {
         options.locationOptions.locationServiceEnabled = true;
 
         // Set the minSDK to 14.  It just controls logging error messages for different platform features.
-        options.minSDK = 14;
+        options.minSdkVersion = 14;
 
         return options;
     }
