@@ -14,12 +14,12 @@ import java.util.Map;
 
 public class PushAutopilot extends Autopilot {
     static final String UA_PREFIX = "com.urbanairship";
-    static final String PRODUCTION_KEY = "com.urbanairship.productionAppKey";
-    static final String PRODUCTION_SECRET = "com.urbanairship.productionAppSecret";
-    static final String DEVELOPMENT_KEY = "com.urbanairship.developmentAppKey";
-    static final String DEVELOPMENT_SECRET = "com.urbanairship.developmentAppSecret";
-    static final String IN_PRODUCTION = "com.urbanairship.inProduction";
-    static final String GCM_SENDER = "com.urbanairship.gcmSender";
+    static final String PRODUCTION_KEY = "com.urbanairship.production_app_key";
+    static final String PRODUCTION_SECRET = "com.urbanairship.production_app_secret";
+    static final String DEVELOPMENT_KEY = "com.urbanairship.development_app_key";
+    static final String DEVELOPMENT_SECRET = "com.urbanairship.development_app_secret";
+    static final String IN_PRODUCTION = "com.urbanairship.in_production";
+    static final String GCM_SENDER = "com.urbanairship.gcm_sender";
 
     @Override
     public void execute(Application application) {

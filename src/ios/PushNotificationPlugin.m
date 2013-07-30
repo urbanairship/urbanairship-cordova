@@ -27,13 +27,13 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     
     NSDictionary *settings = self.commandDelegate.settings;
 
-    config.productionAppKey = [settings valueForKey:@"com.urbanairship.productionAppKey"] ?: config.productionAppKey;
-    config.productionAppSecret = [settings valueForKey:@"com.urbanairship.productionAppSecret"] ?: config.productionAppSecret;
-    config.developmentAppKey = [settings valueForKey:@"com.urbanairship.developmentAppKey"] ?: config.developmentAppKey;
-    config.developmentAppSecret = [settings valueForKey:@"com.urbanairship.developmentAppKey"] ?: config.developmentAppSecret;
+    config.productionAppKey = [settings valueForKey:@"com.urbanairship.production_app_key"] ?: config.productionAppKey;
+    config.productionAppSecret = [settings valueForKey:@"com.urbanairship.production_app_secret"] ?: config.productionAppSecret;
+    config.developmentAppKey = [settings valueForKey:@"com.urbanairship.development_app_key"] ?: config.developmentAppKey;
+    config.developmentAppSecret = [settings valueForKey:@"com.urbanairship.development_app_secret"] ?: config.developmentAppSecret;
 
-    if ([settings valueForKey:@"com.urbanairship.inProduction"]) {
-        config.inProduction = [[settings valueForKey:@"com.urbanairship.inProduction"] boolValue];
+    if ([settings valueForKey:@"com.urbanairship.in_production"]) {
+        config.inProduction = [[settings valueForKey:@"com.urbanairship.in_production"] boolValue];
     }
     
     // Create Airship singleton that's used to talk to Urban Airship servers.

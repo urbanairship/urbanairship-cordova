@@ -30,13 +30,12 @@ cordova plugin add <path>
 
 2. Modify the www/config.xml directory to contain (replacing with your configuration settings):
 
-        <preference name="com.urbanairship.productionAppKey" value="Your production app key" />
-        <preference name="com.urbanairship.productionAppSecret" value="Your production app secret" />
-        <preference name="com.urbanairship.developmentAppKey" value="Your development app key" />
-        <preference name="com.urbanairship.developmentAppSecret" value="Your development app secret" />
-        <preference name="com.urbanairship.inProduction" value="If the app is in production or not" />
-
-        <preference name="com.urbanairship.gcmSender" value="Android only: Your GCM sender id" />
+        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
+        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
+        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
+        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
+        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
+        <preference name="com.urbanairship.gcm_sender" value="Android only: Your GCM sender id" />
 
 3. If your app supports Android API < 14, then you have to manually instrument any Android Activities to 
 have proper analytics.  
@@ -72,11 +71,11 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
             <param name="onload" value="true" />
         </feature>
         
-        <preference name="com.urbanairship.productionAppKey" value="Your production app key" />
-        <preference name="com.urbanairship.productionAppSecret" value="Your production app secret" />
-        <preference name="com.urbanairship.developmentAppKey" value="Your development app key" />
-        <preference name="com.urbanairship.developmentAppSecret" value="Your development app secret" />
-        <preference name="com.urbanairship.inProduction" value="If the app is in production or not" />
+        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
+        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
+        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
+        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
+        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
 
 #### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
@@ -136,12 +135,12 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
             <param name="onload" value="true" />
         </feature>
 
-        <preference name="com.urbanairship.productionAppKey" value="Your production app key" />
-        <preference name="com.urbanairship.productionAppSecret" value="Your production app secret" />
-        <preference name="com.urbanairship.developmentAppKey" value="Your development app key" />
-        <preference name="com.urbanairship.developmentAppSecret" value="Your development app secret" />
-        <preference name="com.urbanairship.inProduction" value="If the app is in production or not" />
-        <preference name="com.urbanairship.gcmSender" value="Android only: Your GCM sender id" />
+        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
+        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
+        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
+        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
+        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
+        <preference name="com.urbanairship.gcm_sender" value="Android only: Your GCM sender id" />
 
 1. If your app supports Android API < 14 (pre ICS), then need to manually instrument any Android Activities
 to get proper analytics.  
