@@ -25,7 +25,7 @@ Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreemen
 #### Automatic Installation using PhoneGap/Cordova CLI (iOS and Android)
 1. Install this plugin using PhoneGap/Cordova cli:
 ```
-cordova plugin add <path>
+cordova plugin add https://github.com/urbanairship/phonegap-ua-push.git
 ``` 
 
 2. Modify the www/config.xml directory to contain (replacing with your configuration settings):
