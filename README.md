@@ -23,7 +23,7 @@ Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreemen
 ## Installation
 
 #### Automatic Installation using PhoneGap/Cordova CLI (iOS and Android)
-1. Install this plugin using phonegap/cordova cli:
+1. Install this plugin using PhoneGap/Cordova cli:
 ```
 cordova plugin add <path>
 ``` 
@@ -79,7 +79,7 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 
 #### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
-1. Copy src/Android/urbanairship-lib-*.jar to your projects lib directory
+1. Copy src/Android/urbanairship-lib-*.jar to your projects libs directory
 
 1. Modify the AndroidManifest.xml to include these permissions:
 
