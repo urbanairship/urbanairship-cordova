@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.urbanairship.phonegap.PushNotification"
+    version="2.0.0">
+
+    <name>Urban Airship Push Notification Plugin</name>
+    
+    <description>Urban Airship Push Notification Plugin for PhoneGap/Cordova</description>
+    
+    <license>Apache 2.0</license>
+    
+    <engines>
+      <engine name="cordova" version=">=3.0.0" />
+    </engines>
+
+    <dependency id="org.apache.cordova.core.device" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git" commit="master" subdir="." />
+
+    <asset src="www/PushNotification.js" target="js/PushNotification.js" />
+
+    <!-- android -->
+    <platform name="android">
+       
+        <config-file target="res/xml/config.xml" parent="/widget">
+            <feature name="PushNotificationPlugin">
+                <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin"/>
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.VIBRATE" />
+            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+            <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
+            <receiver android:name="com.urbanairship.CoreReceiver" />
+            <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
+              <intent-filter>
+                  <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                  <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+                  <category android:name="$PACKAGE_NAME" />
+              </intent-filter>
+            </receiver>
+
+            <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" />  
+
+
+            <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
+            <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
+            <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
+            
+            <provider android:name="com.urbanairship.UrbanAirshipProvider"
+                android:authorities="$PACKAGE_NAME.urbanairship.provider"
+                android:exported="false"
+                android:multiprocess="true" />
+
+            <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+        </config-file>
+
+        <source-file src="src/android/PushNotificationPlugin.java" target-dir="src/com/urbanairship/phonegap" />
+        <source-file src="src/android/PushReceiver.java" target-dir="src/com/urbanairship/phonegap" />
+        <source-file src="src/android/PushAutopilot.java" target-dir="src/com/urbanairship/phonegap" />
+        <source-file src="src/android/urbanairship-lib-3.0.0.jar" target-dir="libs/" />
+    </platform>
+    
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/widget">
+             <feature name="PushNotificationPlugin">
+                <param name="ios-package" value="PushNotificationPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+        
+        <header-file src="src/ios/PushNotificationPlugin.h" />
+        <source-file src="src/ios/PushNotificationPlugin.m" />
+
+        <!-- Common header files -->
+        <header-file src="src/ios/Airship/Common/UAAnalytics.h"  />
+        <header-file src="src/ios/Airship/Common/UAAnalyticsDBManager.h"  />
+        <header-file src="src/ios/Airship/Common/UAAutoAppDelegate.h"  />
+        <header-file src="src/ios/Airship/Common/UABaseAppDelegateSurrogate.h"  />
+        <header-file src="src/ios/Airship/Common/UABaseLocationProvider.h"  />
+        <header-file src="src/ios/Airship/Common/UAConfig.h"  />
+        <header-file src="src/ios/Airship/Common/UADelayOperation.h"  />
+        <header-file src="src/ios/Airship/Common/UAEvent.h"  />
+        <header-file src="src/ios/Airship/Common/UAGlobal.h"  />
+        <header-file src="src/ios/Airship/Common/UAHTTPConnection.h"  />
+        <header-file src="src/ios/Airship/Common/UAHTTPConnectionOperation.h"  />
+        <header-file src="src/ios/Airship/Common/UAHTTPRequest.h"  />
+        <header-file src="src/ios/Airship/Common/UAHTTPRequestEngine.h"  />
+        <header-file src="src/ios/Airship/Common/UAKeychainUtils.h"  />
+        <header-file src="src/ios/Airship/Common/UALocationCommonValues.h"  />
+        <header-file src="src/ios/Airship/Common/UALocationEvent.h"  />
+        <header-file src="src/ios/Airship/Common/UALocationProviderDelegate.h"  />
+        <header-file src="src/ios/Airship/Common/UALocationProviderProtocol.h"  />
+        <header-file src="src/ios/Airship/Common/UALocationService.h"  />
+        <header-file src="src/ios/Airship/Common/UASQLite.h"  />
+        <header-file src="src/ios/Airship/Common/UASignificantChangeProvider.h"  />
+        <header-file src="src/ios/Airship/Common/UAStandardLocationProvider.h"  />
+        <header-file src="src/ios/Airship/Common/UATagUtils.h"  />
+        <header-file src="src/ios/Airship/Common/UAUser.h"  />
+        <header-file src="src/ios/Airship/Common/UAUserAPIClient.h"  />
+        <header-file src="src/ios/Airship/Common/UAUserData.h"  />
+        <header-file src="src/ios/Airship/Common/UAUtils.h"  />
+        <header-file src="src/ios/Airship/Common/UAirship.h"  />
+        <header-file src="src/ios/Airship/Common/UAObservable.h"  />
+
+        <!-- Push header files -->
+        <header-file src="src/ios/Airship/Push/UADeviceAPIClient.h"  />
+        <header-file src="src/ios/Airship/Push/UADeviceRegistrationData.h"  />
+        <header-file src="src/ios/Airship/Push/UADeviceRegistrationPayload.h"  />
+        <header-file src="src/ios/Airship/Push/UAPush.h" />
+
+        <!-- External header files -->
+        <header-file src="src/ios/Airship/External/UA_Base64.h"  />
+        <header-file src="src/ios/Airship/External/UA_Reachability.h"  />
+        <header-file src="src/ios/Airship/External/UA_fmdb/UA_FMDatabase.h"  />
+        <header-file src="src/ios/Airship/External/UA_fmdb/UA_FMResultSet.h"  />
+        <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJSON.h"  />
+        <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJsonBase.h"  />
+        <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJsonParser.h"  />
+        <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJsonWriter.h"  />
+
+        <source-file src="src/ios/Airship/libUAirship-2.0.0.a" framework="true"/>
+
+        <!-- system frameworks -->
+        <framework src="libsqlite3.dylib" />
+        <framework src="libz.dylib" />
+        <framework src="CFNetwork.framework" weak="true" />
+        <framework src="CoreGraphics.framework" weak="true" />
+        <framework src="Foundation.framework" weak="true" />
+        <framework src="Security.framework" weak="true" />
+        <framework src="MobileCoreServices.framework" weak="true" />
+        <framework src="SystemConfiguration.framework" weak="true" />
+        <framework src="UIKit.framework" weak="true" />
+        <framework src="CoreTelephony.framework" weak="true" />
+        <framework src="MobileCoreServices.framework" weak="true" />
+    </platform>
+</plugin>
