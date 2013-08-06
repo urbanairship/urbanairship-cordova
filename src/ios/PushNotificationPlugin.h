@@ -12,7 +12,6 @@
 
 @interface PushNotificationPlugin : CDVPlugin <UARegistrationObserver, UAPushNotificationDelegate> {
     dispatch_queue_t dispatchQueue;
-    make me fail
 }
 
 @end
