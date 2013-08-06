@@ -61,8 +61,6 @@ public class PushNotificationPlugin extends CordovaPlugin {
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
         pushPrefs = PushManager.shared().getPreferences();
         locationPrefs = UALocationManager.shared().getPreferences();
-
-        fail me
     }
 
     private static JSONObject notificationObject(String message,
