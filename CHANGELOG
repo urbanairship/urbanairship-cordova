@@ -1,4 +1,10 @@
 ==============================
+Version 2.0.1 - August 8, 2013
+==============================
+- Update Urban Airship iOS Library to 2.0.1 that fixed a bug in UAHTTPConnectionOperation 
+causing intermittent crashes during push registration.
+
+==============================
 Version 2.0.0 - July 30, 2013
 ==============================
 - Updated for PhoneGap 3.0.0
