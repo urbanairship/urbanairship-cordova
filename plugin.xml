@@ -131,7 +131,7 @@
         <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJsonParser.h"  />
         <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJsonWriter.h"  />
 
-        <source-file src="src/ios/Airship/libUAirship-2.0.1.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-2.0.3.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
