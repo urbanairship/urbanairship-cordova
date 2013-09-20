@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.urbanairship.phonegap.PushNotification"
-    version="2.0.1">
+    version="2.1.0">
 
     <name>Urban Airship Push Notification Plugin</name>
     
@@ -114,6 +114,7 @@
         <header-file src="src/ios/Airship/Common/UAUtils.h"  />
         <header-file src="src/ios/Airship/Common/UAirship.h"  />
         <header-file src="src/ios/Airship/Common/UAObservable.h"  />
+        <header-file src="src/ios/Airship/Common/NSJSONSerialization+UAAdditions.h"  />
 
         <!-- Push header files -->
         <header-file src="src/ios/Airship/Push/UADeviceAPIClient.h"  />
@@ -124,14 +125,8 @@
         <!-- External header files -->
         <header-file src="src/ios/Airship/External/UA_Base64.h"  />
         <header-file src="src/ios/Airship/External/UA_Reachability.h"  />
-        <header-file src="src/ios/Airship/External/UA_fmdb/UA_FMDatabase.h"  />
-        <header-file src="src/ios/Airship/External/UA_fmdb/UA_FMResultSet.h"  />
-        <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJSON.h"  />
-        <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJsonBase.h"  />
-        <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJsonParser.h"  />
-        <header-file src="src/ios/Airship/External/UA_json-framework/UA_SBJsonWriter.h"  />
 
-        <source-file src="src/ios/Airship/libUAirship-2.0.3.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-iOS5-3.0.0.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />

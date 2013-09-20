@@ -31,6 +31,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
+// Offset time for use when the app init. This is the time between object
+// creation and first upload.
+#define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
+
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
  * this exception being thrown.
@@ -47,18 +51,25 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 /**
  * The application configuration. This is set on takeOff.
  */
-@property (nonatomic, retain, readonly) UAConfig *config;
+@property (nonatomic, strong, readonly) UAConfig *config;
 
 /**
  * The current APNS/remote notification device token.
  */
-@property (nonatomic, readonly) NSString *deviceToken;
+@property (weak, nonatomic, readonly) NSString *deviceToken;
 
 /**
  * The shared analytics manager. There are not currently any user-defined events,
  * so this is for internal library use only at this time.
  */
-@property (nonatomic, retain, readonly) UAAnalytics *analytics;
+@property (nonatomic, strong, readonly) UAAnalytics *analytics;
+
+/**
+ * This flag is set to `YES` if the application is set up 
+ * with the "remote-notification" background mode and is running
+ * iOS7 or greater.
+ */
+@property (nonatomic, assign, readonly) BOOL backgroundNotificationEnabled;
 
 /**
  * This flag is set to `YES` if the shared instance of
@@ -70,7 +81,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 /// @name Location Services
 ///---------------------------------------------------------------------------------------
 
-@property (nonatomic, retain, readonly) UALocationService *locationService;
+@property (nonatomic, strong, readonly) UALocationService *locationService;
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging

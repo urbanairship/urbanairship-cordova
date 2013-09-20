@@ -35,14 +35,14 @@
 
 @property (nonatomic, readonly, copy) NSString *time;
 @property (nonatomic, readonly, copy) NSString *event_id;
-@property (nonatomic, readonly, retain) NSMutableDictionary *data;
+@property (nonatomic, readonly, strong) NSMutableDictionary *data;
 
 + (id)event;
 - (id)initWithContext:(NSDictionary *)context;
 + (id)eventWithContext:(NSDictionary *)context;
 - (NSString *)getType;
 - (void)gatherData:(NSDictionary *)context;
-- (int)getEstimatedSize;
+- (NSUInteger)getEstimatedSize;
 - (void)addDataFromSessionForKey:(NSString *)dataKey;
 - (void)addDataWithValue:(id)value forKey:(NSString *)key;
 @end
