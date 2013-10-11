@@ -104,7 +104,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 
 /**
  * The distance filter on the standard location provider.
- * @returns CLLocationDistance The current distance filter on the standard location provider
+ * @return CLLocationDistance The current distance filter on the standard location provider
  */
 - (CLLocationDistance)standardLocationDistanceFilter;
 
@@ -138,7 +138,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 + (BOOL)airshipLocationServiceEnabled;
 
 /** 
- * The allows UA Location Services to report location.
+ * This method allows UA Location Services to report location.
  *
  * @param airshipLocationServiceEnabled If set to YES, all UA location services will run
  * if the system reports that location services are available and authorized. This setting will not
@@ -171,10 +171,6 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 /**
  * This method checks the underlying Core Location service to see if a user
  * will receive a prompt requesting permission for Core Location services to run.
- *
- * @warning On iOS < 4.2 This method's default value is YES until after an initial attempt to start location services
- * has been made by UALocationService. If the user declines location services, that value will be persisted, and future attempts
- * to start location services will require that promptUserForLocationServices be set to YES
  * 
  * @return NO If Core Location services are enabled and the user has explicitly authorized location services
  * @return YES If ANY of the following are true:
@@ -184,19 +180,6 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  *   - The user has not been asked yet to allow location services. (Location services are enabled, and CLLocationManager reports kCLAuthorizationStatusNotDetermined)
  */
 + (BOOL)coreLocationWillPromptUserForPermissionToRun;
-
-/**
- * This flag will allow UA Location Services to reprompt the user to allow services
- * The user may have explicitly disallowed location services, so reprompting them may not
- * be welcome. A value of NO (default value) will ensure that the user is only prompted in the
- * case where system location services have indicated that the user has not disabled location
- * services and has not been previously prompted for location services.
- *
- * @return YES An attempt to start location services will be made even if this results in prompting
- * the user to allow location services.
- * @return NO Location services will not start if the user has previously disabled location services. 
- */
-@property (nonatomic, assign) BOOL promptUserForLocationServices;
 
 ///--------------------------------------------------------------------------------------
 /// @name Recent Activity
@@ -209,14 +192,20 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  */
 - (CLLocation *)location;
 
-/// Last location reported to Urban Airship
-@property (nonatomic, retain, readonly) CLLocation *lastReportedLocation;
+/**
+ * Last location reported to Urban Airship
+ */
+@property (nonatomic, strong, readonly) CLLocation *lastReportedLocation;
 
-/// Date of last location event reported 
-@property (nonatomic, retain, readonly) NSDate *dateOfLastLocation;
+/**
+ * Date of last location event reported
+ */
+@property (nonatomic, strong, readonly) NSDate *dateOfLastLocation;
 
-/// UALocationServiceDelegate for location service callbacks
-@property (nonatomic, assign) id <UALocationServiceDelegate> delegate;
+/**
+ * UALocationServiceDelegate for location service callbacks
+ */
+@property (nonatomic, weak) id <UALocationServiceDelegate> delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Automatic Location Services 
@@ -267,15 +256,15 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  * when prompted to allow location services to begin. The default value
  * is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
  * all new location services.
- * @returns An NSString with the current purpose
+ * @return An NSString with the current purpose
  */
 - (NSString *)purpose;
 
 /** Purpose for location services shown to user
- when prompted to allow location services to begin. The default value
- is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
- all new location services.
- @param purpose The new purpose of the service
+ * when prompted to allow location services to begin. The default value
+ * is kUALocationServiceDefaultPurpose listed in UAirship.m. This value is set on
+ * all new location services.
+ * @param purpose The new purpose of the service
  */
 - (void)setPurpose:(NSString *)purpose;
 
@@ -383,6 +372,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
 /**
  * Desired accuracy for single location service. Used by the reportCurrentLocation: method
  * and the automatic foreground location.
+ * @return CLLocationAccuracy representing the desired accuracy for single location service.
  */
 - (CLLocationAccuracy)singleLocationDesiredAccuracy;
 
@@ -401,7 +391,7 @@ extern NSString * const UALocationServiceBestAvailableSingleLocationKey;
  * the singleLocationDesiredAccuracy property. If a location is not found before the timeout, the most
  * accurate location returned by CoreLocation is returned. If no location is found, the service is
  * simply terminated.
-*/
+ */
 - (void)reportCurrentLocation;
 
 /**

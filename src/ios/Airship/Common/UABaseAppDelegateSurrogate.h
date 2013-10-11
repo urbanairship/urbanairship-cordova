@@ -35,17 +35,20 @@
  * @note Delegates are typically not retained, but in this case we will take responsibility for them
  * as we're essentially a man in the middle and we don't want to lose them.
  */
-@interface UABaseAppDelegateSurrogate : NSObject<UIApplicationDelegate>
+@interface UABaseAppDelegateSurrogate : NSProxy<UIApplicationDelegate>
+
+//NSProxy has no default init method, we have to declare it to satisfy the compiler
+- (id)init;
 
 /**
  * The surrogate delegate. This delegate will receive all messages initially destined for
  * the original app delegate (defaultAppDelegate).
  */
-@property(nonatomic, retain) NSObject<UIApplicationDelegate> *surrogateDelegate;
+@property(nonatomic, strong) NSObject<UIApplicationDelegate> *surrogateDelegate;
 
 /**
  * The original app delegate.
  */
-@property(nonatomic, retain) NSObject<UIApplicationDelegate> *defaultAppDelegate;
+@property(nonatomic, strong) NSObject<UIApplicationDelegate> *defaultAppDelegate;
 
 @end

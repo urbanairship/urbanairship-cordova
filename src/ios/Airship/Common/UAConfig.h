@@ -42,12 +42,12 @@
 /**
  * The current app key (resolved using the inProduction flag).
  */
-@property (nonatomic, readonly) NSString *appKey;
+@property (weak, nonatomic, readonly) NSString *appKey;
 
 /**
  * The current app secret (resolved using the inProduction flag).
  */
-@property (nonatomic, readonly) NSString *appSecret;
+@property (weak, nonatomic, readonly) NSString *appSecret;
 
 /**
  * The current log level for the library's UA_L<level> macros (resolved using the inProduction flag).
@@ -106,6 +106,21 @@
  */
 @property (nonatomic, assign) UALogLevel productionLogLevel;
 
+
+/**
+ * The size in MB for the UA Disk Cache.  Defaults to 100.
+ *
+ * Only items that are small enough (1/20th of the size) of the cache will be 
+ * cached.
+ * 
+ * Any size greater than 0 will cause the UA Disk Cache to become active. 
+ * UAURLProtocol will be registered as a NSURLProtocol.  Only requests whose
+ * mainDocumentURL or URL that have been added as a cachable URL will be considered
+ * for caching.  By defualt it includes all of the Rich Application Page URLs.
+ *
+ */
+@property (nonatomic, assign) NSUInteger cacheDiskSizeInMB;
+
 /**
  * If enabled, the UA library automatically registers for remote notifications when push is enabled
  * and intercepts incoming notifications in both the foreground and upon launch.
@@ -163,6 +178,11 @@
  * @param path The path of the specified file.
  */
 + (UAConfig *)configWithContentsOfFile:(NSString *)path;
+
+/**
+ * Creates an instance with empty values.
+ */
++ (UAConfig *)config;
 
 ///---------------------------------------------------------------------------------------
 /// @name Utilities, Helpers

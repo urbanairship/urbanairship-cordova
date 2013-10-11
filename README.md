@@ -67,7 +67,7 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 
 
         <feature name="PushNotificationPlugin">
-            <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin" />
+            <param name="ios-package" value="PushNotificationPlugin" />
             <param name="onload" value="true" />
         </feature>
         

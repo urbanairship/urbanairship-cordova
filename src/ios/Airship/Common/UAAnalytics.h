@@ -32,10 +32,25 @@
  */
 @interface UAAnalytics : NSObject
 
-@property (nonatomic, retain, readonly) NSMutableDictionary *session;
+/**
+ * The analytics session as an NSMutableDictionary.
+ */
+@property (nonatomic, strong, readonly) NSMutableDictionary *session;
+
+/**
+ * The oldest event time as an NSTimeInterval.
+ */
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
+
+/**
+ * Background identifier for the analytics background task.
+ */
 @property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
-@property (nonatomic, retain, readonly) NSDictionary *notificationUserInfo;
+
+/**
+ * The notification as an NSDictionary.
+ */
+@property (nonatomic, strong, readonly) NSDictionary *notificationUserInfo;
 
 
 
@@ -44,6 +59,12 @@
  * @param airshipConfig The 'AirshipConfig.plist' file
  */
 - (id)initWithConfig:(UAConfig *)airshipConfig;
+
+/**
+ * Delays the next analytics send.
+ * @param time The number of seconds to delay the send opertation.
+ */
+- (void)delayNextSend:(NSTimeInterval)time;
 
 /**
  * Triggers an analytics event.
@@ -58,7 +79,9 @@
  */
 - (void)handleNotification:(NSDictionary*)userInfo inApplicationState:(UIApplicationState)applicationState;
 
-/** Date representing the last attempt to send analytics */
+/**
+ * Date representing the last attempt to send analytics.
+ */
 - (NSDate*)lastSendTime;
 
 @end
