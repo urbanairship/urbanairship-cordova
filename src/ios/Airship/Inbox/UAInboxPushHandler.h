@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "UAInboxMessageListObserver.h"
+#import "UAInboxMessageListDelegate.h"
 
 @class UAInboxMessageList;
 
@@ -44,7 +44,7 @@
 - (void)richPushNotificationArrived:(NSDictionary *)notification;
 /**
  * Handle a rich push notification that launched the application.
- * @param notification An NSDictionary with thep ush notification contents.
+ * @param notification An NSDictionary with the push notification contents.
  */
 - (void)applicationLaunchedWithRichPushNotification:(NSDictionary *)notification;
 
@@ -68,7 +68,7 @@
  * This class handles incoming rich push messages that are sent with
  * an APNS notification.
  */
-@interface UAInboxPushHandler : NSObject <UAInboxMessageListObserver>
+@interface UAInboxPushHandler : NSObject <UAInboxMessageListDelegate>
 
 /**
  * Handle an incoming in-app notification.  This should typically be called 
@@ -85,13 +85,13 @@
 /**
  * The message ID of the most recent rich push as an NSString.
  */
-@property (nonatomic, retain) NSString *viewingMessageID;
+@property (nonatomic, strong) NSString *viewingMessageID;
 
 /**
  * The delegate that should be notified when an incoming push is handled,
  * as an object conforming to the UAInboxPushHandlerDelegate protocol.
  * NOTE: The delegate is not retained.
  */
-@property (nonatomic, assign) id <UAInboxPushHandlerDelegate> delegate;
+@property (nonatomic, weak) id <UAInboxPushHandlerDelegate> delegate;
 
 @end

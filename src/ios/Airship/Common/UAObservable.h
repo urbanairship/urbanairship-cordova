@@ -25,14 +25,19 @@
 
 #import <Foundation/Foundation.h>
 
+__attribute__((deprecated("As of version 3.0")))
+/**
+ * @deprecated As of version 3.0. Replaced by NSNotification and
+ * callback-based methods in `UAPush`, `UAInboxMessage` and `UAInboxMessageList`.
+ */
 @interface UAObservable : NSObject 
 
--(void)notifyObservers:(SEL)selector;
--(void)notifyObservers:(SEL)selector withObject:(id)arg1;
--(void)notifyObservers:(SEL)selector withObject:(id)arg1 withObject:(id)arg2;
--(void)addObserver:(id)observer;
--(void)removeObserver:(id)observer;
--(void)removeObservers;
--(int)countObservers;
+- (void)notifyObservers:(SEL)selector;
+- (void)notifyObservers:(SEL)selector withObject:(id)arg1;
+- (void)notifyObservers:(SEL)selector withObject:(id)arg1 withObject:(id)arg2;
+- (void)addObserver:(id)observer;
+- (void)removeObserver:(id)observer;
+- (void)removeObservers;
+- (NSUInteger)countObservers;
 
 @end

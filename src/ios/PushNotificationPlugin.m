@@ -3,8 +3,8 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UALocationService.h"
-#import "UA_SBJsonWriter.h"
 #import "UAConfig.h"
+#import "NSJSONSerialization+UAAdditions.h"
 
 typedef id (^UACordovaCallbackBlock)(NSArray *args);
 typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
@@ -41,7 +41,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [UAirship takeOff:config];
 
     [[UAPush shared] resetBadge];//zero badge on startup
-    [UAPush shared].delegate = self;
+    [UAPush shared].pushNotificationDelegate = self;
     [[UAPush shared] addObserver:self];
 }
 
@@ -192,8 +192,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [data setObject:message forKey:@"message"];
     [data setObject:extras forKey:@"extras"];
 
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
-    NSString *json = [writer stringWithObject:data];
+    NSString *json = [NSJSONSerialization stringWithObject:data];
     NSString *js = [NSString stringWithFormat:@"window.plugins.pushNotification.pushCallback(%@);", json];
 
     [self writeJavascript:js];
@@ -213,8 +212,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [data setObject:[NSNumber numberWithBool:valid] forKey:@"valid"];
     [data setObject:pushID forKey:@"pushID"];
 
-    UA_SBJsonWriter *writer = [[UA_SBJsonWriter alloc] init];
-    NSString *json = [writer stringWithObject:data];
+    NSString *json = [NSJSONSerialization stringWithObject:data];
     NSString *js = [NSString stringWithFormat:@"window.plugins.pushNotification.registrationCallback(%@);", json];
 
     [self writeJavascript:js];
@@ -560,10 +558,11 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [self raisePush:alert withExtras:extras];
 }
 
+
 #pragma mark Other stuff
 
 - (void)dealloc {
-    [UAPush shared].delegate = nil;
+    [UAPush shared].pushNotificationDelegate = nil;
     [[UAPush shared] removeObserver:self];
 
 }
