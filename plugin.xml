@@ -115,6 +115,7 @@
         <header-file src="src/ios/Airship/Common/UAirship.h"  />
         <header-file src="src/ios/Airship/Common/UAObservable.h"  />
         <header-file src="src/ios/Airship/Common/NSJSONSerialization+UAAdditions.h"  />
+        <header-file src="src/ios/Airship/Common/UAURLProtocol.h"  />
 
         <!-- Push header files -->
         <header-file src="src/ios/Airship/Push/UADeviceAPIClient.h"  />
@@ -126,7 +127,7 @@
         <header-file src="src/ios/Airship/External/UA_Base64.h"  />
         <header-file src="src/ios/Airship/External/UA_Reachability.h"  />
 
-        <source-file src="src/ios/Airship/libUAirship-iOS5-3.0.0.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-iOS5-3.0.1.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
