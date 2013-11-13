@@ -41,6 +41,8 @@ cordova plugin add https://github.com/urbanairship/phonegap-ua-push.git
 have proper analytics.  
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required). 
 
+4. Include the PushNotification.js in your html file: `<script type="text/javascript" src="js/PushNotification.js"></script>`
+
 #### iOS manual installation (unnecessary if installed automatically)
 1. Add src/ios/PushNotificationPlugin to your project
 1. Copy src/ios/Airship to your projects directory
