@@ -194,9 +194,9 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [data setObject:extras forKey:@"extras"];
 
     NSString *json = [NSJSONSerialization stringWithObject:data];
-    NSString *js = [NSString stringWithFormat:@"window.plugins.pushNotification.pushCallback(%@);", json];
+    NSString *js = [NSString stringWithFormat:@"cordova.fireDocumentEvent('urbanairship.push', %@);", json];
 
-    [self writeJavascript:js];
+    [self.commandDelegate evalJs:js scheduledOnRunLoop:NO];
 
     UA_LTRACE(@"js callback: %@", js);
 }
@@ -210,13 +210,16 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
-    [data setObject:[NSNumber numberWithBool:valid] forKey:@"valid"];
-    [data setObject:pushID forKey:@"pushID"];
+    if (valid) {
+        [data setObject:pushID forKey:@"pushID"];
+    } else {
+        [data setObject:[NSNumber numberWithBool:valid] forKey:@"error"];
+    }
 
     NSString *json = [NSJSONSerialization stringWithObject:data];
-    NSString *js = [NSString stringWithFormat:@"window.plugins.pushNotification.registrationCallback(%@);", json];
+    NSString *js = [NSString stringWithFormat:@"cordova.fireDocumentEvent('urbanairship.registration', %@);", json];
 
-    [self writeJavascript:js];
+    [self.commandDelegate evalJs:js scheduledOnRunLoop:NO];
 
     UA_LTRACE(@"js callback: %@", js);
 }

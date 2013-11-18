@@ -14,41 +14,54 @@
     <script type="text/javascript">
 
       var onDeviceReady = function() {
+        console.log("Device Ready!");
+
         // Incoming message callback
-        var handleIncomingPush = function(incoming) {
-          if(incoming.message) {
-            console.log("Incoming push: " + incoming.message)
+        var handleIncomingPush = function(event) {
+          if(event.message) {
+            console.log("Incoming push: " + event.message)
           } else {
             console.log("No incoming message")
           }
         }
 
         // Registration callback
-        var onRegistration = function(error, pushID)  {
-          if (!error) {
-            console.log("Reg Success: " + pushID)
-            $('#id').text(pushID)
+        var onRegistration = function(event)  {
+          if (!event.error) {
+            console.log("Reg Success: " + event.pushID)
+            $('#id').text(event.pushID)
           } else {
-            console.log(error)
+            console.log(event.rror)
           }
         }
 
         // push event callback
-        var onPush = function(data) {
-          console.log("Received push: " + data.message)
+        var onPush = function(event) {
+          console.log("Received push: " + event.message)
         }
 
-        // Register for any registration events
-        PushNotification.registerEvent('registration', onRegistration)
-
-        // Register for any push events
-        PushNotification.registerEvent('push', onPush)
-
-        // Reset Badge on resume and check for any incoming pushes
+        
+        // Handle resume
         document.addEventListener("resume", function() {
+          console.log("device resume!");
           PushNotification.resetBadge()
           PushNotification.getIncoming(handleIncomingPush)
-        })
+
+          // Register for any registration events
+          document.addEventListener("urbanairship.registration", onRegistration, false)
+
+          // Register for any push events
+          document.addEventListener("urbanairship.push", handleIncomingPush, false)
+        }, false)
+
+
+        // Handle pause
+        document.addEventListener("pause", function() {
+          console.log("device pause!");
+         
+          document.removeEventListener("urbanairship.registration", onRegistration, false)
+          document.removeEventListener("urbanairship.push", handleIncomingPush, false)
+        }, false)
 
         // Register for notification types
         PushNotification.registerForNotificationTypes(PushNotification.notificationType.badge | 
@@ -212,11 +225,11 @@
         })
       }
 
-      document.addEventListener("deviceready", onDeviceReady)
+      document.addEventListener("deviceready", onDeviceReady, false)
 
     </script>
 </head>
-  <body onload="onLoad()">
+  <body>
   <div data-role="page" id="page">
 
     <div data-role="header" class="ui-bar ui-bar-b">
