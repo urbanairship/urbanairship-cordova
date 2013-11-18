@@ -1,4 +1,11 @@
 ==================================
+Version 2.2.0 - November 18, 2013
+==================================
+- Use DOM events for incoming push and registration events
+- Use js-module for including the PushNotification.js file
+- Updated and fixed issues in the provided example
+
+==================================
 Version 2.1.1 - November 18, 2013
 ==================================
 - Update device plugin dependency id
