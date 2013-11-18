@@ -19,6 +19,9 @@ A older version of the plugin for Phonegap 2.6 - 2.9 can be found [here](https:/
 We accept pull requests! If you would like to submit a pull request, please fill out and submit a
 Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreement/).
 
+## Migration
+
+A migration guide for newer releases of the plugin can be found [here](MIGRATION.md).
 
 ## Installation
 
@@ -40,8 +43,6 @@ cordova plugin add https://github.com/urbanairship/phonegap-ua-push.git
 3. If your app supports Android API < 14, then you have to manually instrument any Android Activities to 
 have proper analytics.  
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required). 
-
-4. Include the PushNotification.js in your html file: `<script type="text/javascript" src="js/PushNotification.js"></script>`
 
 #### iOS manual installation (unnecessary if installed automatically)
 1. Add src/ios/PushNotificationPlugin to your project
@@ -78,6 +79,10 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
         <preference name="com.urbanairship.development_app_key" value="Your development app key" />
         <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
         <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
+
+1. Copy www/PushNotification.js into the projects www directory
+
+1. require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
 
 #### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
@@ -148,6 +153,10 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 to get proper analytics.  
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required).
 
+1. Copy www/PushNotification.js into the projects www directory
+
+1. require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
+
 ## Example
 A full example can be found in Examples.  To run it, copy the files:
 - Examples/index.html to www/index.html
@@ -155,28 +164,34 @@ A full example can be found in Examples.  To run it, copy the files:
 - Examples/js/* to www/js
 
 #### Basic Example
-
-    push = window.plugins.pushNotification;
-
+    
     // Callback for when a device has registered with Urban Airship.
     // https://docs.urbanairship.com/display/DOCS/Server%3A+Android+Push+API#ServerAndroidPushAPI-Registration
-    push.registerEvent('registration', function (error, id) {
+    PushNotification.registerEvent('registration', function (error, id) {
         if (error) {
             console.log('there was an error registering for push notifications');
         } else {
             console.log("Registered with ID: " + id);
         } 
-    });
+    })
 
-    // Callback for when the app is running, and receives a push.
-    push.registerEvent('push', function (push) {
-        console.log("Got push: " + push.message)
-    });
+    // Register for any urban airship events
+    document.addEventListener("urbanairship.registration", function (event) {
+        if (event.error) {
+            console.log('there was an error registering for push notifications');
+        } else {
+            console.log("Registered with ID: " + event.pushID);
+        } 
+    }, false)
+
+    document.addEventListener("urbanairship.push", function (event) {
+        console.log("Incoming push: " + event.message)
+    }, false)
 
     // Set tags on a device, that you can push to
     // https://docs.urbanairship.com/display/DOCS/Server%3A+Tag+API
-    push.setTags(["loves_cats", "shops_for_games"], function () {
-        push.getTags(function (obj) {
+    PushNotification.setTags(["loves_cats", "shops_for_games"], function () {
+        PushNotification.getTags(function (obj) {
             obj.tags.forEach(function (tag) {
                 console.log("Tag: " + tag);
             });
@@ -185,14 +200,14 @@ A full example can be found in Examples.  To run it, copy the files:
 
     // Set an alias, this lets you tie a device to a user in your system
     // https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Alias
-    push.setAlias("awesomeuser22", function () {
+    PushNotification.setAlias("awesomeuser22", function () {
         push.getAlias(function (alias) {
             console.log("The user formerly known as " + alias)
         });
     });
 
     // Check if push is enabled
-    push.isPushEnabled(function (enabled) {
+    PushNotification.isPushEnabled(function (enabled) {
         if (enabled) {
             console.log("Push is enabled! Fire away!");
         }
@@ -419,28 +434,42 @@ Report the location of the device.
 
 ### Events
 
+**Note:** If your application supports Android and it listens to any of the events, you should 
+start listening for events on both 'deviceReady' and 'resume' and stop listening for events on 'pause'.  
+This will prevent the events from being handled in the background.
+
 ### Incoming Push
 
-*Callback arguments:* (Push push)
+Event:
 
-This event is trigerred when your application is open, and a push comes in.
+    {
+        message: <Alert Message>,
+        extras: <Extras Dictionary>
+    }
 
-    push.registerEvent('push', function (push) {
-        alert(push.message);
+This event is trigerred when a push notification is received.
+
+    document.addEventListener('urbanairship.push', function(event) {
+        alert(event.message);
     });
 
 
 ### Registration
 
-*Callback arguments:* (Boolean error, String id)
+Event:
+
+    {
+        error: <Error message when registration failed>,
+        pushID: <Push address>
+    }
 
 This event is trigerred when your application recieves a registration response from Urban Airship.
 
-    push.registerEvent('registration', function (error, id) {
-        if (error) {
+    document.addEventListener('urbanairship.registration', function(event) {
+        if (event.error) {
             console.log('There was an error registering for push notifications.');
         } else {
-            console.log("Registered with ID: " + id);
+            console.log("Registered with ID: " + event.pushID);
         } 
     });
     

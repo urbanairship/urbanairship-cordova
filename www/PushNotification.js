@@ -1,61 +1,7 @@
-// Event emitter used to raise events from the library.
-function EventEmitter() {
-  this._listeners = {}
-  this._mutators = {}
-}
-
-var cons  = EventEmitter
-  , proto = cons.prototype
-
-proto.on = function(ev, fn) {
-  (this._listeners[ev] = this._listeners[ev] || []).push(fn)
-  return this
-}
-
-proto.mutate = function(ev, fn) {
-  this._mutators[ev] = fn
-  return this
-}
-
-proto.once = function(ev, fn) {
-  var self = this
-  return self.on(ev, listener)
-
-  function listener() {
-    fn.apply(this, [].slice.call(arguments))
-    self.remove(ev, listener)
-  }
-}
-
-proto.emit = function(ev) {
-  var list = this._listeners[ev] || []
-    , args = [].slice.call(arguments, 1)
-    , mutator = this._mutators[ev] || function() { return [].slice.call(arguments) }
-
-  args = mutator.apply(null, args)
-
-  list.forEach(function(fn) {
-    fn.apply(null, args)
-  })
-}
-
-proto.listeners = function(ev) {
-  return this._listeners[ev] || []
-}
-
-proto.removeListener =
-proto.remove = function(ev, fn) {
-  var tmp = this._listeners[ev] || []
-
-  typeof fn === 'function' ?
-    tmp.indexOf(fn) > -1 && tmp.splice(tmp.indexOf(fn), 1) :
-    delete this._listeners[ev]
-}
-
 // Init the plugin
 var PushNotification = function () {
-    this.event_emitter = new EventEmitter
-  };
+
+}
 
 // Types
 
@@ -238,27 +184,4 @@ PushNotification.prototype.recordCurrentLocation = function (callback) {
   this.call_native(callback, "recordCurrentLocation");
 }
 
-// Event handling stuff (INTERNAL)
-
-PushNotification.prototype.registerEvent = function (event, func) {
-  // Do event name validation?
-  this.event_emitter.on(event, func)
-}
-
-PushNotification.prototype.pushCallback = function (data) {
-  this.event_emitter.emit('push', data);
-}
-
-PushNotification.prototype.registrationCallback = function (data) {
-  error = !data['valid'];
-  pushID = data['pushID'];
-  this.event_emitter.emit('registration', error, pushID);
-}
-
-// Register the plugin
-if(!window.plugins) {
-	window.plugins = {};
-}
-if (!window.plugins.pushNotification) {
-	window.plugins.pushNotification = new PushNotification();
-}
+module.exports = new PushNotification();
