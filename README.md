@@ -19,6 +19,9 @@ A older version of the plugin for Phonegap 2.6 - 2.9 can be found [here](https:/
 We accept pull requests! If you would like to submit a pull request, please fill out and submit a
 Code Contribution Agreement (http://urbanairship.com/legal/contribution-agreement/).
 
+## Migration
+
+A migration guide for newer releases of the plugin can be found [here](MIGRATION.md).
 
 ## Installation
 
@@ -431,6 +434,10 @@ Report the location of the device.
 
 ### Events
 
+**Note:** If your application supports Android and it listens to any of the events, you should 
+start listening for events on both 'deviceReady' and 'resume' and stop listening for events on 'pause'.  
+This will prevent the events from being handled in the background.
+
 ### Incoming Push
 
 Event:
@@ -440,7 +447,7 @@ Event:
         extras: <Extras Dictionary>
     }
 
-This event is trigerred when your application is open, and a push comes in.
+This event is trigerred when a push notification is received.
 
     document.addEventListener('urbanairship.push', function(event) {
         alert(event.message);
