@@ -91,9 +91,9 @@ public class PushNotificationPlugin extends CordovaPlugin {
         JSONObject data = new JSONObject();
         try {
             if (valid) {
-                data.put("error", "Invalid registration.");
-            } else {
                 data.put("pushID", pushID);
+            } else {
+                data.put("error", "Invalid registration.");
             }
         } catch (JSONException e) {
             Logger.error("Error in raiseRegistration", e);
