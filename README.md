@@ -80,9 +80,9 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
         <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
         <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
 
-1. Copy www/PushNotification.js into the projects www directory
+1. Copy www/PushNotification.js into the project's www directory
 
-1. require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
+1. Require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
 
 #### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
@@ -153,9 +153,9 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 to get proper analytics.  
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required).
 
-1. Copy www/PushNotification.js into the projects www directory
+1. Copy www/PushNotification.js into the project's www directory
 
-1. require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
+1. Require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
 
 ## Example
 A full example can be found in Examples.  To run it, copy the files:
@@ -447,7 +447,7 @@ Event:
         extras: <Extras Dictionary>
     }
 
-This event is trigerred when a push notification is received.
+This event is triggered when a push notification is received.
 
     document.addEventListener('urbanairship.push', function(event) {
         alert(event.message);
@@ -463,7 +463,7 @@ Event:
         pushID: <Push address>
     }
 
-This event is trigerred when your application recieves a registration response from Urban Airship.
+This event is triggered when your application receives a registration response from Urban Airship.
 
     document.addEventListener('urbanairship.registration', function(event) {
         if (event.error) {
