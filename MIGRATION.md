@@ -17,41 +17,40 @@ javascript file that the plugin is being used, include the following:
 
 Registration events and incoming push events are now standard dom events.
 
-  // Removed event registrations:
-  PushNotification.registerEvent('registration', function (error, id) {});
-  PushNotification.registerEvent('push', function (push) {});
+PushNotificaiton.registerEvents is now removed.  The "registration" and "push" events
+can now be accessed by listening for events on the document:
 
-  // Not the plugin will fire document events:
+Events:
 
-  Events: 
-  	'urbanairship.registration'
+  	Name: 'urbanairship.registration'
 
-  	Event object: 
-  	{
-  		error: <Error message if registration failed>,
-  		pushID: <Push address>
-  	}
+	Event object: 
+	{
+	  error: <Error message if registration failed>,
+	  pushID: <Push address>
+	}
+	
+	Name: 'urbanairship.push'
+	
+	Event object: 
+	{
+	  message: <Alert message>,
+	  extras: <Alert extras>
+	}
 
-	'urbanairship.push'
+Example:
 
-  	Event object: 
-  	{
-  		message: <Alert message>,
-  		extras: <Alert extras>
-  	}
-
-  	Example:
-	  	document.addEventListener("urbanairship.registration", function (event) {
-	  		if (event.error) {
-	        	console.log('there was an error registering for push notifications');
-	    	} else {
-	      	  console.log("Registered with ID: " + event.pushID);
-	      	} 
-	    }, false)
-
-		document.addEventListener("urbanairship.push", function (event) {
-			console.log("Incoming push: " + event.message)
-		}, false)
+	document.addEventListener("urbanairship.registration", function (event) {
+		if (event.error) {
+			console.log('there was an error registering for push notifications');
+		} else {
+			console.log("Registered with ID: " + event.pushID);
+		} 
+	}, false)
+	
+	document.addEventListener("urbanairship.push", function (event) {
+		console.log("Incoming push: " + event.message)
+	}, false)
 
 
 
