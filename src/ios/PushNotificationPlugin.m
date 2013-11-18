@@ -213,7 +213,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     if (valid) {
         [data setObject:pushID forKey:@"pushID"];
     } else {
-        [data setObject:[NSNumber numberWithBool:valid] forKey:@"error"];
+        [data setObject:@"Registration failed." forKey:@"error"];
     }
 
     NSString *json = [NSJSONSerialization stringWithObject:data];

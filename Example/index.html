@@ -13,8 +13,9 @@
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript">
 
+
       var onDeviceReady = function() {
-        console.log("Device Ready!");
+        console.log("Device ready!")
 
         // Incoming message callback
         var handleIncomingPush = function(event) {
@@ -40,25 +41,28 @@
           console.log("Received push: " + event.message)
         }
 
+        // Register for any urban airship events
+        document.addEventListener("urbanairship.registration", onRegistration, false)
+        document.addEventListener("urbanairship.push", handleIncomingPush, false)
         
         // Handle resume
         document.addEventListener("resume", function() {
-          console.log("device resume!");
+          console.log("Device resume!")
+          
           PushNotification.resetBadge()
           PushNotification.getIncoming(handleIncomingPush)
 
-          // Register for any registration events
+          // Reregister for urbanairship events if they were removed in pause event
           document.addEventListener("urbanairship.registration", onRegistration, false)
-
-          // Register for any push events
           document.addEventListener("urbanairship.push", handleIncomingPush, false)
         }, false)
 
 
         // Handle pause
         document.addEventListener("pause", function() {
-          console.log("device pause!");
+          console.log("Device pause!")
          
+          // Remove urbanairship events.  Important on android to not receive push in the background.
           document.removeEventListener("urbanairship.registration", onRegistration, false)
           document.removeEventListener("urbanairship.push", handleIncomingPush, false)
         }, false)
