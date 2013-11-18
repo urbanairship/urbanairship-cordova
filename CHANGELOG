@@ -1,4 +1,10 @@
 ==================================
+Version 2.1.1 - November 18, 2013
+==================================
+- Update device plugin dependency id
+- Add log statement to iOS push plugin on initialize
+
+==================================
 Version 2.1.0 - September 20, 2013
 ==================================
 - Update Urban Airship iOS Library to 3.0.0, CHANGELOG: https://github.com/urbanairship/ios-library/blob/3.0.0/CHANGELOG
