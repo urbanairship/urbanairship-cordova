@@ -17,7 +17,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 @implementation PushNotificationPlugin
 
 - (void)pluginInitialize {
-    UA_LINFO("Initializing PushNotificationPlugin")
+    UA_LINFO("Initializing PushNotificationPlugin");
     dispatchQueue =  dispatch_queue_create("com.urbanairship.push_plugin", DISPATCH_QUEUE_SERIAL);
     [self takeOff];
 }
