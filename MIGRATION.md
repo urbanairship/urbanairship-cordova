@@ -53,5 +53,8 @@ Example:
 	}, false)
 
 
+**Note:** If your application supports Android and it listens to any of the events, you should start 
+listening for events on both 'deviceReady' and 'resume' and stop listening for events on 'pause'. 
+This will prevent the events from being handled in the background.
 
 
