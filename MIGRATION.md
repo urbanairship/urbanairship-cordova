@@ -4,20 +4,20 @@
 
 ### Installation changes:
 
-The PushNotificaiton.js no longer sets the PushNotification plugin at window.plugins.PushNotification 
+The PushNotification.js no longer sets the PushNotification plugin at window.plugins.PushNotification 
 and instead uses module.exports.  Instead of including the PushNotification.js script, at the top of the 
 javascript file that the plugin is being used, include the following:
 
 	var PushNotification = require('<Path to PushNotification.js>')
 
-**Note:** If you are using automatic integration, the require step is done automatically.
+**Note:** If you are using automatic integration, the required step is done automatically.
 
 
 ### Event changes
 
 Registration events and incoming push events are now standard dom events.
 
-PushNotificaiton.registerEvents is now removed.  The "registration" and "push" events
+PushNotification.registerEvents is now removed.  The "registration" and "push" events
 can now be accessed by listening for events on the document:
 
 Events:
