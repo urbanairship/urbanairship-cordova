@@ -153,9 +153,7 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 to get proper analytics.  
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required).
 
-1. Copy www/PushNotification.js into the project's www directory
-
-1. Require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
+1. Require the PushNotification module `var PushNotification = cordova.require('<Path to PushNotification.js>')`
 
 ## Example
 A full example can be found in Examples.  To run it, copy the files:
