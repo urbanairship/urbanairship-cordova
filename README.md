@@ -82,7 +82,7 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 
 1. Copy www/PushNotification.js into the project's www directory
 
-1. Require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
+1. Require the PushNotification module `var PushNotification = cordova.require('<Path to PushNotification.js>')`
 
 #### Android manual installation (unnecessary if installed automatically)
 1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
@@ -155,7 +155,7 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 
 1. Copy www/PushNotification.js into the project's www directory
 
-1. Require the PushNotification module `var PushNotification = require('<Path to PushNotification.js>')`
+1. Require the PushNotification module `var PushNotification = cordova.require('<Path to PushNotification.js>')`
 
 ## Example
 A full example can be found in Examples.  To run it, copy the files:
