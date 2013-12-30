@@ -1,4 +1,9 @@
 ==================================
+Version 2.2.1 - December 30, 2013
+==================================
+- Fix iOS location bug
+
+==================================
 Version 2.2.0 - November 18, 2013
 ==================================
 - Use DOM events for incoming push and registration events
