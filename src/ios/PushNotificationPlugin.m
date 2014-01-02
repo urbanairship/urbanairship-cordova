@@ -67,6 +67,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     [[UAPush shared] resetBadge];//zero badge on startup
     [UAPush shared].pushNotificationDelegate = self;
     [[UAPush shared] addObserver:self];
+
+    [[UAirship shared].locationService startReportingSignificantLocationChanges];
 }
 
 - (void)failWithCallbackID:(NSString *)callbackID {
@@ -295,12 +297,14 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 - (void)enableLocation:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UALocationService setAirshipLocationServiceEnabled:YES];
+        [[UAirship shared].locationService startReportingSignificantLocationChanges];
     }];
 }
 
 - (void)disableLocation:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UALocationService setAirshipLocationServiceEnabled:NO];
+        [[UAirship shared].locationService stopReportingSignificantLocationChanges];
     }];
 }
 

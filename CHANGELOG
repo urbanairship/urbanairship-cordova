@@ -1,4 +1,9 @@
 ==================================
+Version 2.2.2 - January 2, 2014
+==================================
+- Start iOS location provider automatically when location is enabled
+
+==================================
 Version 2.2.1 - December 30, 2013
 ==================================
 - Fix iOS location bug
