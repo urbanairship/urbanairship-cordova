@@ -36,11 +36,6 @@
           }
         }
 
-        // push event callback
-        var onPush = function(event) {
-          console.log("Received push: " + event.message)
-        }
-
         // Register for any urban airship events
         document.addEventListener("urbanairship.registration", onRegistration, false)
         document.addEventListener("urbanairship.push", handleIncomingPush, false)
