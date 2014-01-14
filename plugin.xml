@@ -26,7 +26,7 @@
         <config-file target="res/xml/config.xml" parent="/widget">
             <feature name="PushNotificationPlugin">
                 <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin"/>
-                <param name="onload" value="false" />
+                <param name="onload" value="true" />
             </feature>
         </config-file>
 
