@@ -1,4 +1,12 @@
 ==================================
+Version 2.3.0 - January 15, 2014
+==================================
+- Updated Urban Airship Android Library to 3.3.0,
+CHANGELOG: http://docs.urbanairship.com/reference/libraries/android/latest/android_changelog.txt
+- Add config to enable push on launch.  When push is not enabled on launch,
+it will be enabled once enablePush is called from javascript.
+
+==================================
 Version 2.2.2 - January 2, 2014
 ==================================
 - Start iOS location provider automatically when location is enabled
