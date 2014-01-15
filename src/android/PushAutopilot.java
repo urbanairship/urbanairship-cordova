@@ -20,23 +20,27 @@ public class PushAutopilot extends Autopilot {
     static final String DEVELOPMENT_SECRET = "com.urbanairship.development_app_secret";
     static final String IN_PRODUCTION = "com.urbanairship.in_production";
     static final String GCM_SENDER = "com.urbanairship.gcm_sender";
+    static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
 
     @Override
     public void execute(Application application) {
-        UAirship.takeOff(application, getAirshipConfig(application));
+        // Parse cordova config options
+        AirshipOptions configOptions = new AirshipOptions(application);
+
+        UAirship.takeOff(application, getAirshipConfig(application, configOptions));
 
         PushManager.shared().setIntentReceiver(PushReceiver.class);
-        if (UAirship.shared().getAirshipConfigOptions().pushServiceEnabled) {
+
+        boolean enablePushOnLaunch = configOptions.getBoolean(ENABLE_PUSH_ONLAUNCH, false);
+
+        if (UAirship.shared().getAirshipConfigOptions().pushServiceEnabled && enablePushOnLaunch) {
             PushManager.enablePush();
         }
     }
 
-    private AirshipConfigOptions getAirshipConfig(Application application) {
+    private AirshipConfigOptions getAirshipConfig(Application application, AirshipOptions configOptions) {
         // Create the default options, will pull any config from the usual place - assets/airshipconfig.properties
         AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(application);
-
-        //Find any overrides in the cordova config
-        AirshipOptions configOptions = new AirshipOptions(application);
 
         // Apply any overrides from the manifest
         options.productionAppKey = configOptions.getString(PRODUCTION_KEY, options.productionAppKey);
