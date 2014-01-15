@@ -1,5 +1,18 @@
 # Migration Guide
 
+## 2.2.x to 2.3.0
+
+### Config Changes:
+
+In 2.2.x, push was enabled by default and would prompt the user to allow push before the application
+was ready to prompt the user for push.  In 2.3.0, push is now disabled by default and will be enabled
+when the enablePushed is called in javascript.  This allows the to determine when to
+prompt the user for push.
+
+To keep the old 2.2.x behavior, you can set the config option 'com.urbanairship.enable_push_onlaunch'
+to 'true' in the config.xml.
+
+
 ## 2.1.x to 2.2.0
 
 ### Installation changes:
