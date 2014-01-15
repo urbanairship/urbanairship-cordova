@@ -33,12 +33,21 @@ cordova plugin add https://github.com/urbanairship/phonegap-ua-push.git
 
 2. Modify the www/config.xml directory to contain (replacing with your configuration settings):
 
-        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
-        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
-        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
-        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
-        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
-        <preference name="com.urbanairship.gcm_sender" value="Android only: Your GCM sender id" />
+        <!-- Urban Airship app credentials -->
+        <preference name="com.urbanairship.production_app_key" value="PRODUCTION_APP_KEY" />
+        <preference name="com.urbanairship.production_app_secret" value="PRODUCTION_APP_SECRET" />
+        <preference name="com.urbanairship.development_app_key" value="DEVELOPMENT_APP_KEY" />
+        <preference name="com.urbanairship.development_app_secret" value="DEVELOPMENT_APP_SECRET" />
+
+        <!-- If the app is in production or not -->
+        <preference name="com.urbanairship.in_production" value="true | false" />
+
+        <!-- Enable push when the application launches (instead of waiting for enablePush js call).  Defaults to false -->
+        <preference name="com.urbanairship.enable_push_onlaunch" value="true | false" />
+
+        <!-- Only required for Android. -->
+        <preference name="com.urbanairship.gcm_sender" value="GCM_SENDER_ID" />
+
 
 3. If your app supports Android API < 14, then you have to manually instrument any Android Activities to 
 have proper analytics.  
@@ -74,11 +83,17 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
             <param name="onload" value="true" />
         </feature>
         
-        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
-        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
-        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
-        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
-        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
+         <!-- Urban Airship app credentials -->
+        <preference name="com.urbanairship.production_app_key" value="PRODUCTION_APP_KEY" />
+        <preference name="com.urbanairship.production_app_secret" value="PRODUCTION_APP_SECRET" />
+        <preference name="com.urbanairship.development_app_key" value="DEVELOPMENT_APP_KEY" />
+        <preference name="com.urbanairship.development_app_secret" value="DEVELOPMENT_APP_SECRET" />
+
+        <!-- If the app is in production or not -->
+        <preference name="com.urbanairship.in_production" value="true | false" />
+
+        <!-- Enable push when the application launches (instead of waiting for enablePush js call).  Defaults to false -->
+        <preference name="com.urbanairship.enable_push_onlaunch" value="true | false" />
 
 1. Copy www/PushNotification.js into the project's www directory
 
@@ -142,12 +157,20 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
             <param name="onload" value="true" />
         </feature>
 
-        <preference name="com.urbanairship.production_app_key" value="Your production app key" />
-        <preference name="com.urbanairship.production_app_secret" value="Your production app secret" />
-        <preference name="com.urbanairship.development_app_key" value="Your development app key" />
-        <preference name="com.urbanairship.development_app_secret" value="Your development app secret" />
-        <preference name="com.urbanairship.in_production" value="If the app is in production or not" />
-        <preference name="com.urbanairship.gcm_sender" value="Android only: Your GCM sender id" />
+         <!-- Urban Airship app credentials -->
+        <preference name="com.urbanairship.production_app_key" value="PRODUCTION_APP_KEY" />
+        <preference name="com.urbanairship.production_app_secret" value="PRODUCTION_APP_SECRET" />
+        <preference name="com.urbanairship.development_app_key" value="DEVELOPMENT_APP_KEY" />
+        <preference name="com.urbanairship.development_app_secret" value="DEVELOPMENT_APP_SECRET" />
+
+        <!-- If the app is in production or not -->
+        <preference name="com.urbanairship.in_production" value="true | false" />
+
+        <!-- Enable push when the application launches (instead of waiting for enablePush js call).  Defaults to false -->
+        <preference name="com.urbanairship.enable_push_onlaunch" value="true | false" />
+
+        <!-- Only required for Android. -->
+        <preference name="com.urbanairship.gcm_sender" value="GCM_SENDER_ID" />
 
 1. If your app supports Android API < 14 (pre ICS), then need to manually instrument any Android Activities
 to get proper analytics.  
