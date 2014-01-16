@@ -580,7 +580,13 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 #pragma mark UAPushNotificationDelegate
 - (void)launchedFromNotification:(NSDictionary *)notification {
     UA_LDEBUG(@"The application was launched or resumed from a notification %@", [notification description]);
-    self.incomingNotification = notification;
+    
+    UA_LDEBUG(@"Application state is %d", [[UIApplication sharedApplication] applicationState]);
+    if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateInactive) {
+        [self receivedForegroundNotification:notification];
+    } else {
+        self.incomingNotification = notification;
+    }
 }
 
 - (void)receivedForegroundNotification:(NSDictionary *)notification {
