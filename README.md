@@ -188,16 +188,6 @@ A full example can be found in Examples.  To run it, copy the files:
 
 #### Basic Example
     
-    // Callback for when a device has registered with Urban Airship.
-    // https://docs.urbanairship.com/display/DOCS/Server%3A+Android+Push+API#ServerAndroidPushAPI-Registration
-    PushNotification.registerEvent('registration', function (error, id) {
-        if (error) {
-            console.log('there was an error registering for push notifications');
-        } else {
-            console.log("Registered with ID: " + id);
-        } 
-    })
-
     // Register for any urban airship events
     document.addEventListener("urbanairship.registration", function (event) {
         if (event.error) {
