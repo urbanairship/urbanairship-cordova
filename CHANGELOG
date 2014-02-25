@@ -1,4 +1,11 @@
 ==================================
+Version 2.3.1 - February 25, 2014
+==================================
+- Updated Urban Airship Android Library to 3.3.1,
+CHANGELOG: http://docs.urbanairship.com/reference/libraries/android/latest/android_changelog.txt
+- Fixes crash with Android background location
+
+==================================
 Version 2.3.0 - January 15, 2014
 ==================================
 - Updated Urban Airship Android Library to 3.3.0,
