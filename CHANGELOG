@@ -1,4 +1,10 @@
 ==================================
+Version 2.3.3 - March 20, 2014
+==================================
+- Use the 64 bit compatiblie Urban Airship iOS library to fix build issues when building against
+iOS 7.1.
+
+==================================
 Version 2.3.2 - March 10, 2014
 ==================================
 - Updated Urban Airship iOS Library to 3.0.3, which fixed detectProvisioningMode behavior when
