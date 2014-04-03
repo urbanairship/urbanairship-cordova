@@ -28,7 +28,7 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 #### Automatic Installation using PhoneGap/Cordova CLI (iOS and Android)
 1. Install this plugin using PhoneGap/Cordova cli:
 ```
-phonegap plugin add https://github.com/urbanairship/phonegap-ua-push.git
+phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
 ``` 
 
 2. Modify the www/config.xml directory to contain (replacing with your configuration settings):
