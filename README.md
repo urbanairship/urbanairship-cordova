@@ -439,6 +439,11 @@ Set the current application badge number
 
 Reset the badge number to zero
 
+#### clearNotifications(callback)
+**Note:** Android only
+
+Clears the notifications posted by the application.
+
 ### Location
 
 #### recordCurrentLocation(callback)

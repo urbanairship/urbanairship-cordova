@@ -1,5 +1,8 @@
 package com.urbanairship.phonegap;
 
+import android.app.NotificationManager;
+import android.content.Context;
+
 import android.os.RemoteException;
 
 import com.urbanairship.Autopilot;
@@ -37,7 +40,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
             "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
             "getIncoming", "getPushID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
-            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation");
+            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications");
 
     public static  String incomingAlert = "";
     public static Map<String, String> incomingExtras = new HashMap<String, String>();
@@ -136,7 +139,12 @@ public class PushNotificationPlugin extends CordovaPlugin {
         return true;
     }
 
-    // Actions
+    void clearNotifications(JSONArray data, CallbackContext callbackContext) {
+        Context context = UAirship.shared().getApplicationContext();
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+        callbackContext.success();
+    }
 
     void enablePush(JSONArray data, CallbackContext callbackContext) {
         if (requirePushServiceEnabled(callbackContext)) {
