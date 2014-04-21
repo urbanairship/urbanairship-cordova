@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -30,8 +30,9 @@
 /**
  * The reference implementation of the UAInboxJavaScriptDelegate protocol.
  */
-@interface UAInboxDefaultJSDelegate : NSObject <UAInboxJavaScriptDelegate> {
-
-}
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+@interface UAInboxDefaultJSDelegate : NSObject <UAInboxJavaScriptDelegate>
+#pragma clang diagnostic pop
 
 @end

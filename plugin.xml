@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.urbanairship.phonegap.PushNotification"
-    version="2.3.3">
+    version="2.4.0">
 
     <name>Urban Airship Push Notification Plugin</name>
     
@@ -118,18 +118,51 @@
         <header-file src="src/ios/Airship/Common/UAObservable.h"  />
         <header-file src="src/ios/Airship/Common/NSJSONSerialization+UAAdditions.h"  />
         <header-file src="src/ios/Airship/Common/UAURLProtocol.h"  />
+        <header-file src="src/ios/Airship/Common/NSString+URLEncoding.h" />
+        <header-file src="src/ios/Airship/Common/UAAction+Operators.h" />
+        <header-file src="src/ios/Airship/Common/UAAction.h" />
+        <header-file src="src/ios/Airship/Common/UAActionArguments.h" />
+        <header-file src="src/ios/Airship/Common/UAActionJSDelegate.h" />
+        <header-file src="src/ios/Airship/Common/UAActionRegistry.h" />
+        <header-file src="src/ios/Airship/Common/UAActionRegistryEntry.h" />
+        <header-file src="src/ios/Airship/Common/UAActionResult.h" />
+        <header-file src="src/ios/Airship/Common/UAActionRunner.h" />
+        <header-file src="src/ios/Airship/Common/UAAddTagsAction.h" />
+        <header-file src="src/ios/Airship/Common/UAAggregateActionResult.h" />
+        <header-file src="src/ios/Airship/Common/UAApplicationMetrics.h" />
+        <header-file src="src/ios/Airship/Common/UABespokeCloseView.h" />
+        <header-file src="src/ios/Airship/Common/UABeveledLoadingIndicator.h" />
+        <header-file src="src/ios/Airship/Common/UACloseWindowAction.h" />
+        <header-file src="src/ios/Airship/Common/UAIncomingPushAction.h" />
+        <header-file src="src/ios/Airship/Common/UAIncomingRichPushAction.h" />
+        <header-file src="src/ios/Airship/Common/UAJavaScriptDelegate.h" />
+        <header-file src="src/ios/Airship/Common/UALandingPageOverlayController.h" />
+        <header-file src="src/ios/Airship/Common/UAModifyTagsAction.h" />
+        <header-file src="src/ios/Airship/Common/UAOpenExternalURLAction.h" />
+        <header-file src="src/ios/Airship/Common/UAPushActionArguments.h" />
+        <header-file src="src/ios/Airship/Common/UARemoveTagsAction.h" />
+        <header-file src="src/ios/Airship/Common/UARichContentWindow.h" />
+        <header-file src="src/ios/Airship/Common/UASyncAction.h" />
+        <header-file src="src/ios/Airship/Common/UAWebInvocationActionArguments.h" />
+        <header-file src="src/ios/Airship/Common/UAWebViewCallData.h" />
+        <header-file src="src/ios/Airship/Common/UAWebViewTools.h" />
+        <header-file src="src/ios/Airship/Common/UIWebView+UAAdditions.h" />
+        <header-file src="src/ios/Airship/Common/JS/UANativeBridge.h" />
+        <header-file src="src/ios/Airship/Common/LandingPages/UALandingPageAction.h" />
 
         <!-- Push header files -->
         <header-file src="src/ios/Airship/Push/UADeviceAPIClient.h"  />
-        <header-file src="src/ios/Airship/Push/UADeviceRegistrationData.h"  />
         <header-file src="src/ios/Airship/Push/UADeviceRegistrationPayload.h"  />
         <header-file src="src/ios/Airship/Push/UAPush.h" />
+        <header-file src="src/ios/Airship/Push/UAChannelAPIClient.h" />
+        <header-file src="src/ios/Airship/Push/UAChannelRegistrationPayload.h" />
+        <header-file src="src/ios/Airship/Push/UADeviceRegistrar.h" />
 
         <!-- External header files -->
         <header-file src="src/ios/Airship/External/UA_Base64.h"  />
         <header-file src="src/ios/Airship/External/UA_Reachability.h"  />
 
-        <source-file src="src/ios/Airship/libUAirship-iOS5-3.0.3.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-4.0.0.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />

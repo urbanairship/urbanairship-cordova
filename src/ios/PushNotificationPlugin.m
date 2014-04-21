@@ -69,7 +69,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
     [[UAPush shared] resetBadge];//zero badge on startup
     [UAPush shared].pushNotificationDelegate = self;
-    [[UAPush shared] addObserver:self];
+    [UAPush shared].registrationDelegate = self;
 
     [[UAirship shared].locationService startReportingSignificantLocationChanges];
 }
@@ -599,7 +599,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 - (void)dealloc {
     [UAPush shared].pushNotificationDelegate = nil;
-    [[UAPush shared] removeObserver:self];
+    [UAPush shared].registrationDelegate = nil;
 
 }
 

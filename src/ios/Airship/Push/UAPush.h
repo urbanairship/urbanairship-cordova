@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -26,6 +26,49 @@
 #import "UAGlobal.h"
 #import "UAObservable.h"
 #import "UAHTTPConnection.h"
+#import "UADeviceRegistrar.h"
+
+
+//---------------------------------------------------------------------------------------
+// UARegistrationDelegate
+//---------------------------------------------------------------------------------------
+
+/**
+ * Implement this protocol and add as a [UAPush registrationDelegate] to receive
+ * registration success and failure callbacks.
+ *
+ */
+@protocol UARegistrationDelegate <NSObject>
+@optional
+
+/**
+ * Called when the device channel and/or device token successfully registers with
+ * Urban Airship.  Successful registrations could be disabling push, enabling push,
+ * or updating the device registration settings.
+ *
+ * A nil channel id indicates the channel creation failed and the old device token
+ * registration is being used.
+ *
+ * The device token will only be available once the application successfully
+ * registers with APNS.
+ *
+ * When registration finishes in the background, any async tasks that are triggered
+ * from this call should request a background task.
+ * @param channelID The channel ID string.
+ * @param deviceToken The device token string.
+ */
+- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken;
+
+/**
+ * Called when the device channel and/or device token failed to register with
+ * Urban Airship.
+ *
+ * When registration finishes in the background, any async tasks that are triggered
+ * from this call should request a background task.
+ */
+- (void)registrationFailed;
+
+@end
 
 //---------------------------------------------------------------------------------------
 // UAPushUIProtocol Protocol
@@ -146,85 +189,6 @@
 
 @end
 
-//---------------------------------------------------------------------------------------
-// UARegistrationDelegate Protocol
-//---------------------------------------------------------------------------------------
-
-/**
- * Implement this protocol and add as a [UAPush registrationDelegate] to receive
- * device token registration success and failure callbacks.
- *
- */
-@protocol UARegistrationDelegate<NSObject>
-@optional
-
-/**
- * Called when the device token is successfully registered with Urban Airship.
- */
-- (void)registerDeviceTokenSucceeded;
-
-/**
- * Called when the device token registration fails.
- *
- * @param request The failed request.
- */
-- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
-
-/**
- * Called when the device token is successfully deactivated with Urban Airship.
- */
-- (void)unregisterDeviceTokenSucceeded;
-
-/**
- * Called when the device token deactivation fails and cannot be retried.
- *
- * @param request The failed request.
- */
-- (void)unregisterDeviceTokenFailed:(UAHTTPRequest *)request;
-@end
-
-
-
-//---------------------------------------------------------------------------------------
-// UARegistrationObserver Protocol
-//---------------------------------------------------------------------------------------
-
-/**
- * Implement this protocol and register with the UAPush shared instance to receive
- * device token registration success and failure callbacks.
- *
- * @deprecated As of version 3.0. Replaced with `UARegistrationDelegate` protocol.
- */
-__attribute__((deprecated("As of version 3.0")))
-@protocol UARegistrationObserver
-@optional
-
-/**
- * Called when the device token is successfully registered with Urban Airship.
- */
-- (void)registerDeviceTokenSucceeded;
-
-/**
- * Called when the device token registration fails.
- *
- * @param request The failed request.
- */
-- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request;
-
-/**
- * Called when the device token is successfully deactivated with Urban Airship.
- */
-- (void)unregisterDeviceTokenSucceeded;
-
-/**
- * Called when the device token deactivation fails and cannot be retried.
- *
- * @param request The failed request.
- */
-- (void)unregisterDeviceTokenFailed:(UAHTTPRequest *)request;
-@end
-
-
 
 //---------------------------------------------------------------------------------------
 // UAPush Class
@@ -234,10 +198,7 @@ __attribute__((deprecated("As of version 3.0")))
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-@interface UAPush : UAObservable
-#pragma clang diagnostic pop
-
+@interface UAPush : NSObject <UADeviceRegistrarDelegate>
 
 SINGLETON_INTERFACE(UAPush);
 
@@ -298,6 +259,11 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic, copy, readonly) NSString *deviceToken;
 
 /**
+ * The channel id for this device.
+ */
+@property (nonatomic, copy, readonly) NSString *channelID;
+
+/**
  * Notification types this app will request from APNS. If push is enabled, changes to this value will
  * take effect the next time the app registers with [UAPush registerForRemoteNotifications].
  *
@@ -322,7 +288,12 @@ SINGLETON_INTERFACE(UAPush);
 /**
  * Set a delegate that implements the UARegistrationDelegate protocol.
  */
-@property (nonatomic, assign) id<UARegistrationDelegate> registrationDelegate;
+@property (nonatomic, weak) id<UARegistrationDelegate> registrationDelegate;
+
+/**
+ * Notification that launched the application
+ */
+@property (nonatomic, readonly, strong) NSDictionary *launchNotification;
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge
@@ -427,9 +398,10 @@ SINGLETON_INTERFACE(UAPush);
 @property (nonatomic, copy, readonly) NSDictionary *quietTime;
 
 /**
- * Time Zone for quiet time.
+ * Time Zone for quiet time.  If the time zone is not set, the current
+ * local time zone is returned.
  */
-@property (nonatomic, strong) NSTimeZone *timeZone; /* getter = timeZone, setter = setTimeZone: */
+@property (nonatomic, strong) NSTimeZone *timeZone;
 
 /**
  * Enables/Disables quiet time
@@ -449,8 +421,29 @@ SINGLETON_INTERFACE(UAPush);
  * @param from Date for start of quiet time (HH:MM are used)
  * @param to Date for end of quiet time (HH:MM are used)
  * @param tz The time zone for the from and to dates
+ * @deprecated As of version 3.2.  Replaced with 
+ * setQuietTimeStartHour:startMinute:endHour:endMinute:
  */
 - (void)setQuietTimeFrom:(NSDate *)from to:(NSDate *)to withTimeZone:(NSTimeZone *)tz;
+
+/**
+ * Sets the quiet time start and end time.  The start and end time does not change
+ * if the time zone changes.  To set the time zone, see 'timeZone'.
+ *
+ * Update the server after making changes to the quiet time with the
+ * `updateRegistration` call. Batching these calls improves API and client performance.
+ *
+ * @warning This method does not automatically enable quiet time and does not
+ * automatically update the server. Please refer to `quietTimeEnabled` and 
+ * `updateRegistration` methods for more information.
+ *
+ * @param startHour Quiet time start hour. Only 0-23 is valid.
+ * @param startMinute Quiet time start minute. Only 0-59 is valid.
+ * @param endHour Quiet time end hour. Only 0-23 is valid.
+ * @param endMinute Quiet time end minute. Only 0-59 is valid.
+ */
+-(void)setQuietTimeStartHour:(NSUInteger)startHour startMinute:(NSUInteger)startMinute
+                     endHour:(NSUInteger)endHour endMinute:(NSUInteger)endMinute;
 
 
 ///---------------------------------------------------------------------------------------

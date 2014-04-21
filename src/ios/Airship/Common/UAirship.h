@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -24,10 +24,12 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAGlobal.h"
+#import "UAJavaScriptDelegate.h"
 
 @class UAConfig;
 @class UAAnalytics;
 @class UALocationService;
+@class UAApplicationMetrics;
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
@@ -56,13 +58,18 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 /**
  * The current APNS/remote notification device token.
  */
-@property (weak, nonatomic, readonly) NSString *deviceToken;
+@property (nonatomic, readonly) NSString *deviceToken;
 
 /**
  * The shared analytics manager. There are not currently any user-defined events,
  * so this is for internal library use only at this time.
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
+
+/**
+ * Stores common application metrics such as last open.
+ */
+@property (nonatomic, strong, readonly) UAApplicationMetrics *applicationMetrics;
 
 /**
  * This flag is set to `YES` if the application is set up 
@@ -76,6 +83,13 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * UAirship has been initialized and is ready for use.
  */
 @property (nonatomic, assign, readonly) BOOL ready;
+
+/**
+ * A user configurable JavaScript delegate.
+ *
+ * NOTE: this delegate is not retained.
+ */
+@property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Services

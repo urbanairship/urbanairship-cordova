@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -72,6 +72,7 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelError
 // constants
 #define kAirshipProductionServer @"https://device-api.urbanairship.com"
 #define kAnalyticsProductionServer @"https://combine.urbanairship.com";
+#define kUAProductionLandingPageContentURL @"https://dl.urbanairship.com/aaa"
 
 #ifdef _UA_VERSION
 #define UA_VERSION @ _UA_VERSION
