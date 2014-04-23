@@ -1,8 +1,10 @@
 ==================================
 Version 2.4.0 - April 23, 2014
 ==================================
-- Updated for Cordova 3.4.1
+- Updated for Cordova 3.4.0+
 - Updated Urban Airship iOS Library to 4.0.0
+- Updated Urban Airship Android Library to 4.0.1,
+CHANGELOG: http://docs.urbanairship.com/reference/libraries/android/latest/android_changelog.txt
 
 ==================================
 Version 2.3.3 - April 18, 2014
