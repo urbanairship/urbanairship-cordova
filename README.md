@@ -12,7 +12,7 @@ More documentation and integration guides for IOS and Android are availble on ou
 
 ### Older PhoneGap versions
 
-An older version of the plugin for Phonegap 3.0 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/2.3.3)
+An older unsupported version of the plugin for Phonegap 3.0 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/2.3.3)
 and for Phonegap 2.6 - 2.9 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/1.0.8).
 
 ### Contributing Code
