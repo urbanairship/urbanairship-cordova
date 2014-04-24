@@ -564,15 +564,15 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 }
 
 
-#pragma mark UARegistrationObservers
-- (void)registerDeviceTokenSucceeded {
-    UA_LINFO(@"PushNotificationPlugin: registered for remote notifications");
+#pragma mark UARegistrationDelegate
+- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
+    UA_LINFO(@"PushNotificationPlugin: registered for remote notifications.");
     
-    [self raiseRegistration:YES withpushID:[UAirship shared].deviceToken];
+    [self raiseRegistration:YES withpushID:deviceToken];
 }
 
-- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request {
-    UA_LINFO(@"PushNotificationPlugin: Failed to register for remote notifications with request: %@", request);
+- (void)registrationFailed {
+    UA_LINFO(@"PushNotificationPlugin: Failed to register for remote notifications.");
     
     [self raiseRegistration:NO withpushID:@""]; 
 }
