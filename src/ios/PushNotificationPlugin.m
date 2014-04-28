@@ -568,7 +568,9 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
     UA_LINFO(@"PushNotificationPlugin: registered for remote notifications.");
     
-    [self raiseRegistration:YES withpushID:deviceToken];
+    if (deviceToken) {
+        [self raiseRegistration:YES withpushID:deviceToken];
+    }
 }
 
 - (void)registrationFailed {
