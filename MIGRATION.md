@@ -1,5 +1,17 @@
 # Migration Guide
 
+## 2.3.x to 2.4.0
+
+### Installation changes:
+
+For iOS, make sure you update your iOS project to Cordova iOS version 3.4.1 before installing the phonegap-ua-push plugin.
+For example:
+```
+1. cordova platform update ios
+iOS project is now at version 3.4.1
+2. phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
+```
+
 ## 2.2.x to 2.3.0
 
 ### Config Changes:

@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -70,15 +70,10 @@ typedef enum {
 #pragma clang diagnostic pop
 /**
  * The shared singleton accessor.
+ *
+ * @deprecated As of version 3.1. Replaced with [UAInbox shared].messageList.
  */
-+ (UAInboxMessageList *)shared;
-
-/**
- * Teardown method.  This method is called as appropriate by the library,
- * and thus you will not oridinarlly need to call it directly.
- */
-+ (void)land;
-
++ (UAInboxMessageList *)shared __attribute__((deprecated("As of version 3.1")));
 
 /**
  * Fetch new messages from the server. If the associated user has not yet
@@ -204,7 +199,7 @@ typedef enum {
  * The number of messages that are currently unread or -1
  * if the message list is not loaded.
  */
-@property(assign) int unreadCount;
+@property(assign) NSInteger unreadCount;
 
 /**
  * YES if a batch update is currently being performed on the message list,

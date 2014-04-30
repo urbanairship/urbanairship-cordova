@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -42,12 +42,12 @@
 /**
  * The current app key (resolved using the inProduction flag).
  */
-@property (weak, nonatomic, readonly) NSString *appKey;
+@property (nonatomic, readonly) NSString *appKey;
 
 /**
  * The current app secret (resolved using the inProduction flag).
  */
-@property (weak, nonatomic, readonly) NSString *appSecret;
+@property (nonatomic, readonly) NSString *appSecret;
 
 /**
  * The current log level for the library's UA_L<level> macros (resolved using the inProduction flag).
@@ -166,10 +166,16 @@
  */
 @property (nonatomic, copy) NSString *deviceAPIURL;
 
+
 /**
  * The Urban Airship analytics API url. This option is reserved for internal debugging.
  */
 @property (nonatomic, copy) NSString *analyticsURL;
+
+/**
+ * The Urban Airship landing page content url. This option is reserved for internal debugging.
+ */
+@property (nonatomic, copy) NSString *landingPageContentURL;
 
 
 ///---------------------------------------------------------------------------------------

@@ -69,7 +69,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
     [[UAPush shared] resetBadge];//zero badge on startup
     [UAPush shared].pushNotificationDelegate = self;
-    [[UAPush shared] addObserver:self];
+    [UAPush shared].registrationDelegate = self;
 
     [[UAirship shared].locationService startReportingSignificantLocationChanges];
 }
@@ -564,15 +564,17 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 }
 
 
-#pragma mark UARegistrationObservers
-- (void)registerDeviceTokenSucceeded {
-    UA_LINFO(@"PushNotificationPlugin: registered for remote notifications");
+#pragma mark UARegistrationDelegate
+- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
+    UA_LINFO(@"PushNotificationPlugin: registered for remote notifications.");
     
-    [self raiseRegistration:YES withpushID:[UAirship shared].deviceToken];
+    if (deviceToken) {
+        [self raiseRegistration:YES withpushID:deviceToken];
+    }
 }
 
-- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request {
-    UA_LINFO(@"PushNotificationPlugin: Failed to register for remote notifications with request: %@", request);
+- (void)registrationFailed {
+    UA_LINFO(@"PushNotificationPlugin: Failed to register for remote notifications.");
     
     [self raiseRegistration:NO withpushID:@""]; 
 }
@@ -599,7 +601,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 - (void)dealloc {
     [UAPush shared].pushNotificationDelegate = nil;
-    [[UAPush shared] removeObserver:self];
+    [UAPush shared].registrationDelegate = nil;
 
 }
 

@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -67,7 +67,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * Rich Push messages.
  *
  * UAInboxDefaultJSDelegate is a reference implementation of this protocol.
+ *
+ * @deprecated As of version 3.2. Replaced with UAJavaScriptDelegate.
  */
+__attribute__((deprecated("As of version 3.2")))
 @protocol UAInboxJavaScriptDelegate <NSObject>
 
 /**
@@ -153,7 +156,7 @@ SINGLETON_INTERFACE(UAInbox);
 /**
  * The list of Rich Push Inbox messages.
  */
-@property (nonatomic, weak) UAInboxMessageList *messageList;
+@property (nonatomic, strong) UAInboxMessageList *messageList;
 
 /**
  * Handles incoming rich push messages.
@@ -162,10 +165,14 @@ SINGLETON_INTERFACE(UAInbox);
 
 
 /**
- * The Javascript delegate.
+ * The user-configurable JavaScript delegate, implementing
+ * the deprecated UAInboxJavaScriptDelegate protocol.
  * 
  * NOTE: this delegate is not retained.
  */
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property (nonatomic, weak) id<UAInboxJavaScriptDelegate> jsDelegate;
+#pragma clang diagnostic pop
 
 @end

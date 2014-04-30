@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -48,7 +48,7 @@ SINGLETON_INTERFACE(UAAnalyticsDBManager);
 - (void)deleteBySessionId:(NSString *)sessionId;
 - (void)deleteOldestSession;
 
-- (NSInteger)eventCount;
-- (NSInteger)sizeInBytes;
+- (NSUInteger)eventCount;
+- (NSUInteger)sizeInBytes;
 
 @end

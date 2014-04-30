@@ -6,13 +6,14 @@ This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
 
 ### Version Requirements
 
-This plugin is meant to work with PhoneGap 3.0.0+ and the latest version of the Urban Airship library.
+This plugin is meant to work with Cordova 3.4.0+ and the latest version of the Urban Airship library.
 More documentation and integration guides for IOS and Android are availble on our
 [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap). 
 
 ### Older PhoneGap versions
 
-A older version of the plugin for Phonegap 2.6 - 2.9 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/1.0.8). 
+An older unsupported version of the plugin for Phonegap 3.0 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/2.3.3)
+and for Phonegap 2.6 - 2.9 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/1.0.8).
 
 ### Contributing Code
 
@@ -26,12 +27,15 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 ## Installation
 
 #### Automatic Installation using PhoneGap/Cordova CLI (iOS and Android)
-1. Install this plugin using PhoneGap/Cordova cli:
-```
-phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
-``` 
+1. For iOS, make sure you update your iOS project to Cordova iOS version 3.4.1 before installing this plugin.
 
-2. Modify the www/config.xml directory to contain (replacing with your configuration settings):
+        cordova platform update ios
+
+2. Install this plugin using PhoneGap/Cordova cli:
+
+        phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
+
+3. Modify the www/config.xml directory to contain (replacing with your configuration settings):
 
         <!-- Urban Airship app credentials -->
         <preference name="com.urbanairship.production_app_key" value="PRODUCTION_APP_KEY" />
@@ -49,8 +53,7 @@ phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
         <preference name="com.urbanairship.gcm_sender" value="GCM_SENDER_ID" />
 
 
-3. If your app supports Android API < 14, then you have to manually instrument any Android Activities to 
-have proper analytics.  
+4. If your app supports Android API < 14, then you have to manually instrument any Android Activities to have proper analytics.
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required). 
 
 #### iOS manual installation (unnecessary if installed automatically)

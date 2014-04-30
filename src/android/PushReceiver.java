@@ -7,6 +7,10 @@ import android.content.Intent;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
+import com.urbanairship.actions.ActionUtils;
+import com.urbanairship.actions.DeepLinkAction;
+import com.urbanairship.actions.LandingPageAction;
+import com.urbanairship.actions.OpenExternalUrlAction;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,6 +18,13 @@ import java.util.List;
 import java.util.Map;
 
 public class PushReceiver extends BroadcastReceiver {
+    // A set of actions that launch activities when a push is opened. Update
+    // with any custom actions that also start activities when a push is opened.
+    private static String[] ACTIVITY_ACTIONS = new String[] {
+        DeepLinkAction.DEFAULT_REGISTRY_NAME,
+        OpenExternalUrlAction.DEFAULT_REGISTRY_NAME,
+        LandingPageAction.DEFAULT_REGISTRY_NAME
+    };
 
     private static final List<String> IGNORED_EXTRAS_KEYS = Arrays.asList(
             "collapse_key",// c2dm collapse key
@@ -54,14 +65,17 @@ public class PushReceiver extends BroadcastReceiver {
         Logger.info("User clicked notification. Message: " + alert
                 + ". Payload: " + extras.toString());
 
-        Intent launch = context.getPackageManager().getLaunchIntentForPackage(UAirship.getPackageName());
-        launch.addCategory(Intent.CATEGORY_LAUNCHER);
-        launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
         PushNotificationPlugin.incomingAlert = alert;
         PushNotificationPlugin.incomingExtras = extras;
 
-        context.startActivity(launch);
+        // Only launch the main activity if the payload does not contain any
+        // actions that might have already opened an activity
+        if (!ActionUtils.containsRegisteredActions(intent.getExtras(), ACTIVITY_ACTIONS)) {
+            Intent launch = context.getPackageManager().getLaunchIntentForPackage(UAirship.getPackageName());
+            launch.addCategory(Intent.CATEGORY_LAUNCHER);
+            launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startActivity(launch);
+        }
     }
 
     private void handleRegistrationFinished(Intent intent) {

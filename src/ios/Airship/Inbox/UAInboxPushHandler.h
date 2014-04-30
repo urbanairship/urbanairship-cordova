@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -70,12 +70,6 @@
  */
 @interface UAInboxPushHandler : NSObject <UAInboxMessageListDelegate>
 
-/**
- * Handle an incoming in-app notification.  This should typically be called 
- * from the UIApplicationDelegate.
- * @param userInfo the notification as an NSDictionary
- */
-+ (void)handleNotification:(NSDictionary *)userInfo;
 
 /**
  * YES if the most recent rich push launched the app, NO otherwise.
