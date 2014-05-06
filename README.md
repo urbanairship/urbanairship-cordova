@@ -1,8 +1,13 @@
 # Urban Airship PhoneGap/Cordova Plugin
 
-### Platform Support
+### Supported Platforms
 
 This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
+
+### Support and Feature Requests
+
+Contact our support team at support@urbanairship.com if you ever need assistance, find a bug, or would like to request
+a new feature or enhancement.
 
 ### Version Requirements
 
