@@ -38,6 +38,9 @@
 #define kUALandingPageActionDefaultRegistryAlias @"^p"
 #define kUADeepLinkActionDefaultRegistryName @"deep_link_action"
 #define kUADeepLinkActionDefaultRegistryAlias @"^d"
+#define kUAAddCustomEventActionDefaultRegistryName @"add_custom_event_action"
+#define kUAShareActionDefaultRegistryName @"share_action"
+#define kUAShareActionDefaultRegistryAlias @"^s"
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 
 /**
@@ -52,7 +55,7 @@ SINGLETON_INTERFACE(UAActionRegistry);
 /**
  * A set of the current registered entries
  */
-@property(nonatomic, readonly) NSSet *registeredEntries;
+@property (nonatomic, readonly) NSSet *registeredEntries;
 
 /**
  * Registers an action with a predicate.

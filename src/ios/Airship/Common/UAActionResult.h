@@ -28,22 +28,26 @@
 /**
  * Represents the result of performing a background fetch, or none if no fetch was performed.
  */
-typedef enum  {
+typedef NS_OPTIONS(NSInteger, UAActionFetchResult) {
     /**
      * The action did not result in any new data being fetched.
      */
     UAActionFetchResultNoData = UIBackgroundFetchResultNoData,
+
     /**
      * The action resulted in new data being fetched.
      */
     UAActionFetchResultNewData = UIBackgroundFetchResultNewData,
+
     /**
      * The action failed.
      */
     UAActionFetchResultFailed = UIBackgroundFetchResultFailed
-} UAActionFetchResult;
+};
 
-
+/**
+ * Represents the action status.
+ */
 typedef NS_ENUM(NSInteger, UAActionStatus) {
     /**
      * The action accepted the arguments and executed without an error.
@@ -77,22 +81,22 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
 /**
  * The result value produced when running an action (can be nil).
  */
-@property(nonatomic, strong, readonly) id value;
+@property (nonatomic, strong, readonly) id value;
 
 /**
  * An optional UAActionFetchResult that can be set if the action performed a background fetch.
  */
-@property(nonatomic, assign, readonly) UAActionFetchResult fetchResult;
+@property (nonatomic, assign, readonly) UAActionFetchResult fetchResult;
 
 /**
  * An optional error value that can be set if the action was unable to perform its work successfully.
  */
-@property(nonatomic, strong, readonly) NSError *error;
+@property (nonatomic, strong, readonly) NSError *error;
 
 /**
  * The action's run status.
  */
-@property(nonatomic, assign, readonly) UAActionStatus status;
+@property (nonatomic, assign, readonly) UAActionStatus status;
 
 /**
  * Creates a UAActionResult with the supplied value. The `fetchResult` and `error` properties
@@ -133,8 +137,9 @@ typedef NS_ENUM(NSInteger, UAActionStatus) {
  * and `fetchResult` properties are set to the supplied arguments.
  *
  * @param error An instance of NSError.
- * @param fetchResult A UAActionFetchResult enum value;
+ * @param fetchResult A UAActionFetchResult enum value.
  */
 + (instancetype)resultWithError:(NSError *)error withFetchResult:(UAActionFetchResult)fetchResult;
+
 
 @end

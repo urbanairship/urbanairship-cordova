@@ -26,7 +26,6 @@
 #import <Foundation/Foundation.h>
 #import "UAAction.h"
 #import "UAActionRegistry.h"
-#import "UAPushActionArguments.h"
 #import "UAAggregateActionResult.h"
 
 /**
@@ -56,7 +55,7 @@
  * @param completionHandler CompletionHandler to pass to the action.
  */
 + (void)runAction:(UAAction *)action
-        withArguments:(UAActionArguments *)arguments
+    withArguments:(UAActionArguments *)arguments
 withCompletionHandler:(UAActionCompletionHandler)completionHandler;
 
 /**
@@ -67,7 +66,7 @@ withCompletionHandler:(UAActionCompletionHandler)completionHandler;
  *
  * @param actions The map of action names and arguments.
  * @param completionHandler CompletionHandler to call after all the
- * actions have completed.  The result will be the aggregated result 
+ * actions have completed. The result will be the aggregated result
  * of all the actions run.
  */
 + (void)runActions:(NSDictionary *)actions
