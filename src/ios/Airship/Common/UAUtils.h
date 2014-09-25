@@ -43,14 +43,6 @@
 ///---------------------------------------------------------------------------------------
 
 /**
- * Generate a UUID.
- * Uses CFUUID to generate and return a UUID.
- *
- * @return A UUID.
- */
-+ (NSString *)UUID;
-
-/**
  * Get the device model name. e.g., iPhone3,1
  * @return The device model name.
  */
@@ -126,6 +118,15 @@
  * @return YES if successful, NO otherwise
  */
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL *)url;
+
+
+/**
+ * A utility method that grabs the top-most view controller for the main application window.
+ * May return nil if a suitable view controller cannot be found.
+ * @return The top-most view controller or nil if controller cannot be found.
+ */
++ (UIViewController *)topController;
+
 
 
 @end

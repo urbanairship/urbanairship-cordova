@@ -38,16 +38,16 @@
 @interface UAAppDelegateProxy : NSProxy<UIApplicationDelegate>
 
 //NSProxy has no default init method, we have to declare it to satisfy the compiler
-- (id)init;
+- (instancetype)init;
 
 /**
  * The Urban Airship app delegate. 
  */
-@property(nonatomic, strong) NSObject<UIApplicationDelegate> *airshipAppDelegate;
+@property (nonatomic, strong) NSObject<UIApplicationDelegate> *airshipAppDelegate;
 
 /**
  * The original app delegate.
  */
-@property(nonatomic, strong) NSObject<UIApplicationDelegate> *originalAppDelegate;
+@property (nonatomic, strong) NSObject<UIApplicationDelegate> *originalAppDelegate;
 
 @end

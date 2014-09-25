@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.urbanairship.phonegap.PushNotification"
-    version="2.4.0">
+    version="2.5.0">
 
     <name>Urban Airship Push Notification Plugin</name>
     
@@ -128,7 +128,6 @@
         <header-file src="src/ios/Airship/Common/UAUserData.h"  />
         <header-file src="src/ios/Airship/Common/UAUtils.h"  />
         <header-file src="src/ios/Airship/Common/UAirship.h"  />
-        <header-file src="src/ios/Airship/Common/UAObservable.h"  />
         <header-file src="src/ios/Airship/Common/NSJSONSerialization+UAAdditions.h"  />
         <header-file src="src/ios/Airship/Common/UAURLProtocol.h"  />
         <header-file src="src/ios/Airship/Common/NSString+URLEncoding.h" />
@@ -162,6 +161,17 @@
         <header-file src="src/ios/Airship/Common/UIWebView+UAAdditions.h" />
         <header-file src="src/ios/Airship/Common/JS/UANativeBridge.h" />
         <header-file src="src/ios/Airship/Common/LandingPages/UALandingPageAction.h" />
+        <header-file src="src/ios/Airship/Common/UAAddCustomEventAction.h" />
+        <header-file src="src/ios/Airship/Common/UACustomEvent.h" />
+        <header-file src="src/ios/Airship/Common/UAEventAppBackground.h" />
+        <header-file src="src/ios/Airship/Common/UAEventAppExit.h" />
+        <header-file src="src/ios/Airship/Common/UAEventAppForeground.h" />
+        <header-file src="src/ios/Airship/Common/UAEventAppInit.h" />
+        <header-file src="src/ios/Airship/Common/UAEventDeviceRegistration.h" />
+        <header-file src="src/ios/Airship/Common/UAEventPushReceived.h" />
+        <header-file src="src/ios/Airship/Common/UAInteractiveNotificationEvent.h" />
+        <header-file src="src/ios/Airship/Common/UAShareAction.h" />
+
 
         <!-- Push header files -->
         <header-file src="src/ios/Airship/Push/UADeviceAPIClient.h"  />
@@ -170,12 +180,27 @@
         <header-file src="src/ios/Airship/Push/UAChannelAPIClient.h" />
         <header-file src="src/ios/Airship/Push/UAChannelRegistrationPayload.h" />
         <header-file src="src/ios/Airship/Push/UADeviceRegistrar.h" />
+        <header-file src="src/ios/Airship/Push/UAUserNotificationCategories.h" />
+
+
 
         <!-- External header files -->
         <header-file src="src/ios/Airship/External/UA_Base64.h"  />
         <header-file src="src/ios/Airship/External/UA_Reachability.h"  />
 
-        <source-file src="src/ios/Airship/libUAirship-4.0.0.a" framework="true"/>
+        <!-- UI Resource files -->
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/Settings.bundle" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/de.lproj" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/en.lproj" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/es.lproj" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/fr.lproj" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/it.lproj" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/ja.lproj" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/pt.lproj" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/zh-Hans.lproj" />
+        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/zh-Hant.lproj" />
+
+        <source-file src="src/ios/Airship/libUAirship-5.0.1.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />

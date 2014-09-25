@@ -29,7 +29,7 @@
  * Represents the possible error conditions
  * when running a `UAOpenExternalURLAction`.
  */
-NS_ENUM(NSInteger, UAOpenExternalURLActionErrorCode) {
+typedef NS_ENUM(NSInteger, UAOpenExternalURLActionErrorCode) {
     /**
      * Indicates that the URL failed to open.
      */
@@ -48,7 +48,8 @@ extern NSString * const UAOpenExternalURLActionErrorDomain;
  * Expected argument values: NSString
  *
  * Valid situations: UASituationForegroundPush, UASituationLaunchedFromPush
- * UASituationWebViewInvocation, and UASituationManualInvocation
+ * UASituationWebViewInvocation, UASituationForegoundInteractiveButton, and
+ * UASituationManualInvocation
  *
  * Result value: An NSString representation of the input
  *

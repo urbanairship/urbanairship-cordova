@@ -157,8 +157,12 @@
 /**
  * If set to `YES`, the app will clear all keychain user information every time the app starts.
  * This is designed for development mode only.
+ *
+ * @deprecated As of version 5.0. To clear the keychain once during the next
+ * application start, use the settings bundle to set YES for the key
+ * "com.urbanairship.reset_keychain" in standard user defaults.
  */
-@property (nonatomic, assign) BOOL clearKeychain;
+@property (nonatomic, assign) BOOL clearKeychain __attribute__((deprecated("As of version 5.0.0")));
 
 
 /**
@@ -184,17 +188,20 @@
 
 /**
  * Creates an instance using the values set in the `AirshipConfig.plist` file.
+ * @return A UAConfig with values from `AirshipConfig.plist` file.
  */
 + (UAConfig *)defaultConfig;
 
 /**
  * Creates an instance using the values found in the specified `.plist` file.
  * @param path The path of the specified file.
+ * @return A UAConfig with values from the specified file.
  */
 + (UAConfig *)configWithContentsOfFile:(NSString *)path;
 
 /**
  * Creates an instance with empty values.
+ * @return A UAConfig with empty values.
  */
 + (UAConfig *)config;
 
