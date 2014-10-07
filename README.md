@@ -53,7 +53,9 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
         <preference name="com.urbanairship.gcm_sender" value="GCM_SENDER_ID" />
 
 
-4. If your app supports Android API < 14, then you have to manually instrument any Android Activities to have proper analytics.
+4. For iOS; manually install the localized strings to their respective folders. For example; `src/ios/Airship/UI/Default/Common/Resources/de.lproj/UAInteractiveNotifications.strings` will need to be moved to your `platforms/ios/HelloWorld/Resources/de.lproj/` folder. This will need to be completed for all files in the `src/ios/Airship/UI/Default/Common/Resources/` folders. 
+
+5. If your app supports Android API < 14, then you have to manually instrument any Android Activities to have proper analytics.
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required). 
 
 #### iOS manual installation (unnecessary if installed automatically)
