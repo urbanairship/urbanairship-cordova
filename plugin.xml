@@ -190,13 +190,6 @@
 
         <!-- UI Resource files -->
         <resource-file src="src/ios/Airship/UI/Default/Common/Resources/Settings.bundle" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/de.lproj" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/en.lproj" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/es.lproj" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/fr.lproj" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/it.lproj" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/ja.lproj" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/pt.lproj" />
         <resource-file src="src/ios/Airship/UI/Default/Common/Resources/zh-Hans.lproj" />
         <resource-file src="src/ios/Airship/UI/Default/Common/Resources/zh-Hant.lproj" />
 
