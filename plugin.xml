@@ -190,8 +190,6 @@
 
         <!-- UI Resource files -->
         <resource-file src="src/ios/Airship/UI/Default/Common/Resources/Settings.bundle" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/zh-Hans.lproj" />
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/zh-Hant.lproj" />
 
         <source-file src="src/ios/Airship/libUAirship-5.0.1.a" framework="true"/>
 
