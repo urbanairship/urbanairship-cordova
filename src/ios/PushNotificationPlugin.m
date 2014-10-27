@@ -270,15 +270,15 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
             [[UAPush shared] updateRegistration];
 
             CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self writeJavascript: [result toSuccessCallbackString:command.callbackId]];
+            [self.commandDelegate evalJs: [result toSuccessCallbackString:command.callbackId]];
         } else {
             CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-            [self writeJavascript: [result toErrorCallbackString:command.callbackId]];
+            [self.commandDelegate evalJs: [result toErrorCallbackString:command.callbackId]];
         }
 
     } else {
         CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        [self writeJavascript: [result toErrorCallbackString:command.callbackId]];
+        [self.commandDelegate evalJs: [result toErrorCallbackString:command.callbackId]];
     }
 }
 
