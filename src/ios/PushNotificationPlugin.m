@@ -258,28 +258,28 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 - (void)registerForNotificationTypes:(CDVInvokedUrlCommand*)command {
     UA_LDEBUG(@"PushNotificationPlugin: register for notification types");
-
+    
+    CDVPluginResult* pluginResult = nil;
+    
     if (command.arguments.count >= 1) {
         id obj = [command.arguments objectAtIndex:0];
-
+        
         if ([obj isKindOfClass:[NSNumber class]]) {
             UIUserNotificationType bitmask = [obj intValue];
             UALOG(@"bitmask value: %d", [obj intValue]);
-
+            
             [UAPush shared].userNotificationTypes = bitmask;
             [[UAPush shared] updateRegistration];
-
-            CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self.commandDelegate evalJs: [result toSuccessCallbackString:command.callbackId]];
+            
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
-            CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-            [self.commandDelegate evalJs: [result toErrorCallbackString:command.callbackId]];
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
         }
-
+        
     } else {
-        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        [self.commandDelegate evalJs: [result toErrorCallbackString:command.callbackId]];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 //general enablement
