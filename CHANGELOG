@@ -1,4 +1,9 @@
 ==================================
+Version 2.5.1 - October 30, 2014
+==================================
+- Removed writeJavascript calls for compatibility with Cordova 4.0
+
+==================================
 Version 2.5.0 - September 22, 2014
 ==================================
 - Updated Urban Airship iOS Library to 5.0.0
