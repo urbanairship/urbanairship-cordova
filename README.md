@@ -185,9 +185,9 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 
 ## Example
 A full example can be found in Examples.  To run it, copy the files:
-- Examples/index.html to www/index.html
-- Examples/css/* to www/css
-- Examples/js/* to www/js
+- Example/index.html to www/index.html
+- Example/css/* to www/css
+- Example/js/* to www/js
 
 #### Basic Example
     
