@@ -1,5 +1,5 @@
 ==================================
-Version 2.5.1 - October 30, 2014
+Version 2.5.1 - November 3, 2014
 ==================================
 - Removed writeJavascript calls for compatibility with Cordova 4.0
 
