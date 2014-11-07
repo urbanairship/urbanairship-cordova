@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+
+    <target name="-pre-build">
+        <echo>Copying Google Play Services</echo>
+        <copy todir="." overwrite="true">
+            <fileset dir="${sdk.dir}/extras/google/google_play_services/libproject/google-play-services_lib">
+                <exclude name="project.properties"/>
+            </fileset>
+        </copy>
+    </target>
+
+</project>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/build/workspace/android-library/UrbanAirship/src/main/res/values-de/strings.xml -->
+    <eat-comment/>
+    <string name="ua_notification_button_accept">Akzeptieren</string>
+    <string name="ua_notification_button_buy_now">Jetzt kaufen</string>
+    <string name="ua_notification_button_decline">Ablehnen</string>
+    <string name="ua_notification_button_dislike">Nicht mögen</string>
+    <string name="ua_notification_button_download">Herunterladen</string>
+    <string name="ua_notification_button_follow">Folgen</string>
+    <string name="ua_notification_button_less_like">Weniger so</string>
+    <string name="ua_notification_button_like">Mögen</string>
+    <string name="ua_notification_button_more_like">Mehr so</string>
+    <string name="ua_notification_button_no">Nein</string>
+    <string name="ua_notification_button_opt_in">Opt-in</string>
+    <string name="ua_notification_button_opt_out">Opt-out</string>
+    <string name="ua_notification_button_remind">Später erinnern</string>
+    <string name="ua_notification_button_share">Teilen</string>
+    <string name="ua_notification_button_shop_now">Jetzt Einkaufen</string>
+    <string name="ua_notification_button_unfollow">Nicht mehr folgen</string>
+    <string name="ua_notification_button_yes">Ja</string>
+    <string name="ua_share_dialog_title">Teilen</string>
+</resources>

@@ -1,5 +1,14 @@
 # Migration Guide
 
+## 2.5.x to 2.6.0
+
+### Android Installation changes:
+
+Android plugin now requires Google Play Services and the Android Support v4 library. If the plugin was manually installed,
+remove the old urbanairship.jar file and follow the manual setup instructions again in the README.
+
+The custom_rules.xml file in the root of the android project needs to be deleted due to bug https://code.google.com/p/android/issues/detail?id=23271 and https://issues.apache.org/jira/browse/CB-7675.
+
 ## 2.3.x to 2.4.0
 
 ### Installation changes:
