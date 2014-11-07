@@ -1,0 +1,30 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.13.+'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+repositories {
+    mavenCentral()
+}
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.0.2"
+
+
+    defaultConfig {
+        minSdkVersion 6
+        targetSdkVersion 21
+    }
+}
+
+dependencies {
+    compile 'com.google.android.gms:play-services:6.1.+'
+    compile 'com.android.support:support-v4:21.+'
+}

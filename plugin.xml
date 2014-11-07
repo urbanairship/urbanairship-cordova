@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.urbanairship.phonegap.PushNotification"
-    version="2.5.1">
+    version="2.6.0">
 
     <name>Urban Airship Push Notification Plugin</name>
     
@@ -40,11 +40,52 @@
             <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
             <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
             <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+
+            <permission android:name="$PACKAGE_NAME.permission.UA_DATA" android:protectionLevel="signature" />
+            <uses-permission android:name="$PACKAGE_NAME.permission.UA_DATA" />
+        </config-file>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.VIBRATE" />
+            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+            <uses-permission android:name="android.permission.WAKE_LOCK" />
+            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+            <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
+            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+            <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+
+            <permission android:name="$PACKAGE_NAME.permission.UA_DATA" android:protectionLevel="signature" />
+            <uses-permission android:name="$PACKAGE_NAME.permission.UA_DATA" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
-            <receiver android:name="com.urbanairship.CoreReceiver" />
+
+            <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+            <receiver android:name="com.urbanairship.phonegap.PushReceiver"
+                        android:exported="false">
+
+                <intent-filter>
+                    <action android:name="com.urbanairship.push.CHANNEL_UPDATED" />
+                    <action android:name="com.urbanairship.push.OPENED" />
+                    <action android:name="com.urbanairship.push.DISMISSED" />
+                    <action android:name="com.urbanairship.push.RECEIVED" />
+                    <category android:name="$PACKAGE_NAME" />
+                </intent-filter>
+            </receiver>
+
+            <receiver android:name="com.urbanairship.CoreReceiver" 
+                android:exported="false">
+                <intent-filter android:priority="-999">
+                    <action android:name="com.urbanairship.push.OPENED" />
+                    <category android:name="$PACKAGE_NAME" />
+                </intent-filter>
+            </receiver>
+
             <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
               <intent-filter>
                   <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -59,7 +100,6 @@
                 android:name="com.urbanairship.actions.LandingPageActivity"
                 android:exported="false">
 
-                <meta-data android:name="meta" android:value="what" />
                 <intent-filter>
                     <action android:name="com.urbanairship.actions.SHOW_LANDING_PAGE_INTENT_ACTION"/>
                     <data android:scheme="http" />
@@ -68,9 +108,15 @@
                 </intent-filter>
             </activity>
 
+            <activity android:name="com.urbanairship.google.PlayServicesErrorActivity" 
+                android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+
+            <activity android:name="com.urbanairship.CoreActivity"/>
             <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
-            <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
             <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
+            <service android:name="com.urbanairship.richpush.RichPushUpdateService"/>
+
             <service android:name="com.urbanairship.actions.ActionService" />
             
             <provider android:name="com.urbanairship.UrbanAirshipProvider"
@@ -84,7 +130,13 @@
         <source-file src="src/android/PushNotificationPlugin.java" target-dir="src/com/urbanairship/phonegap" />
         <source-file src="src/android/PushReceiver.java" target-dir="src/com/urbanairship/phonegap" />
         <source-file src="src/android/PushAutopilot.java" target-dir="src/com/urbanairship/phonegap" />
-        <source-file src="src/android/urbanairship-lib-4.0.2.jar" target-dir="libs/" />
+
+        <!-- UA SDK -->
+        <framework src="src/android/urbanairship-lib" custom="true" />
+
+        <framework src="src/android/google-play-services" custom="true" />
+
+
     </platform>
     
     <!-- ios -->
@@ -172,7 +224,6 @@
         <header-file src="src/ios/Airship/Common/UAInteractiveNotificationEvent.h" />
         <header-file src="src/ios/Airship/Common/UAShareAction.h" />
 
-
         <!-- Push header files -->
         <header-file src="src/ios/Airship/Push/UADeviceAPIClient.h"  />
         <header-file src="src/ios/Airship/Push/UADeviceRegistrationPayload.h"  />
@@ -181,7 +232,6 @@
         <header-file src="src/ios/Airship/Push/UAChannelRegistrationPayload.h" />
         <header-file src="src/ios/Airship/Push/UADeviceRegistrar.h" />
         <header-file src="src/ios/Airship/Push/UAUserNotificationCategories.h" />
-
 
 
         <!-- External header files -->
