@@ -31,11 +31,13 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 
         cordova platform update ios
 
-2. Install this plugin using PhoneGap/Cordova cli:
+2. For Android, make sure the Android SDK is up to date. Android Support v4 library revision 21+ and Google Play Service 6.1+ are required.
+
+3. Install this plugin using PhoneGap/Cordova cli:
 
         phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
 
-3. Modify the config.xml directory to contain (replacing with your configuration settings):
+4. Modify the config.xml directory to contain (replacing with your configuration settings):
 
         <!-- Urban Airship app credentials -->
         <preference name="com.urbanairship.production_app_key" value="PRODUCTION_APP_KEY" />
@@ -53,11 +55,12 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
         <preference name="com.urbanairship.gcm_sender" value="GCM_SENDER_ID" />
 
 
-4. For iOS; manually install the localized strings to their respective folders. For example; `src/ios/Airship/UI/Default/Common/Resources/de.lproj/UAInteractiveNotifications.strings` will need to be moved to your `platforms/ios/HelloWorld/Resources/de.lproj/` folder. This will need to be completed for all files in the `src/ios/Airship/UI/Default/Common/Resources/` folders. 
+5. For iOS; manually install the localized strings to their respective folders. For example; `src/ios/Airship/UI/Default/Common/Resources/de.lproj/UAInteractiveNotifications.strings` will need to be moved to your `platforms/ios/HelloWorld/Resources/de.lproj/` folder. This will need to be completed for all files in the `src/ios/Airship/UI/Default/Common/Resources/` folders. 
 
-5. If your app supports Android API < 14, then you have to manually instrument any Android Activities to have proper analytics.
+6. If your app supports Android API < 14, then you have to manually instrument any Android Activities to have proper analytics.
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required). 
-6. Due to bug https://code.google.com/p/android/issues/detail?id=23271 and https://issues.apache.org/jira/browse/CB-7675, the custom_rules.xml file in the root of android platform project must be deleted.
+
+7. Due to bug https://code.google.com/p/android/issues/detail?id=23271 and https://issues.apache.org/jira/browse/CB-7675, the custom_rules.xml file in the root of android platform project must be deleted.
 
 #### iOS manual installation (unnecessary if installed automatically)
 1. Add src/ios/PushNotificationPlugin to your project
