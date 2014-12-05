@@ -182,7 +182,7 @@
         <header-file src="src/ios/Airship/Common/UAirship.h"  />
         <header-file src="src/ios/Airship/Common/NSJSONSerialization+UAAdditions.h"  />
         <header-file src="src/ios/Airship/Common/UAURLProtocol.h"  />
-        <header-file src="src/ios/Airship/Common/NSString+URLEncoding.h" />
+        <header-file src="src/ios/Airship/Common/NSString+UAURLEncoding.h" />
         <header-file src="src/ios/Airship/Common/UAAction+Operators.h" />
         <header-file src="src/ios/Airship/Common/UAAction.h" />
         <header-file src="src/ios/Airship/Common/UAActionArguments.h" />
@@ -203,11 +203,10 @@
         <header-file src="src/ios/Airship/Common/UALandingPageOverlayController.h" />
         <header-file src="src/ios/Airship/Common/UAModifyTagsAction.h" />
         <header-file src="src/ios/Airship/Common/UAOpenExternalURLAction.h" />
-        <header-file src="src/ios/Airship/Common/UAPushActionArguments.h" />
         <header-file src="src/ios/Airship/Common/UARemoveTagsAction.h" />
         <header-file src="src/ios/Airship/Common/UARichContentWindow.h" />
         <header-file src="src/ios/Airship/Common/UASyncAction.h" />
-        <header-file src="src/ios/Airship/Common/UAWebInvocationActionArguments.h" />
+        <header-file src="src/ios/Airship/Common/UAWebViewDelegate.h" />
         <header-file src="src/ios/Airship/Common/UAWebViewCallData.h" />
         <header-file src="src/ios/Airship/Common/UAWebViewTools.h" />
         <header-file src="src/ios/Airship/Common/UIWebView+UAAdditions.h" />
@@ -223,14 +222,16 @@
         <header-file src="src/ios/Airship/Common/UAEventPushReceived.h" />
         <header-file src="src/ios/Airship/Common/UAInteractiveNotificationEvent.h" />
         <header-file src="src/ios/Airship/Common/UAShareAction.h" />
+        <header-file src="src/ios/Airship/Common/UAPreferenceDataStore.h" />
+        <header-file src="src/ios/Airship/Common/UAWhitelist.h" />
+
+
 
         <!-- Push header files -->
-        <header-file src="src/ios/Airship/Push/UADeviceAPIClient.h"  />
-        <header-file src="src/ios/Airship/Push/UADeviceRegistrationPayload.h"  />
         <header-file src="src/ios/Airship/Push/UAPush.h" />
         <header-file src="src/ios/Airship/Push/UAChannelAPIClient.h" />
         <header-file src="src/ios/Airship/Push/UAChannelRegistrationPayload.h" />
-        <header-file src="src/ios/Airship/Push/UADeviceRegistrar.h" />
+        <header-file src="src/ios/Airship/Push/UAChannelRegistrar.h" />
         <header-file src="src/ios/Airship/Push/UAUserNotificationCategories.h" />
 
 
@@ -239,9 +240,7 @@
         <header-file src="src/ios/Airship/External/UA_Reachability.h"  />
 
         <!-- UI Resource files -->
-        <resource-file src="src/ios/Airship/UI/Default/Common/Resources/Settings.bundle" />
-
-        <source-file src="src/ios/Airship/libUAirship-5.0.1.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-5.1.0.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
