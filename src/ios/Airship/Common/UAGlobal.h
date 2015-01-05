@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,15 +25,45 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum _UALogLevel {
+/**
+ * Represents the possible log levels.
+ */
+typedef NS_ENUM(NSInteger, UALogLevel) {
+    /**
+     * Undefined log level.
+     */
     UALogLevelUndefined = -1,
+
+    /**
+     * No log messages.
+     */
     UALogLevelNone = 0,
+
+    /**
+     * Log error messages.
+     */
     UALogLevelError = 1,
+
+    /**
+     * Log warning messages.
+     */
     UALogLevelWarn = 2,
+
+    /**
+     * Log informative messages.
+     */
     UALogLevelInfo = 3,
+
+    /**
+     * Log debugging messages.
+     */
     UALogLevelDebug = 4,
+
+    /**
+     * Log detailed tracing messages.
+     */
     UALogLevelTrace = 5
-} UALogLevel;
+};
 
 
 #define UA_LEVEL_LOG_THREAD(level, levelString, fmt, ...) \
@@ -71,12 +101,13 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelError
 
 // constants
 #define kAirshipProductionServer @"https://device-api.urbanairship.com"
-#define kAnalyticsProductionServer @"https://combine.urbanairship.com";
+#define kAnalyticsProductionServer @"https://combine.urbanairship.com"
+#define kUAProductionLandingPageContentURL @"https://dl.urbanairship.com/aaa"
 
 #ifdef _UA_VERSION
 #define UA_VERSION @ _UA_VERSION
 #else
-#define UA_VERSION @ "1.1.2"
+#define UA_VERSION @ "0.0.0"
 #endif
 
 #define UA_VERSION_INTERFACE(CLASSNAME) \
@@ -99,10 +130,11 @@ return VERSION_STR;                                         \
 #define SINGLETON_IMPLEMENTATION(CLASSNAME)                                                 \
                                                                                             \
 static CLASSNAME* g_shared##CLASSNAME = nil;                                                \
+static dispatch_once_t sharedOncePredicate##CLASSNAME;                                      \
+static dispatch_once_t allocOncePredicate##CLASSNAME;                                                  \
 \
 + (CLASSNAME*)shared                                                                        \
 {                                                                                           \
-static dispatch_once_t sharedOncePredicate##CLASSNAME;                                                 \
 \
 dispatch_once(&sharedOncePredicate##CLASSNAME, ^{                                                      \
 g_shared##CLASSNAME = [[self alloc] init];                                                  \
@@ -112,7 +144,6 @@ return g_shared##CLASSNAME;                                                     
 \
 + (id)allocWithZone:(NSZone*)zone                                                           \
 {                                                                                           \
-static dispatch_once_t allocOncePredicate##CLASSNAME;                                                  \
 dispatch_once(&allocOncePredicate##CLASSNAME, ^{                                                       \
 if (g_shared##CLASSNAME == nil) {                                                           \
 g_shared##CLASSNAME = [super allocWithZone:zone];                                           \
@@ -125,11 +156,6 @@ return g_shared##CLASSNAME;                                                     
 {                                                                                           \
 return self;                                                                                \
 }                                                                                           \
-
-// TODO: Remove this when its actually available
-#ifndef kCFCoreFoundationVersionNumber_iOS_7_0
-#define kCFCoreFoundationVersionNumber_iOS_7_0 847.0
-#endif
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
 #define IF_IOS7_OR_GREATER(...) \
@@ -149,3 +175,27 @@ THE_CODE; \
 _Pragma("clang diagnostic pop") \
 } while (0)
 
+#define UA_PREVIEW_WARNING \
+NSLog(@"\n\n\n" \
+      "\t *********************************************************\n" \
+      "\t *             URBAN AIRSHIP PREVIEW RELEASE             *\n" \
+      "\t *                                                       *\n" \
+      "\t * This is a preview Urban Airship release.  It is       *\n" \
+      "\t * not intended to be part of a production application.  *\n" \
+      "\t *                                                       *\n" \
+      "\t *                                                       *\n" \
+      "\t *                 _..--=--..._                          *\n" \
+      "\t *              .-'            '-.  .-.                  *\n" \
+      "\t *             /.'              '.\\/  /                  *\n" \
+      "\t *            |=-                -=| (                   *\n" \
+      "\t *             \'.              .'/\\  \\                   *\n" \
+      "\t *              '-.,_____ _____.-'  '-'                  *\n" \
+      "\t *                   [_____]=8                           *\n" \
+      "\t *                                                       *\n" \
+      "\t *********************************************************\n\n\n"); \
+
+#ifdef UA_PREVIEW
+#define UA_BUILD_WARNINGS UA_PREVIEW_WARNING
+#else
+#define UA_BUILD_WARNINGS
+#endif

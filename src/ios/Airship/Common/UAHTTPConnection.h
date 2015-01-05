@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -46,7 +46,7 @@
 /**
  * The connection delegate.
  */
-@property (weak, nonatomic) id delegate;
+@property (nonatomic, weak) id delegate;
 
 /**
  * The connection success selector.
@@ -69,10 +69,19 @@
 @property (nonatomic, copy) UAHTTPConnectionFailureBlock failureBlock;
 
 /**
+ * The queue on which to dispatch block and delegate callbacks.
+ *
+ * If unset, callbacks will occur on the thread from which the connection was started.
+ * Note: you cannot reschedule the delegate queue once a connection is in flight.
+ */
+@property (nonatomic, strong) NSOperationQueue *delegateQueue;
+
+/**
  * Class factory method for creating a UAHTTPConnection.
  * @param httpRequest An instance of UAHTTPRequest.
+ * @return A UAHTTPConnection with the specified httpRequest.
  */
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest;
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest;
 
 /**
  * Class factory method for creating a UAHTTPConnection.
@@ -80,36 +89,39 @@
  * @param delegate The delegate
  * @param successSelector The selector to be called if the connection was successful.
  * @param failureSelector The selector to be called if the connection was unsuccessful.
+ * @return A UAHTTPConnection with the specified httpRequest.
  */
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                                   delegate:(id)delegate
-                                    success:(SEL)successSelector
-                                    failure:(SEL)failureSelector;
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                             delegate:(id)delegate
+                              success:(SEL)successSelector
+                              failure:(SEL)failureSelector;
 
 /**
  * Class factory method for creating a UAHTTPConnection.
  * @param httpRequest An instance of UAHTTPRequest.
  * @param successBlock A UAHTTPConnectionSuccessBlock that will be called if the connection was successful.
  * @param failureBlock A UAHTTPConnectionFailureBlock that will be called if the connection was unsuccessful.
- *
+ * @return A UAHTTPConnection with the specified httpRequest.
  */
-+ (UAHTTPConnection *)connectionWithRequest:(UAHTTPRequest *)httpRequest
-                               successBlock:(UAHTTPConnectionSuccessBlock)successBlock
-                               failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
++ (instancetype)connectionWithRequest:(UAHTTPRequest *)httpRequest
+                         successBlock:(UAHTTPConnectionSuccessBlock)successBlock
+                         failureBlock:(UAHTTPConnectionFailureBlock)failureBlock;
 
 /**
  * Initializer with the HTTP request.
  * @param httpRequest An instance of UAHTTPRequest.
  */
-- (id)initWithRequest:(UAHTTPRequest *)httpRequest;
+- (instancetype)initWithRequest:(UAHTTPRequest *)httpRequest;
 
 /**
  * Start the connection asynchronously.
+ * @return 'YES' if the connection was started, otherwise 'NO'.
  */
 - (BOOL)start;
 
 /**
- * Start the connection synchronously
+ * Start the connection synchronously.
+ * @return 'YES' if the connection was started, otherwise 'NO'.
  */
 - (BOOL)startSynchronous;
 

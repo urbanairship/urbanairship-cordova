@@ -1,5 +1,26 @@
 # Migration Guide
 
+## 2.5.x to 2.6.0
+
+### Android Installation changes:
+
+Android plugin now requires Google Play Services and the Android Support v4 library. If the plugin was manually installed,
+remove the old urbanairship.jar file and follow the manual setup instructions again in the README.
+
+The custom_rules.xml file in the root of the android project needs to be deleted due to bug https://code.google.com/p/android/issues/detail?id=23271 and https://issues.apache.org/jira/browse/CB-7675.
+
+## 2.3.x to 2.4.0
+
+### Installation changes:
+
+For iOS, make sure you update your iOS project to Cordova iOS version 3.4.1 before installing the phonegap-ua-push plugin.
+For example:
+```
+1. cordova platform update ios
+iOS project is now at version 3.4.1
+2. phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
+```
+
 ## 2.2.x to 2.3.0
 
 ### Config Changes:

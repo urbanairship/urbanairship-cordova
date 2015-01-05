@@ -26,16 +26,16 @@ public class PushAutopilot extends Autopilot {
     public void execute(Application application) {
         // Parse cordova config options
         AirshipOptions configOptions = new AirshipOptions(application);
+        final boolean enablePushOnLaunch = configOptions.getBoolean(ENABLE_PUSH_ONLAUNCH, false);
 
-        UAirship.takeOff(application, getAirshipConfig(application, configOptions));
-
-        PushManager.shared().setIntentReceiver(PushReceiver.class);
-
-        boolean enablePushOnLaunch = configOptions.getBoolean(ENABLE_PUSH_ONLAUNCH, false);
-
-        if (UAirship.shared().getAirshipConfigOptions().pushServiceEnabled && enablePushOnLaunch) {
-            PushManager.enablePush();
-        }
+        UAirship.takeOff(application, getAirshipConfig(application, configOptions), new UAirship.OnReadyCallback() {
+            @Override
+            public void onAirshipReady(UAirship airship) {
+                if (enablePushOnLaunch) {
+                    airship.getPushManager().setUserNotificationsEnabled(true);
+                }
+            }
+        });
     }
 
     private AirshipConfigOptions getAirshipConfig(Application application, AirshipOptions configOptions) {
@@ -49,10 +49,6 @@ public class PushAutopilot extends Autopilot {
         options.developmentAppSecret = configOptions.getString(DEVELOPMENT_SECRET, options.developmentAppSecret);
         options.gcmSender = configOptions.getString(GCM_SENDER, options.gcmSender);
         options.inProduction = configOptions.getBoolean(IN_PRODUCTION, options.inProduction);
-
-        // Always enable the use of the location service.  This does not mean
-        // that location is enabled.  Still need to call enableLocation for that.
-        options.locationOptions.locationServiceEnabled = true;
 
         // Set the minSDK to 14.  It just controls logging error messages for different platform features.
         options.minSdkVersion = 14;

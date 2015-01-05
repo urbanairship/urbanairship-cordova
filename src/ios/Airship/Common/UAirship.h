@@ -1,5 +1,5 @@
 /*
-Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -24,10 +24,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #import "UAGlobal.h"
+#import "UAJavaScriptDelegate.h"
+#import "UAWhitelist.h"
 
 @class UAConfig;
 @class UAAnalytics;
 @class UALocationService;
+@class UAApplicationMetrics;
 
 UA_VERSION_INTERFACE(UAirshipVersion)
 
@@ -56,7 +59,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 /**
  * The current APNS/remote notification device token.
  */
-@property (weak, nonatomic, readonly) NSString *deviceToken;
+@property (nonatomic, readonly) NSString *deviceToken;
 
 /**
  * The shared analytics manager. There are not currently any user-defined events,
@@ -65,17 +68,35 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
 /**
+ * Stores common application metrics such as last open.
+ */
+@property (nonatomic, strong, readonly) UAApplicationMetrics *applicationMetrics;
+
+/**
  * This flag is set to `YES` if the application is set up 
  * with the "remote-notification" background mode and is running
  * iOS7 or greater.
  */
-@property (nonatomic, assign, readonly) BOOL backgroundNotificationEnabled;
+@property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 
 /**
  * This flag is set to `YES` if the shared instance of
  * UAirship has been initialized and is ready for use.
  */
 @property (nonatomic, assign, readonly) BOOL ready;
+
+/**
+ * A user configurable JavaScript delegate.
+ *
+ * NOTE: this delegate is not retained.
+ */
+@property (nonatomic, weak) id<UAJavaScriptDelegate> jsDelegate;
+
+/**
+ * The whitelist used for validating webview URLs.
+ */
+@property (nonatomic, strong, readonly) UAWhitelist *whitelist;
+
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Services

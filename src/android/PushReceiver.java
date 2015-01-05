@@ -7,85 +7,64 @@ import android.content.Intent;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.push.PushManager;
+import com.urbanairship.actions.ActionUtils;
+import com.urbanairship.actions.DeepLinkAction;
+import com.urbanairship.actions.LandingPageAction;
+import com.urbanairship.actions.OpenExternalUrlAction;
+
+import com.urbanairship.push.BaseIntentReceiver;
+import com.urbanairship.push.PushMessage;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import android.util.Log;
 
-public class PushReceiver extends BroadcastReceiver {
+public class PushReceiver extends BaseIntentReceiver {
 
-    private static final List<String> IGNORED_EXTRAS_KEYS = Arrays.asList(
-            "collapse_key",// c2dm collapse key
-            "from", // c2dm sender
-            PushManager.EXTRA_NOTIFICATION_ID, // int id of generated
-            PushManager.EXTRA_PUSH_ID, // internal UA push id
-            PushManager.EXTRA_ALERT); // ignore alert
+    private static final String TAG = "IntentReceiver";
 
     @Override
-    public void onReceive(Context context, Intent intent) {
-        Logger.info("Received intent: " + intent.toString());
-        String action = intent.getAction();
+    protected void onChannelRegistrationSucceeded(Context context, String channelId) {
+        Log.i(TAG, "Channel registration updated. Channel ID:" + channelId + ".");
 
-        if (action.equals(PushManager.ACTION_PUSH_RECEIVED)) {
-            handlePushReceived(intent);
-        } else if (action.equals(PushManager.ACTION_NOTIFICATION_OPENED)) {
-            handleNotificationOpened(context, intent);
-        } else if (action.equals(PushManager.ACTION_REGISTRATION_FINISHED)) {
-            handleRegistrationFinished(intent);
-        }
+        PushNotificationPlugin.raiseRegistration(true, channelId);
     }
 
-    private void handlePushReceived(Intent intent) {
-        int id = intent.getIntExtra(PushManager.EXTRA_NOTIFICATION_ID, 0);
-        String alert = intent.getStringExtra(PushManager.EXTRA_ALERT);
-        Map<String, String> extras = getNotificationExtras(intent);
+    @Override
+    protected void onChannelRegistrationFailed(Context context) {
+        Log.i(TAG, "Channel registration failed.");
 
-        Logger.info("Received push notification. Alert: " + alert +
-                ". Payload: " + extras + ". NotificationID=" + id);
-
-        PushNotificationPlugin.raisePush(alert, extras);
+        PushNotificationPlugin.raiseRegistration(false, null);
     }
 
-    private void handleNotificationOpened(Context context, Intent intent) {
-        String alert = intent.getStringExtra(PushManager.EXTRA_ALERT);
-        Map<String, String> extras = getNotificationExtras(intent);
+    @Override
+    protected void onPushReceived(Context context, PushMessage message, int notificationId) {
+        Log.i(TAG, "Received push notification. Alert: " + message.getAlert() + ". Notification ID: " + notificationId);
 
-        Logger.info("User clicked notification. Message: " + alert
-                + ". Payload: " + extras.toString());
-
-        Intent launch = context.getPackageManager().getLaunchIntentForPackage(UAirship.getPackageName());
-        launch.addCategory(Intent.CATEGORY_LAUNCHER);
-        launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        PushNotificationPlugin.incomingAlert = alert;
-        PushNotificationPlugin.incomingExtras = extras;
-
-        context.startActivity(launch);
+        PushNotificationPlugin.raisePush(message, notificationId);
     }
 
-    private void handleRegistrationFinished(Intent intent) {
-        String apid = intent.getStringExtra(PushManager.EXTRA_APID);
-        Boolean valid = intent.getBooleanExtra(PushManager.EXTRA_REGISTRATION_VALID, false);
+    @Override
+    protected void onBackgroundPushReceived(Context context, PushMessage message) {
+        Log.i(TAG, "Received background push message: " + message);
 
-        Logger.info("Registration complete. APID:"
-                + intent.getStringExtra(PushManager.EXTRA_APID)
-                + ". Valid: "
-                + intent.getBooleanExtra(PushManager.EXTRA_REGISTRATION_VALID, false));
-
-        PushNotificationPlugin.raiseRegistration(valid, apid);
+        PushNotificationPlugin.raisePush(message, null);
     }
 
+    @Override
+    protected boolean onNotificationOpened(Context context, PushMessage message, int notificationId) {
+        Log.i(TAG, "User clicked notification. Alert: " + message.getAlert());
+        PushNotificationPlugin.incomingPush = message;
+        PushNotificationPlugin.incomingNotificationId = notificationId;
 
-    private Map<String, String> getNotificationExtras(Intent intent) {
-        Map<String, String> extrasMap = new HashMap<String, String>();
+        return false;
+    }
 
-        for (String key : intent.getExtras().keySet()) {
-            if (!IGNORED_EXTRAS_KEYS.contains(key)) {
-                extrasMap.put(key, intent.getStringExtra(key));
-            }
-        }
-
-        return extrasMap;
+    @Override
+    protected boolean onNotificationActionOpened(Context context, PushMessage message, int notificationId, String buttonId, boolean isForeground) {
+        Log.i(TAG, "User clicked notification button. Button ID: " + buttonId + " Alert: " + message.getAlert());
+        return false;
     }
 }

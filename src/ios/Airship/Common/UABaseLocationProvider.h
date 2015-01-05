@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -39,6 +39,10 @@
 /// @name NSObject 
 ///---------------------------------------------------------------------------------------
 
+/**
+ * Returns a string that describes the contents of UABaseLocationProvider.
+ * @return A string that describes UABaseLocationProvider.
+ */
 - (NSString *)description;
 
 ///---------------------------------------------------------------------------------------
@@ -81,18 +85,13 @@
 - (void)setDesiredAccuracy:(CLLocationAccuracy)desiredAccuracy;
 
 /**
- * Current purpose attached to the CLLocationMananger locationManager.
- * @return Current purpose on the locationManager
+ * Purpose for location services shown to user
+ * when prompted to allow location services to begin. The default value
+ * is the NSLocationUsageDescription listed in the info.plist. This value cannot be set
+ * programatically.
+ * @return An NSString with the current purpose
  */
 - (NSString *)purpose;
-
-/**
- * Sets the purpose on the CLLocationManager locationManger which is displayed to the user
- * when the UIAlertView is displayed asking the user for location permission.
- * @warning This value cannot be nil.
- * @param newPurpose String to be set on the locationManager
- */
-- (void)setPurpose:(NSString *)newPurpose;
 
 /**
  * The most recently received location available from the CLLocationManager object. This may be more accurate than
@@ -129,27 +128,26 @@
 /// @name Creating a UABaseLocationProvider
 ///---------------------------------------------------------------------------------------
 
-- (id)init;
+- (instancetype)init;
 
 /**
  * Initializes the object with a delegate
  * @param delegate Delegate object that implements the UALocationProviderDelegate protocol
  */
-- (id)initWithDelegate:(id<UALocationProviderDelegate>)delegate;
+- (instancetype)initWithDelegate:(id<UALocationProviderDelegate>)delegate;
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Accuracy
 ///---------------------------------------------------------------------------------------
 
-/** 
+/**
  * Calculates location change accuracy
  * @param newLocation The updated location from the location service.
- * @param oldLocation The location that the new location is compared to.
  *
  * @return YES if the location meets accuracy requirements
  * @return NO if the location does not meet accuracy requirements
  */
-- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation from:(CLLocation *)oldLocation;
+- (BOOL)locationChangeMeetsAccuracyRequirements:(CLLocation *)newLocation;
 
 ///---------------------------------------------------------------------------------------
 /// @name Starting and Stopping Location Services

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -22,10 +22,12 @@
  OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import <Foundation/Foundation.h>
 
 @class UAEvent;
 @class UAConfig;
+@class UAPreferenceDataStore;
 
 /**
  * The UAAnalytics object provides an interface to the Urban Airship Analytics API.
@@ -33,32 +35,32 @@
 @interface UAAnalytics : NSObject
 
 /**
- * The analytics session as an NSMutableDictionary.
+ * The conversion send Id.
  */
-@property (nonatomic, strong, readonly) NSMutableDictionary *session;
+@property (nonatomic, copy, readonly) NSString *conversionSendId;
+
+/**
+ * The conversion rich push Id.
+ */
+@property (nonatomic, copy, readonly) NSString *conversionRichPushId;
+
+/**
+ * The current session Id.
+ */
+@property (nonatomic, copy, readonly) NSString *sessionId;
 
 /**
  * The oldest event time as an NSTimeInterval.
  */
 @property (nonatomic, assign, readonly) NSTimeInterval oldestEventTime;
 
-/**
- * Background identifier for the analytics background task.
- */
-@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier sendBackgroundTask;
-
-/**
- * The notification as an NSDictionary.
- */
-@property (nonatomic, strong, readonly) NSDictionary *notificationUserInfo;
-
-
 
 /**
  * Initializes with the specified airshipConfig file.
  * @param airshipConfig The 'AirshipConfig.plist' file
+ * @param dataStore The shared preference data store.
  */
-- (id)initWithConfig:(UAConfig *)airshipConfig;
+- (instancetype)initWithConfig:(UAConfig *)airshipConfig dataStore:(UAPreferenceDataStore *)dataStore;
 
 /**
  * Delays the next analytics send.
@@ -81,6 +83,7 @@
 
 /**
  * Date representing the last attempt to send analytics.
+ * @return NSDate representing the last attempt to send analytics
  */
 - (NSDate*)lastSendTime;
 

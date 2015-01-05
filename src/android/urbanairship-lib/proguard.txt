@@ -1,0 +1,7 @@
+ ## Required even for GCM only apps
+-dontwarn com.amazon.device.messaging.**
+
+## Required for the Javascript Interface
+-keepclassmembers class com.urbanairship.js.UAJavascriptInterface {
+    public *;
+}

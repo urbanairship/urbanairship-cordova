@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -43,14 +43,6 @@
 ///---------------------------------------------------------------------------------------
 
 /**
- * Generate a UUID.
- * Uses CFUUID to generate and return a UUID.
- *
- * @return A UUID.
- */
-+ (NSString *)UUID;
-
-/**
  * Get the device model name. e.g., iPhone3,1
  * @return The device model name.
  */
@@ -62,12 +54,6 @@
  * @return The device ID, or an empty string if the ID cannot be retrieved or created.
  */
 + (NSString *)deviceID;
-
-///---------------------------------------------------------------------------------------
-/// @name URL Encoding
-///---------------------------------------------------------------------------------------
-
-+ (NSString *)urlEncodedStringWithString:(NSString *)string encoding:(NSStringEncoding)encoding;
 
 ///---------------------------------------------------------------------------------------
 /// @name UAHTTP Authenticated Request Helpers
@@ -87,6 +73,16 @@
  * @return An HTTP Basic Auth header string value for the user's credentials.
  */
 + (NSString *)userAuthHeaderString;
+
+
+/**
+ * Returns a basic auth header string.
+ *
+ * The return value takes the form of: `Basic [Base64 Encoded "username:password"]`
+ *
+ * @return An HTTP Basic Auth header string value for the app's credentials.
+ */
++ (NSString *)appAuthHeaderString;
 
 ///---------------------------------------------------------------------------------------
 /// @name UI Formatting Helpers
@@ -122,6 +118,15 @@
  * @return YES if successful, NO otherwise
  */
 + (BOOL)addSkipBackupAttributeToItemAtURL:(NSURL *)url;
+
+
+/**
+ * A utility method that grabs the top-most view controller for the main application window.
+ * May return nil if a suitable view controller cannot be found.
+ * @return The top-most view controller or nil if controller cannot be found.
+ */
++ (UIViewController *)topController;
+
 
 
 @end

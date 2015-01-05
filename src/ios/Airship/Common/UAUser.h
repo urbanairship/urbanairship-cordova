@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -34,6 +34,7 @@ extern NSString * const UAUserCreatedNotification;
 
 /**
  * Returns the singleton user instance.
+ * @return The singleton user instance.
  */
 + (UAUser *)defaultUser;
 
@@ -57,13 +58,20 @@ extern NSString * const UAUserCreatedNotification;
  * The user name.
  */
 @property (nonatomic, readonly, copy) NSString *username;
+
 /**
  * The user password.
  */
 @property (nonatomic, readonly, copy) NSString *password;
+
 /**
  * The user url.
  */
 @property (nonatomic, readonly, copy) NSString *url;
+
+/**
+ * Background task identifier used to perform user updates in the background.
+ */
+@property (nonatomic, assign, readonly) UIBackgroundTaskIdentifier userUpdateBackgroundTask;
 
 @end

@@ -13,7 +13,7 @@
  * @param password The associated user password.
  * @param url The associated user url, as a string.
  */
-+ (id)dataWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url;
++ (instancetype)dataWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url;
 
 /**
  * UAUserData initializer.
@@ -22,19 +22,19 @@
  * @param password The associated user password.
  * @param url The associated user url, as a string.
  */
-- (id)initWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url;
+- (instancetype)initWithUsername:(NSString *)username password:(NSString *)password url:(NSString *)url;
 
 /**
  * The user name.
  */
-@property(nonatomic, readonly, copy) NSString *username;
+@property (nonatomic, readonly, copy) NSString *username;
 /**
  * The password.
  */
-@property(nonatomic, readonly, copy) NSString *password;
+@property (nonatomic, readonly, copy) NSString *password;
 /**
  * The url as a string.
  */
-@property(nonatomic, readonly, copy) NSString *url;
+@property (nonatomic, readonly, copy) NSString *url;
 
 @end

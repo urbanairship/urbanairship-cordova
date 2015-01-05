@@ -178,6 +178,12 @@ PushNotification.prototype.resetBadge = function (callback) {
   }
 }
 
+// Clear notifications
+PushNotification.prototype.clearNotifications = function (callback) {
+  if (!this.isPlatformIOS()) {
+    this.call_native(callback, "clearNotifications");
+  }
+}
 // Location stuff
 
 PushNotification.prototype.recordCurrentLocation = function (callback) {

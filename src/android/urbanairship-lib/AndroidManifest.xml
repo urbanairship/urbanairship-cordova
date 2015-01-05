@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.urbanairship"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="6"
+        android:targetSdkVersion="21"
+        tools:overrideLibrary="com.google.android.gms, com.squareup.fest" />
+
+    <application />
+
+</manifest>

@@ -6,13 +6,14 @@ This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
 
 ### Version Requirements
 
-This plugin is meant to work with PhoneGap 3.0.0+ and the latest version of the Urban Airship library.
+This plugin is meant to work with Cordova 3.4.0+ and the latest version of the Urban Airship library.
 More documentation and integration guides for IOS and Android are availble on our
 [website](https://docs.urbanairship.com/display/DOCS/Client%3A+PhoneGap). 
 
 ### Older PhoneGap versions
 
-A older version of the plugin for Phonegap 2.6 - 2.9 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/1.0.8). 
+An older unsupported version of the plugin for Phonegap 3.0 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/2.3.3)
+and for Phonegap 2.6 - 2.9 can be found [here](https://github.com/urbanairship/phonegap-ua-push/tree/1.0.8).
 
 ### Contributing Code
 
@@ -26,12 +27,17 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 ## Installation
 
 #### Automatic Installation using PhoneGap/Cordova CLI (iOS and Android)
-1. Install this plugin using PhoneGap/Cordova cli:
-```
-cordova plugin add https://github.com/urbanairship/phonegap-ua-push.git
-``` 
+1. For iOS, make sure you update your iOS project to Cordova iOS version 3.4.1 before installing this plugin.
 
-2. Modify the www/config.xml directory to contain (replacing with your configuration settings):
+        cordova platform update ios
+
+2. For Android, make sure the Android SDK is up to date. Android Support v4 library revision 21+ and Google Play Service 6.1+ are required.
+
+3. Install this plugin using PhoneGap/Cordova cli:
+
+        phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
+
+4. Modify the config.xml directory to contain (replacing with your configuration settings):
 
         <!-- Urban Airship app credentials -->
         <preference name="com.urbanairship.production_app_key" value="PRODUCTION_APP_KEY" />
@@ -49,9 +55,12 @@ cordova plugin add https://github.com/urbanairship/phonegap-ua-push.git
         <preference name="com.urbanairship.gcm_sender" value="GCM_SENDER_ID" />
 
 
-3. If your app supports Android API < 14, then you have to manually instrument any Android Activities to 
-have proper analytics.  
+5. For iOS; manually install the localized strings to their respective folders. For example; `src/ios/Airship/UI/Default/Common/Resources/de.lproj/UAInteractiveNotifications.strings` will need to be moved to your `platforms/ios/HelloWorld/Resources/de.lproj/` folder. This will need to be completed for all files in the `src/ios/Airship/UI/Default/Common/Resources/` folders. 
+
+6. If your app supports Android API < 14, then you have to manually instrument any Android Activities to have proper analytics.
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required). 
+
+7. Due to bug https://code.google.com/p/android/issues/detail?id=23271 and https://issues.apache.org/jira/browse/CB-7675, the custom_rules.xml file in the root of android platform project must be deleted.
 
 #### iOS manual installation (unnecessary if installed automatically)
 1. Add src/ios/PushNotificationPlugin to your project
@@ -100,8 +109,10 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 1. Require the PushNotification module `var PushNotification = cordova.require('<Path to PushNotification.js>')`
 
 #### Android manual installation (unnecessary if installed automatically)
-1. Copy src/Android/*.java files to your projects src/com/urbanairship/phonegap/ directory
-1. Copy src/Android/urbanairship-lib-*.jar to your projects libs directory
+1. Copy src/Android/*.java files to your project's src/com/urbanairship/phonegap/ directory
+1. Install [Urban Airship Android SDK](http://docs.urbanairship.com/build/push/android.html#urban-airship-sdk-setup)
+1. Install [Google Play Services](http://docs.urbanairship.com/build/push/android.html#urban-airship-sdk-setup) (version 6.1 or greater)
+1. Install [Android v4 support library](http://developer.android.com/tools/support-library/setup.html) (revision 21 or greater)
 
 1. Modify the AndroidManifest.xml to include these permissions:
 
@@ -114,22 +125,48 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
         <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
         <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     
-        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your app's package name -->
         <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
     
-        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your app's package name -->
         <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+
+        <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your app's package name -->
+        <permission android:name="$PACKAGE_NAME.permission.UA_DATA" android:protectionLevel="signature" />
+        <uses-permission android:name="$PACKAGE_NAME.permission.UA_DATA" />
 
 1. Modify the AndroidManifest.xml Application section to include:
 
+         <receiver android:name="com.urbanairship.phonegap.PushReceiver"
+                        android:exported="false">
 
-        <receiver android:name="com.urbanairship.phonegap.PushReceiver" />
-        <receiver android:name="com.urbanairship.CoreReceiver" />
+                <intent-filter>
+                    <action android:name="com.urbanairship.push.CHANNEL_UPDATED" />
+                    <action android:name="com.urbanairship.push.OPENED" />
+                    <action android:name="com.urbanairship.push.DISMISSED" />
+                    <action android:name="com.urbanairship.push.RECEIVED" />
+
+                    <!-- MODIFICATION REQUIRED - Use your package name as the category -->
+                    <category android:name="$PACKAGE_NAME" />
+                </intent-filter>
+         </receiver>
+
+         <receiver android:name="com.urbanairship.CoreReceiver"
+                  android:exported="false">
+
+            <intent-filter android:priority="-999">
+                <action android:name="com.urbanairship.push.OPENED" />
+
+                <!-- MODIFICATION REQUIRED - Use your package name as the category -->
+                <category android:name="$PACKAGE_NAME" />
+            </intent-filter>
+        </receiver>
+
         <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+                <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your app's package name -->
                 <category android:name="$PACKAGE_NAME" /> 
             </intent-filter>
         </receiver>
@@ -137,16 +174,34 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
         <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" /> 
         
         <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
-        <service android:name="com.urbanairship.push.PushWorkerService" android:label="Push Notification Worker Service"/>
         <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
-        
+        <service android:name="com.urbanairship.richpush.RichPushUpdateService"/>
+        <service android:name="com.urbanairship.actions.ActionService"/>
+        <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+
         <provider android:name="com.urbanairship.UrbanAirshipProvider"
-            <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your apps package name -->
+            <!-- MODIFICATION REQUIRED, replace $PACKAGE_NAME with your app's package name -->
             android:authorities="$PACKAGE_NAME.urbanairship.provider" 
             android:exported="false"
             android:multiprocess="true" />
         
-        <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
+        <activity android:name="com.urbanairship.CoreActivity"/>
+        <activity android:name="com.urbanairship.actions.ActionActivity"/>
+
+        <activity android:name="com.urbanairship.google.PlayServicesErrorActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
+
+        <activity
+            android:name="com.urbanairship.actions.LandingPageActivity"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="com.urbanairship.actions.SHOW_LANDING_PAGE_INTENT_ACTION"/>
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
 
 
 1. Modify the cordova config.xml file to include the PushNotificationPlugin:
@@ -182,9 +237,9 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 
 ## Example
 A full example can be found in Examples.  To run it, copy the files:
-- Examples/index.html to www/index.html
-- Examples/css/* to www/css
-- Examples/js/* to www/js
+- Example/index.html to www/index.html
+- Example/css/* to www/css
+- Example/js/* to www/js
 
 #### Basic Example
     
@@ -214,7 +269,7 @@ A full example can be found in Examples.  To run it, copy the files:
     // Set an alias, this lets you tie a device to a user in your system
     // https://docs.urbanairship.com/display/DOCS/Server%3A+iOS+Push+API#ServeriOSPushAPI-Alias
     PushNotification.setAlias("awesomeuser22", function () {
-        push.getAlias(function (alias) {
+        PushNotification.getAlias(function (alias) {
             console.log("The user formerly known as " + alias)
         });
     });
@@ -288,7 +343,7 @@ On iOS, registration for push requires specifying what combination of badges, so
 alerts are desired.  This function must be explicitly called in order to begin the
 registration process.  For example:
 
-    push.registerForNotificationTypes(push.notificationType.sound | push.notificationType.alert)
+    PushNotification.registerForNotificationTypes(PushNotification.notificationType.sound | PushNotification.notificationType.alert)
 
 *Available notification types:*
 
@@ -302,7 +357,7 @@ registration process.  For example:
 
 All status callbacks are passed a boolean indicating the result of the request:
 
-    push.isPushEnabled(function (has_push) {
+    PushNotification.isPushEnabled(function (has_push) {
         if (has_push) {
             $('#pushEnabled').prop("checked", true)
         }
@@ -360,7 +415,7 @@ Indicates whether Quiet Time is currently in effect.
 
 Get information about the push that caused the application to be launched. When a user clicks on a push to launch your app, this functions callback will be passed a Push object consisting of the alert message, and an object containing extra key/value pairs.  Otherwise the incoming message and extras will be an empty string and an empty object, respectively.
 
-    push.getIncoming(function (incoming) {
+    PushNotification.getIncoming(function (incoming) {
         if (incoming.message) {
             alert("Incoming push message: " + incoming.message;
         }
@@ -438,6 +493,11 @@ Set the current application badge number
 **Note:** iOS only
 
 Reset the badge number to zero
+
+#### clearNotifications(callback)
+**Note:** Android only
+
+Clears the notifications posted by the application.
 
 ### Location
 

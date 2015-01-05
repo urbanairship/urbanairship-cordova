@@ -1,15 +1,17 @@
 package com.urbanairship.phonegap;
 
+import android.app.NotificationManager;
+import android.content.Context;
+
 import android.os.RemoteException;
 
 import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
-import com.urbanairship.location.LocationPreferences;
 import com.urbanairship.location.UALocationManager;
 import com.urbanairship.push.PushManager;
-import com.urbanairship.push.PushPreferences;
-import com.urbanairship.util.ServiceNotBoundException;
+import com.urbanairship.push.PushMessage;
+import com.urbanairship.google.PlayServicesUtils;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -32,21 +34,19 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
 public class PushNotificationPlugin extends CordovaPlugin {
 
     private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
             "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
             "getIncoming", "getPushID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
-            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation");
+            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications");
 
-    public static  String incomingAlert = "";
-    public static Map<String, String> incomingExtras = new HashMap<String, String>();
+    public static PushMessage incomingPush = null;
+    public static Integer incomingNotificationId = null;
 
     // Used to raise pushes and registration from the PushReceiver
     private static PushNotificationPlugin instance;
-
-    private PushPreferences pushPrefs;
-    private LocationPreferences locationPrefs;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -59,39 +59,57 @@ public class PushNotificationPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         Logger.info("Initializing PushNotificationPlugin");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
-        pushPrefs = PushManager.shared().getPreferences();
-        locationPrefs = UALocationManager.shared().getPreferences();
     }
 
-    private static JSONObject notificationObject(String message,
-            Map<String, String> extras) {
+    @Override
+    public void onResume(boolean multitasking) {
+        super.onResume(multitasking);
+
+         // Handle any Google Play services errors
+        if (PlayServicesUtils.isGooglePlayStoreAvailable()) {
+            PlayServicesUtils.handleAnyPlayServicesError(UAirship.getApplicationContext());
+        }
+    }
+
+    private static JSONObject notificationObject(PushMessage message, Integer notificationId) {
         JSONObject data = new JSONObject();
+        
+        if (message == null) {
+            return data;
+        }
+
+        Map<String, String> extras = new HashMap<String, String>();
+        for (String key : message.getPushBundle().keySet()) {
+            extras.put(key, message.getPushBundle().getString(key));
+        }        
+
         try {
-            data.put("message", message);
-            data.put("extras", new JSONObject(extras));
+            data.putOpt("message", message.getAlert());
+            data.putOpt("extras", new JSONObject(extras));
+            data.putOpt("notification_id", notificationId);
         } catch (JSONException e) {
             Logger.error("Error constructing notification object", e);
         }
         return data;
     }
 
-    static void raisePush(String message, Map<String, String> extras) {
+    static void raisePush(PushMessage message, Integer notificationId) {
         if (instance == null) {
             return;
         }
 
-        sendEvent("urbanairship.push", notificationObject(message, extras).toString());
+        sendEvent("urbanairship.push", notificationObject(message, notificationId).toString());
     }
 
-    static void raiseRegistration(Boolean valid, String pushID) {
+    static void raiseRegistration(boolean isSuccess, String channelId) {
         if (instance == null) {
             return;
         }
 
         JSONObject data = new JSONObject();
         try {
-            if (valid) {
-                data.put("pushID", pushID);
+            if (isSuccess) {
+                data.put("pushID", channelId);
             } else {
                 data.put("error", "Invalid registration.");
             }
@@ -136,118 +154,91 @@ public class PushNotificationPlugin extends CordovaPlugin {
         return true;
     }
 
-    // Actions
+    void clearNotifications(JSONArray data, CallbackContext callbackContext) {
+        Context context = UAirship.getApplicationContext();
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+        callbackContext.success();
+    }
 
     void enablePush(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            PushManager.enablePush();
-            callbackContext.success();
-        }
+        UAirship.shared().getPushManager().setUserNotificationsEnabled(true);
+        callbackContext.success();
     }
 
     void disablePush(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            PushManager.disablePush();
-            callbackContext.success();
-        }
+        UAirship.shared().getPushManager().setUserNotificationsEnabled(false);
+        callbackContext.success();
     }
 
     void enableLocation(JSONArray data, CallbackContext callbackContext) {
-        if (requireLocationServiceEnabled(callbackContext)) {
-            UALocationManager.enableLocation();
-            callbackContext.success();
-        }
+        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(true);
+        callbackContext.success();
     }
 
     void disableLocation(JSONArray data, CallbackContext callbackContext) {
-        if (requireLocationServiceEnabled(callbackContext)) {
-            UALocationManager.disableLocation();
-            callbackContext.success();
-        }
+        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(false);
+        callbackContext.success();
     }
 
     void enableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
-        if (requireLocationServiceEnabled(callbackContext)) {
-            UALocationManager.enableBackgroundLocation();
-            callbackContext.success();
-        }
+        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(true);
+        callbackContext.success();
     }
 
     void disableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
-        if (requireLocationServiceEnabled(callbackContext)) {
-            UALocationManager.disableBackgroundLocation();
-            callbackContext.success();
-        }
+        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(false);
+        callbackContext.success();
     }
 
     void isPushEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            int value = this.pushPrefs.isPushEnabled() ? 1 : 0;
-            callbackContext.success(value);
-        }
+        int value = UAirship.shared().getPushManager().getUserNotificationsEnabled() ? 1 : 0;
+        callbackContext.success(value);
     }
 
     void isSoundEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            int value = this.pushPrefs.isSoundEnabled() ? 1 : 0;
-            callbackContext.success(value);
-        }
+        int value = UAirship.shared().getPushManager().isSoundEnabled() ? 1 : 0;
+        callbackContext.success(value);
     }
 
     void isVibrateEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            int value = this.pushPrefs.isVibrateEnabled() ? 1 : 0;
-            callbackContext.success(value);
-        }
+        int value = UAirship.shared().getPushManager().isVibrateEnabled() ? 1 : 0;
+        callbackContext.success(value);
     }
 
     void isQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            int value = this.pushPrefs.isQuietTimeEnabled() ? 1 : 0;
-            callbackContext.success(value);
-        }
+        int value = UAirship.shared().getPushManager().isQuietTimeEnabled() ? 1 : 0;
+        callbackContext.success(value);
     }
 
     void isInQuietTime(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            int value = this.pushPrefs.isInQuietTime() ? 1 : 0;
-            callbackContext.success(value);
-        }
+        int value = UAirship.shared().getPushManager().isInQuietTime() ? 1 : 0;
+        callbackContext.success(value);
     }
 
     void isLocationEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (requireLocationServiceEnabled(callbackContext)) {
-            int value = this.locationPrefs.isLocationEnabled() ? 1 : 0;
-            callbackContext.success(value);
-        }
+        int value = UAirship.shared().getLocationManager().isLocationUpdatesEnabled() ? 1 : 0;
+        callbackContext.success(value);
     }
 
     void getIncoming(JSONArray data, CallbackContext callbackContext) {
-        String alert = PushNotificationPlugin.incomingAlert;
-        Map<String, String> extras = PushNotificationPlugin.incomingExtras;
-        JSONObject obj = notificationObject(alert, extras);
+        JSONObject notificationObject = notificationObject(PushNotificationPlugin.incomingPush, PushNotificationPlugin.incomingNotificationId);
 
-        callbackContext.success(obj);
+        callbackContext.success(notificationObject);
 
-        //reset incoming push data until the next background push comes in
-        PushNotificationPlugin.incomingAlert = "";
-        PushNotificationPlugin.incomingExtras = new HashMap<String,String>();
+        // Reset incoming push data until the next background push comes in
+        PushNotificationPlugin.incomingPush = null;
+        PushNotificationPlugin.incomingNotificationId = null;
     }
 
     void getPushID(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            String pushID = PushManager.shared().getAPID();
-            pushID = pushID != null ? pushID : "";
-            callbackContext.success(pushID);
-        }
+        String pushID = UAirship.shared().getPushManager().getChannelId();
+        pushID = pushID != null ? pushID : "";
+        callbackContext.success(pushID);
     }
 
     void getQuietTime(JSONArray data, CallbackContext callbackContext) {
-        if (!requirePushServiceEnabled(callbackContext)) {
-            return;
-        }
-
-        Date[] quietTime = this.pushPrefs.getQuietTimeInterval();
+        Date[] quietTime = UAirship.shared().getPushManager().getQuietTimeInterval();
 
         int startHour = 0;
         int startMinute = 0;
@@ -281,11 +272,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void getTags(JSONArray data, CallbackContext callbackContext) {
-        if (!requirePushServiceEnabled(callbackContext)) {
-            return;
-        }
-
-        Set<String> tags = PushManager.shared().getTags();
+        Set<String> tags = UAirship.shared().getPushManager().getTags();
         try {
             JSONObject returnObject = new JSONObject();
             returnObject.put("tags", new JSONArray(tags));
@@ -299,11 +286,9 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void getAlias(JSONArray data, CallbackContext callbackContext) {
-        if (requirePushServiceEnabled(callbackContext)) {
-            String alias = PushManager.shared().getAlias();
-            alias = alias != null ? alias : "";
-            callbackContext.success(alias);
-        }
+        String alias = UAirship.shared().getPushManager().getAlias();
+        alias = alias != null ? alias : "";
+        callbackContext.success(alias);
     }
 
     void setAlias(JSONArray data, CallbackContext callbackContext) {
@@ -314,7 +299,8 @@ public class PushNotificationPlugin extends CordovaPlugin {
             }
 
             Logger.debug("Settings alias: " + alias);
-            PushManager.shared().setAlias(alias);
+
+            UAirship.shared().getPushManager().setAlias(alias);
 
             callbackContext.success();
         } catch (JSONException e) {
@@ -324,10 +310,6 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void setTags(JSONArray data, CallbackContext callbackContext) {
-        if (!requirePushServiceEnabled(callbackContext)) {
-            return;
-        }
-
         try {
             HashSet<String> tagSet = new HashSet<String>();
             JSONArray tagsArray = data.getJSONArray(0);
@@ -336,7 +318,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
             }
 
             Logger.debug("Settings tags: " + tagSet);
-            PushManager.shared().setTags(tagSet);
+            UAirship.shared().getPushManager().setTags(tagSet);
 
             callbackContext.success();
         } catch (JSONException e) {
@@ -346,13 +328,9 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void setSoundEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (!requirePushServiceEnabled(callbackContext)) {
-            return;
-        }
-
         try {
             boolean soundPreference = data.getBoolean(0);
-            this.pushPrefs.setSoundEnabled(soundPreference);
+            UAirship.shared().getPushManager().setSoundEnabled(soundPreference);
             Logger.debug("Settings Sound: " + soundPreference);
             callbackContext.success();
         } catch (JSONException e) {
@@ -362,13 +340,9 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void setVibrateEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (!requirePushServiceEnabled(callbackContext)) {
-            return;
-        }
-
         try {
             boolean vibrationPreference = data.getBoolean(0);
-            this.pushPrefs.setVibrateEnabled(vibrationPreference);
+            UAirship.shared().getPushManager().setVibrateEnabled(vibrationPreference);
             Logger.debug("Settings Vibrate: " + vibrationPreference);
             callbackContext.success();
         } catch (JSONException e) {
@@ -378,13 +352,9 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void setQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) {
-        if (!requirePushServiceEnabled(callbackContext)) {
-            return;
-        }
-
         try {
             boolean quietPreference = data.getBoolean(0);
-            this.pushPrefs.setQuietTimeEnabled(quietPreference);
+            UAirship.shared().getPushManager().setQuietTimeEnabled(quietPreference);
             Logger.debug("Settings QuietTime: " + quietPreference);
             callbackContext.success();
         } catch (JSONException e) {
@@ -394,10 +364,6 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void setQuietTime(JSONArray data, CallbackContext callbackContext) {
-        if (!requirePushServiceEnabled(callbackContext)) {
-            return;
-        }
-
         try {
             Calendar start = new GregorianCalendar();
             Calendar end = new GregorianCalendar();
@@ -412,7 +378,8 @@ public class PushNotificationPlugin extends CordovaPlugin {
             end.set(Calendar.MINUTE, endMinute);
 
             Logger.debug("Settings QuietTime. Start: " + start.getTime() + ", End: " + end.getTime());
-            this.pushPrefs.setQuietTimeInterval(start.getTime(), end.getTime());
+            UAirship.shared().getPushManager().setQuietTimeInterval(start.getTime(), end.getTime());
+
             callbackContext.success();
         } catch (JSONException e) {
             Logger.error("Error reading quietTime JSON", e);
@@ -421,41 +388,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void recordCurrentLocation(JSONArray data, CallbackContext callbackContext) {
-        if (!requireLocationServiceEnabled(callbackContext)) {
-            return;
-        }
-
-        try {
-            Logger.debug("LOGGING LOCATION");
-            UALocationManager.shared().recordCurrentLocation();
-        } catch (ServiceNotBoundException e) {
-            Logger.debug("Location not bound, binding now");
-            UALocationManager.bindService();
-        } catch (RemoteException e) {
-            Logger.error("Caught RemoteException in recordCurrentLocation", e);
-        }
+        UAirship.shared().getLocationManager().requestSingleLocation();
         callbackContext.success();
-    }
-
-    // Helpers
-
-    private boolean requirePushServiceEnabled(CallbackContext callbackContext) {
-        if (!UAirship.shared().getAirshipConfigOptions().pushServiceEnabled) {
-            Logger.warn("pushServiceEnabled must be enabled in the airshipconfig.properties file");
-            callbackContext.error("pushServiceEnabled must be enabled in the airshipconfig.properties file");
-            return false;
-        }
-
-        return true;
-    }
-
-    private boolean requireLocationServiceEnabled(CallbackContext callbackContext) {
-        if (!UAirship.shared().getAirshipConfigOptions().locationOptions.locationServiceEnabled) {
-            Logger.warn("locationServiceEnabled must be enabled in the location.properties file");
-            callbackContext.error("locationServiceEnabled must be enabled in the location.properties file");
-            return false;
-        }
-
-        return true;
     }
 }

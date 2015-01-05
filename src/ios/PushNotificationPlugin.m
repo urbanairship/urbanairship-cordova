@@ -49,7 +49,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 - (void)takeOff {
     //Init Airship launch options
     UAConfig *config = [UAConfig defaultConfig];
-    
+
     NSDictionary *settings = self.commandDelegate.settings;
 
     config.productionAppKey = [settings valueForKey:@"com.urbanairship.production_app_key"] ?: config.productionAppKey;
@@ -61,15 +61,15 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }
 
     BOOL enablePushOnLaunch = [[settings valueForKey:@"com.urbanairship.enable_push_onlaunch"] boolValue];
-    [UAPush setDefaultPushEnabledValue:enablePushOnLaunch];
-    
+    [UAPush shared].userPushNotificationsEnabledByDefault = enablePushOnLaunch;
+
     // Create Airship singleton that's used to talk to Urban Airship servers.
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:config];
 
     [[UAPush shared] resetBadge];//zero badge on startup
     [UAPush shared].pushNotificationDelegate = self;
-    [[UAPush shared] addObserver:self];
+    [UAPush shared].registrationDelegate = self;
 
     [[UAirship shared].locationService startReportingSignificantLocationChanges];
 }
@@ -89,7 +89,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
             if (![[args objectAtIndex:i] isKindOfClass:[types objectAtIndex:i]]) {
                 //fail when when there is a type mismatch an expected and passed parameter
                 UA_LERR(@"Type mismatch in cordova callback: expected %@ and received %@",
-                      [types description], [args description]);
+                        [types description], [args description]);
                 return NO;
             }
         }
@@ -98,13 +98,13 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         UA_LERR(@"Parameter number mismatch in cordova callback: expected %d and received %d", types.count, args.count);
         return NO;
     }
-    
+
     return YES;
 }
 
 - (CDVPluginResult *)pluginResultForValue:(id)value {
     CDVPluginResult *result;
-    
+
     /*
      NSSString -> String
      NSNumber --> (Integer | Double)
@@ -112,7 +112,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
      NSDictionary --> Object
      nil --> no return value
      */
-    
+
     if ([value isKindOfClass:[NSString class]]) {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
                                    messageAsString:[value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
@@ -134,7 +134,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         UA_LERR(@"Cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
         return nil;
     }
-    
+
     return result;
 }
 
@@ -155,7 +155,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
         //execute the block. the return value should be an obj-c object holding what we want to pass back to cordova.
         id returnValue = block(command.arguments);
-    
+
         CDVPluginResult *result = [self pluginResultForValue:returnValue];
         if (result) {
             [self succeedWithPluginResult:result withCallbackID:command.callbackId];
@@ -258,32 +258,35 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 - (void)registerForNotificationTypes:(CDVInvokedUrlCommand*)command {
     UA_LDEBUG(@"PushNotificationPlugin: register for notification types");
-
+    
+    CDVPluginResult* pluginResult = nil;
+    
     if (command.arguments.count >= 1) {
         id obj = [command.arguments objectAtIndex:0];
-
+        
         if ([obj isKindOfClass:[NSNumber class]]) {
-            UIRemoteNotificationType bitmask = [obj intValue];
+            UIUserNotificationType bitmask = [obj intValue];
             UALOG(@"bitmask value: %d", [obj intValue]);
-            [[UAPush shared] registerForRemoteNotificationTypes:bitmask];
-            CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-            [self writeJavascript: [result toSuccessCallbackString:command.callbackId]];
+            
+            [UAPush shared].userNotificationTypes = bitmask;
+            [[UAPush shared] updateRegistration];
+            
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
         } else {
-            CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-            [self writeJavascript: [result toErrorCallbackString:command.callbackId]];
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
         }
-
+        
     } else {
-        CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        [self writeJavascript: [result toErrorCallbackString:command.callbackId]];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
 //general enablement
 
 - (void)enablePush:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
-        [UAPush shared].pushEnabled = YES;
+        [UAPush shared].userPushNotificationsEnabled = YES;
         //forces a reregistration
         [[UAPush shared] updateRegistration];
     }];
@@ -291,7 +294,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 - (void)disablePush:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
-        [UAPush shared].pushEnabled = NO;
+        [UAPush shared].userPushNotificationsEnabled = NO;
         //forces a reregistration
         [[UAPush shared] updateRegistration];
     }];
@@ -327,7 +330,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 - (void)isPushEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
-        BOOL enabled = [UAPush shared].pushEnabled;
+        BOOL enabled = [UAPush shared].userPushNotificationsEnabled;
         return [NSNumber numberWithBool:enabled];
     }];
 }
@@ -393,10 +396,10 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
         [returnDictionary setObject:incomingAlert forKey:@"message"];
         [returnDictionary setObject:incomingExtras forKey:@"extras"];
-        
+
         //reset incoming push data until the next background push comes in
         self.incomingNotification = nil;
-        
+
         return returnDictionary;
     }];
 }
@@ -417,7 +420,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
                                           zero,@"startMinute",
                                           zero,@"endHour",
                                           zero,@"endMinute",nil];
-        
+
         //this can be nil if quiet time is not set
         if (quietTimeDictionary) {
 
@@ -510,23 +513,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
         id endHr = [args objectAtIndex:2];
         id endMin = [args objectAtIndex:3];
 
-        NSDate *startDate;
-        NSDate *endDate;
-
-        NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        NSDateComponents *startComponents = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
-        NSDateComponents *endComponents = [gregorian components:NSYearCalendarUnit fromDate:[NSDate date]];
-
-        startComponents.hour = [startHr intValue];
-        startComponents.minute =[startMin intValue];
-        endComponents.hour = [endHr intValue];
-        endComponents.minute = [endMin intValue];
-
-        startDate = [gregorian dateFromComponents:startComponents];
-        endDate = [gregorian dateFromComponents:endComponents];
-
-        [[UAPush shared] setQuietTimeFrom:startDate to:endDate withTimeZone:[NSTimeZone localTimeZone]];
-        [[UAPush shared] updateRegistration];        
+        [[UAPush shared] setQuietTimeStartHour:[startHr integerValue] startMinute:[startMin integerValue] endHour:[endHr integerValue] endMinute:[endMin integerValue]];
+        [[UAPush shared] updateRegistration];
     }];
 }
 
@@ -564,17 +552,19 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 }
 
 
-#pragma mark UARegistrationObservers
-- (void)registerDeviceTokenSucceeded {
-    UA_LINFO(@"PushNotificationPlugin: registered for remote notifications");
-    
-    [self raiseRegistration:YES withpushID:[UAirship shared].deviceToken];
+#pragma mark UARegistrationDelegate
+- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
+    UA_LINFO(@"PushNotificationPlugin: registered for remote notifications.");
+
+    if (deviceToken) {
+        [self raiseRegistration:YES withpushID:deviceToken];
+    }
 }
 
-- (void)registerDeviceTokenFailed:(UAHTTPRequest *)request {
-    UA_LINFO(@"PushNotificationPlugin: Failed to register for remote notifications with request: %@", request);
-    
-    [self raiseRegistration:NO withpushID:@""]; 
+- (void)registrationFailed {
+    UA_LINFO(@"PushNotificationPlugin: Failed to register for remote notifications.");
+
+    [self raiseRegistration:NO withpushID:@""];
 }
 
 #pragma mark UAPushNotificationDelegate
@@ -599,7 +589,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 - (void)dealloc {
     [UAPush shared].pushNotificationDelegate = nil;
-    [[UAPush shared] removeObserver:self];
+    [UAPush shared].registrationDelegate = nil;
 
 }
 
@@ -610,7 +600,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
                                                            delegate:self
                                                   cancelButtonTitle:@"OK"
                                                   otherButtonTitles:nil];
-
+        
         [someError show];
     }
 }

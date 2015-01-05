@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,14 +25,30 @@
 
 /** These are common keys used in several location classes */
 
-typedef enum {
-    UALocationProviderNotUpdating = 0,
-    UALocationProviderUpdating
-} UALocationProviderStatus;
+/**
+ * Represents the possible location provider status.
+ */
+typedef NS_ENUM(NSInteger, UALocationProviderStatus) {
+    /**
+     * The service is not updating location.
+     */
+    UALocationProviderNotUpdating,
 
-typedef enum {
-    UALocationServiceTimedOut = 0
-} UALocationServiceError;
+    /**
+     * The service is currently updating location.
+     */
+    UALocationProviderUpdating
+};
+
+/**
+ * Represents the possible location service error conditions.
+ */
+typedef NS_ENUM(NSInteger, UALocationServiceError) {
+    /**
+     * The location service timed out before receiving a location.
+     */
+    UALocationServiceTimedOut
+};
 
 // The different service provider types, for UAAnalytics
 typedef NSString UALocationServiceProviderType;
@@ -44,7 +60,6 @@ extern UALocationServiceProviderType * const UALocationServiceProviderUnknown;
 typedef NSString UALocationServiceNSDefaultsKey;
 extern UALocationServiceNSDefaultsKey * const UALocationServiceAllowedKey;
 extern UALocationServiceNSDefaultsKey * const UALocationServiceEnabledKey;
-extern UALocationServiceNSDefaultsKey * const UALocationServicePurposeKey;
 extern UALocationServiceNSDefaultsKey * const UAStandardLocationServiceRestartKey;
 extern UALocationServiceNSDefaultsKey * const UASignificantChangeServiceRestartKey;
 extern UALocationServiceNSDefaultsKey * const UAStandardLocationDistanceFilterKey;

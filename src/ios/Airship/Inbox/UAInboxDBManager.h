@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -46,9 +46,10 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  * Gets the current users messages, sorted descending 
  * by the messageSent time.
  *
+ * @param predicate An optional predicate to filter array of returned messages.
  * @return NSArray of UAInboxMessages
  */
-- (NSArray *)getMessages;
+- (NSArray *)fetchMessagesWithPredicate:(NSPredicate *)predicate;
 
 /**
  * Adds a message inbox.
@@ -57,7 +58,6 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  * @return A message, populated with data from the message dictionary.
  */
 - (UAInboxMessage *)addMessageFromDictionary:(NSDictionary *)dictionary;
-
 
 /**
  * Updates an existing message in the inbox.
@@ -75,17 +75,6 @@ SINGLETON_INTERFACE(UAInboxDBManager);
  */
 - (void)deleteMessages:(NSArray *)messages;
 
-/**
- * Deletes a set of messages from the database
- * @param messageIDs NSArray of the messages IDs to be deleted
- */
-- (void)deleteMessagesWithIDs:(NSSet *)messageIDs;
-
-/**
- * Retuns the set of the current message ids in the inbox
- * @return An NSSet of message ids
- */
-- (NSSet *)messageIDs;
 /**
  * Saves any changes to the database
  */

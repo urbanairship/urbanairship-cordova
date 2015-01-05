@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -43,7 +43,7 @@ typedef void (^UADisposalBlock)(void);
  *
  * @param disposalBlock A `UADisposalBlock` to be executed upon disposal.
  */
-+ (instancetype) disposableWithBlock:(UADisposalBlock)disposalBlock;
++ (instancetype)disposableWithBlock:(UADisposalBlock)disposalBlock;
 
 /**
  * Dispose of associated resources.

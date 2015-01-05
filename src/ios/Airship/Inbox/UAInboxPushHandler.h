@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2014 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -68,14 +68,8 @@
  * This class handles incoming rich push messages that are sent with
  * an APNS notification.
  */
-@interface UAInboxPushHandler : NSObject <UAInboxMessageListDelegate>
+@interface UAInboxPushHandler : NSObject
 
-/**
- * Handle an incoming in-app notification.  This should typically be called 
- * from the UIApplicationDelegate.
- * @param userInfo the notification as an NSDictionary
- */
-+ (void)handleNotification:(NSDictionary *)userInfo;
 
 /**
  * YES if the most recent rich push launched the app, NO otherwise.
@@ -85,7 +79,7 @@
 /**
  * The message ID of the most recent rich push as an NSString.
  */
-@property (nonatomic, strong) NSString *viewingMessageID;
+@property (nonatomic, copy, readonly) NSString *viewingMessageID;
 
 /**
  * The delegate that should be notified when an incoming push is handled,
