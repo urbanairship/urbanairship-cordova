@@ -1,7 +1,7 @@
 =================================
 Version 2.8.0 - February 11, 2015
 =================================
- - Remove extra manual installations steps by providing plugin hooks.
+ - Removed extra manual installation steps by providing plugin hooks.
  - Updated the minimum cordova version to 4.0.0.
 
 ================================
