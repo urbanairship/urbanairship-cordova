@@ -22,6 +22,8 @@
 
     <!-- android -->
     <platform name="android">
+
+        <hook type="after_prepare" src="scripts/remove_files.js" />
        
         <config-file target="res/xml/config.xml" parent="/widget">
             <feature name="PushNotificationPlugin">
@@ -141,6 +143,9 @@
     
     <!-- ios -->
     <platform name="ios">
+        
+        <hook type="after_prepare" src="scripts/copy_resources.js" />
+        
         <config-file target="config.xml" parent="/widget">
              <feature name="PushNotificationPlugin">
                 <param name="ios-package" value="PushNotificationPlugin" />
