@@ -1,4 +1,9 @@
 =================================
+Version 2.8.1 - February 12, 2015
+=================================
+ - Revert min sdk version back to 3.4.0
+
+=================================
 Version 2.8.0 - February 11, 2015
 =================================
  - Removed extra manual installation steps by providing plugin hooks.
