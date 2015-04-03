@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.urbanairship.push.iam.view.SwipeDismissViewLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom">
+
+    <com.urbanairship.push.iam.view.BannerCardView
+        style="@style/Widget.UrbanAirship.InAppMessage.Banner.Card"
+        android:id="@+id/in_app_message"/>
+
+</com.urbanairship.push.iam.view.SwipeDismissViewLayout><!-- From: file:/Users/build/workspace/android-library/UrbanAirship/src/main/res/layout-v14/ua_fragment_iam_card.xml -->

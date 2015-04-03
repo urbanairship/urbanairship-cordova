@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button
+    android:id="@+id/action_button"
+    style="@style/Widget.UrbanAirship.InAppMessage.Banner.ActionButton"
+    xmlns:android="http://schemas.android.com/apk/res/android"/><!-- From: file:/Users/build/workspace/android-library/UrbanAirship/src/main/res/layout-v14/ua_iam_button.xml -->

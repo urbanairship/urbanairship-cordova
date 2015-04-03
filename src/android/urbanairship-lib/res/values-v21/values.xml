@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/build/workspace/android-library/UrbanAirship/src/main/res/values-v21/styles.xml -->
+    <eat-comment/>
+    <style name="Widget.UrbanAirship.InAppMessage.Banner" parent="Base.Widget.UrbanAirship.InAppMessage.Banner">
+        <item name="android:background">@drawable/ua_iam_background</item>
+        <item name="android:elevation">@dimen/ua_iam_banner_elevation</item>
+    </style>
+</resources>
