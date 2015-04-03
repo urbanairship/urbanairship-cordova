@@ -3,23 +3,10 @@ package com.urbanairship.phonegap;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-
-import com.urbanairship.Logger;
-import com.urbanairship.UAirship;
-import com.urbanairship.push.PushManager;
-import com.urbanairship.actions.ActionUtils;
-import com.urbanairship.actions.DeepLinkAction;
-import com.urbanairship.actions.LandingPageAction;
-import com.urbanairship.actions.OpenExternalUrlAction;
+import android.util.Log;
 
 import com.urbanairship.push.BaseIntentReceiver;
 import com.urbanairship.push.PushMessage;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import android.util.Log;
 
 public class PushReceiver extends BaseIntentReceiver {
 
