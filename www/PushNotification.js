@@ -128,6 +128,12 @@ PushNotification.prototype.getAlias = function (callback) {
   this.call_native(callback, "getAlias");
 }
 
+PushNotification.prototype.getBadgeNumber = function (callback) {
+  if (this.isPlatformIOS()) {
+    this.call_native(callback, "getBadgeNumber");
+  }
+}
+
 // Setters
 
 PushNotification.prototype.setAlias = function (alias, callback) {
