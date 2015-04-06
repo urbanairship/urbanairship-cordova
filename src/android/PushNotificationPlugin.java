@@ -39,7 +39,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
 
     private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
             "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
-            "getIncoming", "getPushID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
+            "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications");
 
     public static PushMessage incomingPush = null;
@@ -109,7 +109,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
         JSONObject data = new JSONObject();
         try {
             if (isSuccess) {
-                data.put("pushID", channelId);
+                data.put("channelID", channelId);
             } else {
                 data.put("error", "Invalid registration.");
             }
@@ -231,10 +231,10 @@ public class PushNotificationPlugin extends CordovaPlugin {
         PushNotificationPlugin.incomingNotificationId = null;
     }
 
-    void getPushID(JSONArray data, CallbackContext callbackContext) {
-        String pushID = UAirship.shared().getPushManager().getChannelId();
-        pushID = pushID != null ? pushID : "";
-        callbackContext.success(pushID);
+    void getChannelID(JSONArray data, CallbackContext callbackContext) {
+        String channelId = UAirship.shared().getPushManager().getChannelId();
+        channelId = channelId != null ? channelId : "";
+        callbackContext.success(channelId);
     }
 
     void getQuietTime(JSONArray data, CallbackContext callbackContext) {
