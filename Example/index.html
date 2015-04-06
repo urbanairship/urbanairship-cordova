@@ -29,8 +29,8 @@
         // Registration callback
         var onRegistration = function(event)  {
           if (!event.error) {
-            console.log("Reg Success: " + event.pushID)
-            $('#id').text(event.pushID)
+            console.log("Reg Success: " + event.channelID)
+            $('#id').text(event.channelID)
           } else {
             console.log(event.error)
           }
@@ -129,9 +129,9 @@
           $('#locationEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        PushNotification.getPushID(function(id) {
+        PushNotification.getChannelID(function(id) {
           if(id) {
-             console.log("Got push ID: " + id)
+             console.log("Got channel ID: " + id)
              $('#id').text(id)
           }
         })
@@ -242,7 +242,7 @@
         <div class="ui-body ui-body-b">
 
           <div data-role="fieldcontain">
-            <label for="id">Identifier:</label><br />
+            <label for="id">Channel ID:</label><br />
             <span name="id" id="id" style="word-wrap: break-word;"></span>
             <center><h3>Push Settings</h3></center>
             <label>Alias: </label>

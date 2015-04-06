@@ -231,17 +231,10 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     UA_LTRACE(@"js callback: %@", js);
 }
 
-- (void)raiseRegistration:(BOOL)valid withpushID:(NSString *)pushID {
-
-    if (!pushID) {
-        UA_LDEBUG(@"PushNotificationPlugin: attempted to raise registration with nil pushID");
-        pushID = @"";
-        valid = NO;
-    }
-
+- (void)raiseRegistration:(BOOL)valid channelID:(NSString *)channelID {
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
     if (valid) {
-        [data setObject:pushID forKey:@"pushID"];
+        [data setValue:channelID forKey:@"channelID"];
     } else {
         [data setObject:@"Registration failed." forKey:@"error"];
     }
@@ -404,10 +397,9 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }];
 }
 
-- (void)getPushID:(CDVInvokedUrlCommand*)command {
+- (void)getChannelID:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
-        NSString *pushID = [UAirship push].deviceToken ?: @"";
-        return pushID;
+        return [UAirship push].channelID ?: @"";
     }];
 }
 
@@ -554,17 +546,13 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 #pragma mark UARegistrationDelegate
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
-    UA_LINFO(@"PushNotificationPlugin: registered for remote notifications.");
-
-    if (deviceToken) {
-        [self raiseRegistration:YES withpushID:deviceToken];
-    }
+    UA_LINFO(@"PushNotificationPlugin: channel registration successful %@.", channelID);
+    [self raiseRegistration:YES channelID:channelID];
 }
 
 - (void)registrationFailed {
-    UA_LINFO(@"PushNotificationPlugin: Failed to register for remote notifications.");
-
-    [self raiseRegistration:NO withpushID:@""];
+    UA_LINFO(@"PushNotificationPlugin: channel registration failed.");
+    [self raiseRegistration:NO channelID:[UAirship push].channelID];
 }
 
 #pragma mark UAPushNotificationDelegate
