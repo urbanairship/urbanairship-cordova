@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 ROOT=`dirname "${0}"`/..
-AIRSHIP=$ROOT/src/ios/Airship/
+AIRSHIP=$ROOT/src/ios/Airship
 
 HEADERS=`find $AIRSHIP -name '*.h'`;
 
