@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -7,9 +7,9 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -25,11 +25,12 @@
 
 #import <Foundation/Foundation.h>
 #import "UADisposable.h"
-#import "UAInboxMessageListDelegate.h"
 
-typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 
 @class UAInboxMessageList;
+@class UAInboxMessage;
+
+typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 
 /**
  * This class represents a Rich Push Inbox message. It contains all
@@ -50,13 +51,13 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
 
 /**
  * The URL for the message body itself.
- * This URL may only be accessed with Basic Auth credentials set to the user id and password.
+ * This URL may only be accessed with Basic Auth credentials set to the user ID and password.
  */
 @property (nonatomic, readonly) NSURL *messageBodyURL;
 
 /**
  * The URL for the message.
- * This URL may only be accessed with Basic Auth credentials set to the user id and password.
+ * This URL may only be accessed with Basic Auth credentials set to the user ID and password.
  */
 @property (nonatomic, readonly) NSURL *messageURL;
 
@@ -121,35 +122,6 @@ typedef void (^UAInboxMessageCallbackBlock)(UAInboxMessage *message);
  */
 - (UADisposable *)markMessageReadWithCompletionHandler:(UAInboxMessageCallbackBlock)completionHandler;
 
-
-/**
- * Mark the message as read.
- * @param successBlock A block to be executed if the mark-as-read operation is successful.
- * @param failureBlock A block to be executed if the mark-as-read operation fails.
- * @return A UADisposable which can be used to cancel callback execution.
- * This value will be nil if the request is not submitted due to an already scheduled update,
- * or because the message has already been marked as read.
- *
- * @deprecated As of 5.0.0. Use markMessageReadWithCompletionHandler: instead. Marking
- * messages read no longer require an HTTP operation to complete, so the failure 
- * block will never be called.
- */
-- (UADisposable *)markAsReadWithSuccessBlock:(UAInboxMessageCallbackBlock)successBlock
-                            withFailureBlock:(UAInboxMessageCallbackBlock)failureBlock __attribute__((deprecated("As of version 5.0.0")));
-
-/**
- * Mark the message as read. This eventually results in a callback to
- * [UAInboxMessageListDelegate singleMessageMarkAsReadFinished:] or
- * [UAInboxMessageListDelegate singleMessageMarkAsReadFailed:].
- *
- * @param delegate An object implementing the `UAInboxMessageListDelegate` protocol.
- * @return A UADisposable which can be used to cancel callback execution.
- * This value will be nil if the request is not submitted due to an already scheduled update,
- * or because the message has already been marked as read.
- *
- * @deprecated As of 5.0.0. Use markMessageReadWithCompletionHandler: instead.
- */
-- (UADisposable *)markAsReadWithDelegate:(id<UAInboxMessageListDelegate>)delegate __attribute__((deprecated("As of version 5.0.0")));
 
 /**
  * YES if the message is expired, NO otherwise

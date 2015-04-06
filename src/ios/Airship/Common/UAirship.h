@@ -1,27 +1,27 @@
 /*
-Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
 
-1. Redistributions of source code must retain the above copyright notice, this
-list of conditions and the following disclaimer.
+ 1. Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
 
-2. Redistributions in binaryform must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the documentation
-and/or other materials provided withthe distribution.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
 
-THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
-IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
+ IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+ EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #import "UAGlobal.h"
 #import "UAJavaScriptDelegate.h"
@@ -31,12 +31,13 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 @class UAAnalytics;
 @class UALocationService;
 @class UAApplicationMetrics;
+@class UAPush;
+@class UAUser;
+@class UAInbox;
+@class UAActionRegistry;
+@class UAInAppMessaging;
 
 UA_VERSION_INTERFACE(UAirshipVersion)
-
-// Offset time for use when the app init. This is the time between object
-// creation and first upload.
-#define UAAnalyticsFirstBatchUploadInterval 15 // time in seconds
 
 /**
  * The takeOff method must be called on the main thread. Not doing so results in 
@@ -46,8 +47,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * UAirship manages the shared state for all Urban Airship services. [UAirship takeOff:] should be
- * called from `[UIApplication application:didFinishLaunchingWithOptions:]` to initialize the shared
- * instance.
+ * called from within your application delegate's `application:didFinishLaunchingWithOptions:` method
+ * to initialize the shared instance.
  */
 @interface UAirship : NSObject
 
@@ -57,15 +58,17 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @property (nonatomic, strong, readonly) UAConfig *config;
 
 /**
- * The current APNS/remote notification device token.
- */
-@property (nonatomic, readonly) NSString *deviceToken;
-
-/**
  * The shared analytics manager. There are not currently any user-defined events,
  * so this is for internal library use only at this time.
  */
 @property (nonatomic, strong, readonly) UAAnalytics *analytics;
+
+
+/**
+ * The default action registry.
+ */
+@property (nonatomic, strong, readonly) UAActionRegistry *actionRegistry;
+
 
 /**
  * Stores common application metrics such as last open.
@@ -79,11 +82,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 
-/**
- * This flag is set to `YES` if the shared instance of
- * UAirship has been initialized and is ready for use.
- */
-@property (nonatomic, assign, readonly) BOOL ready;
 
 /**
  * A user configurable JavaScript delegate.
@@ -151,11 +149,43 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (void)takeOff;
 
+///---------------------------------------------------------------------------------------
+/// @name Instance Accessors
+///---------------------------------------------------------------------------------------
+
 /**
- * Returns the shared `UAirship` instance.
+ * Returns the `UAirship` instance.
  *
- * @return The shared `UAirship` instance.
+ * @return The `UAirship` instance.
  */
 + (UAirship *)shared;
+
+/**
+ * Returns the `UAPush` instance. Used for configuring and managing push
+ * notifications.
+ *
+ * @return The `UAPush` instance.
+ */
++ (UAPush *)push;
+
+/**
+ * Returns the `UAInbox` instance. Provides access to the inbox messages.
+ *
+ * @return The `UAInbox` instance.
+ */
++ (UAInbox *)inbox;
+
+/**
+ * Returns the `UAUser` instance.
+ *
+ * @return The `UAUser` instance.
+ */
++ (UAUser *)inboxUser;
+
+/**
+ * Returns the `UAInAppMessaging` instance. Used for customizing
+ * in-app notifications.
+ */
++ (UAInAppMessaging *)inAppMessaging;
 
 @end

@@ -112,8 +112,8 @@ PushNotification.prototype.getIncoming = function (callback) {
   this.call_native(callback, "getIncoming");
 }
 
-PushNotification.prototype.getPushID = function (callback) {
-  this.call_native(callback, "getPushID")
+PushNotification.prototype.getChannelID = function (callback) {
+  this.call_native(callback, "getChannelID")
 }
 
 PushNotification.prototype.getQuietTime = function (callback) {
@@ -126,6 +126,12 @@ PushNotification.prototype.getTags = function (callback) {
 
 PushNotification.prototype.getAlias = function (callback) {
   this.call_native(callback, "getAlias");
+}
+
+PushNotification.prototype.getBadgeNumber = function (callback) {
+  if (this.isPlatformIOS()) {
+    this.call_native(callback, "getBadgeNumber");
+  }
 }
 
 // Setters

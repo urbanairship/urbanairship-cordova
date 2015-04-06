@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -7,9 +7,9 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -122,40 +122,6 @@ extern UALogLevel uaLogLevel; // Default is UALogLevelError
 return VERSION_STR;                                         \
 }                                                           \
 @end
-
-
-#define SINGLETON_INTERFACE(CLASSNAME)                                                      \
-+ (CLASSNAME*)shared;                                                                       \
-
-#define SINGLETON_IMPLEMENTATION(CLASSNAME)                                                 \
-                                                                                            \
-static CLASSNAME* g_shared##CLASSNAME = nil;                                                \
-static dispatch_once_t sharedOncePredicate##CLASSNAME;                                      \
-static dispatch_once_t allocOncePredicate##CLASSNAME;                                                  \
-\
-+ (CLASSNAME*)shared                                                                        \
-{                                                                                           \
-\
-dispatch_once(&sharedOncePredicate##CLASSNAME, ^{                                                      \
-g_shared##CLASSNAME = [[self alloc] init];                                                  \
-});                                                                                         \
-return g_shared##CLASSNAME;                                                                 \
-}                                                                                           \
-\
-+ (id)allocWithZone:(NSZone*)zone                                                           \
-{                                                                                           \
-dispatch_once(&allocOncePredicate##CLASSNAME, ^{                                                       \
-if (g_shared##CLASSNAME == nil) {                                                           \
-g_shared##CLASSNAME = [super allocWithZone:zone];                                           \
-}                                                                                           \
-});                                                                                         \
-return g_shared##CLASSNAME;                                                                 \
-}                                                                                           \
-\
-- (id)copyWithZone:(NSZone*)zone                                                            \
-{                                                                                           \
-return self;                                                                                \
-}                                                                                           \
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
 #define IF_IOS7_OR_GREATER(...) \

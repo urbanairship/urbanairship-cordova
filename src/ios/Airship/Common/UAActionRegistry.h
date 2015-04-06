@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -7,11 +7,11 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -41,6 +41,9 @@
 #define kUAAddCustomEventActionDefaultRegistryName @"add_custom_event_action"
 #define kUAShareActionDefaultRegistryName @"share_action"
 #define kUAShareActionDefaultRegistryAlias @"^s"
+#define kUADisplayInboxActionDefaultRegistryName @"open_mc_action"
+#define kUADisplayInboxActionDefaultRegistryAlias @"^mc"
+
 #define kUALandingPageActionLastOpenTimeLimitInSeconds @(7 * 86400) // 1 week
 
 /**
@@ -49,13 +52,18 @@
  */
 @interface UAActionRegistry : NSObject
 
-SINGLETON_INTERFACE(UAActionRegistry);
-
++ (instancetype)shared __attribute__((deprecated("As of version 6.0.0. Use [UAirship shared].actionRegistry instead.")));
 
 /**
  * A set of the current registered entries
  */
 @property (nonatomic, readonly) NSSet *registeredEntries;
+
+/**
+ * Factory method to create an action registry with the default action entries.
+ * @return An action registry with the default action entries.
+ */
++ (instancetype)defaultRegistry;
 
 /**
  * Registers an action with a predicate.

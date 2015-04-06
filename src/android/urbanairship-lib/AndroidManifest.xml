@@ -6,9 +6,9 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="6"
-        android:targetSdkVersion="21"
-        tools:overrideLibrary="com.google.android.gms, com.squareup.fest" />
+        android:minSdkVersion="7"
+        android:targetSdkVersion="22"
+        tools:overrideLibrary="com.google.android.gms, com.google.android.gms.location, com.google.android.gms.gcm, com.google.android.gms.maps" />
 
     <application />
 

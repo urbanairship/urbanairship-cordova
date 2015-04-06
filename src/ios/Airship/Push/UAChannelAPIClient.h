@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -7,11 +7,11 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -28,11 +28,27 @@
 @class UAHTTPRequestEngine;
 @class UAChannelRegistrationPayload;
 @class UAHTTPRequest;
+@class UAConfig;
 
-typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation);
+/**
+ * A block called when the channel ID creation succeeded.
+ *
+ * @param channelID The channel identifier string.
+ * @param channelLocation The channel location string.
+ * @param existing Boolean to indicate if the channel previously existed or not.
+ */
+typedef void (^UAChannelAPIClientCreateSuccessBlock)(NSString *channelID, NSString *channelLocation, BOOL existing);
 
+/**
+ * A block called when the channel update succeeded.
+ */
 typedef void (^UAChannelAPIClientUpdateSuccessBlock)();
 
+/**
+ * A block called when the channel creation or update failed.
+ *
+ * @param request The request that failed.
+ */
 typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
@@ -42,16 +58,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
 
 /**
  * Factory method to create a UAChannelAPIClient.
- * @param requestEngine The specified UAHTTPRequestEngine.
- * @return UAChannelAPIClient with the specified requestEngine.
+ * @param config the Urban Airship config.
+ * @return UAChannelAPIClient instance.
  */
-+ (UAChannelAPIClient *)clientWithRequestEngine:(UAHTTPRequestEngine *)requestEngine;
-
-/**
- * Factory method to create a UAChannelAPIClient.
- * @return UAChannelAPIClient with a default requestEngine.
- */
-+ (UAChannelAPIClient *)client;
++ (instancetype)clientWithConfig:(UAConfig *)config;
 
 /**
  * Create the channel ID.
@@ -98,5 +108,10 @@ typedef void (^UAChannelAPIClientFailureBlock)(UAHTTPRequest *request);
  * reconnections accordingly before calling back with a success or failure.  Defaults to `YES`.
  */
 @property (nonatomic, assign) BOOL shouldRetryOnConnectionError;
+
+/**
+ * The client's request engine.
+ */
+@property (nonatomic, strong) UAHTTPRequestEngine *requestEngine;
 
 @end

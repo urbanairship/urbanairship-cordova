@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2014 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -7,9 +7,9 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
 
  THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -30,32 +30,6 @@
  * Category extensions for Urban Airship web view additions.
  */
 @interface UIWebView (UAAdditions)
-
-/**
- * Injects the Urban Airship Javascript environment into the webview.
- *
- * @param message The message loaded into the webview.
- * @deprecated As of 5.1. Instead, custom webview implementations should
- * use the UAWebViewDelegate class.
- */
-- (void)populateJavascriptEnvironment:(UAInboxMessage *)message __attribute__((deprecated("As of version 5.1.0")));
-
-
-/**
- * Injects the Urban Airship Javascript environment into the webview.
- *
- * @deprecated As of 5.1. Instead, custom webview implementations should
- * use the UAWebViewDelegate class.
- */
-- (void)populateJavascriptEnvironment __attribute__((deprecated("As of version 5.1.0")));
-
-/**
- * Fires the Urban Airship Javascript ready event.
- *
- * @deprecated As of 5.1. Instead, custom webview implementations should
- * use the UAWebViewDelegate class.
- */
-- (void)fireUALibraryReadyEvent __attribute__((deprecated("As of version 5.1.0")));
 
 /**
  * Injects the current orientation into the webview. Should be called when the webview's

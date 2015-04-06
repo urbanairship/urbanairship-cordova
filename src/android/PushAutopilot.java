@@ -1,15 +1,15 @@
 package com.urbanairship.phonegap;
 
-import android.app.Application;
+import android.content.Context;
 import android.content.res.XmlResourceParser;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
-import com.urbanairship.push.PushManager;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class PushAutopilot extends Autopilot {
@@ -22,33 +22,20 @@ public class PushAutopilot extends Autopilot {
     static final String GCM_SENDER = "com.urbanairship.gcm_sender";
     static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
 
+    private PluginConfig pluginConfig;
+
     @Override
-    public void execute(Application application) {
-        // Parse cordova config options
-        AirshipOptions configOptions = new AirshipOptions(application);
-        final boolean enablePushOnLaunch = configOptions.getBoolean(ENABLE_PUSH_ONLAUNCH, false);
-
-        UAirship.takeOff(application, getAirshipConfig(application, configOptions), new UAirship.OnReadyCallback() {
-            @Override
-            public void onAirshipReady(UAirship airship) {
-                if (enablePushOnLaunch) {
-                    airship.getPushManager().setUserNotificationsEnabled(true);
-                }
-            }
-        });
-    }
-
-    private AirshipConfigOptions getAirshipConfig(Application application, AirshipOptions configOptions) {
-        // Create the default options, will pull any config from the usual place - assets/airshipconfig.properties
-        AirshipConfigOptions options = AirshipConfigOptions.loadDefaultOptions(application);
+    public AirshipConfigOptions createAirshipConfigOptions(Context context) {
+        AirshipConfigOptions options = new AirshipConfigOptions();
+        PluginConfig pluginConfig = getPluginConfig(context);
 
         // Apply any overrides from the manifest
-        options.productionAppKey = configOptions.getString(PRODUCTION_KEY, options.productionAppKey);
-        options.productionAppSecret = configOptions.getString(PRODUCTION_SECRET, options.productionAppSecret);
-        options.developmentAppKey = configOptions.getString(DEVELOPMENT_KEY, options.developmentAppKey);
-        options.developmentAppSecret = configOptions.getString(DEVELOPMENT_SECRET, options.developmentAppSecret);
-        options.gcmSender = configOptions.getString(GCM_SENDER, options.gcmSender);
-        options.inProduction = configOptions.getBoolean(IN_PRODUCTION, options.inProduction);
+        options.productionAppKey = pluginConfig.getString(PRODUCTION_KEY, options.productionAppKey);
+        options.productionAppSecret = pluginConfig.getString(PRODUCTION_SECRET, options.productionAppSecret);
+        options.developmentAppKey = pluginConfig.getString(DEVELOPMENT_KEY, options.developmentAppKey);
+        options.developmentAppSecret = pluginConfig.getString(DEVELOPMENT_SECRET, options.developmentAppSecret);
+        options.gcmSender = pluginConfig.getString(GCM_SENDER, options.gcmSender);
+        options.inProduction = pluginConfig.getBoolean(IN_PRODUCTION, options.inProduction);
 
         // Set the minSDK to 14.  It just controls logging error messages for different platform features.
         options.minSdkVersion = 14;
@@ -56,40 +43,58 @@ public class PushAutopilot extends Autopilot {
         return options;
     }
 
-    class AirshipOptions {
-        private Map<String, String> airshipValues = new HashMap<String, String>();
+    @Override
+    public void onAirshipReady(UAirship airship) {
+        final boolean enablePushOnLaunch = getPluginConfig(UAirship.getApplicationContext())
+                .getBoolean(ENABLE_PUSH_ONLAUNCH, false);
 
-        AirshipOptions(Application application) {
-            parseConfig(application);
+        if (enablePushOnLaunch) {
+            airship.getPushManager().setUserNotificationsEnabled(enablePushOnLaunch);
+        }
+    }
+
+    public PluginConfig getPluginConfig(Context context) {
+        if (pluginConfig == null) {
+            pluginConfig = new PluginConfig(context);
+        }
+
+        return pluginConfig;
+    }
+
+    class PluginConfig {
+        private Map<String, String> configValues = new HashMap<String, String>();
+
+        PluginConfig(Context context) {
+            parseConfig(context);
         }
 
         String getString(String key, String defaultValue) {
-            return airshipValues.containsKey(key) ? airshipValues.get(key) : defaultValue;
+            return configValues.containsKey(key) ? configValues.get(key) : defaultValue;
         }
 
         boolean getBoolean(String key, boolean defaultValue) {
-            return airshipValues.containsKey(key) ?
-                    Boolean.parseBoolean(airshipValues.get(key)) : defaultValue;
+            return configValues.containsKey(key) ?
+                    Boolean.parseBoolean(configValues.get(key)) : defaultValue;
         }
 
-        private void parseConfig(Application application) {
-            int id = application.getResources().getIdentifier("config", "xml", application.getPackageName());
+        private void parseConfig(Context context) {
+            int id = context.getResources().getIdentifier("config", "xml", context.getPackageName());
             if (id == 0) {
                 return;
             }
 
-            XmlResourceParser xml = application.getResources().getXml(id);
+            XmlResourceParser xml = context.getResources().getXml(id);
 
             int eventType = -1;
             while (eventType != XmlResourceParser.END_DOCUMENT) {
 
                 if (eventType == XmlResourceParser.START_TAG) {
                     if (xml.getName().equals("preference")) {
-                        String name = xml.getAttributeValue(null, "name").toLowerCase();
+                        String name = xml.getAttributeValue(null, "name").toLowerCase(Locale.US);
                         String value = xml.getAttributeValue(null, "value");
 
                         if (name.startsWith(UA_PREFIX) && value != null) {
-                            airshipValues.put(name, value);
+                            configValues.put(name, value);
                             Logger.verbose("Found " + name + " in config.xml with value: " + value);
                         }
                     }
