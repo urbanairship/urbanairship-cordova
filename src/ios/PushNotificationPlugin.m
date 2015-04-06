@@ -470,6 +470,12 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
     }];
 }
 
+- (void)getBadgeNumber:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+        return @([UIApplication sharedApplication].applicationIconBadgeNumber);
+    }];
+}
+
 //setters
 
 - (void)setTags:(CDVInvokedUrlCommand*)command {
