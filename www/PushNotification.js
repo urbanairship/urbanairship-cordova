@@ -90,6 +90,15 @@ var plugin = {
   isAnalyticsEnabled: function(callback) {
     callNative(callback, "isAnalyticsEnabled")
   },
+
+  getNamedUser: function(callback) {
+    callNative(callback, "getNamedUser")
+  },
+
+  setNamedUser: function(namedUser, callback) {
+    callNative(callback, "setNamedUser", [namedUser])
+  },
+
   // Location
 
   enableLocation: function(callback) {
