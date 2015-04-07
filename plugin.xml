@@ -14,8 +14,6 @@
       <engine name="cordova" version=">=3.4.0" />
     </engines>
 
-    <dependency id="cordova-plugin-device" url="https://git-wip-us.apache.org/repos/asf/cordova-plugin-device.git" commit="master" subdir="." />
-
     <js-module src="www/PushNotification.js" name="PushNotification">
          <clobbers target="PushNotification" />
      </js-module>
