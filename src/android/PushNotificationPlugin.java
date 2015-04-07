@@ -53,7 +53,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
             "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
             "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
-            "setAnalyticsEnabled");
+            "setAnalyticsEnabled", "isAnalyticsEnabled");
 
     public static PushMessage incomingPush = null;
     public static Integer incomingNotificationId = null;
@@ -418,6 +418,11 @@ public class PushNotificationPlugin extends CordovaPlugin {
             Logger.error("Error reading analyticsEnabled in callback", e);
             callbackContext.error("Error reading analyticsEnabled in callback");
         }
+    }
+
+    void isAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) {
+        int value = UAirship.shared().getAnalytics().isEnabled() ? 1 : 0;
+        callbackContext.success(value);
     }
 
     private static JSONObject notificationObject(PushMessage message, Integer notificationId) {
