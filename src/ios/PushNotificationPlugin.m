@@ -294,6 +294,14 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
+- (void)setAnalyticsEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+        NSNumber *value = [args objectAtIndex:0];
+        BOOL enabled = [value boolValue];
+        [UAirship shared].analytics.enabled = enabled;
+    }];
+}
+
 //getters
 
 - (void)isPushEnabled:(CDVInvokedUrlCommand*)command {

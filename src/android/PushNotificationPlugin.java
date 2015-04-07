@@ -52,7 +52,8 @@ public class PushNotificationPlugin extends CordovaPlugin {
     private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
             "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
             "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
-            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener");
+            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
+            "setAnalyticsEnabled");
 
     public static PushMessage incomingPush = null;
     public static Integer incomingNotificationId = null;
@@ -405,6 +406,18 @@ public class PushNotificationPlugin extends CordovaPlugin {
     void recordCurrentLocation(JSONArray data, CallbackContext callbackContext) {
         UAirship.shared().getLocationManager().requestSingleLocation();
         callbackContext.success();
+    }
+
+    void setAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) {
+        try {
+            boolean enabled = data.getBoolean(0);
+            Logger.debug("Settings analyticsEnabled: " + enabled);
+            UAirship.shared().getAnalytics().setEnabled(enabled);
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading analyticsEnabled in callback", e);
+            callbackContext.error("Error reading analyticsEnabled in callback");
+        }
     }
 
     private static JSONObject notificationObject(PushMessage message, Integer notificationId) {
