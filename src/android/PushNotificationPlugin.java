@@ -52,7 +52,8 @@ public class PushNotificationPlugin extends CordovaPlugin {
     private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
             "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
             "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
-            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener");
+            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
+            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser");
 
     public static PushMessage incomingPush = null;
     public static Integer incomingNotificationId = null;
@@ -405,6 +406,47 @@ public class PushNotificationPlugin extends CordovaPlugin {
     void recordCurrentLocation(JSONArray data, CallbackContext callbackContext) {
         UAirship.shared().getLocationManager().requestSingleLocation();
         callbackContext.success();
+    }
+
+    void setAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) {
+        try {
+            boolean enabled = data.getBoolean(0);
+            Logger.debug("Settings analyticsEnabled: " + enabled);
+            UAirship.shared().getAnalytics().setEnabled(enabled);
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading analyticsEnabled in callback", e);
+            callbackContext.error("Error reading analyticsEnabled in callback");
+        }
+    }
+
+    void isAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) {
+        int value = UAirship.shared().getAnalytics().isEnabled() ? 1 : 0;
+        callbackContext.success(value);
+    }
+
+    void getNamedUser(JSONArray data, CallbackContext callbackContext) {
+        String namedUserId = UAirship.shared().getPushManager().getNamedUser().getId();
+        namedUserId = namedUserId != null ? namedUserId : "";
+        callbackContext.success(namedUserId);
+    }
+
+    void setNamedUser(JSONArray data, CallbackContext callbackContext) {
+        try {
+            String namedUserId = data.optString(0);
+            if (UAStringUtil.isEmpty(namedUserId)) {
+                namedUserId = null;
+            }
+
+            Logger.debug("Settings named user: " + namedUserId);
+
+            UAirship.shared().getPushManager().getNamedUser().setId(namedUserId);
+
+            callbackContext.success();
+        } catch (JSONException e) {
+            Logger.error("Error reading named user ID in callback", e);
+            callbackContext.error("Error reading named user ID in callback");
+        }
     }
 
     private static JSONObject notificationObject(PushMessage message, Integer notificationId) {

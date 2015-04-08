@@ -83,6 +83,22 @@ var plugin = {
     callNative(callback, "setQuietTime", [startHour, startMinute, endHour, endMinute])
   },
 
+  setAnalyticsEnabled: function(enabled, callback) {
+    callNative(callback, "setAnalyticsEnabled", [enabled])
+  },
+
+  isAnalyticsEnabled: function(callback) {
+    callNative(callback, "isAnalyticsEnabled")
+  },
+
+  getNamedUser: function(callback) {
+    callNative(callback, "getNamedUser")
+  },
+
+  setNamedUser: function(namedUser, callback) {
+    callNative(callback, "setNamedUser", [namedUser])
+  },
+
   // Location
 
   enableLocation: function(callback) {

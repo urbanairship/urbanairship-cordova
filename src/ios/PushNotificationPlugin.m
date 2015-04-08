@@ -294,6 +294,21 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
+- (void)setAnalyticsEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+        NSNumber *value = [args objectAtIndex:0];
+        BOOL enabled = [value boolValue];
+        [UAirship shared].analytics.enabled = enabled;
+    }];
+}
+
+- (void)isAnalyticsEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+        BOOL enabled = [UAirship shared].analytics.enabled;
+        return [NSNumber numberWithBool:enabled];
+    }];
+}
+
 //getters
 
 - (void)isPushEnabled:(CDVInvokedUrlCommand*)command {
@@ -443,6 +458,12 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
+- (void)getNamedUser:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+        return [UAirship push].namedUser.identifier ?: @"";
+    }];
+}
+
 //setters
 
 - (void)setTags:(CDVInvokedUrlCommand*)command {
@@ -468,6 +489,8 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
         [[UAirship push] updateRegistration];
     }];
 }
+
+
 
 - (void)setQuietTimeEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
@@ -504,6 +527,15 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
         id number = [args objectAtIndex:0];
         NSInteger badgeNumber = [number intValue];
         [[UAirship push] setBadgeNumber:badgeNumber];
+    }];
+}
+
+- (void)setNamedUser:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSString class],nil] withVoidBlock:^(NSArray *args) {
+        NSString *namedUserID = [args objectAtIndex:0];
+        namedUserID = [namedUserID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+        [UAirship push].namedUser.identifier = [namedUserID length] ? namedUserID : nil;
     }];
 }
 
