@@ -1,5 +1,6 @@
 
-var exec = require("cordova/exec")
+var cardova = require("cordova"),
+    exec = require("cordova/exec")
 
 // Helper method to call into the native plugin
 function callNative(callback, name, args) {
@@ -11,6 +12,18 @@ function callNative(callback, name, args) {
 
   exec(callback, failure, "PushNotificationPlugin", name, args)
 }
+
+// Listen for channel registration updates
+callNative(function(registration) {
+  console.log("Firing document event for registration update.")
+  cordova.fireDocumentEvent("urbanairship.registration", registration)
+}, "registerChannelListener")
+
+// Listen for incoming push notifications
+callNative(function(push) {
+  console.log("Firing document event for push event.")
+  cordova.fireDocumentEvent("urbanairship.push", push)
+}, "registerPushListener")
 
 var plugin = {
 

@@ -1,9 +1,13 @@
 package com.urbanairship.phonegap;
 
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 
 import android.os.RemoteException;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
@@ -17,6 +21,8 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginResult;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,22 +43,24 @@ import java.util.concurrent.Executors;
 
 public class PushNotificationPlugin extends CordovaPlugin {
 
+    public static final String ACTION_CHANNEL_REGISTRATION = "com.urbanairship.cordova.ACTION_CHANNEL_REGISTRATION";
+    public static final String ACTION_PUSH_RECEIVED = "com.urbanairship.cordova.ACTION_PUSH_RECEIVED";
+    public static final String EXTRA_ERROR = "com.urbanairship.cordova.EXTRA_ERROR";
+    public static final String EXTRA_PUSH = "com.urbanairship.cordova.EXTRA_PUSH";
+    public static final String EXTRA_NOTIFICATION_ID = "com.urbanairship.cordova.EXTRA_NOTIFICATION_ID";
+
     private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
             "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
             "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
-            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications");
+            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener");
 
     public static PushMessage incomingPush = null;
     public static Integer incomingNotificationId = null;
 
-    // Used to raise pushes and registration from the PushReceiver
-    private static PushNotificationPlugin instance;
-
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
-    public PushNotificationPlugin() {
-        instance = this;
-    }
+    private BroadcastReceiver channelUpdateReceiver;
+    private BroadcastReceiver pushReceiver;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
@@ -69,66 +77,6 @@ public class PushNotificationPlugin extends CordovaPlugin {
         if (PlayServicesUtils.isGooglePlayStoreAvailable()) {
             PlayServicesUtils.handleAnyPlayServicesError(UAirship.getApplicationContext());
         }
-    }
-
-    private static JSONObject notificationObject(PushMessage message, Integer notificationId) {
-        JSONObject data = new JSONObject();
-        
-        if (message == null) {
-            return data;
-        }
-
-        Map<String, String> extras = new HashMap<String, String>();
-        for (String key : message.getPushBundle().keySet()) {
-            extras.put(key, message.getPushBundle().getString(key));
-        }        
-
-        try {
-            data.putOpt("message", message.getAlert());
-            data.putOpt("extras", new JSONObject(extras));
-            data.putOpt("notification_id", notificationId);
-        } catch (JSONException e) {
-            Logger.error("Error constructing notification object", e);
-        }
-        return data;
-    }
-
-    static void raisePush(PushMessage message, Integer notificationId) {
-        if (instance == null) {
-            return;
-        }
-
-        sendEvent("urbanairship.push", notificationObject(message, notificationId).toString());
-    }
-
-    static void raiseRegistration(boolean isSuccess, String channelId) {
-        if (instance == null) {
-            return;
-        }
-
-        JSONObject data = new JSONObject();
-        try {
-            if (isSuccess) {
-                data.put("channelID", channelId);
-            } else {
-                data.put("error", "Invalid registration.");
-            }
-        } catch (JSONException e) {
-            Logger.error("Error in raiseRegistration", e);
-        }
-
-        sendEvent("urbanairship.registration", data.toString());
-    }
-
-    static void sendEvent(String event, String data) {
-        if (instance == null) {
-            return;
-        }
-
-        Logger.info("Sending event " + event + ": " + data);
-        String eventURL = String.format("javascript:try{cordova.fireDocumentEvent('%s', %s);}catch(e){console.log('exception firing event %s from native');};", event, data, event);
-
-        instance.webView.loadUrl(eventURL);
     }
 
     @Override
@@ -152,6 +100,73 @@ public class PushNotificationPlugin extends CordovaPlugin {
         });
 
         return true;
+    }
+
+    void registerPushListener(JSONArray data, final CallbackContext callbackContext) {
+        Logger.debug("Listening for push events.");
+
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(cordova.getActivity());
+
+        if (pushReceiver != null) {
+            manager.unregisterReceiver(pushReceiver);
+        }
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_PUSH_RECEIVED);
+        pushReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Logger.debug("Received push.");
+
+                PushMessage message = intent.getParcelableExtra(EXTRA_PUSH);
+                int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
+                JSONObject data = notificationObject(message, notificationId != -1 ? notificationId : null);
+
+                PluginResult result = new PluginResult(PluginResult.Status.OK, data);
+                result.setKeepCallback(true);
+
+                callbackContext.sendPluginResult(result);
+            }
+        };
+
+        manager.registerReceiver(pushReceiver, intentFilter);
+    }
+
+    void registerChannelListener(JSONArray data, final CallbackContext callbackContext) {
+        Logger.debug("Listening for channel updates.");
+
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(cordova.getActivity());
+
+        if (channelUpdateReceiver != null) {
+            manager.unregisterReceiver(channelUpdateReceiver);
+        }
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ACTION_CHANNEL_REGISTRATION);
+        channelUpdateReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Logger.debug("Received channel update.");
+
+                JSONObject data = new JSONObject();
+                try {
+                    if (!intent.hasExtra(EXTRA_ERROR)) {
+                        data.put("channelID", UAirship.shared().getPushManager().getChannelId());
+                    } else {
+                        data.put("error", "Invalid registration.");
+                    }
+                } catch (JSONException e) {
+                    Logger.error("Error in channel registration", e);
+                }
+
+                PluginResult result = new PluginResult(PluginResult.Status.OK, data);
+                result.setKeepCallback(true);
+
+                callbackContext.sendPluginResult(result);
+            }
+        };
+
+        manager.registerReceiver(channelUpdateReceiver, intentFilter);
     }
 
     void clearNotifications(JSONArray data, CallbackContext callbackContext) {
@@ -390,5 +405,28 @@ public class PushNotificationPlugin extends CordovaPlugin {
     void recordCurrentLocation(JSONArray data, CallbackContext callbackContext) {
         UAirship.shared().getLocationManager().requestSingleLocation();
         callbackContext.success();
+    }
+
+    private static JSONObject notificationObject(PushMessage message, Integer notificationId) {
+        JSONObject data = new JSONObject();
+
+        if (message == null) {
+            return data;
+        }
+
+        Map<String, String> extras = new HashMap<String, String>();
+        for (String key : message.getPushBundle().keySet()) {
+            extras.put(key, message.getPushBundle().getString(key));
+        }
+
+        try {
+            data.putOpt("message", message.getAlert());
+            data.putOpt("extras", new JSONObject(extras));
+            data.putOpt("notification_id", notificationId);
+        } catch (JSONException e) {
+            Logger.error("Error constructing notification object", e);
+        }
+
+        return data;
     }
 }
