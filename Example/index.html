@@ -44,8 +44,8 @@
         document.addEventListener("resume", function() {
           console.log("Device resume!")
           
-          PushNotification.resetBadge()
-          PushNotification.getIncoming(handleIncomingPush)
+          UAirship.resetBadge()
+          UAirship.getIncoming(handleIncomingPush)
 
           // Reregister for urbanairship events if they were removed in pause event
           document.addEventListener("urbanairship.registration", onRegistration, false)
@@ -63,15 +63,15 @@
         }, false)
 
         // Register for notification types
-        PushNotification.registerForNotificationTypes(PushNotification.notificationType.badge | 
-          PushNotification.notificationType.sound | 
-          PushNotification.notificationType.alert)
+        UAirship.registerForNotificationTypes(UAirship.notificationType.badge |
+          UAirship.notificationType.sound |
+          UAirship.notificationType.alert)
 
         // Initiate the UI
         initiateUI()
         
         // Get any incoming push from device ready open
-        PushNotification.getIncoming(handleIncomingPush)
+        UAirship.getIncoming(handleIncomingPush)
       }
 
       // Initiates the UI and sets up any UI callbacks
@@ -88,10 +88,10 @@
             $tag.remove()
 
             // Remove the tag from the current list of tags
-            PushNotification.getTags(function(obj) {
+            UAirship.getTags(function(obj) {
               console.log("Removing tag: " + tag)
               obj.tags.splice(obj.tags.indexOf(tag), 1)
-              PushNotification.setTags(obj.tags)
+              UAirship.setTags(obj.tags)
             })
           })
         }
@@ -109,47 +109,47 @@
         }
 
         // Update the interface with the current UA settings
-        PushNotification.isUserNotificationsEnabled(function(isEnabled) {
+        UAirship.isUserNotificationsEnabled(function(isEnabled) {
           $('#pushEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        PushNotification.isSoundEnabled(function(isEnabled) {
+        UAirship.isSoundEnabled(function(isEnabled) {
           $('#soundEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        PushNotification.isVibrateEnabled(function(isEnabled) {
+        UAirship.isVibrateEnabled(function(isEnabled) {
           $('#vibrateEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        PushNotification.isQuietTimeEnabled(function(isEnabled) {
+        UAirship.isQuietTimeEnabled(function(isEnabled) {
           $('#quietTimeEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        PushNotification.isLocationEnabled(function(isEnabled) {
+        UAirship.isLocationEnabled(function(isEnabled) {
           $('#locationEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        PushNotification.getChannelID(function(id) {
+        UAirship.getChannelID(function(id) {
           if(id) {
              console.log("Got channel ID: " + id)
              $('#id').text(id)
           }
         })
 
-        PushNotification.getAlias(function(alias) {
+        UAirship.getAlias(function(alias) {
           if(alias) {
             console.log("Got alias: " + alias)
             setAlias(alias)
           }
         })
 
-        PushNotification.getTags(function(obj) {
+        UAirship.getTags(function(obj) {
           obj.tags.forEach(function(tag) {
             addTag(tag)
           })
         })
 
-        PushNotification.getQuietTime(function(obj) {
+        UAirship.getQuietTime(function(obj) {
           $("#startHour").val(obj.startHour)
           $("#startMinute").val(obj.startMinute)
           $("#endHour").val(obj.endHour)
@@ -159,39 +159,39 @@
         // Set up change callbacks for the UI elements
         $('#pushEnabled').change(function() {
           var isEnabled = ($('#pushEnabled').val() == "on")
-          PushNotification.setUserNotificationsEnabled(isEnabled)
+          UAirship.setUserNotificationsEnabled(isEnabled)
         })
 
         $('#locationEnabled').change(function() {
           var isEnabled = ($('#locationEnabled').val() == "on")
-          PushNotification.setLocationEnabled(isEnabled)
+          UAirship.setLocationEnabled(isEnabled)
         })
 
         $('#soundEnabled').change(function() {
           var isEnabled = ($('#soundEnabled').val() == "on")
-          PushNotification.setSoundEnabled(isEnabled)
+          UAirship.setSoundEnabled(isEnabled)
         })
 
         $('#vibrateEnabled').change(function() {
           var isEnabled = ($('#vibrateEnabled').val() == "on")
-          PushNotification.setVibrateEnabled(isEnabled)
+          UAirship.setVibrateEnabled(isEnabled)
         })
 
         $('#quietTimeEnabled').change(function() {
           var isEnabled = ($('#quietTimeEnabled').val() == "on")
-          PushNotification.setQuietTimeEnabled(isEnabled)
+          UAirship.setQuietTimeEnabled(isEnabled)
         })
 
         $("#addTagButton").click(function(ev) {
           var tag = $("#addTagField").val()
           console.log("Adding new tag: " + tag)
 
-          PushNotification.getTags(function(obj) {
+          UAirship.getTags(function(obj) {
             if(obj.tags.indexOf(tag) == -1) {
               console.log("Valid tag: " + tag)
               obj.tags = obj.tags.concat([tag])
 
-              PushNotification.setTags(obj.tags, function() {
+              UAirship.setTags(obj.tags, function() {
                 addTag(tag)
                 $("#addTagField").val('')
               })
@@ -205,14 +205,14 @@
           var endHour = parseInt($("#endHour").val())
           var endMinute = parseInt($("#endMinute").val())
 
-          PushNotification.setQuietTime(startHour, startMinute, endHour, endMinute, function() {
+          UAirship.setQuietTime(startHour, startMinute, endHour, endMinute, function() {
             console.log("Set quiet time from JS")
           })
         })
 
         $("#setAliasButton").click(function(ev) {
           var alias = $("#setAliasField").val()
-          PushNotification.setAlias(alias, function() {
+          UAirship.setAlias(alias, function() {
             setAlias(alias)
           })
         })

@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="com.urbanairship.phonegap.PushNotification"
+    id="com.urbanairship.cordova"
     version="2.8.1">
 
-    <name>Urban Airship Push Notification Plugin</name>
-    
-    <description>Urban Airship Push Notification Plugin for PhoneGap/Cordova</description>
-    
+    <name>Urban Airship</name>
+    <description>Urban Airship Cordova plugin</description>
     <license>Apache 2.0</license>
+    <keywords>cordova,urbanairship</keywords>
+    <repo>https://github.com/urbanairship/phonegap-ua-push.git</repo>
     
     <engines>
       <engine name="cordova" version=">=3.4.0" />
     </engines>
 
-    <js-module src="www/PushNotification.js" name="PushNotification">
-         <clobbers target="PushNotification" />
+    <js-module src="www/UrbanAirship.js" name="UrbanAirship">
+         <clobbers target="UAirship" />
      </js-module>
 
     <!-- android -->
@@ -24,8 +24,8 @@
         <hook type="after_prepare" src="scripts/remove_files.js" />
        
         <config-file target="res/xml/config.xml" parent="/widget">
-            <feature name="PushNotificationPlugin">
-                <param name="android-package" value="com.urbanairship.phonegap.PushNotificationPlugin"/>
+            <feature name="UAirship">
+                <param name="android-package" value="com.urbanairship.cordova.UAirshipPlugin"/>
                 <param name="onload" value="true" />
             </feature>
         </config-file>
@@ -66,7 +66,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-            <receiver android:name="com.urbanairship.phonegap.PushReceiver"
+            <receiver android:name="com.urbanairship.cordova.IntentReceiver"
                         android:exported="false">
 
                 <intent-filter>
@@ -94,7 +94,7 @@
               </intent-filter>
             </receiver>
 
-            <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.phonegap.PushAutopilot" />
+            <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.cordova.CordovaAutopilot" />
             <activity android:name="com.urbanairship.actions.ActionActivity"/>
             <activity
                 android:name="com.urbanairship.actions.LandingPageActivity"
@@ -127,9 +127,9 @@
             <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
         </config-file>
 
-        <source-file src="src/android/PushNotificationPlugin.java" target-dir="src/com/urbanairship/phonegap" />
-        <source-file src="src/android/PushReceiver.java" target-dir="src/com/urbanairship/phonegap" />
-        <source-file src="src/android/PushAutopilot.java" target-dir="src/com/urbanairship/phonegap" />
+        <source-file src="src/android/UAirshipPlugin.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/IntentReceiver.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/CordovaAutopilot.java" target-dir="src/com/urbanairship/cordova" />
 
         <!-- UA SDK -->
         <framework src="src/android/urbanairship-lib" custom="true" />
@@ -145,14 +145,14 @@
         <hook type="after_prepare" src="scripts/copy_resources.js" />
         
         <config-file target="config.xml" parent="/widget">
-             <feature name="PushNotificationPlugin">
-                <param name="ios-package" value="PushNotificationPlugin" />
+             <feature name="UAirship">
+                <param name="ios-package" value="UAirshipPlugin" />
                 <param name="onload" value="true" />
             </feature>
         </config-file>
         
-        <header-file src="src/ios/PushNotificationPlugin.h" />
-        <source-file src="src/ios/PushNotificationPlugin.m" />
+        <header-file src="src/ios/UAirshipPlugin.h" />
+        <source-file src="src/ios/UAirshipPlugin.m" />
 
         <!-- Airship headers -->
         <header-file src="src/ios/Airship/AirshipLib.h" />

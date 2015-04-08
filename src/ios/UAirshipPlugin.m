@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "PushNotificationPlugin.h"
+#import "UAirshipPlugin.h"
 #import "UAPush.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
@@ -34,13 +34,13 @@
 typedef id (^UACordovaCallbackBlock)(NSArray *args);
 typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
-@interface PushNotificationPlugin()
+@interface UAirshipPlugin()
 @property (nonatomic, copy) NSDictionary *incomingNotification;
 @property (nonatomic, copy) NSString *registrationCallbackID;
 @property (nonatomic, copy) NSString *pushCallbackID;
 @end
 
-@implementation PushNotificationPlugin
+@implementation UAirshipPlugin
 
 NSString *const ProductionAppKeyConfigKey = @"com.urbanairship.production_app_key";
 NSString *const ProductionAppSecretConfigKey = @"com.urbanairship.production_app_secret";
@@ -51,7 +51,7 @@ NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onl
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
 
 - (void)pluginInitialize {
-    UA_LINFO("Initializing PushNotificationPlugin");
+    UA_LINFO("Initializing UrbanAirship cordova plugin.");
     [self takeOff];
 }
 
@@ -225,7 +225,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)registerForNotificationTypes:(CDVInvokedUrlCommand*)command {
-    UA_LDEBUG(@"PushNotificationPlugin: register for notification types");
+    UA_LDEBUG(@"Register for notification types");
     
     CDVPluginResult* pluginResult = nil;
     
@@ -546,7 +546,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 #pragma mark UARegistrationDelegate
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
-    UA_LINFO(@"PushNotificationPlugin: channel registration successful %@.", channelID);
+    UA_LINFO(@"Channel registration successful %@.", channelID);
 
     if (self.registrationCallbackID) {
         NSDictionary *data = @{ @"channelID":channelID };
@@ -557,7 +557,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)registrationFailed {
-    UA_LINFO(@"PushNotificationPlugin: channel registration failed.");
+    UA_LINFO(@"Channel registration failed.");
 
     if (self.registrationCallbackID) {
         NSDictionary *data = @{ @"error": @"Registration failed." };

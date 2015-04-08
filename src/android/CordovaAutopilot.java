@@ -1,4 +1,4 @@
-package com.urbanairship.phonegap;
+package com.urbanairship.cordova;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class PushAutopilot extends Autopilot {
+public class CordovaAutopilot extends Autopilot {
     static final String UA_PREFIX = "com.urbanairship";
     static final String PRODUCTION_KEY = "com.urbanairship.production_app_key";
     static final String PRODUCTION_SECRET = "com.urbanairship.production_app_secret";

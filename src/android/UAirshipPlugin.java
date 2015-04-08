@@ -1,4 +1,4 @@
-package com.urbanairship.phonegap;
+package com.urbanairship.cordova;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
@@ -40,8 +40,14 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 
-public class PushNotificationPlugin extends CordovaPlugin {
+
+public class UAirshipPlugin extends CordovaPlugin {
 
     public static final String ACTION_CHANNEL_REGISTRATION = "com.urbanairship.cordova.ACTION_CHANNEL_REGISTRATION";
     public static final String ACTION_PUSH_RECEIVED = "com.urbanairship.cordova.ACTION_PUSH_RECEIVED";
@@ -66,7 +72,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        Logger.info("Initializing PushNotificationPlugin");
+        Logger.info("Initializing Urban Airship cordova plugin.");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
     }
 
@@ -92,8 +98,8 @@ public class PushNotificationPlugin extends CordovaPlugin {
             public void run() {
                 try {
                     Logger.debug("Plugin Execute: " + action);
-                    Method method = PushNotificationPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
-                    method.invoke(PushNotificationPlugin.this, data, callbackContext);
+                    Method method = UAirshipPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
+                    method.invoke(UAirshipPlugin.this, data, callbackContext);
                 } catch (Exception e) {
                     Logger.error(e);
                 }
@@ -231,13 +237,13 @@ public class PushNotificationPlugin extends CordovaPlugin {
     }
 
     void getIncoming(JSONArray data, CallbackContext callbackContext) {
-        JSONObject notificationObject = notificationObject(PushNotificationPlugin.incomingPush, PushNotificationPlugin.incomingNotificationId);
+        JSONObject notificationObject = notificationObject(incomingPush, incomingNotificationId);
 
         callbackContext.success(notificationObject);
 
         // Reset incoming push data until the next background push comes in
-        PushNotificationPlugin.incomingPush = null;
-        PushNotificationPlugin.incomingNotificationId = null;
+        incomingPush = null;
+        incomingNotificationId = null;
     }
 
     void getChannelID(JSONArray data, CallbackContext callbackContext) {

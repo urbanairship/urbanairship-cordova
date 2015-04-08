@@ -10,7 +10,7 @@ function callNative(callback, name, args) {
       console.log("Javascript Callback Error: " + e)
   }
 
-  exec(callback, failure, "PushNotificationPlugin", name, args)
+  exec(callback, failure, "UAirship", name, args)
 }
 
 // Listen for channel registration updates
