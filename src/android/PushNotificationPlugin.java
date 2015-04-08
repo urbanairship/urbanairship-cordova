@@ -16,6 +16,7 @@ import com.urbanairship.location.UALocationManager;
 import com.urbanairship.push.PushManager;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.google.PlayServicesUtils;
+import com.urbanairship.util.UAStringUtil;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -433,7 +434,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
 
     void setNamedUser(JSONArray data, CallbackContext callbackContext) {
         try {
-            String namedUserId = data.optString(0);
+            String namedUserId = data.getString(0);
             if (UAStringUtil.isEmpty(namedUserId)) {
                 namedUserId = null;
             }
