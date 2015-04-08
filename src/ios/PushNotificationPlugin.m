@@ -36,6 +36,8 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 @interface PushNotificationPlugin()
 @property (nonatomic, copy) NSDictionary *incomingNotification;
+@property (nonatomic, copy) NSString *registrationCallbackID;
+@property (nonatomic, copy) NSString *pushCallbackID;
 @end
 
 @implementation PushNotificationPlugin
@@ -178,7 +180,6 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 
-
 - (NSString *)alertForUserInfo:(NSDictionary *)userInfo {
     NSString *alert = @"";
 
@@ -213,46 +214,15 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 #pragma mark Phonegap bridge
 
-//events
-
-- (void)raisePush:(NSString *)message withExtras:(NSDictionary *)extras {
-
-    if (!message || !extras) {
-        UA_LDEBUG(@"PushNotificationPlugin: attempted to raise push with nil message or extras");
-        message = @"";
-        extras = [NSMutableDictionary dictionary];
-    }
-
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-
-    [data setObject:message forKey:@"message"];
-    [data setObject:extras forKey:@"extras"];
-
-    NSString *json = [NSJSONSerialization stringWithObject:data];
-    NSString *js = [NSString stringWithFormat:@"cordova.fireDocumentEvent('urbanairship.push', %@);", json];
-
-    [self.commandDelegate evalJs:js scheduledOnRunLoop:NO];
-
-    UA_LTRACE(@"js callback: %@", js);
-}
-
-- (void)raiseRegistration:(BOOL)valid channelID:(NSString *)channelID {
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-    if (valid) {
-        [data setValue:channelID forKey:@"channelID"];
-    } else {
-        [data setObject:@"Registration failed." forKey:@"error"];
-    }
-
-    NSString *json = [NSJSONSerialization stringWithObject:data];
-    NSString *js = [NSString stringWithFormat:@"cordova.fireDocumentEvent('urbanairship.registration', %@);", json];
-
-    [self.commandDelegate evalJs:js scheduledOnRunLoop:NO];
-
-    UA_LTRACE(@"js callback: %@", js);
-}
-
 //registration
+
+- (void)registerChannelListener:(CDVInvokedUrlCommand*)command {
+    self.registrationCallbackID = command.callbackId;
+}
+
+- (void)registerPushListener:(CDVInvokedUrlCommand*)command {
+    self.pushCallbackID = command.callbackId;
+}
 
 - (void)registerForNotificationTypes:(CDVInvokedUrlCommand*)command {
     UA_LDEBUG(@"PushNotificationPlugin: register for notification types");
@@ -321,6 +291,21 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 - (void)disableBackgroundLocation:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
         [UAirship shared].locationService.backgroundLocationServiceEnabled = NO;
+    }];
+}
+
+- (void)setAnalyticsEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+        NSNumber *value = [args objectAtIndex:0];
+        BOOL enabled = [value boolValue];
+        [UAirship shared].analytics.enabled = enabled;
+    }];
+}
+
+- (void)isAnalyticsEnabled:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+        BOOL enabled = [UAirship shared].analytics.enabled;
+        return [NSNumber numberWithBool:enabled];
     }];
 }
 
@@ -473,6 +458,12 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
+- (void)getNamedUser:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+        return [UAirship push].namedUser.identifier ?: @"";
+    }];
+}
+
 //setters
 
 - (void)setTags:(CDVInvokedUrlCommand*)command {
@@ -498,6 +489,8 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
         [[UAirship push] updateRegistration];
     }];
 }
+
+
 
 - (void)setQuietTimeEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
@@ -537,6 +530,15 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
+- (void)setNamedUser:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSString class],nil] withVoidBlock:^(NSArray *args) {
+        NSString *namedUserID = [args objectAtIndex:0];
+        namedUserID = [namedUserID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+
+        [UAirship push].namedUser.identifier = [namedUserID length] ? namedUserID : nil;
+    }];
+}
+
 //reset badge
 
 - (void)resetBadge:(CDVInvokedUrlCommand*)command {
@@ -554,19 +556,31 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
-
 #pragma mark UARegistrationDelegate
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
     UA_LINFO(@"PushNotificationPlugin: channel registration successful %@.", channelID);
-    [self raiseRegistration:YES channelID:channelID];
+
+    if (self.registrationCallbackID) {
+        NSDictionary *data = @{ @"channelID":channelID };
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
+        [result setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:result callbackId:self.registrationCallbackID];
+    }
 }
 
 - (void)registrationFailed {
     UA_LINFO(@"PushNotificationPlugin: channel registration failed.");
-    [self raiseRegistration:NO channelID:[UAirship push].channelID];
+
+    if (self.registrationCallbackID) {
+        NSDictionary *data = @{ @"error": @"Registration failed." };
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
+        [result setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:result callbackId:self.registrationCallbackID];
+    }
 }
 
 #pragma mark UAPushNotificationDelegate
+
 - (void)launchedFromNotification:(NSDictionary *)notification {
     UA_LDEBUG(@"The application was launched or resumed from a notification %@", [notification description]);
     self.incomingNotification = notification;
@@ -577,19 +591,22 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
     [[UAirship push] setBadgeNumber:0]; // zero badge after push received
 
-    NSString *alert = [self alertForUserInfo:notification];
-    NSMutableDictionary *extras = [self extrasForUserInfo:notification];
+    if (self.pushCallbackID) {
+        NSMutableDictionary *data = [NSMutableDictionary dictionary];
+        [data setValue:[self alertForUserInfo:notification] forKey:@"message"];
+        [data setValue:[self extrasForUserInfo:notification] forKey:@"extras"];
 
-    [self raisePush:alert withExtras:extras];
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
+        [result setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:result callbackId:self.pushCallbackID];
+    }
 }
-
 
 #pragma mark Other stuff
 
 - (void)dealloc {
     [UAirship push].pushNotificationDelegate = nil;
     [UAirship push].registrationDelegate = nil;
-
 }
 
 - (void)failIfSimulator {
