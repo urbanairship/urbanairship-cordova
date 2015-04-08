@@ -1,199 +1,185 @@
-// Init the plugin
-var PushNotification = function () {
 
-}
+var cardova = require("cordova"),
+    exec = require("cordova/exec")
 
-// Types
+// Helper method to call into the native plugin
+function callNative(callback, name, args) {
+  args = args || []
 
-PushNotification.prototype.notificationType = {
-  none: 0,
-  badge: 1,
-  sound: 2,
-  alert: 4
-}
-
-// Helpers
-
-PushNotification.prototype.failure = function (msg) {
-  console.log("Javascript Callback Error: " + msg)
-}
-
-
-PushNotification.prototype.call_native = function (callback, name, args) {
-  if(arguments.length == 2) {
-    args = []
+  var failure = function(e) {
+      console.log("Javascript Callback Error: " + e)
   }
-  ret = cordova.exec(
-  callback, // called when signature capture is successful
-  this.failure, // called when signature capture encounters an error
-  'PushNotificationPlugin', // Tell cordova that we want to run "PushNotificationPlugin"
-  name, // Tell the plugin the action we want to perform
-  args); // List of arguments to the plugin
-  return ret;
+
+  exec(callback, failure, "PushNotificationPlugin", name, args)
 }
 
-PushNotification.prototype.isPlatformIOS = function () {
-  return device.platform == "iPhone" || device.platform == "iPad" || device.platform == "iPod touch" || device.platform == "iOS"
-}
+// Listen for channel registration updates
+callNative(function(registration) {
+  console.log("Firing document event for registration update.")
+  cordova.fireDocumentEvent("urbanairship.registration", registration)
+}, "registerChannelListener")
 
-// Core API
+// Listen for incoming push notifications
+callNative(function(push) {
+  console.log("Firing document event for push event.")
+  cordova.fireDocumentEvent("urbanairship.push", push)
+}, "registerPushListener")
 
-// Registration
+var plugin = {
 
-PushNotification.prototype.registerForNotificationTypes = function (types, callback) {
-  if(device.platform == "iPhone" || device.platform == "iPad" || device.platform == "iPod touch" || device.platform == "iOS") {
-    this.call_native(callback, "registerForNotificationTypes", [types])
-  }
-}
+  enablePush: function(callback) {
+    callNative(callback, "enablePush");
+  },
 
-// Top level enabling/disabling
+  disablePush: function(callback) {
+    callNative(callback, "disablePush")
+  },
 
-PushNotification.prototype.enablePush = function (callback) {
-  this.call_native(callback, "enablePush");
-}
+  isPushEnabled: function(callback) {
+    callNative(callback, "isPushEnabled")
+  },
 
-PushNotification.prototype.disablePush = function (callback) {
-  this.call_native(callback, "disablePush");
-}
+  getChannelID: function(callback) {
+    callNative(callback, "getChannelID")
+  },
 
-PushNotification.prototype.enableLocation = function (callback) {
-  this.call_native(callback, "enableLocation")
-}
+  getIncoming: function(callback) {
+    callNative(callback, "getIncoming")
+  },
 
-PushNotification.prototype.disableLocation = function (callback) {
-  this.call_native(callback, "disableLocation")
-}
+  getTags: function(callback) {
+    callNative(callback, "getTags")
+  },
 
-PushNotification.prototype.enableBackgroundLocation = function (callback) {
-  this.call_native(callback, "enableBackgroundLocation")
-}
+  setTags: function(tags, callback) {
+    callNative(callback, "setTags", [tags])
+  },
 
-PushNotification.prototype.disableBackgroundLocation = function (callback) {
-  this.call_native(callback, "disableBackgroundLocation")
-}
+  getAlias: function(callback) {
+    callNative(callback, "getAlias")
+  },
 
-// is* functions
+  setAlias: function(alias, callback) {
+    callNative(callback, "setAlias", [alias])
+  },
 
-PushNotification.prototype.isPushEnabled = function (callback) {
-  this.call_native(callback, "isPushEnabled");
-}
+  isQuietTimeEnabled: function(callback) {
+    callNative(callback, "isQuietTimeEnabled")
+  },
 
-PushNotification.prototype.isSoundEnabled = function (callback) {
-  if(device.platform == "Android") {
-    this.call_native(callback, "isSoundEnabled");
-  }
-}
+  setQuietTimeEnabled: function(bool, callback) {
+    callNative(callback, "setQuietTimeEnabled", [bool])
+  },
 
-PushNotification.prototype.isVibrateEnabled = function (callback) {
-  if(device.platform == "Android") {
-    this.call_native(callback, "isVibrateEnabled");
-  }
-}
+  isInQuietTime: function(callback) {
+    callNative(callback, "isInQuietTime")
+  },
 
-PushNotification.prototype.isQuietTimeEnabled = function (callback) {
-  this.call_native(callback, "isQuietTimeEnabled");
-}
+  getQuietTime: function(callback) {
+    callNative(callback, "getQuietTime")
+  },
 
-PushNotification.prototype.isInQuietTime = function (callback) {
-  this.call_native(callback, "isInQuietTime");
-}
+  setQuietTime: function(startHour, startMinute, endHour, endMinute, callback) {
+    callNative(callback, "setQuietTime", [startHour, startMinute, endHour, endMinute])
+  },
 
-PushNotification.prototype.isLocationEnabled = function (callback) {
-  this.call_native(callback, "isLocationEnabled");
-}
+  setAnalyticsEnabled: function(enabled, callback) {
+    callNative(callback, "setAnalyticsEnabled", [enabled])
+  },
 
-PushNotification.prototype.isBackgroundLocationEnabled = function (callback) {
-  this.call_native(callback, "isBackgroundLocationEnabled");
-}
+  isAnalyticsEnabled: function(callback) {
+    callNative(callback, "isAnalyticsEnabled")
+  },
 
-// Getters
+  getNamedUser: function(callback) {
+    callNative(callback, "getNamedUser")
+  },
 
-PushNotification.prototype.getIncoming = function (callback) {
-  this.call_native(callback, "getIncoming");
-}
+  setNamedUser: function(namedUser, callback) {
+    callNative(callback, "setNamedUser", [namedUser])
+  },
 
-PushNotification.prototype.getChannelID = function (callback) {
-  this.call_native(callback, "getChannelID")
-}
+  // Location
 
-PushNotification.prototype.getQuietTime = function (callback) {
-  this.call_native(callback, "getQuietTime");
-}
+  enableLocation: function(callback) {
+    callNative(callback, "enableLocation")
+  },
 
-PushNotification.prototype.getTags = function (callback) {
-  this.call_native(callback, "getTags");
-}
+  disableLocation: function(callback) {
+    callNative(callback, "disableLocation")
+  },
 
-PushNotification.prototype.getAlias = function (callback) {
-  this.call_native(callback, "getAlias");
-}
+  isLocationEnabled: function(callback) {
+    callNative(callback, "isLocationEnabled")
+  },
 
-PushNotification.prototype.getBadgeNumber = function (callback) {
-  if (this.isPlatformIOS()) {
-    this.call_native(callback, "getBadgeNumber");
-  }
-}
+  enableBackgroundLocation: function(callback) {
+    callNative(callback, "enableBackgroundLocation")
+  },
 
-// Setters
+  disableBackgroundLocation: function(callback) {
+    callNative(callback, "disableBackgroundLocation")
+  },
 
-PushNotification.prototype.setAlias = function (alias, callback) {
-  this.call_native(callback, "setAlias", [alias])
-}
+  isBackgroundLocationEnabled: function(callback) {
+    callNative(callback, "isBackgroundLocationEnabled")
+  },
 
-PushNotification.prototype.setTags = function (tags, callback) {
-  this.call_native(callback, "setTags", [tags])
-}
+  recordCurrentLocation: function(callback) {
+    callNative(callback, "recordCurrentLocation")
+  },
 
-PushNotification.prototype.setSoundEnabled = function (bool, callback) {
-  if(device.platform == "Android") {
-    this.call_native(callback, "setSoundEnabled", [bool])
-  }
-}
+  // iOS only
 
-PushNotification.prototype.setVibrateEnabled = function (bool, callback) {
-  if(device.platform == "Android") {
-    this.call_native(callback, "setVibrateEnabled", [bool])
-  }
-}
+  setAutobadgeEnabled: function(enabled, callback) {
+    callNative(callback, "setAutobadgeEnabled", [enabled])
+  },
 
-PushNotification.prototype.setQuietTimeEnabled = function (bool, callback) {
-  this.call_native(callback, "setQuietTimeEnabled", [bool])
-}
+  setBadgeNumber: function(number, callback) {
+    callNative(callback, "setBadgeNumber", [number])
+  },
 
-PushNotification.prototype.setQuietTime = function (startHour, startMinute, endHour, endMinute, callback) {
-  this.call_native(callback, "setQuietTime", [startHour, startMinute, endHour, endMinute])
-}
+  getBadgeNumber: function(callback) {
+    callNative(callback, "getBadgeNumber", [number])
+  },
 
-PushNotification.prototype.setAutobadgeEnabled = function (enabled, callback) {
-  if (this.isPlatformIOS()) {
-    this.call_native(callback, "setAutobadgeEnabled", [enabled]);
-  }
-}
+  resetBadge: function(callback) {
+    callNative(callback, "resetBadge")
+  },
 
-PushNotification.prototype.setBadgeNumber = function (number, callback) {
-  if (this.isPlatformIOS()) {
-    this.call_native(callback, "setBadgeNumber", [number]);
-  }
-}
+  registerForNotificationTypes: function(types, callback) {
+    callNative(callback, "registerForNotificationTypes", [types])
+  },
 
-// Reset Badge
+  notificationType: {
+    none: 0,
+    badge: 1,
+    sound: 2,
+    alert: 4
+  },
 
-PushNotification.prototype.resetBadge = function (callback) {
-  if (this.isPlatformIOS()) {
-    this.call_native(callback, "resetBadge");
+
+  // Android only
+
+  clearNotifications: function(callback) {
+    callNative(callback, "clearNotifications")
+  },
+
+  isSoundEnabled: function(callback) {
+    callNative(callback, "isSoundEnabled")
+  },
+
+  isVibrateEnabled: function(callback) {
+    callNative(callback, "isVibrateEnabled")
+  },
+
+  setSoundEnabled: function(bool, callback) {
+    callNative(callback, "setSoundEnabled", [bool])
+  },
+
+  setVibrateEnabled: function(bool, callback) {
+    callNative(callback, "setVibrateEnabled", [bool])
   }
 }
 
-// Clear notifications
-PushNotification.prototype.clearNotifications = function (callback) {
-  if (!this.isPlatformIOS()) {
-    this.call_native(callback, "clearNotifications");
-  }
-}
-// Location stuff
-
-PushNotification.prototype.recordCurrentLocation = function (callback) {
-  this.call_native(callback, "recordCurrentLocation");
-}
-
-module.exports = new PushNotification();
+module.exports = plugin

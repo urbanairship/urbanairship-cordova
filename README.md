@@ -232,10 +232,12 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
 1. Require the PushNotification module `var PushNotification = cordova.require('<Path to PushNotification.js>')`
 
 ## Example
-A full example can be found in Examples.  To run it, copy the files:
+A full example can be found in Examples. To run it, copy the files:
 - Example/index.html to www/index.html
 - Example/css/* to www/css
 - Example/js/* to www/js
+
+Add the device plugin: `cordova plugin add org.apache.cordova.device`
 
 #### Basic Example
     
