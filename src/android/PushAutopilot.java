@@ -2,11 +2,15 @@ package com.urbanairship.phonegap;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
+import android.graphics.Color;
+import android.support.v4.app.NotificationCompat;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
+import com.urbanairship.push.notifications.DefaultNotificationFactory;
+import com.urbanairship.util.UAStringUtil;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -21,6 +25,8 @@ public class PushAutopilot extends Autopilot {
     static final String IN_PRODUCTION = "com.urbanairship.in_production";
     static final String GCM_SENDER = "com.urbanairship.gcm_sender";
     static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
+    static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
+    static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
 
     private PluginConfig pluginConfig;
 
@@ -45,12 +51,39 @@ public class PushAutopilot extends Autopilot {
 
     @Override
     public void onAirshipReady(UAirship airship) {
-        final boolean enablePushOnLaunch = getPluginConfig(UAirship.getApplicationContext())
-                .getBoolean(ENABLE_PUSH_ONLAUNCH, false);
+        Context context = UAirship.getApplicationContext();
+        PluginConfig pluginConfig = getPluginConfig(context);
 
+        final boolean enablePushOnLaunch = pluginConfig.getBoolean(ENABLE_PUSH_ONLAUNCH, false);
         if (enablePushOnLaunch) {
             airship.getPushManager().setUserNotificationsEnabled(enablePushOnLaunch);
         }
+
+        // Customize the notification factory
+        DefaultNotificationFactory factory = new DefaultNotificationFactory(context);
+
+        // Accent color
+        String accentColor = pluginConfig.getString(NOTIFICATION_ACCENT_COLOR, null);
+        if (!UAStringUtil.isEmpty(accentColor)) {
+            try {
+                factory.setColor(Color.parseColor(accentColor));
+            } catch (IllegalArgumentException e) {
+                Logger.error("Unable to parse notification accent color: " + accentColor, e);
+            }
+        }
+
+        // Notification icon
+        String notificationIconName = pluginConfig.getString(NOTIFICATION_ICON, null);
+        if (!UAStringUtil.isEmpty(notificationIconName)) {
+            int id  = context.getResources().getIdentifier(notificationIconName, "drawable", context.getPackageName());
+            if (id > 0) {
+                factory.setSmallIconId(id);
+            } else {
+                Logger.error("Unable to find notification icon with name: " + notificationIconName);
+            }
+        }
+
+        airship.getPushManager().setNotificationFactory(factory);
     }
 
     public PluginConfig getPluginConfig(Context context) {
