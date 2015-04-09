@@ -81,34 +81,6 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     [[UAirship shared].locationService startReportingSignificantLocationChanges];
 }
 
-- (void)failWithCallbackID:(NSString *)callbackID {
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    [self.commandDelegate sendPluginResult:result callbackId:callbackID];
-}
-
-- (void)succeedWithPluginResult:(CDVPluginResult *)result withCallbackID:(NSString *)callbackID {
-    [self.commandDelegate sendPluginResult:result callbackId:callbackID];
-}
-
-- (BOOL)validateArguments:(NSArray *)args forExpectedTypes:(NSArray *)types {
-    if (args.count == types.count) {
-        for (int i = 0; i < args.count; i++) {
-            if (![[args objectAtIndex:i] isKindOfClass:[types objectAtIndex:i]]) {
-                //fail when when there is a type mismatch an expected and passed parameter
-                UA_LERR(@"Type mismatch in cordova callback: expected %@ and received %@",
-                        [types description], [args description]);
-                return NO;
-            }
-        }
-    } else {
-        //fail when there is a number mismatch
-        UA_LERR(@"Parameter number mismatch in cordova callback: expected %d and received %d", types.count, args.count);
-        return NO;
-    }
-
-    return YES;
-}
-
 - (CDVPluginResult *)pluginResultForValue:(id)value {
     CDVPluginResult *result;
 
@@ -117,7 +89,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
      NSNumber --> (Integer | Double)
      NSArray --> Array
      NSDictionary --> Object
-     nil --> no return value
+     NSNull --> no return value
      */
 
     if ([value isKindOfClass:[NSString class]]) {
@@ -139,46 +111,31 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     } else {
         UA_LERR(@"Cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
-        return nil;
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
     }
 
     return result;
 }
 
-- (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command expecting:(NSArray *)expected withBlock:(UACordovaCallbackBlock)block {
-
+- (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command withBlock:(UACordovaCallbackBlock)block {
     dispatch_async(dispatch_get_main_queue(), ^{
-        //if we're expecting any arguments
-        if (expected) {
-            if (![self validateArguments:command.arguments forExpectedTypes:expected]) {
-                [self failWithCallbackID:command.callbackId];
-                return;
-            }
-        } else if(command.arguments.count) {
-            UA_LERR(@"Parameter number mismatch: expected 0 and received %d", command.arguments.count);
-            [self failWithCallbackID:command.callbackId];
-            return;
-        }
-
         //execute the block. the return value should be an obj-c object holding what we want to pass back to cordova.
-        id returnValue = block(command.arguments);
+        id returnValue = block ? block(command.arguments) : nil;
 
         CDVPluginResult *result = [self pluginResultForValue:returnValue];
-        if (result) {
-            [self succeedWithPluginResult:result withCallbackID:command.callbackId];
-        } else {
-            [self failWithCallbackID:command.callbackId];
-        }
+        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
     });
 }
 
-- (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command expecting:(NSArray *)expected withVoidBlock:(UACordovaVoidCallbackBlock)block {
-    [self performCallbackWithCommand:command expecting:expected withBlock:^(NSArray *args) {
-        block(args);
+- (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command withVoidBlock:(UACordovaVoidCallbackBlock)block {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args) {
+        if (block) {
+            block(args);
+        }
+        
         return [NSNull null];
     }];
 }
-
 
 - (NSString *)alertForUserInfo:(NSDictionary *)userInfo {
     NSString *alert = @"";
@@ -253,7 +210,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 //general enablement
 
 - (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args){
         BOOL enabled = [[args objectAtIndex:0] boolValue];
         [UAirship push].userPushNotificationsEnabled = enabled;
 
@@ -263,7 +220,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)setLocationEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args){
         BOOL enabled = [[args objectAtIndex:0] boolValue];
         [UALocationService setAirshipLocationServiceEnabled:enabled];
 
@@ -276,14 +233,14 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)setBackgroundLocationEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args){
         BOOL enabled = [[args objectAtIndex:0] boolValue];
         [UAirship shared].locationService.backgroundLocationServiceEnabled = enabled;
     }];
 }
 
 - (void)setAnalyticsEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         NSNumber *value = [args objectAtIndex:0];
         BOOL enabled = [value boolValue];
         [UAirship shared].analytics.enabled = enabled;
@@ -291,7 +248,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)isAnalyticsEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         BOOL enabled = [UAirship shared].analytics.enabled;
         return [NSNumber numberWithBool:enabled];
     }];
@@ -300,21 +257,21 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 //getters
 
 - (void)isUserNotificationsEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         BOOL enabled = [UAirship push].userPushNotificationsEnabled;
         return [NSNumber numberWithBool:enabled];
     }];
 }
 
 - (void)isQuietTimeEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         BOOL enabled = [UAirship push].quietTimeEnabled;
         return [NSNumber numberWithBool:enabled];
     }];
 }
 
 - (void)isInQuietTime:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         BOOL inQuietTime;
         NSDictionary *quietTimeDictionary = [UAirship push].quietTime;
         if (quietTimeDictionary) {
@@ -340,21 +297,21 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)isLocationEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         BOOL enabled = [UALocationService airshipLocationServiceEnabled];
         return [NSNumber numberWithBool:enabled];
     }];
 }
 
 - (void)isBackgroundLocationEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         BOOL enabled = [UAirship shared].locationService.backgroundLocationServiceEnabled;
         return [NSNumber numberWithBool:enabled];
     }];
 }
 
 - (void)getIncoming:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         NSString *incomingAlert = @"";
         NSMutableDictionary *incomingExtras = [NSMutableDictionary dictionary];
 
@@ -376,13 +333,13 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)getChannelID:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         return [UAirship push].channelID ?: @"";
     }];
 }
 
 - (void)getQuietTime:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         NSDictionary *quietTimeDictionary = [UAirship push].quietTime;
         //initialize the returned dictionary with zero values
         NSNumber *zero = [NSNumber numberWithInt:0];
@@ -426,7 +383,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)getTags:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         NSArray *tags = [UAirship push].tags? : [NSArray array];
         NSDictionary *returnDictionary = [NSDictionary dictionaryWithObjectsAndKeys:tags, @"tags", nil];
         return returnDictionary;
@@ -434,20 +391,20 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)getAlias:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         NSString *alias = [UAirship push].alias ?: @"";
         return alias;
     }];
 }
 
 - (void)getBadgeNumber:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         return @([UIApplication sharedApplication].applicationIconBadgeNumber);
     }];
 }
 
 - (void)getNamedUser:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         return [UAirship push].namedUser.identifier ?: @"";
     }];
 }
@@ -455,7 +412,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 //setters
 
 - (void)setTags:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSArray class],nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         NSMutableArray *tags = [NSMutableArray arrayWithArray:[args objectAtIndex:0]];
         [UAirship push].tags = tags;
         [[UAirship push] updateRegistration];
@@ -463,7 +420,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)setAlias:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSString class],nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         NSString *alias = [args objectAtIndex:0];
         // If the value passed in is nil or an empty string, set the alias to nil. Empty string will cause registration failures
         // from the Urban Airship API
@@ -481,7 +438,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 
 - (void)setQuietTimeEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         NSNumber *value = [args objectAtIndex:0];
         BOOL enabled = [value boolValue];
         [UAirship push].quietTimeEnabled = enabled;
@@ -491,7 +448,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 - (void)setQuietTime:(CDVInvokedUrlCommand*)command {
     Class c = [NSNumber class];
-    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:c,c,c,c,nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         id startHr = [args objectAtIndex:0];
         id startMin = [args objectAtIndex:1];
         id endHr = [args objectAtIndex:2];
@@ -503,7 +460,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)setAutobadgeEnabled:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         NSNumber *number = [args objectAtIndex:0];
         BOOL enabled = [number boolValue];
         [UAirship push].autobadgeEnabled = enabled;
@@ -511,7 +468,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)setBadgeNumber:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSNumber class],nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         id number = [args objectAtIndex:0];
         NSInteger badgeNumber = [number intValue];
         [[UAirship push] setBadgeNumber:badgeNumber];
@@ -519,7 +476,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)setNamedUser:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:[NSArray arrayWithObjects:[NSString class],nil] withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         NSString *namedUserID = [args objectAtIndex:0];
         namedUserID = [namedUserID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
@@ -530,7 +487,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 //reset badge
 
 - (void)resetBadge:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         [[UAirship push] resetBadge];
         [[UAirship push] updateRegistration];
     }];
@@ -539,7 +496,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 //location recording
 
 - (void)recordCurrentLocation:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args) {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         [[UAirship shared].locationService reportCurrentLocation];
     }];
 }
