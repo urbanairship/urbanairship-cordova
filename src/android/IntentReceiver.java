@@ -61,8 +61,8 @@ public class IntentReceiver extends BaseIntentReceiver {
     protected boolean onNotificationOpened(Context context, PushMessage message, int notificationId) {
         Log.i(TAG, "User clicked notification. Alert: " + message.getAlert());
 
-        UAirshipPlugin.incomingPush = message;
-        UAirshipPlugin.incomingNotificationId = notificationId;
+        UAirshipPlugin.launchPushMessage = message;
+        UAirshipPlugin.launchNotificationId = notificationId;
 
         return false;
     }
@@ -71,8 +71,8 @@ public class IntentReceiver extends BaseIntentReceiver {
     protected boolean onNotificationActionOpened(Context context, PushMessage message, int notificationId, String buttonId, boolean isForeground) {
         Log.i(TAG, "User clicked notification button. Button ID: " + buttonId + " Alert: " + message.getAlert());
 
-        UAirshipPlugin.incomingPush = message;
-        UAirshipPlugin.incomingNotificationId = notificationId;
+        UAirshipPlugin.launchPushMessage = message;
+        UAirshipPlugin.launchNotificationId = notificationId;
 
         return false;
     }

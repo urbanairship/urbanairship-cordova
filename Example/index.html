@@ -18,9 +18,18 @@
         console.log("Device ready!")
 
         // Incoming message callback
-        var handleIncomingPush = function(event) {
-          if(event.message) {
-            console.log("Incoming push: " + event.message)
+        var onPushReceived = function(event) {
+          if (event.message) {
+            console.log("Received push: " + event.message)
+          } else {
+            console.log("No incoming message")
+          }
+        }
+
+         // Incoming message callback
+        var onLaunchedFromPush = function(event) {
+          if (event.message) {
+            console.log("Launched from push: " + event.message)
           } else {
             console.log("No incoming message")
           }
@@ -38,18 +47,18 @@
 
         // Register for any urban airship events
         document.addEventListener("urbanairship.registration", onRegistration, false)
-        document.addEventListener("urbanairship.push", handleIncomingPush, false)
+        document.addEventListener("urbanairship.push", onPushReceived, false)
         
         // Handle resume
         document.addEventListener("resume", function() {
           console.log("Device resume!")
           
           UAirship.resetBadge()
-          UAirship.getIncoming(handleIncomingPush)
+          UAirship.getLaunchNotification(true, onLaunchedFromPush)
 
           // Reregister for urbanairship events if they were removed in pause event
           document.addEventListener("urbanairship.registration", onRegistration, false)
-          document.addEventListener("urbanairship.push", handleIncomingPush, false)
+          document.addEventListener("urbanairship.push", onPushReceived, false)
         }, false)
 
 
@@ -59,7 +68,7 @@
          
           // Remove urbanairship events.  Important on android to not receive push in the background.
           document.removeEventListener("urbanairship.registration", onRegistration, false)
-          document.removeEventListener("urbanairship.push", handleIncomingPush, false)
+          document.removeEventListener("urbanairship.push", onPushReceived, false)
         }, false)
 
         // Register for notification types
@@ -70,8 +79,8 @@
         // Initiate the UI
         initiateUI()
         
-        // Get any incoming push from device ready open
-        UAirship.getIncoming(handleIncomingPush)
+        // Get the launch notification if its available.
+        UAirship.getLaunchNotification(true, onLaunchedFromPush)
       }
 
       // Initiates the UI and sets up any UI callbacks

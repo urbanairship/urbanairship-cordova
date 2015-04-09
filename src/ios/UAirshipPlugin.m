@@ -36,7 +36,7 @@ typedef id (^UACordovaCallbackBlock)(NSArray *args);
 typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 @interface UAirshipPlugin()
-@property (nonatomic, copy) NSDictionary *incomingNotification;
+@property (nonatomic, copy) NSDictionary *launchNotification;
 @property (nonatomic, copy) NSString *registrationCallbackID;
 @property (nonatomic, copy) NSString *pushCallbackID;
 @end
@@ -311,14 +311,14 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
-- (void)getIncoming:(CDVInvokedUrlCommand*)command {
+- (void)getLaunchNotification:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         NSString *incomingAlert = @"";
         NSMutableDictionary *incomingExtras = [NSMutableDictionary dictionary];
 
-        if (self.incomingNotification) {
-            incomingAlert = [self alertForUserInfo:self.incomingNotification];
-            [incomingExtras setDictionary:[self extrasForUserInfo:self.incomingNotification]];
+        if (self.launchNotification) {
+            incomingAlert = [self alertForUserInfo:self.launchNotification];
+            [incomingExtras setDictionary:[self extrasForUserInfo:self.launchNotification]];
         }
 
         NSMutableDictionary *returnDictionary = [NSMutableDictionary dictionary];
@@ -326,8 +326,9 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
         [returnDictionary setObject:incomingAlert forKey:@"message"];
         [returnDictionary setObject:incomingExtras forKey:@"extras"];
 
-        //reset incoming push data until the next background push comes in
-        self.incomingNotification = nil;
+        if ([args firstObject]) {
+            self.launchNotification = nil;
+        }
 
         return returnDictionary;
     }];
@@ -568,7 +569,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 - (void)launchedFromNotification:(NSDictionary *)notification {
     UA_LDEBUG(@"The application was launched or resumed from a notification %@", [notification description]);
-    self.incomingNotification = notification;
+    self.launchNotification = notification;
 }
 
 - (void)receivedForegroundNotification:(NSDictionary *)notification {

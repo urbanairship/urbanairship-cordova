@@ -66,12 +66,12 @@ public class UAirshipPlugin extends CordovaPlugin {
 
     private final static List<String> knownActions = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
-            "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
+            "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
             "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction");
 
-    public static PushMessage incomingPush = null;
-    public static Integer incomingNotificationId = null;
+    public static PushMessage launchPushMessage = null;
+    public static Integer launchNotificationId = null;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -246,14 +246,15 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success(value);
     }
 
-    void getIncoming(JSONArray data, CallbackContext callbackContext) {
-        JSONObject notificationObject = notificationObject(incomingPush, incomingNotificationId);
+    void getLaunchNotification(JSONArray data, CallbackContext callbackContext) {
+        JSONObject notificationObject = notificationObject(launchPushMessage, launchNotificationId);
+
+        if (data.optBoolean(0, false)) {
+             launchPushMessage = null;
+             launchNotificationId = null;
+        }
 
         callbackContext.success(notificationObject);
-
-        // Reset incoming push data until the next background push comes in
-        incomingPush = null;
-        incomingNotificationId = null;
     }
 
     void getChannelID(JSONArray data, CallbackContext callbackContext) {

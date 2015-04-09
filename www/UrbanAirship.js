@@ -55,9 +55,9 @@ var plugin = {
     callNative(callback, "getChannelID")
   },
 
-  getIncoming: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getIncoming', arguments);
-    callNative(callback, "getIncoming")
+  getLaunchNotification: function(clear, callback) {
+    argscheck.checkArgs('*f', 'UAirship.getLaunchNotification', arguments);
+    callNative(callback, "getLaunchNotification", [clear])
   },
 
   getTags: function(callback) {
