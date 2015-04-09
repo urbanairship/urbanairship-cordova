@@ -1,5 +1,38 @@
 # Migration Guide
 
+## 2.8.x to 3.0.0
+
+### Plugin Access:
+
+The plugin is now attached to the window as `UAirship` instead of `PushNotification`.
+
+## Installation changes
+
+Plugin ID has been changed from `com.urbanairship.phonegap.PushNotification` to `com.urbanairship.cordova`. The old version
+may need to be uninstalled manually before updating to the new version.
+
+## Push Changes
+
+To enable or disable push, use `setUserNotificationsEnabled` instead of `enablePush` or `disablePush`. The app will
+continue to not prompt for push until user notifications is enabled. `registerNotificationTypes` has been renamed to
+`setNotificationTypes`. Its only required to be called if the app only wants to register for specific types of notifications.
+If its not set, the app will register for all types (alert, sound, and vibrate).
+
+The method `getPushID` has been replaced with `getChannelID`. It now returns the channel ID for both Android and iOS.
+
+To access the launch notification, call `getLaunchNotification` instead of `getIncoming`. `getLaunchNotification` no longer
+clears the notification on first access, instead it takes a flag as the first parameter to clear the notification or not.
+
+Example:
+
+	UAirship.getLaunchNotification(true, callback)
+
+### Location Changes:
+
+To enable or disable location, use `setLocationEnabled` instead of `enableLocation` or `disableLocation`. Similarly with
+background location, use `setBackgroundLocationEnabled`.
+
+
 ## 2.5.x to 2.6.0
 
 ### Android Installation changes:
