@@ -252,45 +252,33 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 //general enablement
 
-- (void)enablePush:(CDVInvokedUrlCommand*)command {
+- (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
-        [UAirship push].userPushNotificationsEnabled = YES;
+        BOOL enabled = [[args objectAtIndex:0] boolValue];
+        [UAirship push].userPushNotificationsEnabled = enabled;
+
         //forces a reregistration
         [[UAirship push] updateRegistration];
     }];
 }
 
-- (void)disablePush:(CDVInvokedUrlCommand*)command {
+- (void)setLocationEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
-        [UAirship push].userPushNotificationsEnabled = NO;
-        //forces a reregistration
-        [[UAirship push] updateRegistration];
+        BOOL enabled = [[args objectAtIndex:0] boolValue];
+        [UALocationService setAirshipLocationServiceEnabled:enabled];
+
+        if (enabled) {
+            [[UAirship shared].locationService startReportingSignificantLocationChanges];
+        } else {
+            [[UAirship shared].locationService stopReportingSignificantLocationChanges];
+        }
     }];
 }
 
-- (void)enableLocation:(CDVInvokedUrlCommand*)command {
+- (void)setBackgroundLocationEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
-        [UALocationService setAirshipLocationServiceEnabled:YES];
-        [[UAirship shared].locationService startReportingSignificantLocationChanges];
-    }];
-}
-
-- (void)disableLocation:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
-        [UALocationService setAirshipLocationServiceEnabled:NO];
-        [[UAirship shared].locationService stopReportingSignificantLocationChanges];
-    }];
-}
-
-- (void)enableBackgroundLocation:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
-        [UAirship shared].locationService.backgroundLocationServiceEnabled = YES;
-    }];
-}
-
-- (void)disableBackgroundLocation:(CDVInvokedUrlCommand*)command {
-    [self performCallbackWithCommand:command expecting:nil withVoidBlock:^(NSArray *args){
-        [UAirship shared].locationService.backgroundLocationServiceEnabled = NO;
+        BOOL enabled = [[args objectAtIndex:0] boolValue];
+        [UAirship shared].locationService.backgroundLocationServiceEnabled = enabled;
     }];
 }
 
@@ -311,7 +299,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 //getters
 
-- (void)isPushEnabled:(CDVInvokedUrlCommand*)command {
+- (void)isUserNotificationsEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command expecting:nil withBlock:^(NSArray *args){
         BOOL enabled = [UAirship push].userPushNotificationsEnabled;
         return [NSNumber numberWithBool:enabled];

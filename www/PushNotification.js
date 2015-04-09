@@ -27,16 +27,12 @@ callNative(function(push) {
 
 var plugin = {
 
-  enablePush: function(callback) {
-    callNative(callback, "enablePush");
+  setUserNotificationsEnabled: function(enabled, callback) {
+    callNative(callback, "setUserNotificationsEnabled", [enabled]);
   },
 
-  disablePush: function(callback) {
-    callNative(callback, "disablePush")
-  },
-
-  isPushEnabled: function(callback) {
-    callNative(callback, "isPushEnabled")
+  isUserNotificationsEnabled: function(callback) {
+    callNative(callback, "isUserNotificationsEnabled")
   },
 
   getChannelID: function(callback) {
@@ -101,24 +97,16 @@ var plugin = {
 
   // Location
 
-  enableLocation: function(callback) {
-    callNative(callback, "enableLocation")
-  },
-
-  disableLocation: function(callback) {
-    callNative(callback, "disableLocation")
+  setLocationEnabled: function(enabled, callback) {
+    callNative(callback, "setLocationEnabled", [enabled])
   },
 
   isLocationEnabled: function(callback) {
     callNative(callback, "isLocationEnabled")
   },
 
-  enableBackgroundLocation: function(callback) {
-    callNative(callback, "enableBackgroundLocation")
-  },
-
-  disableBackgroundLocation: function(callback) {
-    callNative(callback, "disableBackgroundLocation")
+  setBackgroundLocationEnabled: function(enabled, callback) {
+    callNative(callback, "setBackgroundLocationEnabled", [enabled])
   },
 
   isBackgroundLocationEnabled: function(callback) {
@@ -169,12 +157,12 @@ var plugin = {
     callNative(callback, "isSoundEnabled")
   },
 
-  isVibrateEnabled: function(callback) {
-    callNative(callback, "isVibrateEnabled")
-  },
-
   setSoundEnabled: function(bool, callback) {
     callNative(callback, "setSoundEnabled", [bool])
+  },
+
+  isVibrateEnabled: function(callback) {
+    callNative(callback, "isVibrateEnabled")
   },
 
   setVibrateEnabled: function(bool, callback) {

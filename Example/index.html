@@ -109,7 +109,7 @@
         }
 
         // Update the interface with the current UA settings
-        PushNotification.isPushEnabled(function(isEnabled) {
+        PushNotification.isUserNotificationsEnabled(function(isEnabled) {
           $('#pushEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
@@ -158,19 +158,13 @@
 
         // Set up change callbacks for the UI elements
         $('#pushEnabled').change(function() {
-          if($('#pushEnabled').val() == "on") {
-            PushNotification.enablePush()
-          } else {
-            PushNotification.disablePush()
-          }
+          var isEnabled = ($('#pushEnabled').val() == "on")
+          PushNotification.setUserNotificationsEnabled(isEnabled)
         })
 
         $('#locationEnabled').change(function() {
-          if($('#locationEnabled').val() == "on") {
-            PushNotification.enableLocation()
-          } else {
-            PushNotification.disableLocation()
-          }
+          var isEnabled = ($('#locationEnabled').val() == "on")
+          PushNotification.setLocationEnabled(isEnabled)
         })
 
         $('#soundEnabled').change(function() {

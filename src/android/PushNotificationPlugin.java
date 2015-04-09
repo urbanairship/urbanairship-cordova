@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -50,8 +49,8 @@ public class PushNotificationPlugin extends CordovaPlugin {
     public static final String EXTRA_PUSH = "com.urbanairship.cordova.EXTRA_PUSH";
     public static final String EXTRA_NOTIFICATION_ID = "com.urbanairship.cordova.EXTRA_NOTIFICATION_ID";
 
-    private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
-            "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
+    private final static List<String> knownActions = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
+            "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
             "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
             "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser");
@@ -75,7 +74,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     public void onResume(boolean multitasking) {
         super.onResume(multitasking);
 
-         // Handle any Google Play services errors
+        // Handle any Google Play services errors
         if (PlayServicesUtils.isGooglePlayStoreAvailable()) {
             PlayServicesUtils.handleAnyPlayServicesError(UAirship.getApplicationContext());
         }
@@ -178,38 +177,36 @@ public class PushNotificationPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    void enablePush(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getPushManager().setUserNotificationsEnabled(true);
+    void setUserNotificationsEnabled(JSONArray data, CallbackContext callbackContext) {
+        boolean enabled = data.optBoolean(0, false);
+        UAirship.shared().getPushManager().setUserNotificationsEnabled(enabled);
         callbackContext.success();
     }
 
-    void disablePush(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getPushManager().setUserNotificationsEnabled(false);
-        callbackContext.success();
-    }
-
-    void enableLocation(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(true);
-        callbackContext.success();
-    }
-
-    void disableLocation(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(false);
-        callbackContext.success();
-    }
-
-    void enableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(true);
-        callbackContext.success();
-    }
-
-    void disableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(false);
-        callbackContext.success();
-    }
-
-    void isPushEnabled(JSONArray data, CallbackContext callbackContext) {
+    void isUserNotificationsEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().getUserNotificationsEnabled() ? 1 : 0;
+        callbackContext.success(value);
+    }
+
+    void setLocationEnabled(JSONArray data, CallbackContext callbackContext) {
+        boolean enabled = data.optBoolean(0, false);
+        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
+        callbackContext.success();
+    }
+
+    void isLocationEnabled(JSONArray data, CallbackContext callbackContext) {
+        int value = UAirship.shared().getLocationManager().isLocationUpdatesEnabled() ? 1 : 0;
+        callbackContext.success(value);
+    }
+
+    void setBackgroundLocationEnabled(JSONArray data, CallbackContext callbackContext) {
+        boolean enabled = data.optBoolean(0, false);
+        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(enabled);
+        callbackContext.success();
+    }
+
+    void isBackgroundLocationEnabled(JSONArray data, CallbackContext callbackContext) {
+        int value = UAirship.shared().getLocationManager().isBackgroundLocationAllowed() ? 1 : 0;
         callbackContext.success(value);
     }
 
@@ -230,11 +227,6 @@ public class PushNotificationPlugin extends CordovaPlugin {
 
     void isInQuietTime(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isInQuietTime() ? 1 : 0;
-        callbackContext.success(value);
-    }
-
-    void isLocationEnabled(JSONArray data, CallbackContext callbackContext) {
-        int value = UAirship.shared().getLocationManager().isLocationUpdatesEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
 
