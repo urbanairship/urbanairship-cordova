@@ -30,6 +30,7 @@
 #import "UALocationService.h"
 #import "UAConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
+#import "UAActionRunner.h"
 
 typedef id (^UACordovaCallbackBlock)(NSArray *args);
 typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
@@ -447,7 +448,6 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 - (void)setQuietTime:(CDVInvokedUrlCommand*)command {
-    Class c = [NSNumber class];
     [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         id startHr = [args objectAtIndex:0];
         id startMin = [args objectAtIndex:1];
@@ -500,6 +500,46 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
         [[UAirship shared].locationService reportCurrentLocation];
     }];
 }
+
+- (void)runAction:(CDVInvokedUrlCommand*)command {
+    NSString *actionName = [command.arguments firstObject];
+    id actionValue = command.arguments.count >= 2 ? [command.arguments objectAtIndex:1] : nil;
+
+    [UAActionRunner runActionWithName:actionName
+                                value:actionValue
+                            situation:UASituationManualInvocation
+                    completionHandler:^(UAActionResult *actionResult) {
+                        NSDictionary *cordovaResult = [NSMutableDictionary dictionary];
+
+                        if (actionResult.status == UAActionStatusCompleted) {
+                            [cordovaResult setValue:actionResult.value forKey:@"value"];
+                        } else {
+                            NSString *error = [self errorMessageForAction:actionName result:actionResult];
+                            [cordovaResult setValue:error forKey:@"error"];
+                        }
+
+                        CDVPluginResult *result = [self pluginResultForValue:cordovaResult];
+                        [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
+                    }];
+}
+
+- (NSString *)errorMessageForAction:(NSString *)actionName result:(UAActionResult *)actionResult {
+    switch (actionResult.status) {
+        case UAActionStatusActionNotFound:
+            return [NSString stringWithFormat:@"Action %@ not found.", actionName];
+        case UAActionStatusArgumentsRejected:
+            return [NSString stringWithFormat:@"Action %@ rejected its arguments.", actionName];
+        case UAActionStatusError:
+            if (actionResult.error.localizedDescription) {
+                return actionResult.error.localizedDescription;
+            }
+        case UAActionStatusCompleted:
+            return nil;
+    }
+
+    return [NSString stringWithFormat:@"Action %@ failed with unspecified error", actionName];
+}
+
 
 #pragma mark UARegistrationDelegate
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {

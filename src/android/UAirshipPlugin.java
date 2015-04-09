@@ -17,6 +17,15 @@ import com.urbanairship.push.PushMessage;
 import com.urbanairship.google.PlayServicesUtils;
 import com.urbanairship.util.UAStringUtil;
 
+import com.urbanairship.actions.Action;
+import com.urbanairship.actions.ActionArguments;
+import com.urbanairship.actions.ActionCompletionCallback;
+import com.urbanairship.actions.ActionResult;
+import com.urbanairship.actions.ActionRunRequest;
+import com.urbanairship.actions.ActionValueException;
+import com.urbanairship.json.JsonMap;
+import com.urbanairship.json.JsonValue;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -59,7 +68,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
             "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
-            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser");
+            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction");
 
     public static PushMessage incomingPush = null;
     public static Integer incomingNotificationId = null;
@@ -398,6 +407,52 @@ public class UAirshipPlugin extends CordovaPlugin {
         UAirship.shared().getPushManager().getNamedUser().setId(namedUserId);
 
         callbackContext.success();
+    }
+
+    void runAction(JSONArray data, final CallbackContext callbackContext) throws JSONException, ActionValueException {
+        final String actionName = data.getString(0);
+        final Object actionValue = data.opt(1);
+
+
+        ActionRunRequest.createRequest(actionName)
+                        .setValue(actionValue)
+                        .run(new ActionCompletionCallback() {
+                            @Override
+                            public void onFinish(ActionArguments arguments, ActionResult result) {
+                                Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
+
+                                if (result.getStatus() == ActionResult.Status.COMPLETED) {
+                                    resultMap.put("value", result.getValue().toJsonValue());
+                                } else {
+                                    String error = createActionErrorMessage(actionName, result);
+                                    resultMap.put("error", JsonValue.wrap(error, JsonValue.NULL));
+                                }
+
+                                try {
+                                    // Convert back to a JSONObject
+                                    JSONObject jsonObject = new JSONObject(new JsonMap(resultMap).toString());
+                                    callbackContext.success(jsonObject);
+                                } catch (JSONException e) {
+                                    Logger.error("Failed to convert action results", e);
+                                    callbackContext.error("Failed to convert action results: " + e.getMessage());
+                                }
+                            }
+                        });
+    }
+
+    private String createActionErrorMessage(String name, ActionResult result) {
+        switch (result.getStatus()) {
+            case ACTION_NOT_FOUND:
+                return String.format("Action %s not found", name);
+            case REJECTED_ARGUMENTS:
+                return String.format("Action %s rejected its arguments", name);
+            case EXECUTION_ERROR:
+                if (result.getException() != null) {
+                    return result.getException().getMessage();
+                }
+        }
+
+        return String.format("Action %s failed with unspecified error", name);
     }
 
     private static JSONObject notificationObject(PushMessage message, Integer notificationId) {

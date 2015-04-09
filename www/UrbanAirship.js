@@ -125,6 +125,11 @@ var plugin = {
     callNative(callback, "setNamedUser", [namedUser])
   },
 
+  runAction: function(actionName, actionValue, callback) {
+    argscheck.checkArgs('s*F', 'UAirship.runAction', arguments);
+    callNative(callback, "runAction", [actionName, actionValue])
+  },
+
   // Location
 
   setLocationEnabled: function(enabled, callback) {
