@@ -56,25 +56,60 @@ import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
 
 
+/**
+ * The Urban Airship Cordova plugin.
+ */
 public class UAirshipPlugin extends CordovaPlugin {
 
+    /**
+     * Local broadcast action for channel registration updates.
+     */
     public static final String ACTION_CHANNEL_REGISTRATION = "com.urbanairship.cordova.ACTION_CHANNEL_REGISTRATION";
-    public static final String ACTION_PUSH_RECEIVED = "com.urbanairship.cordova.ACTION_PUSH_RECEIVED";
+
+    /**
+     * Error extra to indicate the channel registration failed.
+     */
     public static final String EXTRA_ERROR = "com.urbanairship.cordova.EXTRA_ERROR";
+
+    /**
+     * Local broadcast action for push received events.
+     */
+    public static final String ACTION_PUSH_RECEIVED = "com.urbanairship.cordova.ACTION_PUSH_RECEIVED";
+
+    /**
+     * Push message extra.
+     */
     public static final String EXTRA_PUSH = "com.urbanairship.cordova.EXTRA_PUSH";
+
+    /**
+     * Notification ID extra.
+     */
     public static final String EXTRA_NOTIFICATION_ID = "com.urbanairship.cordova.EXTRA_NOTIFICATION_ID";
 
+    /**
+     * List of Cordova "actions". To extend the plugin, add the action below and then define the method
+     * with the signature `void <CORDOVA_ACTION>(JSONArray data, final CallbackContext callbackContext)`
+     * and it will automatically be called. All methods will be executed in the ExecutorService. Any
+     * exceptions thrown by the actions are automatically caught and the callbackContext will return
+     * an error result.
+     */
     private final static List<String> knownActions = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
             "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction");
 
+    /**
+     * The launch push message. Set from the IntentReceiver.
+     */
     public static PushMessage launchPushMessage = null;
+
+    /**
+     * The launch notification ID. Set from the IntentReceiver.
+     */
     public static Integer launchNotificationId = null;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
-
     private BroadcastReceiver channelUpdateReceiver;
     private BroadcastReceiver pushReceiver;
 
@@ -119,6 +154,13 @@ public class UAirshipPlugin extends CordovaPlugin {
         return true;
     }
 
+    /**
+     * Registers the push received listener. Any push received events will
+     * be sent to the callbackContext.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void registerPushListener(JSONArray data, final CallbackContext callbackContext) {
         Logger.debug("Listening for push events.");
 
@@ -149,6 +191,13 @@ public class UAirshipPlugin extends CordovaPlugin {
         manager.registerReceiver(pushReceiver, intentFilter);
     }
 
+    /**
+     * Registers the channel listener. Any channel registration updates will
+     * be sent to the callbackContext.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void registerChannelListener(JSONArray data, final CallbackContext callbackContext) {
         Logger.debug("Listening for channel updates.");
 
@@ -186,6 +235,12 @@ public class UAirshipPlugin extends CordovaPlugin {
         manager.registerReceiver(channelUpdateReceiver, intentFilter);
     }
 
+    /**
+     * Clears all notification posted by the application.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void clearNotifications(JSONArray data, CallbackContext callbackContext) {
         Context context = UAirship.getApplicationContext();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -193,76 +248,166 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Enables or disables user notifications.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setUserNotificationsEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         UAirship.shared().getPushManager().setUserNotificationsEnabled(enabled);
         callbackContext.success();
     }
 
+    /**
+     * Checks if user notifications are enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void isUserNotificationsEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().getUserNotificationsEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
 
+    /**
+     * Enables or disables Urban Airship location services.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setLocationEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
         callbackContext.success();
     }
 
+    /**
+     * Checks if location is enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void isLocationEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getLocationManager().isLocationUpdatesEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
 
-    void setBackgroundLocationEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException{
+    /**
+     * Enables are disables background location. Background location requires location to be enabled.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void setBackgroundLocationEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         UAirship.shared().getLocationManager().setBackgroundLocationAllowed(enabled);
         callbackContext.success();
     }
 
+    /**
+     * Checks if background location is enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void isBackgroundLocationEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getLocationManager().isBackgroundLocationAllowed() ? 1 : 0;
         callbackContext.success(value);
     }
 
+    /**
+     * Checks if notification sound is enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void isSoundEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isSoundEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
 
+    /**
+     * Checks if notification vibration is enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void isVibrateEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isVibrateEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
 
+    /**
+     * Checks if quiet time is enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void isQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isQuietTimeEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
 
+    /**
+     * Checks if the device is currently in quiet time.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void isInQuietTime(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isInQuietTime() ? 1 : 0;
         callbackContext.success(value);
     }
 
+    /**
+     * Returns the last notification that launched the application.
+     * <p/>
+     * Expected arguments: Boolean - `YES` to clear the notification
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void getLaunchNotification(JSONArray data, CallbackContext callbackContext) {
         JSONObject notificationObject = notificationObject(launchPushMessage, launchNotificationId);
 
         if (data.optBoolean(0, false)) {
-             launchPushMessage = null;
-             launchNotificationId = null;
+            launchPushMessage = null;
+            launchNotificationId = null;
         }
 
         callbackContext.success(notificationObject);
     }
 
+    /**
+     * Returns the channel ID.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void getChannelID(JSONArray data, CallbackContext callbackContext) {
         String channelId = UAirship.shared().getPushManager().getChannelId();
         channelId = channelId != null ? channelId : "";
         callbackContext.success(channelId);
     }
 
+    /**
+     * Returns the queit time as an object with the following:
+     * "startHour": Number,
+     * "startMinute": Number,
+     * "endHour": Number,
+     * "endMinute": Number
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void getQuietTime(JSONArray data, CallbackContext callbackContext) throws JSONException {
         Date[] quietTime = UAirship.shared().getPushManager().getQuietTimeInterval();
 
@@ -293,6 +438,12 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success(returnObject);
     }
 
+    /**
+     * Returns the tags as an array.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void getTags(JSONArray data, CallbackContext callbackContext) throws JSONException {
         Set<String> tags = UAirship.shared().getPushManager().getTags();
         JSONObject returnObject = new JSONObject();
@@ -302,12 +453,26 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success(returnObject);
     }
 
+    /**
+     * Returns the alias.
+     * <p/>
+     * Expected arguments: String
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void getAlias(JSONArray data, CallbackContext callbackContext) {
         String alias = UAirship.shared().getPushManager().getAlias();
         alias = alias != null ? alias : "";
         callbackContext.success(alias);
     }
 
+    /**
+     * Sets the alias.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setAlias(JSONArray data, CallbackContext callbackContext) throws JSONException {
         String alias = data.getString(0);
         if (alias.equals("")) {
@@ -321,6 +486,14 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Sets the tags.
+     * <p/>
+     * Expected arguments: An array of Strings
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setTags(JSONArray data, CallbackContext callbackContext) throws JSONException {
         HashSet<String> tagSet = new HashSet<String>();
         JSONArray tagsArray = data.getJSONArray(0);
@@ -334,6 +507,14 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Enables or disables notification sound.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setSoundEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean soundPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setSoundEnabled(soundPreference);
@@ -341,6 +522,14 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Enables or disables notification vibration.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setVibrateEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean vibrationPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setVibrateEnabled(vibrationPreference);
@@ -348,6 +537,14 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Enables or disables quiet time.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean quietPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setQuietTimeEnabled(quietPreference);
@@ -355,6 +552,15 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Sets the quiet time.
+     * <p/>
+     * Expected arguments: Number - start hour, Number - start minute,
+     * Number - end hour, Number - end minute
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setQuietTime(JSONArray data, CallbackContext callbackContext) throws JSONException {
         Calendar start = new GregorianCalendar();
         Calendar end = new GregorianCalendar();
@@ -374,11 +580,30 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Records the current location.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void recordCurrentLocation(JSONArray data, CallbackContext callbackContext) {
         UAirship.shared().getLocationManager().requestSingleLocation();
         callbackContext.success();
     }
 
+    /**
+     * Enables or disables analytics.
+     * <p/>
+     * Disabling analytics will delete any locally stored events
+     * and prevent any events from uploading. Features that depend on analytics being
+     * enabled may not work properly if it's disabled (reports, region triggers,
+     * location segmentation, push to local time).
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         Logger.debug("Settings analyticsEnabled: " + enabled);
@@ -386,17 +611,37 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Checks if analytics is enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void isAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getAnalytics().isEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
 
+    /**
+     * Sets the named user ID.
+     * <p/>
+     * Expected arguments: String
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void getNamedUser(JSONArray data, CallbackContext callbackContext) {
         String namedUserId = UAirship.shared().getPushManager().getNamedUser().getId();
         namedUserId = namedUserId != null ? namedUserId : "";
         callbackContext.success(namedUserId);
     }
 
+    /**
+     * Returns the named user ID.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void setNamedUser(JSONArray data, CallbackContext callbackContext) throws JSONException {
         String namedUserId = data.getString(0);
         if (UAStringUtil.isEmpty(namedUserId)) {
@@ -410,6 +655,17 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Runs an Urban Airship action. An object will be returned with
+     * the following:
+     * "error": String
+     * "value": *
+     * <p/>
+     * Expected arguments: String - action name, * - the action value
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
     void runAction(JSONArray data, final CallbackContext callbackContext) throws JSONException, ActionValueException {
         final String actionName = data.getString(0);
         final Object actionValue = data.opt(1);
@@ -441,7 +697,14 @@ public class UAirshipPlugin extends CordovaPlugin {
                         });
     }
 
-    private String createActionErrorMessage(String name, ActionResult result) {
+    /**
+     * Helper method to create the action run error message.
+     *
+     * @param name The name of the action.
+     * @param result The action result.
+     * @return The action error message.
+     */
+    private static String createActionErrorMessage(String name, ActionResult result) {
         switch (result.getStatus()) {
             case ACTION_NOT_FOUND:
                 return String.format("Action %s not found", name);
@@ -456,6 +719,13 @@ public class UAirshipPlugin extends CordovaPlugin {
         return String.format("Action %s failed with unspecified error", name);
     }
 
+    /**
+     * Helper method to create a notification JSONObject.
+     *
+     * @param message The push message.
+     * @param notificationId The notification ID.
+     * @return A JSONObject containing the notification data.
+     */
     private static JSONObject notificationObject(PushMessage message, Integer notificationId) {
         JSONObject data = new JSONObject();
 

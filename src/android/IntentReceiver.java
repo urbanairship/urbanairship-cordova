@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import android.util.Log;
 
+/**
+ * Intent receiver for Urban Airship channel and push events.
+ */
 public class IntentReceiver extends BaseIntentReceiver {
     private static final String TAG = "IntentReceiver";
 
