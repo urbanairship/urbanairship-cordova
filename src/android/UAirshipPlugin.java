@@ -1,11 +1,10 @@
-package com.urbanairship.phonegap;
+package com.urbanairship.cordova;
 
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
 import android.os.RemoteException;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -17,6 +16,15 @@ import com.urbanairship.push.PushManager;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.google.PlayServicesUtils;
 import com.urbanairship.util.UAStringUtil;
+
+import com.urbanairship.actions.Action;
+import com.urbanairship.actions.ActionArguments;
+import com.urbanairship.actions.ActionCompletionCallback;
+import com.urbanairship.actions.ActionResult;
+import com.urbanairship.actions.ActionRunRequest;
+import com.urbanairship.actions.ActionValueException;
+import com.urbanairship.json.JsonMap;
+import com.urbanairship.json.JsonValue;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -41,8 +49,14 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaInterface;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 
-public class PushNotificationPlugin extends CordovaPlugin {
+
+public class UAirshipPlugin extends CordovaPlugin {
 
     public static final String ACTION_CHANNEL_REGISTRATION = "com.urbanairship.cordova.ACTION_CHANNEL_REGISTRATION";
     public static final String ACTION_PUSH_RECEIVED = "com.urbanairship.cordova.ACTION_PUSH_RECEIVED";
@@ -50,14 +64,14 @@ public class PushNotificationPlugin extends CordovaPlugin {
     public static final String EXTRA_PUSH = "com.urbanairship.cordova.EXTRA_PUSH";
     public static final String EXTRA_NOTIFICATION_ID = "com.urbanairship.cordova.EXTRA_NOTIFICATION_ID";
 
-    private final static List<String> knownActions = Arrays.asList("enablePush", "disablePush", "enableLocation", "disableLocation", "enableBackgroundLocation",
-            "disableBackgroundLocation", "isPushEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled",
-            "getIncoming", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
+    private final static List<String> knownActions = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
+            "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
+            "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
-            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser");
+            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction");
 
-    public static PushMessage incomingPush = null;
-    public static Integer incomingNotificationId = null;
+    public static PushMessage launchPushMessage = null;
+    public static Integer launchNotificationId = null;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -67,7 +81,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        Logger.info("Initializing PushNotificationPlugin");
+        Logger.info("Initializing Urban Airship cordova plugin.");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
     }
 
@@ -75,7 +89,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
     public void onResume(boolean multitasking) {
         super.onResume(multitasking);
 
-         // Handle any Google Play services errors
+        // Handle any Google Play services errors
         if (PlayServicesUtils.isGooglePlayStoreAvailable()) {
             PlayServicesUtils.handleAnyPlayServicesError(UAirship.getApplicationContext());
         }
@@ -93,10 +107,11 @@ public class PushNotificationPlugin extends CordovaPlugin {
             public void run() {
                 try {
                     Logger.debug("Plugin Execute: " + action);
-                    Method method = PushNotificationPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
-                    method.invoke(PushNotificationPlugin.this, data, callbackContext);
+                    Method method = UAirshipPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
+                    method.invoke(UAirshipPlugin.this, data, callbackContext);
                 } catch (Exception e) {
-                    Logger.error(e);
+                    Logger.error("Action failed to execute: " + action, e);
+                    callbackContext.error("Action " + action + " failed with exception: " + e.getMessage());
                 }
             }
         });
@@ -178,38 +193,36 @@ public class PushNotificationPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    void enablePush(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getPushManager().setUserNotificationsEnabled(true);
+    void setUserNotificationsEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        boolean enabled = data.getBoolean(0);
+        UAirship.shared().getPushManager().setUserNotificationsEnabled(enabled);
         callbackContext.success();
     }
 
-    void disablePush(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getPushManager().setUserNotificationsEnabled(false);
-        callbackContext.success();
-    }
-
-    void enableLocation(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(true);
-        callbackContext.success();
-    }
-
-    void disableLocation(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(false);
-        callbackContext.success();
-    }
-
-    void enableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(true);
-        callbackContext.success();
-    }
-
-    void disableBackgroundLocation(JSONArray data, CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(false);
-        callbackContext.success();
-    }
-
-    void isPushEnabled(JSONArray data, CallbackContext callbackContext) {
+    void isUserNotificationsEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().getUserNotificationsEnabled() ? 1 : 0;
+        callbackContext.success(value);
+    }
+
+    void setLocationEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        boolean enabled = data.getBoolean(0);
+        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
+        callbackContext.success();
+    }
+
+    void isLocationEnabled(JSONArray data, CallbackContext callbackContext) {
+        int value = UAirship.shared().getLocationManager().isLocationUpdatesEnabled() ? 1 : 0;
+        callbackContext.success(value);
+    }
+
+    void setBackgroundLocationEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException{
+        boolean enabled = data.getBoolean(0);
+        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(enabled);
+        callbackContext.success();
+    }
+
+    void isBackgroundLocationEnabled(JSONArray data, CallbackContext callbackContext) {
+        int value = UAirship.shared().getLocationManager().isBackgroundLocationAllowed() ? 1 : 0;
         callbackContext.success(value);
     }
 
@@ -233,19 +246,15 @@ public class PushNotificationPlugin extends CordovaPlugin {
         callbackContext.success(value);
     }
 
-    void isLocationEnabled(JSONArray data, CallbackContext callbackContext) {
-        int value = UAirship.shared().getLocationManager().isLocationUpdatesEnabled() ? 1 : 0;
-        callbackContext.success(value);
-    }
+    void getLaunchNotification(JSONArray data, CallbackContext callbackContext) {
+        JSONObject notificationObject = notificationObject(launchPushMessage, launchNotificationId);
 
-    void getIncoming(JSONArray data, CallbackContext callbackContext) {
-        JSONObject notificationObject = notificationObject(PushNotificationPlugin.incomingPush, PushNotificationPlugin.incomingNotificationId);
+        if (data.optBoolean(0, false)) {
+             launchPushMessage = null;
+             launchNotificationId = null;
+        }
 
         callbackContext.success(notificationObject);
-
-        // Reset incoming push data until the next background push comes in
-        PushNotificationPlugin.incomingPush = null;
-        PushNotificationPlugin.incomingNotificationId = null;
     }
 
     void getChannelID(JSONArray data, CallbackContext callbackContext) {
@@ -254,7 +263,7 @@ public class PushNotificationPlugin extends CordovaPlugin {
         callbackContext.success(channelId);
     }
 
-    void getQuietTime(JSONArray data, CallbackContext callbackContext) {
+    void getQuietTime(JSONArray data, CallbackContext callbackContext) throws JSONException {
         Date[] quietTime = UAirship.shared().getPushManager().getQuietTimeInterval();
 
         int startHour = 0;
@@ -274,32 +283,23 @@ public class PushNotificationPlugin extends CordovaPlugin {
             endMinute = end.get(Calendar.MINUTE);
         }
 
-        try {
-            JSONObject returnObject = new JSONObject();
-            returnObject.put("startHour", startHour);
-            returnObject.put("startMinute", startMinute);
-            returnObject.put("endHour", endHour);
-            returnObject.put("endMinute", endMinute);
+        JSONObject returnObject = new JSONObject();
+        returnObject.put("startHour", startHour);
+        returnObject.put("startMinute", startMinute);
+        returnObject.put("endHour", endHour);
+        returnObject.put("endMinute", endMinute);
 
-            Logger.debug("Returning quiet time");
-            callbackContext.success(returnObject);
-        } catch (JSONException e) {
-            callbackContext.error("Error building quietTime JSON");
-        }
+        Logger.debug("Returning quiet time");
+        callbackContext.success(returnObject);
     }
 
-    void getTags(JSONArray data, CallbackContext callbackContext) {
+    void getTags(JSONArray data, CallbackContext callbackContext) throws JSONException {
         Set<String> tags = UAirship.shared().getPushManager().getTags();
-        try {
-            JSONObject returnObject = new JSONObject();
-            returnObject.put("tags", new JSONArray(tags));
+        JSONObject returnObject = new JSONObject();
+        returnObject.put("tags", new JSONArray(tags));
 
-            Logger.debug("Returning tags");
-            callbackContext.success(returnObject);
-        } catch (JSONException e) {
-            Logger.error("Error building tags JSON", e);
-            callbackContext.error("Error building tags JSON");
-        }
+        Logger.debug("Returning tags");
+        callbackContext.success(returnObject);
     }
 
     void getAlias(JSONArray data, CallbackContext callbackContext) {
@@ -308,100 +308,70 @@ public class PushNotificationPlugin extends CordovaPlugin {
         callbackContext.success(alias);
     }
 
-    void setAlias(JSONArray data, CallbackContext callbackContext) {
-        try {
-            String alias = data.getString(0);
-            if (alias.equals("")) {
-                alias = null;
-            }
-
-            Logger.debug("Settings alias: " + alias);
-
-            UAirship.shared().getPushManager().setAlias(alias);
-
-            callbackContext.success();
-        } catch (JSONException e) {
-            Logger.error("Error reading alias in callback", e);
-            callbackContext.error("Error reading alias in callback");
+    void setAlias(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        String alias = data.getString(0);
+        if (alias.equals("")) {
+            alias = null;
         }
+
+        Logger.debug("Settings alias: " + alias);
+
+        UAirship.shared().getPushManager().setAlias(alias);
+
+        callbackContext.success();
     }
 
-    void setTags(JSONArray data, CallbackContext callbackContext) {
-        try {
-            HashSet<String> tagSet = new HashSet<String>();
-            JSONArray tagsArray = data.getJSONArray(0);
-            for (int i = 0; i < tagsArray.length(); ++i) {
-                tagSet.add(tagsArray.getString(i));
-            }
-
-            Logger.debug("Settings tags: " + tagSet);
-            UAirship.shared().getPushManager().setTags(tagSet);
-
-            callbackContext.success();
-        } catch (JSONException e) {
-            Logger.error("Error reading tags JSON", e);
-            callbackContext.error("Error reading tags JSON");
+    void setTags(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        HashSet<String> tagSet = new HashSet<String>();
+        JSONArray tagsArray = data.getJSONArray(0);
+        for (int i = 0; i < tagsArray.length(); ++i) {
+            tagSet.add(tagsArray.getString(i));
         }
+
+        Logger.debug("Settings tags: " + tagSet);
+        UAirship.shared().getPushManager().setTags(tagSet);
+
+        callbackContext.success();
     }
 
-    void setSoundEnabled(JSONArray data, CallbackContext callbackContext) {
-        try {
-            boolean soundPreference = data.getBoolean(0);
-            UAirship.shared().getPushManager().setSoundEnabled(soundPreference);
-            Logger.debug("Settings Sound: " + soundPreference);
-            callbackContext.success();
-        } catch (JSONException e) {
-            Logger.error("Error reading soundEnabled in callback", e);
-            callbackContext.error("Error reading soundEnabled in callback");
-        }
+    void setSoundEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        boolean soundPreference = data.getBoolean(0);
+        UAirship.shared().getPushManager().setSoundEnabled(soundPreference);
+        Logger.debug("Settings Sound: " + soundPreference);
+        callbackContext.success();
     }
 
-    void setVibrateEnabled(JSONArray data, CallbackContext callbackContext) {
-        try {
-            boolean vibrationPreference = data.getBoolean(0);
-            UAirship.shared().getPushManager().setVibrateEnabled(vibrationPreference);
-            Logger.debug("Settings Vibrate: " + vibrationPreference);
-            callbackContext.success();
-        } catch (JSONException e) {
-            Logger.error("Error reading vibrateEnabled in callback", e);
-            callbackContext.error("Error reading vibrateEnabled in callback");
-        }
+    void setVibrateEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        boolean vibrationPreference = data.getBoolean(0);
+        UAirship.shared().getPushManager().setVibrateEnabled(vibrationPreference);
+        Logger.debug("Settings Vibrate: " + vibrationPreference);
+        callbackContext.success();
     }
 
-    void setQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) {
-        try {
-            boolean quietPreference = data.getBoolean(0);
-            UAirship.shared().getPushManager().setQuietTimeEnabled(quietPreference);
-            Logger.debug("Settings QuietTime: " + quietPreference);
-            callbackContext.success();
-        } catch (JSONException e) {
-            Logger.error("Error reading quietTimeEnabled in callback", e);
-            callbackContext.error("Error reading quietTimeEnabled in callback");
-        }
+    void setQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        boolean quietPreference = data.getBoolean(0);
+        UAirship.shared().getPushManager().setQuietTimeEnabled(quietPreference);
+        Logger.debug("Settings QuietTime: " + quietPreference);
+        callbackContext.success();
     }
 
-    void setQuietTime(JSONArray data, CallbackContext callbackContext) {
-        try {
-            Calendar start = new GregorianCalendar();
-            Calendar end = new GregorianCalendar();
-            int startHour = data.getInt(0);
-            int startMinute = data.getInt(1);
-            int endHour = data.getInt(2);
-            int endMinute = data.getInt(3);
+    void setQuietTime(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        Calendar start = new GregorianCalendar();
+        Calendar end = new GregorianCalendar();
+        int startHour = data.getInt(0);
+        int startMinute = data.getInt(1);
+        int endHour = data.getInt(2);
+        int endMinute = data.getInt(3);
 
-            start.set(Calendar.HOUR_OF_DAY, startHour);
-            start.set(Calendar.MINUTE, startMinute);
-            end.set(Calendar.HOUR_OF_DAY, endHour);
-            end.set(Calendar.MINUTE, endMinute);
+        start.set(Calendar.HOUR_OF_DAY, startHour);
+        start.set(Calendar.MINUTE, startMinute);
+        end.set(Calendar.HOUR_OF_DAY, endHour);
+        end.set(Calendar.MINUTE, endMinute);
 
-            Logger.debug("Settings QuietTime. Start: " + start.getTime() + ", End: " + end.getTime());
-            UAirship.shared().getPushManager().setQuietTimeInterval(start.getTime(), end.getTime());
+        Logger.debug("Settings QuietTime. Start: " + start.getTime() + ", End: " + end.getTime());
+        UAirship.shared().getPushManager().setQuietTimeInterval(start.getTime(), end.getTime());
 
-            callbackContext.success();
-        } catch (JSONException e) {
-            Logger.error("Error reading quietTime JSON", e);
-            callbackContext.error("Error reading quietTime JSON");
-        }
+        callbackContext.success();
     }
 
     void recordCurrentLocation(JSONArray data, CallbackContext callbackContext) {
@@ -409,16 +379,11 @@ public class PushNotificationPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    void setAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) {
-        try {
-            boolean enabled = data.getBoolean(0);
-            Logger.debug("Settings analyticsEnabled: " + enabled);
-            UAirship.shared().getAnalytics().setEnabled(enabled);
-            callbackContext.success();
-        } catch (JSONException e) {
-            Logger.error("Error reading analyticsEnabled in callback", e);
-            callbackContext.error("Error reading analyticsEnabled in callback");
-        }
+    void setAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        boolean enabled = data.getBoolean(0);
+        Logger.debug("Settings analyticsEnabled: " + enabled);
+        UAirship.shared().getAnalytics().setEnabled(enabled);
+        callbackContext.success();
     }
 
     void isAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) {
@@ -432,22 +397,63 @@ public class PushNotificationPlugin extends CordovaPlugin {
         callbackContext.success(namedUserId);
     }
 
-    void setNamedUser(JSONArray data, CallbackContext callbackContext) {
-        try {
-            String namedUserId = data.getString(0);
-            if (UAStringUtil.isEmpty(namedUserId)) {
-                namedUserId = null;
-            }
-
-            Logger.debug("Settings named user: " + namedUserId);
-
-            UAirship.shared().getPushManager().getNamedUser().setId(namedUserId);
-
-            callbackContext.success();
-        } catch (JSONException e) {
-            Logger.error("Error reading named user ID in callback", e);
-            callbackContext.error("Error reading named user ID in callback");
+    void setNamedUser(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        String namedUserId = data.getString(0);
+        if (UAStringUtil.isEmpty(namedUserId)) {
+            namedUserId = null;
         }
+
+        Logger.debug("Settings named user: " + namedUserId);
+
+        UAirship.shared().getPushManager().getNamedUser().setId(namedUserId);
+
+        callbackContext.success();
+    }
+
+    void runAction(JSONArray data, final CallbackContext callbackContext) throws JSONException, ActionValueException {
+        final String actionName = data.getString(0);
+        final Object actionValue = data.opt(1);
+
+
+        ActionRunRequest.createRequest(actionName)
+                        .setValue(actionValue)
+                        .run(new ActionCompletionCallback() {
+                            @Override
+                            public void onFinish(ActionArguments arguments, ActionResult result) {
+                                Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
+
+                                if (result.getStatus() == ActionResult.Status.COMPLETED) {
+                                    resultMap.put("value", result.getValue().toJsonValue());
+                                } else {
+                                    String error = createActionErrorMessage(actionName, result);
+                                    resultMap.put("error", JsonValue.wrap(error, JsonValue.NULL));
+                                }
+
+                                try {
+                                    // Convert back to a JSONObject
+                                    JSONObject jsonObject = new JSONObject(new JsonMap(resultMap).toString());
+                                    callbackContext.success(jsonObject);
+                                } catch (JSONException e) {
+                                    Logger.error("Failed to convert action results", e);
+                                    callbackContext.error("Failed to convert action results: " + e.getMessage());
+                                }
+                            }
+                        });
+    }
+
+    private String createActionErrorMessage(String name, ActionResult result) {
+        switch (result.getStatus()) {
+            case ACTION_NOT_FOUND:
+                return String.format("Action %s not found", name);
+            case REJECTED_ARGUMENTS:
+                return String.format("Action %s rejected its arguments", name);
+            case EXECUTION_ERROR:
+                if (result.getException() != null) {
+                    return result.getException().getMessage();
+                }
+        }
+
+        return String.format("Action %s failed with unspecified error", name);
     }
 
     private static JSONObject notificationObject(PushMessage message, Integer notificationId) {

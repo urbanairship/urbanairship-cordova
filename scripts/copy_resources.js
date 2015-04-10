@@ -18,7 +18,7 @@ module.exports = function (context) {
     ///////////////////////////
         ios : [
             {
-                "plugins/com.urbanairship.phonegap.PushNotification/src/ios/Airship/UI/Default/Common/Resources": "platforms/ios/" + projName
+                "plugins/com.urbanairship.cordova/src/ios/Airship/UI/Default/Common/Resources": "platforms/ios/" + projName
             }
         ]
     };

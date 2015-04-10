@@ -27,6 +27,6 @@
 #import <Cordova/CDVPlugin.h>
 #import "UAPush.h"
 
-@interface PushNotificationPlugin : CDVPlugin <UARegistrationDelegate, UAPushNotificationDelegate>
+@interface UAirshipPlugin : CDVPlugin <UARegistrationDelegate, UAPushNotificationDelegate>
 
 @end
