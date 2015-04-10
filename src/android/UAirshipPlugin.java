@@ -236,7 +236,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Clears all notification posted by the application.
+     * Clears all notifications posted by the application.
      *
      * @param data The call data.
      * @param callbackContext The callback context.
@@ -399,7 +399,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Returns the queit time as an object with the following:
+     * Returns the quiet time as an object with the following:
      * "startHour": Number,
      * "startMinute": Number,
      * "endHour": Number,

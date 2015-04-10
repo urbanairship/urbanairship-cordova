@@ -91,7 +91,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 /**
  * Helper method to create a plugin result with the specified value.
  *
- * @param value The results value.
+ * @param value The result's value.
  * @returns A CDVPluginResult with specified value.
  */
 - (CDVPluginResult *)pluginResultForValue:(id)value {
@@ -131,7 +131,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 /**
- * Helper method to perfrom a cordova command with a return type. The command will
+ * Helper method to perform a cordova command with a return type. The command will
  * automatically be dispatched on the main queue.
  *
  * @param command The cordova command.
@@ -148,7 +148,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 /**
- * Helper method to perfrom a cordova command without a return type. The command will
+ * Helper method to perform a cordova command without a return type. The command will
  * automatically be dispatched on the main queue.
  *
  * @param command The cordova command.
@@ -167,7 +167,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 /**
  * Helper method to parse the alert from a notification.
  *
- * @param userInfo The notificaiton.
+ * @param userInfo The notification.
  * @return The notification's alert.
  */
 - (NSString *)alertForUserInfo:(NSDictionary *)userInfo {
@@ -187,7 +187,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 /**
  * Helper method to parse the extras from a notification.
  *
- * @param userInfo The notificaiton.
+ * @param userInfo The notification.
  * @return The notification's extras.
  */
 - (NSMutableDictionary *)extrasForUserInfo:(NSDictionary *)userInfo {

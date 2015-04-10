@@ -27,6 +27,9 @@
 #import <Cordova/CDVPlugin.h>
 #import "UAPush.h"
 
+/**
+ * The Urban Airship Cordova plugin.
+ */
 @interface UAirshipPlugin : CDVPlugin <UARegistrationDelegate, UAPushNotificationDelegate>
 
 /**
@@ -101,7 +104,7 @@
 - (void)getBadgeNumber:(CDVInvokedUrlCommand*)command;
 
 /**
- * Enables or disables autobadging. Defaults to `NO`.
+ * Enables or disables auto badge. Defaults to `NO`.
  *
  * Expected arguments: Boolean
  *
@@ -144,7 +147,7 @@
 - (void)getNamedUser:(CDVInvokedUrlCommand*)command;
 
 /**
- * Enables or disbales quiet time.
+ * Enables or disables quiet time.
  *
  * Expected arguments: Boolean
  *
@@ -160,7 +163,7 @@
 - (void)isQuietTimeEnabled:(CDVInvokedUrlCommand*)command;
 
 /**
- * Sets the queit time.
+ * Sets the quiet time.
  *
  * Expected arguments: Number - start hour, Number - start minute,
  * Number - end hour, Number - end minute
@@ -170,7 +173,7 @@
 - (void)setQuietTime:(CDVInvokedUrlCommand*)command;
 
 /**
- * Returns the queit time as an object with the following:
+ * Returns the quiet time as an object with the following:
  * "startHour": Number,
  * "startMinute": Number,
  * "endHour": Number,
@@ -277,7 +280,7 @@
 - (void)registerChannelListener:(CDVInvokedUrlCommand*)command;
 
 /**
- * Registers the channel listener. Any channel registration updates will
+ * Registers the push received listener. Any push received events will
  * be sent to the command's callbackID.
  *
  * @param command The cordova command.
