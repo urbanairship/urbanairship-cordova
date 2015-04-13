@@ -71,8 +71,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setUserNotificationsEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setUserNotificationsEnabled', arguments);
-    callNative(callback, "setUserNotificationsEnabled", [enabled]);
+    argscheck.checkArgs('*F', 'UAirship.setUserNotificationsEnabled', arguments)
+    callNative(callback, "setUserNotificationsEnabled", [!!enabled])
   },
 
   /**
@@ -81,7 +81,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   isUserNotificationsEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isUserNotificationsEnabled', arguments);
+    argscheck.checkArgs('f', 'UAirship.isUserNotificationsEnabled', arguments)
     callNative(callback, "isUserNotificationsEnabled")
   },
 
@@ -91,7 +91,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   getChannelID: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getChannelID', arguments);
+    argscheck.checkArgs('f', 'UAirship.getChannelID', arguments)
     callNative(callback, "getChannelID")
   },
 
@@ -102,8 +102,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   getLaunchNotification: function(clear, callback) {
-    argscheck.checkArgs('*f', 'UAirship.getLaunchNotification', arguments);
-    callNative(callback, "getLaunchNotification", [clear])
+    argscheck.checkArgs('*f', 'UAirship.getLaunchNotification', arguments)
+    callNative(callback, "getLaunchNotification", [!!clear])
   },
 
   /**
@@ -133,7 +133,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   getAlias: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getAlias', arguments);
+    argscheck.checkArgs('f', 'UAirship.getAlias', arguments)
     callNative(callback, "getAlias")
   },
 
@@ -144,7 +144,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setAlias: function(alias, callback) {
-    argscheck.checkArgs('sF', 'UAirship.setAlias', arguments);
+    argscheck.checkArgs('sF', 'UAirship.setAlias', arguments)
     callNative(callback, "setAlias", [alias])
   },
 
@@ -154,7 +154,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   isQuietTimeEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isQuietTimeEnabled', arguments);
+    argscheck.checkArgs('f', 'UAirship.isQuietTimeEnabled', arguments)
     callNative(callback, "isQuietTimeEnabled")
   },
 
@@ -165,8 +165,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setQuietTimeEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setQuietTimeEnabled', arguments);
-    callNative(callback, "setQuietTimeEnabled", [enabled])
+    argscheck.checkArgs('*F', 'UAirship.setQuietTimeEnabled', arguments)
+    callNative(callback, "setQuietTimeEnabled", [!!enabled])
   },
 
   /**
@@ -175,7 +175,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   isInQuietTime: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isInQuietTime', arguments);
+    argscheck.checkArgs('f', 'UAirship.isInQuietTime', arguments)
     callNative(callback, "isInQuietTime")
   },
 
@@ -189,7 +189,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   getQuietTime: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getQuietTime', arguments);
+    argscheck.checkArgs('f', 'UAirship.getQuietTime', arguments)
     callNative(callback, "getQuietTime")
   },
 
@@ -203,7 +203,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setQuietTime: function(startHour, startMinute, endHour, endMinute, callback) {
-    argscheck.checkArgs('nnnnF', 'UAirship.setQuietTime', arguments);
+    argscheck.checkArgs('nnnnF', 'UAirship.setQuietTime', arguments)
     callNative(callback, "setQuietTime", [startHour, startMinute, endHour, endMinute])
   },
 
@@ -219,8 +219,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setAnalyticsEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setAnalyticsEnabled', arguments);
-    callNative(callback, "setAnalyticsEnabled", [enabled])
+    argscheck.checkArgs('*F', 'UAirship.setAnalyticsEnabled', arguments)
+    callNative(callback, "setAnalyticsEnabled", [!!enabled])
   },
 
   /**
@@ -229,7 +229,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   isAnalyticsEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isAnalyticsEnabled', arguments);
+    argscheck.checkArgs('f', 'UAirship.isAnalyticsEnabled', arguments)
     callNative(callback, "isAnalyticsEnabled")
   },
 
@@ -239,7 +239,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   getNamedUser: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getNamedUser', arguments);
+    argscheck.checkArgs('f', 'UAirship.getNamedUser', arguments)
     callNative(callback, "getNamedUser")
   },
 
@@ -250,7 +250,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setNamedUser: function(namedUser, callback) {
-    argscheck.checkArgs('sF', 'UAirship.setNamedUser', arguments);
+    argscheck.checkArgs('sF', 'UAirship.setNamedUser', arguments)
     callNative(callback, "setNamedUser", [namedUser])
   },
 
@@ -265,7 +265,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   runAction: function(actionName, actionValue, callback) {
-    argscheck.checkArgs('s*F', 'UAirship.runAction', arguments);
+    argscheck.checkArgs('s*F', 'UAirship.runAction', arguments)
     callNative(callback, "runAction", [actionName, actionValue])
   },
 
@@ -278,8 +278,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setLocationEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setLocationEnabled', arguments);
-    callNative(callback, "setLocationEnabled", [enabled])
+    argscheck.checkArgs('*F', 'UAirship.setLocationEnabled', arguments)
+    callNative(callback, "setLocationEnabled", [!!enabled])
   },
 
   /**
@@ -288,7 +288,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   isLocationEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isLocationEnabled', arguments);
+    argscheck.checkArgs('f', 'UAirship.isLocationEnabled', arguments)
     callNative(callback, "isLocationEnabled")
   },
 
@@ -299,8 +299,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setBackgroundLocationEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setBackgroundLocationEnabled', arguments);
-    callNative(callback, "setBackgroundLocationEnabled", [enabled])
+    argscheck.checkArgs('*F', 'UAirship.setBackgroundLocationEnabled', arguments)
+    callNative(callback, "setBackgroundLocationEnabled", [!!enabled])
   },
 
   /**
@@ -309,7 +309,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   isBackgroundLocationEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isBackgroundLocationEnabled', arguments);
+    argscheck.checkArgs('f', 'UAirship.isBackgroundLocationEnabled', arguments)
     callNative(callback, "isBackgroundLocationEnabled")
   },
 
@@ -319,7 +319,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   recordCurrentLocation: function(callback) {
-    argscheck.checkArgs('F', 'UAirship.recordCurrentLocation', arguments);
+    argscheck.checkArgs('F', 'UAirship.recordCurrentLocation', arguments)
     callNative(callback, "recordCurrentLocation")
   },
 
@@ -332,8 +332,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setAutobadgeEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setAutobadgeEnabled', arguments);
-    callNative(callback, "setAutobadgeEnabled", [enabled])
+    argscheck.checkArgs('*F', 'UAirship.setAutobadgeEnabled', arguments)
+    callNative(callback, "setAutobadgeEnabled", [!!enabled])
   },
 
   /**
@@ -343,7 +343,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setBadgeNumber: function(number, callback) {
-    argscheck.checkArgs('nF', 'UAirship.setBadgeNumber', arguments);
+    argscheck.checkArgs('nF', 'UAirship.setBadgeNumber', arguments)
     callNative(callback, "setBadgeNumber", [number])
   },
 
@@ -353,7 +353,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   getBadgeNumber: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getBadgeNumber', arguments);
+    argscheck.checkArgs('f', 'UAirship.getBadgeNumber', arguments)
     callNative(callback, "getBadgeNumber", [number])
   },
 
@@ -363,7 +363,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   resetBadge: function(callback) {
-    argscheck.checkArgs('F', 'UAirship.resetBadge', arguments);
+    argscheck.checkArgs('F', 'UAirship.resetBadge', arguments)
     callNative(callback, "resetBadge")
   },
 
@@ -375,7 +375,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setNotificationTypes: function(types, callback) {
-    argscheck.checkArgs('nF', 'UAirship.setNotificationTypes', arguments);
+    argscheck.checkArgs('nF', 'UAirship.setNotificationTypes', arguments)
     callNative(callback, "setNotificationTypes", [types])
   },
 
@@ -394,7 +394,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   clearNotifications: function(callback) {
-    argscheck.checkArgs('F', 'UAirship.clearNotifications', arguments);
+    argscheck.checkArgs('F', 'UAirship.clearNotifications', arguments)
     callNative(callback, "clearNotifications")
   },
 
@@ -404,7 +404,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   isSoundEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isSoundEnabled', arguments);
+    argscheck.checkArgs('f', 'UAirship.isSoundEnabled', arguments)
     callNative(callback, "isSoundEnabled")
   },
 
@@ -415,8 +415,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setSoundEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setSoundEnabled', arguments);
-    callNative(callback, "setSoundEnabled", [enabled])
+    argscheck.checkArgs('*F', 'UAirship.setSoundEnabled', arguments)
+    callNative(callback, "setSoundEnabled", [!!enabled])
   },
 
   /**
@@ -425,7 +425,7 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   isVibrateEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isVibrateEnabled', arguments);
+    argscheck.checkArgs('f', 'UAirship.isVibrateEnabled', arguments)
     callNative(callback, "isVibrateEnabled")
   },
 
@@ -436,8 +436,8 @@ var plugin = {
    * @param {Function} callback The function to call on completion.
    */
   setVibrateEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setVibrateEnabled', arguments);
-    callNative(callback, "setVibrateEnabled", [enabled])
+    argscheck.checkArgs('*F', 'UAirship.setVibrateEnabled', arguments)
+    callNative(callback, "setVibrateEnabled", [!!enabled])
   }
 }
 
