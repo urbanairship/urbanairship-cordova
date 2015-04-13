@@ -91,10 +91,10 @@
             $tag.remove()
 
             // Remove the tag from the current list of tags
-            UAirship.getTags(function(obj) {
+            UAirship.getTags(function(tags) {
               console.log("Removing tag: " + tag)
-              obj.tags.splice(obj.tags.indexOf(tag), 1)
-              UAirship.setTags(obj.tags)
+              tags.splice(tags.indexOf(tag), 1)
+              UAirship.setTags(tags)
             })
           })
         }
@@ -146,8 +146,8 @@
           }
         })
 
-        UAirship.getTags(function(obj) {
-          obj.tags.forEach(function(tag) {
+        UAirship.getTags(function(tags) {
+          tags.forEach(function(tag) {
             addTag(tag)
           })
         })
@@ -189,12 +189,12 @@
           var tag = $("#addTagField").val()
           console.log("Adding new tag: " + tag)
 
-          UAirship.getTags(function(obj) {
-            if(obj.tags.indexOf(tag) == -1) {
+          UAirship.getTags(function(tags) {
+            if(tags.indexOf(tag) == -1) {
               console.log("Valid tag: " + tag)
-              obj.tags = obj.tags.concat([tag])
+              tags = tags.concat([tag])
 
-              UAirship.setTags(obj.tags, function() {
+              UAirship.setTags(tags, function() {
                 addTag(tag)
                 $("#addTagField").val('')
               })

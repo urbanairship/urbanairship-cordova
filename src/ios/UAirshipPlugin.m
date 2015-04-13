@@ -394,9 +394,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 - (void)getTags:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args){
-        NSArray *tags = [UAirship push].tags? : [NSArray array];
-        NSDictionary *returnDictionary = [NSDictionary dictionaryWithObjectsAndKeys:tags, @"tags", nil];
-        return returnDictionary;
+        return [UAirship push].tags ?: [NSArray array];
     }];
 }
 

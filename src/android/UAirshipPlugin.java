@@ -471,11 +471,8 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     void getTags(JSONArray data, CallbackContext callbackContext) throws JSONException {
         Set<String> tags = UAirship.shared().getPushManager().getTags();
-        JSONObject returnObject = new JSONObject();
-        returnObject.put("tags", new JSONArray(tags));
-
         Logger.debug("Returning tags");
-        callbackContext.success(returnObject);
+        callbackContext.success( new JSONArray(tags));
     }
 
     /**
