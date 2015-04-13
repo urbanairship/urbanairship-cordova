@@ -53,10 +53,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 - (void)pluginInitialize {
     UA_LINFO("Initializing UrbanAirship cordova plugin.");
-    [self takeOff];
-}
 
-- (void)takeOff {
     NSDictionary *settings = self.commandDelegate.settings;
 
     UAConfig *config = [UAConfig config];
@@ -82,11 +79,16 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     [[UAirship shared].locationService startReportingSignificantLocationChanges];
 }
 
+- (void)dealloc {
+    [UAirship push].pushNotificationDelegate = nil;
+    [UAirship push].registrationDelegate = nil;
+}
+
 - (CDVPluginResult *)pluginResultForValue:(id)value {
     CDVPluginResult *result;
 
     /*
-     NSSString -> String
+     NSString -> String
      NSNumber --> (Integer | Double)
      NSArray --> Array
      NSDictionary --> Object
@@ -182,33 +184,15 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     self.pushCallbackID = command.callbackId;
 }
 
-- (void)registerForNotificationTypes:(CDVInvokedUrlCommand*)command {
-    UA_LDEBUG(@"Register for notification types");
-    
-    CDVPluginResult* pluginResult = nil;
-    
-    if (command.arguments.count >= 1) {
-        id obj = [command.arguments objectAtIndex:0];
-        
-        if ([obj isKindOfClass:[NSNumber class]]) {
-            UIUserNotificationType bitmask = [obj intValue];
-            UALOG(@"bitmask value: %d", [obj intValue]);
-            
-            [UAirship push].userNotificationTypes = bitmask;
-            [[UAirship push] updateRegistration];
-            
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        } else {
-            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-        }
-        
-    } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    }
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-}
+- (void)setNotificationTypes:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args){
+        UIUserNotificationType types = [[args objectAtIndex:0] intValue];
 
-//general enablement
+        UA_LDEBUG(@"Setting notification types: %ld", (long)types);
+        [UAirship push].userNotificationTypes = types;
+        [[UAirship push] updateRegistration];
+    }];
+}
 
 - (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args){
@@ -343,14 +327,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 - (void)getQuietTime:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args){
         NSDictionary *quietTimeDictionary = [UAirship push].quietTime;
-        //initialize the returned dictionary with zero values
-        NSNumber *zero = [NSNumber numberWithInt:0];
-        NSDictionary *returnDictionary = [NSDictionary dictionaryWithObjectsAndKeys:zero,@"startHour",
-                                          zero,@"startMinute",
-                                          zero,@"endHour",
-                                          zero,@"endMinute",nil];
 
-        //this can be nil if quiet time is not set
         if (quietTimeDictionary) {
 
             NSString *start = [quietTimeDictionary objectForKey:@"start"];
@@ -363,24 +340,23 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
             NSDate *startDate = [df dateFromString:start];
             NSDate *endDate = [df dateFromString:end];
 
-            //these will be nil if the dateformatter can't make sense of either string
+            // these will be nil if the dateformatter can't make sense of either string
             if (startDate && endDate) {
-
                 NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-
                 NSDateComponents *startComponents = [gregorian components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:startDate];
                 NSDateComponents *endComponents = [gregorian components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:endDate];
 
-                NSNumber *startHr = [NSNumber numberWithInt:startComponents.hour];
-                NSNumber *startMin = [NSNumber numberWithInt:startComponents.minute];
-                NSNumber *endHr = [NSNumber numberWithInt:endComponents.hour];
-                NSNumber *endMin = [NSNumber numberWithInt:endComponents.minute];
-
-                returnDictionary = [NSDictionary dictionaryWithObjectsAndKeys:startHr,@"startHour",startMin,@"startMinute",
-                                    endHr,@"endHour",endMin,@"endMinute",nil];
+                return @{ @"startHour": @(startComponents.hour),
+                          @"startMinute": @(startComponents.minute),
+                          @"endHour": @(endComponents.hour),
+                          @"endMinute": @(endComponents.minute) };
             }
         }
-        return returnDictionary;
+
+        return @{ @"startHour": @(0),
+                  @"startMinute": @(0),
+                  @"endHour": @(0),
+                  @"endMinute": @(0) };
     }];
 }
 
@@ -585,25 +561,6 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
         [result setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:result callbackId:self.pushCallbackID];
-    }
-}
-
-#pragma mark Other stuff
-
-- (void)dealloc {
-    [UAirship push].pushNotificationDelegate = nil;
-    [UAirship push].registrationDelegate = nil;
-}
-
-- (void)failIfSimulator {
-    if ([[[UIDevice currentDevice] model] compare:@"iPhone Simulator"] == NSOrderedSame) {
-        UIAlertView *someError = [[UIAlertView alloc] initWithTitle:@"Notice"
-                                                            message:@"You will not be able to recieve push notifications in the simulator."
-                                                           delegate:self
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
-        
-        [someError show];
     }
 }
 

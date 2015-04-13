@@ -61,7 +61,6 @@
           document.addEventListener("urbanairship.push", onPushReceived, false)
         }, false)
 
-
         // Handle pause
         document.addEventListener("pause", function() {
           console.log("Device pause!")
@@ -70,11 +69,6 @@
           document.removeEventListener("urbanairship.registration", onRegistration, false)
           document.removeEventListener("urbanairship.push", onPushReceived, false)
         }, false)
-
-        // Register for notification types
-        UAirship.registerForNotificationTypes(UAirship.notificationType.badge |
-          UAirship.notificationType.sound |
-          UAirship.notificationType.alert)
 
         // Initiate the UI
         initiateUI()

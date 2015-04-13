@@ -179,9 +179,9 @@ var plugin = {
     callNative(callback, "resetBadge")
   },
 
-  registerForNotificationTypes: function(types, callback) {
-    argscheck.checkArgs('nF', 'UAirship.registerForNotificationTypes', arguments);
-    callNative(callback, "registerForNotificationTypes", [types])
+  setNotificationTypes: function(types, callback) {
+    argscheck.checkArgs('nF', 'UAirship.setNotificationTypes', arguments);
+    callNative(callback, "setNotificationTypes", [types])
   },
 
   notificationType: {
