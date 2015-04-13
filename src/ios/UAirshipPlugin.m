@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2015 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -7,11 +7,11 @@
  1. Redistributions of source code must retain the above copyright notice, this
  list of conditions and the following disclaimer.
 
- 2. Redistributions in binaryform must reproduce the above copyright notice,
+ 2. Redistributions in binary form must reproduce the above copyright notice,
  this list of conditions and the following disclaimer in the documentation
- and/or other materials provided withthe distribution.
+ and/or other materials provided with the distribution.
 
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC``AS IS'' AND ANY EXPRESS OR
+ THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
  EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
@@ -43,6 +43,7 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 
 @implementation UAirshipPlugin
 
+// Config keys
 NSString *const ProductionAppKeyConfigKey = @"com.urbanairship.production_app_key";
 NSString *const ProductionAppSecretConfigKey = @"com.urbanairship.production_app_secret";
 NSString *const DevelopmentAppKeyConfigKey = @"com.urbanairship.development_app_key";
@@ -62,6 +63,9 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     config.developmentAppKey = settings[DevelopmentAppKeyConfigKey];
     config.developmentAppSecret = settings[DevelopmentAppSecretConfigKey];
     config.inProduction = [settings[ProductionConfigKey] boolValue];
+    config.developmentLogLevel = UALogLevelTrace;
+    config.productionLogLevel = UALogLevelTrace;
+
 
     // Create Airship singleton that's used to talk to Urban Airship servers.
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
@@ -84,6 +88,12 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     [UAirship push].registrationDelegate = nil;
 }
 
+/**
+ * Helper method to create a plugin result with the specified value.
+ *
+ * @param value The result's value.
+ * @returns A CDVPluginResult with specified value.
+ */
 - (CDVPluginResult *)pluginResultForValue:(id)value {
     CDVPluginResult *result;
 
@@ -120,6 +130,13 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     return result;
 }
 
+/**
+ * Helper method to perform a cordova command with a return type. The command will
+ * automatically be dispatched on the main queue.
+ *
+ * @param command The cordova command.
+ * @param block The UACordovaCallbackBlock to execute.
+ */
 - (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command withBlock:(UACordovaCallbackBlock)block {
     dispatch_async(dispatch_get_main_queue(), ^{
         //execute the block. the return value should be an obj-c object holding what we want to pass back to cordova.
@@ -130,6 +147,13 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     });
 }
 
+/**
+ * Helper method to perform a cordova command without a return type. The command will
+ * automatically be dispatched on the main queue.
+ *
+ * @param command The cordova command.
+ * @param block The UACordovaCallbackBlock to execute.
+ */
 - (void)performCallbackWithCommand:(CDVInvokedUrlCommand*)command withVoidBlock:(UACordovaVoidCallbackBlock)block {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args) {
         if (block) {
@@ -140,6 +164,12 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
+/**
+ * Helper method to parse the alert from a notification.
+ *
+ * @param userInfo The notification.
+ * @return The notification's alert.
+ */
 - (NSString *)alertForUserInfo:(NSDictionary *)userInfo {
     NSString *alert = @"";
 
@@ -154,6 +184,12 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     return alert;
 }
 
+/**
+ * Helper method to parse the extras from a notification.
+ *
+ * @param userInfo The notification.
+ * @return The notification's extras.
+ */
 - (NSMutableDictionary *)extrasForUserInfo:(NSDictionary *)userInfo {
 
     // remove extraneous key/value pairs
@@ -173,8 +209,6 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 }
 
 #pragma mark Phonegap bridge
-
-//registration
 
 - (void)registerChannelListener:(CDVInvokedUrlCommand*)command {
     self.registrationCallbackID = command.callbackId;
@@ -238,8 +272,6 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
         return [NSNumber numberWithBool:enabled];
     }];
 }
-
-//getters
 
 - (void)isUserNotificationsEnabled:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args){
@@ -387,8 +419,6 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
-//setters
-
 - (void)setTags:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         NSMutableArray *tags = [NSMutableArray arrayWithArray:[args objectAtIndex:0]];
@@ -461,16 +491,12 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     }];
 }
 
-//reset badge
-
 - (void)resetBadge:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         [[UAirship push] resetBadge];
         [[UAirship push] updateRegistration];
     }];
 }
-
-//location recording
 
 - (void)recordCurrentLocation:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
@@ -500,6 +526,13 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
                     }];
 }
 
+/**
+ * Helper method to create an error message from an action result.
+ *
+ * @param actionName The name of the action.
+ * @param actionResult The action result.
+ * @return An error message, or nil if no error was found.
+ */
 - (NSString *)errorMessageForAction:(NSString *)actionName result:(UAActionResult *)actionResult {
     switch (actionResult.status) {
         case UAActionStatusActionNotFound:
@@ -519,6 +552,7 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
 
 #pragma mark UARegistrationDelegate
+
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
     UA_LINFO(@"Channel registration successful %@.", channelID);
 
