@@ -16,7 +16,7 @@ may need to be uninstalled manually before updating to the new version.
 To enable or disable push, use `setUserNotificationsEnabled` instead of `enablePush` or `disablePush`. The app will
 continue to not prompt for push until user notifications is enabled. `registerNotificationTypes` has been renamed to
 `setNotificationTypes`. Its only required to be called if the app only wants to register for specific types of notifications.
-If its not set, the app will register for all types (alert, sound, and vibrate).
+If it is not set, the app will register for all types - alert, sound, and vibrate.
 
 The method `getPushID` has been replaced with `getChannelID`. It now returns the channel ID for both Android and iOS.
 
@@ -26,6 +26,20 @@ clears the notification on first access, instead it takes a flag as the first pa
 Example:
 
 	UAirship.getLaunchNotification(true, callback)
+
+
+Fetching tags no longer returns an object with a tag array, instead it now returns just the tags.
+
+Example:
+
+	UAirship.getTags(function(tags) {
+		tags.forEach(function(tag) {
+			console.log("tag: " + tag);
+		})
+	})
+
+
+
 
 ### Location Changes:
 
