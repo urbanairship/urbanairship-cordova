@@ -1,4 +1,22 @@
 =================================
+Version 3.0.0 - April 14, 2015
+=================================
+ - Updated Android and iOS Urban Airship SDK to 6.0.1
+ - Removed the cordova device plugin dependency
+ - Renamed the plugin ID to "com.urbanairship.cordova" from "com.urbanairship.phonegap.PushNotification"
+ - Renamed the window accessor to "UAirship" from "PushNotification"
+ - Added method to get the channel ID on both Android and iOS
+ - Updated the API to remove any enable/disable methods
+ - Updated getTags to return an array of tags instead of an object
+ - Support for running Urban Airship actions
+ - Support for disabling/enabling analytics
+ - Support for associating and disassociating a channel to a named user
+ - iOS: Added method to get current badge number (iOS only)
+ - iOS: Added config option to not clear badge on launch (iOS only)
+ - Android: Added config to set the notification icon and accent color
+ - Android: Plugin now depends on "android.support.v4" and "com.google.play.services"
+
+=================================
 Version 2.8.1 - February 12, 2015
 =================================
  - Revert min sdk version back to 3.4.0
