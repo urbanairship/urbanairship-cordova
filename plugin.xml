@@ -143,7 +143,14 @@
     <platform name="ios">
         
         <hook type="after_prepare" src="scripts/copy_resources.js" />
-        
+
+         <!-- Background push -->
+        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+            <array>
+                <string>remote-notification</string>
+            </array>
+        </config-file>
+
         <config-file target="config.xml" parent="/widget">
              <feature name="UAirship">
                 <param name="ios-package" value="UAirshipPlugin" />
