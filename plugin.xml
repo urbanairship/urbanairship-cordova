@@ -12,6 +12,8 @@
     
     <engines>
       <engine name="cordova" version=">=3.4.0" />
+        <engine name="cordova-android" version=">=4" />
+        <engine name="cordova-plugman" version=">=4.2.0" />
     </engines>
 
     <js-module src="www/UrbanAirship.js" name="UrbanAirship">
@@ -21,8 +23,6 @@
     <!-- android -->
     <platform name="android">
 
-        <hook type="after_prepare" src="scripts/remove_files.js" />
-       
         <config-file target="res/xml/config.xml" parent="/widget">
             <feature name="UAirship">
                 <param name="android-package" value="com.urbanairship.cordova.UAirshipPlugin"/>
@@ -130,13 +130,8 @@
         <source-file src="src/android/UAirshipPlugin.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/IntentReceiver.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaAutopilot.java" target-dir="src/com/urbanairship/cordova" />
-
-        <!-- UA SDK -->
-        <framework src="src/android/urbanairship-lib" custom="true" />
-
-        <dependency id="android.support.v4" />
-        <dependency id="com.google.play.services" />
-
+        <source-file src="src/android/aars/urbanairship-lib-6.0.1.aar" target-dir="aars" />
+        <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
     </platform>
     
     <!-- ios -->
