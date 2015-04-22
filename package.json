@@ -1,0 +1,43 @@
+{
+  "name": "urbanairship-cordova",
+  "version": "3.1.0",
+  "description": "Urban Airship Cordova plugin",
+  "cordova": {
+    "id": "com.urbanairship.cordova",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urbanairship/phonegap-ua-push.git"
+  },
+  "keywords": [
+    "cordova",
+    "urbanairship",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=3.4.0"
+    },
+    {
+      "name": "cordova-android",
+      "version": ">=4"
+    },
+    {
+      "name": "cordova-plugman",
+      "version": ">=4.2.0"
+    }
+  ],
+  "author": "Urban Airship",
+  "license": "Apache 2.0",
+  "bugs": {
+    "email": "support@urbanairship.com"
+  },
+  "homepage": "https://github.com/urbanairship/phonegap-ua-push#readme"
+}

@@ -24,7 +24,7 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 
 1. Install this plugin using PhoneGap/Cordova CLI:
 
-        cordova plugin add https://github.com/urbanairship/phonegap-ua-push.git
+        cordova plugin add urbanairship-cordova
 
 2. Modify the config.xml file to contain (replacing with your configuration settings):
 
