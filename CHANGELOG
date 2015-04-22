@@ -1,4 +1,9 @@
 =================================
+Version 3.1.1 - April 22, 2015
+=================================
+ - Renamed plugin ID to urbanairship-cordova to better match the IDs for NPM
+
+=================================
 Version 3.1.0 - April 22, 2015
 =================================
  - Updated Android plugin to support cordova-android 4.0.0
