@@ -1,4 +1,9 @@
 =================================
+Version 3.1.0 - April 22, 2015
+=================================
+ - Updated Android plugin to support cordova-android 4.0.0
+
+=================================
 Version 3.0.0 - April 14, 2015
 =================================
  - Updated Android and iOS Urban Airship SDK to 6.0.1

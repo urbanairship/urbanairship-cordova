@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-       android:shape="rectangle">
-    <solid android:color="#ffffff"/>
-    <corners android:radius="@dimen/ua_iam_banner_corner_radius"/>
-</shape><!-- From: file:/Users/build/workspace/android-library/UrbanAirship/src/main/res/drawable-v21/ua_iam_background.xml -->
