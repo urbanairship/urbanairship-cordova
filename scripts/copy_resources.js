@@ -18,7 +18,7 @@ module.exports = function (context) {
     ///////////////////////////
         ios : [
             {
-                "plugins/com.urbanairship.cordova/src/ios/Airship/UI/Default/Common/Resources": "platforms/ios/" + projName
+                "plugins/urbanairship-cordova/src/ios/Airship/UI/Default/Common/Resources": "platforms/ios/" + projName
             }
         ]
     };
