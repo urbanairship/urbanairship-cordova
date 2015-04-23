@@ -1,4 +1,9 @@
 =================================
+Version 3.1.2 - April 23, 2015
+=================================
+ - Fixed iOS build error
+
+=================================
 Version 3.1.1 - April 22, 2015
 =================================
  - Renamed plugin ID to urbanairship-cordova to better match the IDs for NPM
