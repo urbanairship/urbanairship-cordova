@@ -2,3 +2,4 @@
 build
 *.zip
 urbanairship-phonegap-*
+npm-debug.log
