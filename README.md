@@ -542,3 +542,5 @@ This event is triggered when your application receives a registration response f
         } 
     });
     
+
+### Retriving the message list
