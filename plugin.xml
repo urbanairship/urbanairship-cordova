@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="3.1.2">
+    version="3.1.3">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -289,7 +289,7 @@
         <header-file src="src/ios/Airship/UI/Default/Push/Classes/Shared/UAPushSettingsViewController.h" />
 
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.0.1.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.0.2.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
