@@ -28,6 +28,7 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 
 2. Modify the config.xml file to contain (replacing with your configuration settings):
 
+```html
         <!-- Urban Airship app credentials -->
         <preference name="com.urbanairship.production_app_key" value="Your Production App Key" />
         <preference name="com.urbanairship.production_app_secret" value="Your Production App Secret" />
@@ -53,13 +54,14 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 
         <!-- Clear the iOS badge on launch -->
         <preference name="com.urbanairship.clear_badge_onlaunch" value="true | false" />
-
+```
 
 3. If your app supports Android API < 14, then you have to manually instrument any Android Activities to have proper analytics.
 See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required).
 
 ### Basic Example
     
+```javascript
     // Register for any Urban Airship events
     document.addEventListener("urbanairship.registration", function (event) {
         if (event.error) {
@@ -93,6 +95,7 @@ See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android
     UAirship.setUserNotificationsEnabled(true, function (enabled) {
         console.log("User notifications are enabled! Fire away!")
     })
+```
 
 ## Sample
 
