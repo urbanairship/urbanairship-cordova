@@ -52,6 +52,9 @@ NSString *const ProductionConfigKey = @"com.urbanairship.in_production";
 NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onlaunch";
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
 
+NSString *const EnableAnalyticsOnLaunchConfigKey = @"com.urbanairship.enable_analytics_onlaunch";
+NSString *const EnableLocationOnLaunchConfigKey = @"com.urbanairship.enable_location_onlaunch";
+
 - (void)pluginInitialize {
     UA_LINFO("Initializing UrbanAirship cordova plugin.");
 
@@ -72,6 +75,9 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
     [UAirship takeOff:config];
 
     [UAirship push].userPushNotificationsEnabledByDefault = [settings[EnablePushOnLaunchConfigKey] boolValue];
+	
+	// Analytics
+	[UAirship shared].analytics.enabled = [settings[EnableAnalyticsOnLaunchConfigKey] boolValue];
 
     if (settings[ClearBadgeOnLaunchConfigKey] == nil || [settings[ClearBadgeOnLaunchConfigKey] boolValue]) {
         [[UAirship push] resetBadge];
@@ -79,8 +85,13 @@ NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onl
 
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
+	
+	// Enable or disable Location Services on Launch
+	[UALocationService setAirshipLocationServiceEnabled:[settings[EnableLocationOnLaunchConfigKey] boolValue]];
 
-    [[UAirship shared].locationService startReportingSignificantLocationChanges];
+	if( [settings[EnableLocationOnLaunchConfigKey] boolValue] ) {
+    	[[UAirship shared].locationService startReportingSignificantLocationChanges];
+	}
 }
 
 - (void)dealloc {
