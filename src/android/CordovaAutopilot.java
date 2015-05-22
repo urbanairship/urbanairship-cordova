@@ -53,10 +53,12 @@ public class CordovaAutopilot extends Autopilot {
     static final String IN_PRODUCTION = "com.urbanairship.in_production";
     static final String GCM_SENDER = "com.urbanairship.gcm_sender";
     static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
+	static final String ENABLE_LOCATION_ONLAUNCH = "com.urbanairship.enable_location_onlaunch";
     static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
     static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
-	static final String ENABLE_ANALYTICS_ONLAUNCH = "com.urbanairship.enable_analytics_onlaunch";
-	static final String ENABLE_LOCATION_ONLAUNCH = "com.urbanairship.enable_location_onlaunch";
+	
+	// Enable/Disable features
+	static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
 
     private PluginConfig pluginConfig;
 
@@ -72,6 +74,9 @@ public class CordovaAutopilot extends Autopilot {
         options.developmentAppSecret = pluginConfig.getString(DEVELOPMENT_SECRET, options.developmentAppSecret);
         options.gcmSender = pluginConfig.getString(GCM_SENDER, options.gcmSender);
         options.inProduction = pluginConfig.getBoolean(IN_PRODUCTION, options.inProduction);
+		
+		// Analytics. Enabled by Default
+		options.analyticsEnabled = pluginConfig.getBoolean(ENABLE_ANALYTICS, true);
 
         // Set the minSDK to 14.  It just controls logging error messages for different platform features.
         options.minSdkVersion = 14;
@@ -87,12 +92,6 @@ public class CordovaAutopilot extends Autopilot {
         final boolean enablePushOnLaunch = pluginConfig.getBoolean(ENABLE_PUSH_ONLAUNCH, false);
         if (enablePushOnLaunch) {
             airship.getPushManager().setUserNotificationsEnabled(enablePushOnLaunch);
-        }
-		
-		// Enable or disable Analytics on Launch
-		final boolean enableAnalyticsOnLaunch = pluginConfig.getBoolean(ENABLE_ANALYTICS_ONLAUNCH, false);
-        if (enableAnalyticsOnLaunch) {
-            airship.getAnalytics().setEnabled(enableAnalyticsOnLaunch);
         }
 		
 		// Enable or disable Location Services on Launch

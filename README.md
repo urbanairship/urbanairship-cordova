@@ -45,8 +45,8 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
         <!-- Enable push when the application launches -->
         <preference name="com.urbanairship.enable_push_onlaunch" value="true | false" />
 		
-		<!-- Enable Analytics when the application launches -->
-        <preference name="com.urbanairship.enable_analytics_onlaunch" value="true | false" />
+		<!-- Disable Analytics when the application launches -->
+        <preference name="com.urbanairship.enable_analytics" value="true | false" />
 		
 		<!-- Enable Location Services when the application launches -->
         <preference name="com.urbanairship.enable_location_onlaunch" value="true | false" />

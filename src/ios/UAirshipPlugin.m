@@ -51,9 +51,9 @@ NSString *const DevelopmentAppSecretConfigKey = @"com.urbanairship.development_a
 NSString *const ProductionConfigKey = @"com.urbanairship.in_production";
 NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onlaunch";
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
-
-NSString *const EnableAnalyticsOnLaunchConfigKey = @"com.urbanairship.enable_analytics_onlaunch";
 NSString *const EnableLocationOnLaunchConfigKey = @"com.urbanairship.enable_location_onlaunch";
+
+NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 
 - (void)pluginInitialize {
     UA_LINFO("Initializing UrbanAirship cordova plugin.");
@@ -68,16 +68,17 @@ NSString *const EnableLocationOnLaunchConfigKey = @"com.urbanairship.enable_loca
     config.inProduction = [settings[ProductionConfigKey] boolValue];
     config.developmentLogLevel = UALogLevelTrace;
     config.productionLogLevel = UALogLevelTrace;
-
+	
+	// Analytics. Enabled by Default
+	if( settings[EnableAnalyticsConfigKey] != nil ) {
+		config.analyticsEnabled = [settings[EnableAnalyticsConfigKey] boolValue];
+	}
 
     // Create Airship singleton that's used to talk to Urban Airship servers.
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:config];
 
     [UAirship push].userPushNotificationsEnabledByDefault = [settings[EnablePushOnLaunchConfigKey] boolValue];
-	
-	// Analytics
-	[UAirship shared].analytics.enabled = [settings[EnableAnalyticsOnLaunchConfigKey] boolValue];
 
     if (settings[ClearBadgeOnLaunchConfigKey] == nil || [settings[ClearBadgeOnLaunchConfigKey] boolValue]) {
         [[UAirship push] resetBadge];
@@ -86,12 +87,14 @@ NSString *const EnableLocationOnLaunchConfigKey = @"com.urbanairship.enable_loca
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
 	
-	// Enable or disable Location Services on Launch
-	[UALocationService setAirshipLocationServiceEnabled:[settings[EnableLocationOnLaunchConfigKey] boolValue]];
-
-	if( [settings[EnableLocationOnLaunchConfigKey] boolValue] ) {
-    	[[UAirship shared].locationService startReportingSignificantLocationChanges];
+	// Enable Location Service. Disabled by Default
+	if( settings[EnableLocationOnLaunchConfigKey] ) {
+		[UALocationService setAirshipLocationServiceEnabled:[settings[EnableLocationOnLaunchConfigKey] boolValue]];
 	}
+
+	if ([UALocationService airshipLocationServiceEnabled]) {
+   		[[UAirship shared].locationService startReportingSignificantLocationChanges];
+    }
 }
 
 - (void)dealloc {
