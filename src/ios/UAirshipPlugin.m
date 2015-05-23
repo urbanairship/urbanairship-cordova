@@ -88,9 +88,9 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     [UAirship push].registrationDelegate = self;
 	
     // Enable Location Service. Disabled by Default
-	if( settings[EnableLocationOnLaunchConfigKey] ) {
+    if( settings[EnableLocationOnLaunchConfigKey] ) {
         [UALocationService setAirshipLocationServiceEnabled:[settings[EnableLocationOnLaunchConfigKey] boolValue]];
-	}
+    }
     
     if ([UALocationService airshipLocationServiceEnabled]) {
         [[UAirship shared].locationService startReportingSignificantLocationChanges];
