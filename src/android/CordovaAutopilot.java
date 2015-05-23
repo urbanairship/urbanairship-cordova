@@ -94,7 +94,7 @@ public class CordovaAutopilot extends Autopilot {
             airship.getPushManager().setUserNotificationsEnabled(enablePushOnLaunch);
         }
 
-		// Enable or disable Location Services on Launch
+        // Enable or disable Location Services on Launch
         final boolean enableLocationOnLaunch = pluginConfig.getBoolean(ENABLE_LOCATION_ONLAUNCH, false);
         if (enableLocationOnLaunch) {
             airship.getLocationManager().setLocationUpdatesEnabled(enableLocationOnLaunch);
