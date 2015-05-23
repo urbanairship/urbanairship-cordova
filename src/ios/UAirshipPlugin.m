@@ -68,11 +68,11 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     config.inProduction = [settings[ProductionConfigKey] boolValue];
     config.developmentLogLevel = UALogLevelTrace;
     config.productionLogLevel = UALogLevelTrace;
-	
-	// Analytics. Enabled by Default
-	if( settings[EnableAnalyticsConfigKey] != nil ) {
-		config.analyticsEnabled = [settings[EnableAnalyticsConfigKey] boolValue];
-	}
+    
+    // Analytics. Enabled by Default
+    if( settings[EnableAnalyticsConfigKey] != nil ) {
+        config.analyticsEnabled = [settings[EnableAnalyticsConfigKey] boolValue];
+    }
 
     // Create Airship singleton that's used to talk to Urban Airship servers.
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
@@ -89,11 +89,11 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 	
 	// Enable Location Service. Disabled by Default
 	if( settings[EnableLocationOnLaunchConfigKey] ) {
-		[UALocationService setAirshipLocationServiceEnabled:[settings[EnableLocationOnLaunchConfigKey] boolValue]];
+        [UALocationService setAirshipLocationServiceEnabled:[settings[EnableLocationOnLaunchConfigKey] boolValue]];
 	}
-
-	if ([UALocationService airshipLocationServiceEnabled]) {
-   		[[UAirship shared].locationService startReportingSignificantLocationChanges];
+    
+    if ([UALocationService airshipLocationServiceEnabled]) {
+        [[UAirship shared].locationService startReportingSignificantLocationChanges];
     }
 }
 
