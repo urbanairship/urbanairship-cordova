@@ -56,6 +56,9 @@ public class CordovaAutopilot extends Autopilot {
     static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
     static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
 
+    // Enable/Disable features
+    static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
+
     private PluginConfig pluginConfig;
 
     @Override
@@ -70,6 +73,9 @@ public class CordovaAutopilot extends Autopilot {
         options.developmentAppSecret = pluginConfig.getString(DEVELOPMENT_SECRET, options.developmentAppSecret);
         options.gcmSender = pluginConfig.getString(GCM_SENDER, options.gcmSender);
         options.inProduction = pluginConfig.getBoolean(IN_PRODUCTION, options.inProduction);
+
+        // Analytics. Enabled by Default
+        options.analyticsEnabled = pluginConfig.getBoolean(ENABLE_ANALYTICS, true);
 
         // Set the minSDK to 14.  It just controls logging error messages for different platform features.
         options.minSdkVersion = 14;

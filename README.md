@@ -44,6 +44,9 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 
         <!-- Enable push when the application launches -->
         <preference name="com.urbanairship.enable_push_onlaunch" value="true | false" />
+		
+        <!-- Disable Analytics when the application launches -->
+        <preference name="com.urbanairship.enable_analytics" value="true | false" />
 
         <!-- Override the Android notification icon -->
         <preference name="com.urbanairship.notification_icon" value="ic_notification" />
