@@ -51,7 +51,6 @@ NSString *const DevelopmentAppSecretConfigKey = @"com.urbanairship.development_a
 NSString *const ProductionConfigKey = @"com.urbanairship.in_production";
 NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onlaunch";
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
-NSString *const EnableLocationOnLaunchConfigKey = @"com.urbanairship.enable_location_onlaunch";
 
 NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 
@@ -86,11 +85,6 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
-	
-    // Enable Location Service. Disabled by Default
-    if( settings[EnableLocationOnLaunchConfigKey] ) {
-        [UALocationService setAirshipLocationServiceEnabled:[settings[EnableLocationOnLaunchConfigKey] boolValue]];
-    }
     
     if ([UALocationService airshipLocationServiceEnabled]) {
         [[UAirship shared].locationService startReportingSignificantLocationChanges];

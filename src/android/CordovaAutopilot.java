@@ -53,7 +53,6 @@ public class CordovaAutopilot extends Autopilot {
     static final String IN_PRODUCTION = "com.urbanairship.in_production";
     static final String GCM_SENDER = "com.urbanairship.gcm_sender";
     static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
-    static final String ENABLE_LOCATION_ONLAUNCH = "com.urbanairship.enable_location_onlaunch";
     static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
     static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
 
@@ -92,12 +91,6 @@ public class CordovaAutopilot extends Autopilot {
         final boolean enablePushOnLaunch = pluginConfig.getBoolean(ENABLE_PUSH_ONLAUNCH, false);
         if (enablePushOnLaunch) {
             airship.getPushManager().setUserNotificationsEnabled(enablePushOnLaunch);
-        }
-
-        // Enable or disable Location Services on Launch
-        final boolean enableLocationOnLaunch = pluginConfig.getBoolean(ENABLE_LOCATION_ONLAUNCH, false);
-        if (enableLocationOnLaunch) {
-            airship.getLocationManager().setLocationUpdatesEnabled(enableLocationOnLaunch);
         }
 
         // Customize the notification factory
