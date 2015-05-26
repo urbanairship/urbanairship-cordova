@@ -69,7 +69,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     config.productionLogLevel = UALogLevelTrace;
     
     // Analytics. Enabled by Default
-    if(settings[EnableAnalyticsConfigKey] != nil) {
+    if (settings[EnableAnalyticsConfigKey] != nil) {
         config.analyticsEnabled = [settings[EnableAnalyticsConfigKey] boolValue];
     }
 
