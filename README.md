@@ -45,7 +45,8 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
         <!-- Enable push when the application launches -->
         <preference name="com.urbanairship.enable_push_onlaunch" value="true | false" />
 		
-        <!-- Disable Analytics when the application launches -->
+        <!-- Enable Analytics when the application launches -->
+        <!-- Warning: Features that depend on analytics being enabled may not work properly if analytics is disabled (reports, location segmentation, region triggers, push to local time). -->
         <preference name="com.urbanairship.enable_analytics" value="true | false" />
 
         <!-- Override the Android notification icon -->
