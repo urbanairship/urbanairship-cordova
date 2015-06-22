@@ -130,7 +130,8 @@
         <source-file src="src/android/UAirshipPlugin.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/IntentReceiver.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaAutopilot.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/aars/urbanairship-lib-6.0.2.aar" target-dir="aars" />
+        <source-file src="src/android/aars/urbanairship-lib-6.1.0.aar" target-dir="aars" />
+
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
     </platform>
     
@@ -157,7 +158,6 @@
         <source-file src="src/ios/UAirshipPlugin.m" />
 
         <!-- Airship headers -->
-        <header-file src="src/ios/Airship/AirshipLib.h" />
         <header-file src="src/ios/Airship/Common/JS/UANativeBridge.h" />
         <header-file src="src/ios/Airship/Common/LandingPages/UALandingPageAction.h" />
         <header-file src="src/ios/Airship/Common/NSJSONSerialization+UAAdditions.h" />
@@ -176,12 +176,11 @@
         <header-file src="src/ios/Airship/Common/UAAggregateActionResult.h" />
         <header-file src="src/ios/Airship/Common/UAAnalytics.h" />
         <header-file src="src/ios/Airship/Common/UAAnalyticsDBManager.h" />
-        <header-file src="src/ios/Airship/Common/UAAppDelegate.h" />
-        <header-file src="src/ios/Airship/Common/UAAppDelegateProxy.h" />
         <header-file src="src/ios/Airship/Common/UAApplicationMetrics.h" />
         <header-file src="src/ios/Airship/Common/UABaseLocationProvider.h" />
         <header-file src="src/ios/Airship/Common/UABespokeCloseView.h" />
         <header-file src="src/ios/Airship/Common/UABeveledLoadingIndicator.h" />
+        <header-file src="src/ios/Airship/Common/UAChannelCapture.h" />
         <header-file src="src/ios/Airship/Common/UACircularRegion.h" />
         <header-file src="src/ios/Airship/Common/UACloseWindowAction.h" />
         <header-file src="src/ios/Airship/Common/UAColorUtils.h" />
@@ -213,7 +212,6 @@
         <header-file src="src/ios/Airship/Common/UAInAppResolutionEvent.h" />
         <header-file src="src/ios/Airship/Common/UAIncomingInAppMessageAction.h" />
         <header-file src="src/ios/Airship/Common/UAIncomingPushAction.h" />
-        <header-file src="src/ios/Airship/Common/UAIncomingRichPushAction.h" />
         <header-file src="src/ios/Airship/Common/UAInteractiveNotificationEvent.h" />
         <header-file src="src/ios/Airship/Common/UAirship.h" />
         <header-file src="src/ios/Airship/Common/UAJavaScriptDelegate.h" />
@@ -226,6 +224,8 @@
         <header-file src="src/ios/Airship/Common/UALocationService.h" />
         <header-file src="src/ios/Airship/Common/UAModifyTagsAction.h" />
         <header-file src="src/ios/Airship/Common/UAOpenExternalURLAction.h" />
+        <header-file src="src/ios/Airship/Common/UAOverlayInboxMessageAction.h" />
+        <header-file src="src/ios/Airship/Common/UAPasteboardAction.h" />
         <header-file src="src/ios/Airship/Common/UAPreferenceDataStore.h" />
         <header-file src="src/ios/Airship/Common/UAProximityRegion.h" />
         <header-file src="src/ios/Airship/Common/UARegionEvent.h" />
@@ -233,7 +233,6 @@
         <header-file src="src/ios/Airship/Common/UARichContentWindow.h" />
         <header-file src="src/ios/Airship/Common/UAShareAction.h" />
         <header-file src="src/ios/Airship/Common/UASignificantChangeProvider.h" />
-        <header-file src="src/ios/Airship/Common/UASQLite.h" />
         <header-file src="src/ios/Airship/Common/UAStandardLocationProvider.h" />
         <header-file src="src/ios/Airship/Common/UATagUtils.h" />
         <header-file src="src/ios/Airship/Common/UAURLProtocol.h" />
@@ -241,6 +240,7 @@
         <header-file src="src/ios/Airship/Common/UAUserAPIClient.h" />
         <header-file src="src/ios/Airship/Common/UAUserData.h" />
         <header-file src="src/ios/Airship/Common/UAUtils.h" />
+        <header-file src="src/ios/Airship/Common/UAWalletAction.h" />
         <header-file src="src/ios/Airship/Common/UAWebViewCallData.h" />
         <header-file src="src/ios/Airship/Common/UAWebViewDelegate.h" />
         <header-file src="src/ios/Airship/Common/UAWhitelist.h" />
@@ -249,7 +249,6 @@
         <header-file src="src/ios/Airship/External/UA_Reachability.h" />
         <header-file src="src/ios/Airship/Inbox/UAInbox.h" />
         <header-file src="src/ios/Airship/Inbox/UAInboxAPIClient.h" />
-        <header-file src="src/ios/Airship/Inbox/UAInboxDBManager.h" />
         <header-file src="src/ios/Airship/Inbox/UAInboxMessage.h" />
         <header-file src="src/ios/Airship/Inbox/UAInboxMessageData.h" />
         <header-file src="src/ios/Airship/Inbox/UAInboxMessageList.h" />
@@ -264,6 +263,7 @@
         <header-file src="src/ios/Airship/Push/UANamedUser.h" />
         <header-file src="src/ios/Airship/Push/UANamedUserAPIClient.h" />
         <header-file src="src/ios/Airship/Push/UAPush.h" />
+        <header-file src="src/ios/Airship/Push/UATagGroupsAPIClient.h" />
         <header-file src="src/ios/Airship/Push/UAUserNotificationAction.h" />
         <header-file src="src/ios/Airship/Push/UAUserNotificationCategories.h" />
         <header-file src="src/ios/Airship/Push/UAUserNotificationCategory.h" />
@@ -288,8 +288,9 @@
         <header-file src="src/ios/Airship/UI/Default/Push/Classes/Shared/UAPushSettingsTagsViewController.h" />
         <header-file src="src/ios/Airship/UI/Default/Push/Classes/Shared/UAPushSettingsViewController.h" />
 
+
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.0.2.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.1.0.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
