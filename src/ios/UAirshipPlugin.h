@@ -272,6 +272,30 @@
 - (void)runAction:(CDVInvokedUrlCommand*)command;
 
 /**
+ * Edits the named user tag groups.
+ *
+ * Expected arguments: An array of objects that contain:
+ * "operation": String, either "add" or "remove",
+ * "group": String, the tag group,
+ * "tags": Array of tags
+ *
+ * @param command The cordova command.
+ */
+- (void)editNamedUserTagGroups(CDVInvokedUrlCommand*)command;
+
+/**
+ * Edits the channel tag groups.
+ *
+ * Expected arguments: An array of objects that contain:
+ * "operation": String, either "add" or "remove",
+ * "group": String, the tag group,
+ * "tags": Array of tags
+ *
+ * @param command The cordova command.
+ */
+- (void)editChannelTagGroups(CDVInvokedUrlCommand*)command {
+
+/**
  * Registers the channel listener. Any channel registration updates will
  * be sent to the command's callbackID.
  *

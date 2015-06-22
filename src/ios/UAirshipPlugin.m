@@ -497,6 +497,39 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     }];
 }
 
+- (void)editNamedUserTagGroups(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
+
+        UANamedUser *namedUser = [UAirship push].namedUser;
+        for (NSDictionary *operation in [args objectAtIndex:0]) {
+            NSString *group = operation@
+            if ([operation[@"operation"] isEqualToString:@"add"]) {
+                [namedUser addTags:operation[@"tags"] group:operation[@"group"]];
+            } else if ([operation[@"operation"] isEqualToString:@"remove"]) {
+                [namedUser removeTags:operation[@"tags"] group:operation[@"group"]];
+            }
+        }
+
+        [namedUser updateTags];
+    }];
+}
+
+- (void)editChannelTagGroups(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
+
+        for (NSDictionary *operation in [args objectAtIndex:0]) {
+            NSString *group = operation@
+            if ([operation[@"operation"] isEqualToString:@"add"]) {
+                [[UAirship push] addTags:operation[@"tags"] group:operation[@"group"]];
+            } else if ([operation[@"operation"] isEqualToString:@"remove"]) {
+                [[UAirship push] removeTags:operation[@"tags"] group:operation[@"group"]];
+            }
+        }
+
+        [[UAirship push] updateRegistration];
+    }];
+}
+
 - (void)resetBadge:(CDVInvokedUrlCommand*)command {
     [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
         [[UAirship push] resetBadge];

@@ -39,6 +39,7 @@ import com.urbanairship.UAirship;
 import com.urbanairship.location.UALocationManager;
 import com.urbanairship.push.PushManager;
 import com.urbanairship.push.PushMessage;
+import com.urbanairship.push.TagGroupsEditor;
 import com.urbanairship.google.PlayServicesUtils;
 import com.urbanairship.util.UAStringUtil;
 
@@ -122,7 +123,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
-            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction");
+            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups");
 
     /**
      * The launch push message. Set from the IntentReceiver.
@@ -678,6 +679,42 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
+     * Edits the named user tag groups.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void editNamedUserTagGroups(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        JSONArray operations = data.getJSONArray(0);
+
+        Logger.debug("Editing named user tag groups: " + operations);
+
+        TagGroupsEditor editor = UAirship.shared().getPushManager().getNamedUser().editTagGroups();
+        applyTagGroupOperations(editor, operations);
+        editor.apply();
+
+        callbackContext.success();
+    }
+
+    /**
+     * Edits the channel tag groups.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void editChannelTagGroups(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        JSONArray operations = data.getJSONArray(0);
+
+        Logger.debug("Editing channel tag groups: " + operations);
+
+        TagGroupsEditor editor = UAirship.shared().getPushManager().editTagGroups();
+        applyTagGroupOperations(editor, operations);
+        editor.apply();
+
+        callbackContext.success();
+    }
+
+    /**
      * Runs an Urban Airship action. An object will be returned with
      * the following:
      * "error": String
@@ -769,5 +806,36 @@ public class UAirshipPlugin extends CordovaPlugin {
         }
 
         return data;
+    }
+
+    /**
+     * Helper method to apply tag operations to a TagGroupsEditor.
+     *
+     * @param editor The editor.
+     * @param operations The tag operations.
+     */
+    private static void applyTagGroupOperations(TagGroupsEditor editor, JSONArray operations) throws JSONException {
+        for (int i = 0; i < operations.length(); i++) {
+            JSONObject operation = operations.getJSONObject(i);
+
+            JSONArray tags = operation.getJSONArray("tags");
+            String group = operation.getString("group");
+            String operationType = operation.getString("operation");
+
+            HashSet<String> tagSet = new HashSet<String>();
+            for (int j=0; j<tags.length(); j++) {
+                tagSet.add(tags.getString(i));
+            }
+
+            if (tagSet.isEmpty()) {
+                continue;
+            }
+
+            if ("add".equals(operationType)) {
+                editor.addTags(group, tagSet);
+            } else if ("remove".equals(operationType)) {
+                editor.removeTags(group, tagSet);
+            }
+        }
     }
 }
