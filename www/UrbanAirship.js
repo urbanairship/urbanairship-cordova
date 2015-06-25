@@ -49,6 +49,36 @@ function callNative(callback, name, args) {
   exec(callback, failure, "UAirship", name, args)
 }
 
+// Helper method to edit tag groups
+function tagGroupEditor(cordovaMethod, nativeMethod) {
+    // Store the raw operations and let the SDK combine them
+    var operations = []
+    var editor = {}
+
+    editor.addTags = function(tagGroup, tags) {
+        argscheck.checkArgs('sa', cordovaMethod + ".addTags", arguments)
+        var operation = { "operation": "add", "group": tagGroup, "tags": tags }
+        operations.push(operation)
+        return editor
+    }
+
+    editor.removeTags = function(tagGroup, tags) {
+        argscheck.checkArgs('sa', cordovaMethod + ".removeTags", arguments)
+        var operation = { "operation": "remove", "group": tagGroup, "tags": tags }
+        operations.push(operation)
+        return editor
+    }
+
+    editor.apply = function(callback) {
+        argscheck.checkArgs('F', cordovaMethod + ".apply", arguments)
+        callNative(callback, nativeMethod, [operations])
+        operations = []
+        return editor
+    }
+
+    return editor
+}
+
 // Listen for channel registration updates
 callNative(function(registration) {
   console.log("Firing document event for registration update.")
@@ -267,6 +297,24 @@ var plugin = {
   runAction: function(actionName, actionValue, callback) {
     argscheck.checkArgs('s*F', 'UAirship.runAction', arguments)
     callNative(callback, "runAction", [actionName, actionValue])
+  },
+
+  /**
+   * Creates an editor to modify the named user tag groups.
+   *
+   * @return A tag group editor.
+   */
+  editNamedUserTagGroups: function() {
+    return tagGroupEditor('UAirship.editNamedUserTagGroups', 'editNamedUserTagGroups')
+  },
+
+  /**
+   * Creates an editor to modify the channel tag groups.
+   *
+   * @return A tag group editor.
+   */
+  editChannelTagGroups: function() {
+    return tagGroupEditor('UAirship.editTagGroups', 'editChannelTagGroups')
   },
 
   // Location

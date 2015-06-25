@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="3.1.4">
+    version="3.2.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
