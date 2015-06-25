@@ -366,16 +366,20 @@
 @property (nonatomic, copy) NSString *alias;
 
 ///---------------------------------------------------------------------------------------
-/// @name Tags
+/// @name Named User
 ///---------------------------------------------------------------------------------------
-
-/** Tags for this device. */
-@property (nonatomic, copy) NSArray *tags;
 
 /**
  * Named user for this device.
  */
 @property (nonatomic, strong) UANamedUser *namedUser;
+
+///---------------------------------------------------------------------------------------
+/// @name Tags
+///---------------------------------------------------------------------------------------
+
+/** Tags for this device. */
+@property (nonatomic, copy) NSArray *tags;
 
 /**
  * Allows setting tags from the device. Tags can be set from either the server or the device, but
@@ -384,8 +388,20 @@
  * 
  * Set this to `NO` to prevent the device from sending any tag information to the server when using
  * server-side tagging. Defaults to `YES`.
+ *
+ * @deprecated As of version 6.1.0. Replaced with channelTagRegistrationEnabled.
  */
-@property (nonatomic, assign, getter=isDeviceTagsEnabled) BOOL deviceTagsEnabled;
+@property (nonatomic, assign) BOOL deviceTagsEnabled __attribute__((deprecated("As of version 6.1.0.")));
+
+/**
+ * Allows setting tags from the device. Tags can be set from either the server or the device, but
+ * not both (without synchronizing the data), so use this flag to explicitly enable or disable
+ * the device-side flags.
+ *
+ * Set this to `NO` to prevent the device from sending any tag information to the server when using
+ * server-side tagging. Defaults to `YES`.
+ */
+@property (nonatomic, assign, getter=isChannelTagRegistrationEnabled) BOOL channelTagRegistrationEnabled;
 
 /**
  * Adds a tag to the list of tags for the device.
@@ -432,6 +448,28 @@
  * @param tags Array of tags to be removed
  */
 - (void)removeTags:(NSArray *)tags;
+
+///---------------------------------------------------------------------------------------
+/// @name Tag Groups
+///---------------------------------------------------------------------------------------
+
+/**
+ * Add tags to channel tag groups. To update the server,
+ * make all of your changes, then call `updateRegistration`.
+ *
+ * @param tags Array of tags to add.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)addTags:(NSArray *)tags group:(NSString *)tagGroupID;
+
+/**
+ * Removes tags from channel tag groups. To update the server,
+ * make all of your changes, then call `updateRegistration`.
+ *
+ * @param tags Array of tags to remove.
+ * @param tagGroupID Tag group ID string.
+ */
+- (void)removeTags:(NSArray *)tags group:(NSString *)tagGroupID;
 
 ///---------------------------------------------------------------------------------------
 /// @name Quiet Time
