@@ -281,7 +281,7 @@
  *
  * @param command The cordova command.
  */
-- (void)editNamedUserTagGroups(CDVInvokedUrlCommand*)command;
+- (void)editNamedUserTagGroups:(CDVInvokedUrlCommand*)command;
 
 /**
  * Edits the channel tag groups.
@@ -293,7 +293,7 @@
  *
  * @param command The cordova command.
  */
-- (void)editChannelTagGroups(CDVInvokedUrlCommand*)command {
+- (void)editChannelTagGroups:(CDVInvokedUrlCommand*)command;
 
 /**
  * Registers the channel listener. Any channel registration updates will

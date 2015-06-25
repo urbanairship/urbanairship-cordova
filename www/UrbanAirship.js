@@ -53,25 +53,30 @@ function callNative(callback, name, args) {
 function tagGroupEditor(cordovaMethod, nativeMethod) {
     // Store the raw operations and let the SDK combine them
     var operations = []
+    var editor = {}
 
-    return {
-      addTags: function(tagGroup, tags) {
+    editor.addTags = function(tagGroup, tags) {
         argscheck.checkArgs('sa', cordovaMethod + ".addTags", arguments)
         var operation = { "operation": "add", "group": tagGroup, "tags": tags }
         operations.push(operation)
-      },
+        return editor
+    }
 
-      removeTags: function(tagGroup, tags) {
+    editor.removeTags = function(tagGroup, tags) {
         argscheck.checkArgs('sa', cordovaMethod + ".removeTags", arguments)
         var operation = { "operation": "remove", "group": tagGroup, "tags": tags }
         operations.push(operation)
-      },
+        return editor
+    }
 
-      apply: function(callback) {
+    editor.apply = function(callback) {
         argscheck.checkArgs('F', cordovaMethod + ".apply", arguments)
         callNative(callback, nativeMethod, [operations])
-      }
+        operations = []
+        return editor
     }
+
+    return editor
 }
 
 // Listen for channel registration updates

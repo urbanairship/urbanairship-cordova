@@ -824,7 +824,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
             HashSet<String> tagSet = new HashSet<String>();
             for (int j=0; j<tags.length(); j++) {
-                tagSet.add(tags.getString(i));
+                tagSet.add(tags.getString(j));
             }
 
             if (tagSet.isEmpty()) {
