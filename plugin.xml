@@ -289,7 +289,7 @@
 
 
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.1.0.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.1.1.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
