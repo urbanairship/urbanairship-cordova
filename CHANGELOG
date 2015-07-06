@@ -1,8 +1,14 @@
 ==============================
+Version 3.2.1 - July 6, 2015
+==============================
+ - Updated iOS Urban Airship SDK to 6.1.1
+ - Updated Android Urban Airship SDK to 6.1.2
+
+==============================
 Version 3.2.0 - June 25, 2015
 ==============================
  - Updated iOS Urban Airship SDK to 6.1.0
- - Updated Andorid Urban Airship SDK to 6.1.1
+ - Updated Android Urban Airship SDK to 6.1.1
  - Added tag group support
 
 ==============================
