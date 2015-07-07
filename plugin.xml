@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="3.2.0">
+    version="3.2.1">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -130,7 +130,6 @@
         <source-file src="src/android/UAirshipPlugin.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/IntentReceiver.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaAutopilot.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/aars/urbanairship-lib-6.1.1.aar" target-dir="aars" />
 
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
     </platform>
@@ -290,7 +289,7 @@
 
 
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.1.0.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.1.1.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
