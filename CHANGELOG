@@ -1,4 +1,11 @@
 ==============================
+Version 3.3.0 - July 13, 2015
+==============================
+ - Themed the Android landing page to match iOS.
+ - Fixed Android security exception when applications try to open a database with 'window.openDatabase' after
+   launching the application with a landing page.
+
+==============================
 Version 3.2.2 - July 10, 2015
 ==============================
  - Updated iOS Urban Airship SDK to 6.1.2
