@@ -1,0 +1,43 @@
+
+<!-- Custom landing page view -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                tools:context="com.urbanairship.actions.LandingPageActivity"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_margin="16dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <!-- Layout must contain a UAWebView with id @android:id/primary -->
+        <com.urbanairship.widget.UAWebView
+            android:id="@android:id/primary"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"/>
+
+        <!-- Optional progress view with id @android:id/progress -->
+        <ProgressBar
+            android:id="@android:id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
+
+    <!-- Optional close button.  "onCloseButtonClick" will finish the
+    landing page activity -->
+    <ImageButton
+        android:id="@+id/close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/ua_ic_close"
+        android:contentDescription="close"
+        android:background="@null"
+        tools:ignore="OnClick"
+        android:onClick="onCloseButtonClick"/>
+
+</RelativeLayout>

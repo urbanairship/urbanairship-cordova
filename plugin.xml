@@ -98,12 +98,18 @@
             <activity android:name="com.urbanairship.actions.ActionActivity"/>
             <activity
                 android:name="com.urbanairship.actions.LandingPageActivity"
+                android:theme="@style/LandingPageStyle"
                 android:exported="false">
+
+                <meta-data
+                    android:name="com.urbanairship.action.LANDING_PAGE_VIEW"
+                    android:resource="@layout/ua_activity_landing_page" />
 
                 <intent-filter>
                     <action android:name="com.urbanairship.actions.SHOW_LANDING_PAGE_INTENT_ACTION"/>
                     <data android:scheme="http" />
                     <data android:scheme="https" />
+                    <data android:scheme="message" />
                     <category android:name="android.intent.category.DEFAULT"/>
                 </intent-filter>
             </activity>
@@ -130,8 +136,18 @@
         <source-file src="src/android/UAirshipPlugin.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/IntentReceiver.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaAutopilot.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/CordovaLandingPageView.java" target-dir="src/com/urbanairship/cordova" />
+
+        <source-file src="src/android/res/layout/ua_activity_landing_page.xml" target-dir="res/layout"/>
+        <source-file src="src/android/res/values/ua_styles.xml" target-dir="res/values"/>
+        <source-file src="src/android/res/drawable-mdpi/ua_ic_close.png" target-dir="res/drawable-mdpi"/>
+        <source-file src="src/android/res/drawable-hdpi/ua_ic_close.png" target-dir="res/drawable-hdpi"/>
+        <source-file src="src/android/res/drawable-xhdpi/ua_ic_close.png" target-dir="res/drawable-xhdpi"/>
+        <source-file src="src/android/res/drawable-xxhdpi/ua_ic_close.png" target-dir="res/drawable-xxhdpi"/>
+        <source-file src="src/android/res/drawable-xxxhdpi/ua_ic_close.png" target-dir="res/drawable-xxxhdpi"/>
 
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
+
     </platform>
     
     <!-- ios -->
