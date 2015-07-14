@@ -1,4 +1,9 @@
 ==============================
+Version 3.3.1 - July 14, 2015
+==============================
+ - Use the CordovaLandingPageView in the landing page activity.
+
+==============================
 Version 3.3.0 - July 13, 2015
 ==============================
  - Themed the Android landing page to match iOS.
