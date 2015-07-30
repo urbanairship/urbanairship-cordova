@@ -3,3 +3,6 @@ build
 *.zip
 urbanairship-phonegap-*
 npm-debug.log
+src/android/.idea/
+src/android/android.iml
+src/android/local.properties

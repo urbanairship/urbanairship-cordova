@@ -8,5 +8,5 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.google.android.gms:play-services-location:7.5.0'
     compile 'com.google.android.gms:play-services-gcm:7.5.0'
-    compile 'com.urbanairship.android:urbanairship-sdk:6.1.2'
+    compile 'com.urbanairship.android:urbanairship-sdk:6.1.3'
 }
