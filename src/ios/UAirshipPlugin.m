@@ -206,9 +206,6 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     if([[extras allKeys] containsObject:@"aps"]) {
         [extras removeObjectForKey:@"aps"];
     }
-    if([[extras allKeys] containsObject:@"_uamid"]) {
-        [extras removeObjectForKey:@"_uamid"];
-    }
     if([[extras allKeys] containsObject:@"_"]) {
         [extras removeObjectForKey:@"_"];
     }
