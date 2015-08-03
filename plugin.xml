@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="3.3.2">
+    version="3.3.3">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -261,7 +261,6 @@
         <header-file src="src/ios/Airship/Common/UAWhitelist.h" />
         <header-file src="src/ios/Airship/Common/UIWebView+UAAdditions.h" />
         <header-file src="src/ios/Airship/External/UA_Base64.h" />
-        <header-file src="src/ios/Airship/External/UA_Reachability.h" />
         <header-file src="src/ios/Airship/Inbox/UAInbox.h" />
         <header-file src="src/ios/Airship/Inbox/UAInboxAPIClient.h" />
         <header-file src="src/ios/Airship/Inbox/UAInboxMessage.h" />
@@ -305,7 +304,7 @@
 
 
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.1.3.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.1.4.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />

@@ -86,7 +86,6 @@
 #import "UAWhitelist.h"
 #import "UIWebView+UAAdditions.h"
 #import "UA_Base64.h"
-#import "UA_Reachability.h"
 #import "UAInbox.h"
 #import "UAInboxAPIClient.h"
 #import "UAInboxMessage.h"
