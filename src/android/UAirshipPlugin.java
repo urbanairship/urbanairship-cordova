@@ -152,7 +152,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         // Handle any Google Play services errors
         if (PlayServicesUtils.isGooglePlayStoreAvailable()) {
-            PlayServicesUtils.handleAnyPlayServicesError(UAirship.getApplicationContext());
+            PlayServicesUtils.handleAnyPlayServicesError(cordova.getActivity());
         }
     }
 
