@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="3.3.3">
+    version="3.4.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -29,42 +29,9 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
-
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.INTERNET" />
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-            <uses-permission android:name="android.permission.VIBRATE" />
-            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-            <uses-permission android:name="android.permission.WAKE_LOCK" />
-            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-            <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-            <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-
-            <permission android:name="$PACKAGE_NAME.permission.UA_DATA" android:protectionLevel="signature" />
-            <uses-permission android:name="$PACKAGE_NAME.permission.UA_DATA" />
-        </config-file>
-
-        <config-file target="AndroidManifest.xml" parent="/manifest">
-            <uses-permission android:name="android.permission.INTERNET" />
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-            <uses-permission android:name="android.permission.VIBRATE" />
-            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-            <uses-permission android:name="android.permission.WAKE_LOCK" />
-            <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-            <uses-permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" />
-            <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-            <permission android:name="$PACKAGE_NAME.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-
-            <permission android:name="$PACKAGE_NAME.permission.UA_DATA" android:protectionLevel="signature" />
-            <uses-permission android:name="$PACKAGE_NAME.permission.UA_DATA" />
-        </config-file>
-
+        
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
-
-            <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.cordova.CordovaAutopilot" />
 
             <receiver android:name="com.urbanairship.cordova.IntentReceiver"
                         android:exported="false">
@@ -78,25 +45,9 @@
                 </intent-filter>
             </receiver>
 
-            <receiver android:name="com.urbanairship.CoreReceiver" 
-                android:exported="false">
-                <intent-filter android:priority="-999">
-                    <action android:name="com.urbanairship.push.OPENED" />
-                    <category android:name="$PACKAGE_NAME" />
-                </intent-filter>
-            </receiver>
-
-            <receiver android:name="com.urbanairship.push.GCMPushReceiver" android:permission="com.google.android.c2dm.permission.SEND">        
-              <intent-filter>
-                  <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                  <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                  <category android:name="$PACKAGE_NAME" />
-              </intent-filter>
-            </receiver>
-
-            <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.cordova.CordovaAutopilot" />
-            <activity android:name="com.urbanairship.actions.ActionActivity"/>
             <activity
+                xmlns:tools="http://schemas.android.com/tools"
+                tools:node="replace"
                 android:name="com.urbanairship.actions.LandingPageActivity"
                 android:theme="@style/LandingPageStyle"
                 android:exported="false">
@@ -104,6 +55,10 @@
                 <meta-data
                     android:name="com.urbanairship.action.LANDING_PAGE_VIEW"
                     android:resource="@layout/ua_activity_landing_page" />
+
+                <meta-data
+                    android:name="com.urbanairship.push.iam.EXCLUDE_FROM_AUTO_SHOW"
+                    android:value="true" />
 
                 <intent-filter>
                     <action android:name="com.urbanairship.actions.SHOW_LANDING_PAGE_INTENT_ACTION"/>
@@ -114,23 +69,6 @@
                 </intent-filter>
             </activity>
 
-            <activity android:name="com.urbanairship.google.PlayServicesErrorActivity" 
-                android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-
-
-            <activity android:name="com.urbanairship.CoreActivity"/>
-            <service android:name="com.urbanairship.push.PushService" android:label="Push Notification Service"/>
-            <service android:name="com.urbanairship.analytics.EventService" android:label="Event Service"/>
-            <service android:name="com.urbanairship.richpush.RichPushUpdateService"/>
-
-            <service android:name="com.urbanairship.actions.ActionService" />
-            
-            <provider android:name="com.urbanairship.UrbanAirshipProvider"
-                android:authorities="$PACKAGE_NAME.urbanairship.provider"
-                android:exported="false"
-                android:multiprocess="true" />
-
-            <service android:name="com.urbanairship.location.LocationService" android:label="Segments Service"/>
         </config-file>
 
         <source-file src="src/android/UAirshipPlugin.java" target-dir="src/com/urbanairship/cordova" />
@@ -304,7 +242,7 @@
 
 
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.1.4.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.2.0.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
