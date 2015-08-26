@@ -593,7 +593,12 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     UA_LINFO(@"Channel registration successful %@.", channelID);
 
     if (self.registrationCallbackID) {
-        NSDictionary *data = @{ @"channelID":channelID };
+        NSDictionary *data;
+        if (deviceToken) {
+            data = @{ @"channelID":channelID, @"deviceToken":deviceToken };
+        } else {
+            data = @{ @"channelID":channelID };
+        }
         CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
         [result setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:result callbackId:self.registrationCallbackID];
