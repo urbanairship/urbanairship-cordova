@@ -10,7 +10,7 @@ Requirements:
 ## Contributing Code
 
 We accept pull requests! If you would like to submit a pull request, please fill out and submit a
-[Code Contribution Agreement](http://urbanairship.com/legal/contribution-agreement/).
+[Code Contribution Agreement](http://docs.urbanairship.com/contribution-agreement.html).
 
 ## Issues
 
