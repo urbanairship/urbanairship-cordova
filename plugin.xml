@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="3.4.0">
+    version="3.4.1">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -242,7 +242,7 @@
 
 
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.2.0.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.2.2.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
@@ -256,5 +256,8 @@
         <framework src="UIKit.framework" weak="true" />
         <framework src="CoreTelephony.framework" weak="true" />
         <framework src="MobileCoreServices.framework" weak="true" />
+        <framework src="CoreLocation.framework" weak="true" />
+        <framework src="CoreData.framework" weak="true" />
+        <framework src="PassKit.framework" weak="true" />
     </platform>
 </plugin>
