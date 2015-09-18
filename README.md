@@ -105,6 +105,6 @@ A sample can be found in Example. To run it, copy the files:
 - Example/css/* to www/css
 - Example/js/* to www/js
 
-Add the device plugin: `cordova plugin add org.apache.cordova.device`
+Add the device plugin: `cordova plugin add cordova-plugin-device`
 
 

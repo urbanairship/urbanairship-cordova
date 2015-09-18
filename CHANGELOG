@@ -1,5 +1,11 @@
 
 ==============================
+Version 3.4.1 - Sept 18, 2015
+==============================
+ - Updated iOS Urban Airship SDK to 6.2.2 (non-bitcode) compatible with Xcode 6.4
+ - The urbanairship.registration event on iOS now returns the device token along with the channel ID.
+
+==============================
 Version 3.4.0 - Aug 24, 2015
 ==============================
  - Updated iOS Urban Airship SDK to 6.2.0
