@@ -28,7 +28,10 @@
 /**
  * Autogenerate a set of tags with
  * the following flags.
+ *
+ * @deprecated As of version 6.3.0.
  */
+__attribute__((deprecated("As of version 6.3.0. Use device property tags instead.")))
 typedef NS_OPTIONS(NSInteger, UATagType) {
     /**
      * Full Time Zone: "America/Los_Angeles"
@@ -70,8 +73,10 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param tags to create
  * @return The tags as an NSArray.
+ *
+ * @deprecated As of version 6.3.0.
  */
-+ (NSArray *)createTags:(UATagType)tags;
++ (NSArray *)createTags:(UATagType)tags __attribute__((deprecated("As of version 6.3.0. Use device property tags instead.")));
 
 /**
  * Used to trim whitespace and filter out tags with unacceptable tag length.

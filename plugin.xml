@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="3.4.1">
+    version="3.5.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -130,6 +130,7 @@
         <header-file src="src/ios/Airship/Common/UAAnalytics.h" />
         <header-file src="src/ios/Airship/Common/UAAnalyticsDBManager.h" />
         <header-file src="src/ios/Airship/Common/UAApplicationMetrics.h" />
+        <header-file src="src/ios/Airship/Common/UAAssociatedIdentifiers.h" />
         <header-file src="src/ios/Airship/Common/UABaseLocationProvider.h" />
         <header-file src="src/ios/Airship/Common/UABespokeCloseView.h" />
         <header-file src="src/ios/Airship/Common/UABeveledLoadingIndicator.h" />
@@ -166,6 +167,7 @@
         <header-file src="src/ios/Airship/Common/UAIncomingInAppMessageAction.h" />
         <header-file src="src/ios/Airship/Common/UAIncomingPushAction.h" />
         <header-file src="src/ios/Airship/Common/UAInteractiveNotificationEvent.h" />
+        <header-file src="src/ios/Airship/Common/UAInstallAttributionEvent.h" />
         <header-file src="src/ios/Airship/Common/UAirship.h" />
         <header-file src="src/ios/Airship/Common/UAJavaScriptDelegate.h" />
         <header-file src="src/ios/Airship/Common/UAKeychainUtils.h" />
@@ -242,7 +244,7 @@
 
 
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.2.2.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.3.0.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />
