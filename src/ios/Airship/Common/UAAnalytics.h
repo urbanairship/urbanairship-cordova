@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Associates identifiers with the device. This call will add a special event
- * that will be batched and sent up with our other analytic events. Previous
+ * that will be batched and sent up with our other analytics events. Previous
  * associated identifiers will be replaced.
  *
  * @param associatedIdentifiers The associated identifiers.
@@ -96,6 +96,12 @@ NS_ASSUME_NONNULL_BEGIN
  * @return NSDate representing the last attempt to send analytics
  */
 - (NSDate *)lastSendTime;
+
+/**
+ * Initiates screen tracking for a specific app screen, must be called once per tracked screen.
+ * @param screen The screen's identifier as an NSString.
+ */
+- (void)trackScreen:(nullable NSString *)screen;
 
 @end
 

@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="3.5.0">
+    version="3.6.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -244,7 +244,7 @@
 
 
         <!-- UI Resource files -->
-        <source-file src="src/ios/Airship/libUAirship-6.3.0.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-6.4.0.a" framework="true"/>
 
         <!-- system frameworks -->
         <framework src="libsqlite3.dylib" />

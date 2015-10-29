@@ -37,3 +37,6 @@
 #else
 #define UA_SUPPRESS_UI_DEPRECATION_WARNINGS
 #endif
+
+@interface UACommon : NSObject
+@end
