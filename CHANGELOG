@@ -1,4 +1,10 @@
 ==============================
+Version 3.6.0 - Oct 29, 2015
+==============================
+ - Updated iOS Urban Airship SDK to 6.4.0 (non-bitcode) compatible with Xcode 6.4
+ - Updated Android Urban Airship SDK to 6.4.0
+
+==============================
 Version 3.5.0 - Oct 2, 2015
 ==============================
  - Updated iOS Urban Airship SDK to 6.3.0 (non-bitcode) compatible with Xcode 6.4
