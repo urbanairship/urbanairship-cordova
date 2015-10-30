@@ -16,7 +16,6 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.1.0'
     compile 'com.android.support:support-annotations:23.1.0'
     compile 'com.google.android.gms:play-services-location:8.1.0'
-    compile 'com.google.android.gms:play-services-gcm:8.1.0'
     compile 'com.urbanairship.android:urbanairship-sdk:6.4.0'
 }
 
