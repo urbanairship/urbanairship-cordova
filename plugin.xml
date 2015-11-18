@@ -11,8 +11,8 @@
     <repo>https://github.com/urbanairship/phonegap-ua-push.git</repo>
     
     <engines>
-      <engine name="cordova" version=">=3.4.0" />
-        <engine name="cordova-android" version=">=4" />
+      <engine name="cordova" version=">=5.4.0" />
+        <engine name="cordova-android" version=">=4.1.0" />
         <engine name="cordova-plugman" version=">=4.2.0" />
     </engines>
 

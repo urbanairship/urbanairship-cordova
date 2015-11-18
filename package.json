@@ -23,11 +23,15 @@
   "engines": [
     {
       "name": "cordova",
-      "version": ">=3.4.0"
+      "version": ">=5.4.0"
     },
     {
       "name": "cordova-android",
-      "version": ">=4"
+      "version": ">=4.1.0"
+    },
+    {
+      "name": "cordova-ios",
+      "version": ">=3.9.0"
     },
     {
       "name": "cordova-plugman",

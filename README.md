@@ -4,8 +4,8 @@ This plugin supports PhoneGap/Cordova apps running on both iOS and Android. Full
 available [here](http://docs.urbanairship.com/platform/phonegap.html).
 
 Requirements:
- - Cordova 5.0.0+, Cordova Android 4.0.0+, and Cordova iOS 3.8.0+
- - [GCM Setup](http://docs.urbanairship.com/platform/android.html#gcm-setup) or [APNS Setup](http://docs.urbanairship.com/platform/ios.html#apple-setup)
+ - Cordova 5.4.0+, Cordova Android 4.1.0+, and Cordova iOS 3.9.0+
+ - [GCM Setup](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup) or [APNS Setup](http://docs.urbanairship.com/reference/push-providers/apns.html)
 
 ## Contributing Code
 
@@ -60,7 +60,7 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 
 
 3. If your app supports Android API < 14, then you have to manually instrument any Android Activities to have proper analytics.
-See [Instrumenting Android Analytics](http://docs.urbanairship.com/build/android_features.html#setting-up-analytics-minor-assembly-required).
+See [Gingerbread Support](http://docs.urbanairship.com/platform/android.html#gingerbread-support).
 
 ### Basic Example
     
