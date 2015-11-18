@@ -3,11 +3,11 @@
 var fs = require('fs');
 var path = require('path');
 
-module.exports = function (context) {    
+module.exports = function (context) {
     var cordova_util = context.requireCordovaModule('cordova-lib/src/cordova/util');
     var projectRoot = cordova_util.isCordova(process.cwd());
     var projectXml = cordova_util.projectConfig(projectRoot);
-    var ConfigParser = context.requireCordovaModule ('cordova-lib/src/ConfigParser/ConfigParser');
+    var ConfigParser = context.requireCordovaModule("cordova-common").ConfigParser;
     var projectConfig = new ConfigParser(projectXml);
     var projName = projectConfig.name();
     console.log(projName);
@@ -76,7 +76,7 @@ module.exports = function (context) {
                                 }
                             } );
                         }
-                    }            
+                    }
 
                     copyFolderRecursiveSync(srcfile, destfile);
                 });
@@ -86,4 +86,3 @@ module.exports = function (context) {
 
     copyResources();
 };
-
