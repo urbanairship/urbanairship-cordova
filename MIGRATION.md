@@ -1,5 +1,12 @@
 # Migration Guide
 
+## 3.6.0 to 4.0.0
+
+### Installation changes:
+
+Now requires Cordova 5.4.0+, Cordova Android 4.1.0, and Cordova iOS 3.9.0.
+The iOS Airship library is bitcode enabled for Xcode 7+.
+
 ## 2.8.x to 3.0.0
 
 ### Plugin Access:

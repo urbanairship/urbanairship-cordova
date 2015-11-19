@@ -1,4 +1,12 @@
 ==============================
+Version 4.0.0 - Nov 18, 2015
+==============================
+ - Updated to Cordova 5.4.0, Cordova-iOS 3.9.0, Cordova-Android 4.1.0
+ - Updated iOS Urban Airship SDK to 6.4.0 (bitcode) compatible with Xcode 7
+ - Updated Android Urban Airship SDK to 6.4.1
+ - Request Android location permissions for API 23+
+
+==============================
 Version 3.6.0 - Oct 29, 2015
 ==============================
  - Updated iOS Urban Airship SDK to 6.4.0 (non-bitcode) compatible with Xcode 6.4
