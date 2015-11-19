@@ -25,13 +25,18 @@
 
 package com.urbanairship.cordova;
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.RemoteException;
+import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 
 import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
@@ -49,6 +54,7 @@ import com.urbanairship.actions.ActionCompletionCallback;
 import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.ActionRunRequest;
 import com.urbanairship.actions.ActionValueException;
+import com.urbanairship.actions.ActionValue;
 import com.urbanairship.json.JsonMap;
 import com.urbanairship.json.JsonValue;
 
@@ -307,10 +313,54 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setLocationEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+    void setLocationEnabled(JSONArray data, final CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
-        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
-        callbackContext.success();
+
+        if (enabled && shouldRequestPermissions()) {
+            ActionRunRequest.createRequest(new Action() {
+                @NonNull
+                @Override
+                public ActionResult perform(ActionArguments arguments) {
+                    int[] result = requestPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
+                    for (int i = 0; i < result.length; i++) {
+                        if (result[i] == PackageManager.PERMISSION_GRANTED) {
+                            return ActionResult.newResult(ActionValue.wrap(true));
+                        }
+                    }
+
+                    return ActionResult.newResult(ActionValue.wrap(false));
+                }
+            }).run(new ActionCompletionCallback() {
+                @Override
+                public void onFinish(ActionArguments arguments, ActionResult result) {
+                    if (result.getValue().getBoolean(false)) {
+                        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(true);
+                    }
+
+                    callbackContext.success();
+                }
+            });
+
+        } else {
+            UAirship.shared().getLocationManager().setLocationUpdatesEnabled(false);
+            callbackContext.success();
+        }
+    }
+
+
+    /**
+     * Determines if we should request permissions
+     *
+     * @return {@code true} if permissions should be requested, otherwise {@code false}.
+     */
+    private boolean shouldRequestPermissions() {
+        if (Build.VERSION.SDK_INT < 23) {
+            return false;
+        }
+
+        Context context = UAirship.getApplicationContext();
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED &&
+                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED;
     }
 
     /**
