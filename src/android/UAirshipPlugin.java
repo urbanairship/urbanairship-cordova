@@ -342,7 +342,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             });
 
         } else {
-            UAirship.shared().getLocationManager().setLocationUpdatesEnabled(false);
+            UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
             callbackContext.success();
         }
     }

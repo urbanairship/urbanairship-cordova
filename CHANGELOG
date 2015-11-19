@@ -1,4 +1,9 @@
 ==============================
+Version 4.0.1 - Nov 19, 2015
+==============================
+ - Fixed enabling location for Android below API 23.
+
+==============================
 Version 4.0.0 - Nov 18, 2015
 ==============================
  - Updated to Cordova 5.4.0, Cordova-iOS 3.9.0, Cordova-Android 4.1.0
