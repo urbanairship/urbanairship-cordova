@@ -51,6 +51,9 @@ A migration guide for newer releases of the plugin can be found [here](MIGRATION
 
         <!-- Override the Android notification icon -->
         <preference name="com.urbanairship.notification_icon" value="ic_notification" />
+    
+        <!-- Override the Android notification sound (sound file should be in res/raw)-->
+        <preference name="com.urbanairship.notification_sound" value="push" />
 
         <!-- Specify the notification accent color for Android API 21+ (Lollipop) -->
         <preference name="com.urbanairship.notification_accent_color" value="#0000ff" />

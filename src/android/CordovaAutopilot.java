@@ -28,6 +28,7 @@ package com.urbanairship.cordova;
 import android.content.Context;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 
 import com.urbanairship.AirshipConfigOptions;
@@ -55,6 +56,7 @@ public class CordovaAutopilot extends Autopilot {
     static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
     static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
     static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
+    static final String NOTIFICATION_SOUND = "com.urbanairship.notification_sound";
 
     // Enable/Disable features
     static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
@@ -114,6 +116,18 @@ public class CordovaAutopilot extends Autopilot {
                 factory.setSmallIconId(id);
             } else {
                 Logger.error("Unable to find notification icon with name: " + notificationIconName);
+            }
+        }
+
+        // Notification sound
+        String notificationSoundName = pluginConfig.getString(NOTIFICATION_SOUND, null);
+        if (!UAStringUtil.isEmpty(notificationSoundName)) {
+            int id  = context.getResources().getIdentifier(notificationSoundName, "raw", context.getPackageName());
+            if (id > 0) {
+                Uri uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + id);
+                factory.setSound(uri);
+            } else {
+                Logger.error("Unable to find notification sound with name: " + notificationSoundName);
             }
         }
 
