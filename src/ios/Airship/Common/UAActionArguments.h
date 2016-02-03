@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -96,14 +96,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)argumentsWithValue:(nullable id)value
                      withSituation:(UASituation)situation
                           metadata:(nullable NSDictionary *)metadata;
-
-/**
- * Represents a situation in which the action was triggered from a
- * foreground interactive notification button, with alternate spelling.
- *
- * @deprecated As of version 6.0.0. Replaced with UASituationForegroundInteractiveButton.
- */
-extern UASituation const UASituationForegoundInteractiveButton __attribute__((deprecated("As of version 6.0.0")));
 
 /**
  * Metadata key for the web view. Available when an action is triggered from

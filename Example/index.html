@@ -185,6 +185,12 @@
           UAirship.setQuietTimeEnabled(isEnabled)
         })
 
+        $("#displayMessageCenterButton").click(function(ev) {
+          console.log("Displaying Message Center")
+          UAirship.displayMessageCenter()
+
+          })
+
         $("#addTagButton").click(function(ev) {
           var tag = $("#addTagField").val()
           console.log("Adding new tag: " + tag)
@@ -306,6 +312,8 @@
             <input type="button" id="addTagButton" value="Add tag" />
             <div id="tags"></div>
           </div>
+
+          <input type="button" id="displayMessageCenterButton" value="Display MC" />
 
         </div>
       </form>

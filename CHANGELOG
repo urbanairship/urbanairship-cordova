@@ -1,4 +1,14 @@
 ==============================
+Version 4.1.0 - Feb 8, 2016
+==============================
+ - Updated iOS Urban Airship SDK to 7.0.1
+ - Updated Android Urban Airship SDK to 7.0.1
+ - Added Message Center support
+ - Removed Cordova minimum version restriction
+ - Removed Cordova iOS minimum version restriction
+
+
+==============================
 Version 4.0.1 - Nov 19, 2015
 ==============================
  - Fixed enabling location for Android below API 23.
