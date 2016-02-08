@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -24,10 +24,9 @@
  */
 
 #import <CoreLocation/CoreLocation.h>
+#import "UALocationProviderProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@protocol UALocationProviderProtocol;
 
 /**
  * Delegate methods for Location providers. All are required.
@@ -41,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param locationManager The CLLocationManager object
  * @param status The new status
  */
-- (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider 
+- (void)locationProvider:(id<UALocationProviderProtocol>)locationProvider
             withLocationManager:(CLLocationManager*)locationManager
     didChangeAuthorizationStatus:(CLAuthorizationStatus)status;
 

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -103,7 +103,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *interactionType;
 
 /**
- * The event's interaction ID. The ID's length must not exceed 255 characters or it will
+ * The event's transaction ID. The ID's length must not exceed 255 characters or it will
  * invalidate the event.
  */
 @property (nonatomic, copy, nullable) NSString *transactionID;

@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -47,6 +47,7 @@
 @class UAInbox;
 @class UAActionRegistry;
 @class UAInAppMessaging;
+@class UADefaultMessageCenter;
 
 
 UA_VERSION_INTERFACE(UAirshipVersion)
@@ -210,6 +211,18 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * in-app notifications.
  */
 + (null_unspecified UAInAppMessaging *)inAppMessaging;
+
+/**
+ * Returns the `UADefaultMessageCenter` instance. Used for customizing
+ * and displaying the default message center.
+ */
++ (null_unspecified UADefaultMessageCenter *)defaultMessageCenter;
+
+/**
+ * Returns the AirshipResources bundle, or nil if the the bundle
+ * cannot be located at runtime.
+ */
++ (nullable NSBundle *) resources;
 
 NS_ASSUME_NONNULL_END
 

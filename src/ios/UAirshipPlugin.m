@@ -31,6 +31,7 @@
 #import "UAConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAActionRunner.h"
+#import "UADefaultMessageCenter.h"
 
 typedef id (^UACordovaCallbackBlock)(NSArray *args);
 typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
@@ -67,7 +68,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     config.inProduction = [settings[ProductionConfigKey] boolValue];
     config.developmentLogLevel = UALogLevelTrace;
     config.productionLogLevel = UALogLevelTrace;
-    
+
     // Analytics. Enabled by Default
     if (settings[EnableAnalyticsConfigKey] != nil) {
         config.analyticsEnabled = [settings[EnableAnalyticsConfigKey] boolValue];
@@ -85,7 +86,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
-    
+
     if ([UALocationService airshipLocationServiceEnabled]) {
         [[UAirship shared].locationService startReportingSignificantLocationChanges];
     }
@@ -167,7 +168,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
         if (block) {
             block(args);
         }
-        
+
         return [NSNull null];
     }];
 }
@@ -638,5 +639,14 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
         [self.commandDelegate sendPluginResult:result callbackId:self.pushCallbackID];
     }
 }
+
+#pragma mark Message Center
+
+- (void)displayMessageCenter:(CDVInvokedUrlCommand*)command {
+    [self performCallbackWithCommand:command withVoidBlock:^(NSArray *args) {
+        [[UAirship defaultMessageCenter] display];
+    }];
+}
+
 
 @end

@@ -311,5 +311,12 @@
  */
 - (void)registerPushListener:(CDVInvokedUrlCommand*)command;
 
+/**
+ * Display the given message without animation.
+ *
+ * @pararm message The message.
+ */
+- (void)displayMessageCenter:(CDVInvokedUrlCommand*)command;
+
 
 @end

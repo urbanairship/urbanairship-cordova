@@ -129,7 +129,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
-            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups");
+            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter");
 
     /**
      * The launch push message. Set from the IntentReceiver.
@@ -157,7 +157,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         super.onResume(multitasking);
 
         // Handle any Google Play services errors
-        if (PlayServicesUtils.isGooglePlayStoreAvailable()) {
+        if (PlayServicesUtils.isGooglePlayStoreAvailable(cordova.getActivity())) {
             PlayServicesUtils.handleAnyPlayServicesError(cordova.getActivity());
         }
     }
@@ -781,29 +781,29 @@ public class UAirshipPlugin extends CordovaPlugin {
 
 
         ActionRunRequest.createRequest(actionName)
-                        .setValue(actionValue)
-                        .run(new ActionCompletionCallback() {
-                            @Override
-                            public void onFinish(ActionArguments arguments, ActionResult result) {
-                                Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
+                .setValue(actionValue)
+                .run(new ActionCompletionCallback() {
+                    @Override
+                    public void onFinish(ActionArguments arguments, ActionResult result) {
+                        Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
 
-                                if (result.getStatus() == ActionResult.Status.COMPLETED) {
-                                    resultMap.put("value", result.getValue().toJsonValue());
-                                } else {
-                                    String error = createActionErrorMessage(actionName, result);
-                                    resultMap.put("error", JsonValue.wrap(error, JsonValue.NULL));
-                                }
+                        if (result.getStatus() == ActionResult.STATUS_COMPLETED) {
+                            resultMap.put("value", result.getValue().toJsonValue());
+                        } else {
+                            String error = createActionErrorMessage(actionName, result);
+                            resultMap.put("error", JsonValue.wrap(error, JsonValue.NULL));
+                        }
 
-                                try {
-                                    // Convert back to a JSONObject
-                                    JSONObject jsonObject = new JSONObject(new JsonMap(resultMap).toString());
-                                    callbackContext.success(jsonObject);
-                                } catch (JSONException e) {
-                                    Logger.error("Failed to convert action results", e);
-                                    callbackContext.error("Failed to convert action results: " + e.getMessage());
-                                }
-                            }
-                        });
+                        try {
+                            // Convert back to a JSONObject
+                            JSONObject jsonObject = new JSONObject(new JsonMap(resultMap).toString());
+                            callbackContext.success(jsonObject);
+                        } catch (JSONException e) {
+                            Logger.error("Failed to convert action results", e);
+                            callbackContext.error("Failed to convert action results: " + e.getMessage());
+                        }
+                    }
+                });
     }
 
     /**
@@ -815,11 +815,11 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     private static String createActionErrorMessage(String name, ActionResult result) {
         switch (result.getStatus()) {
-            case ACTION_NOT_FOUND:
+            case ActionResult.STATUS_ACTION_NOT_FOUND:
                 return String.format("Action %s not found", name);
-            case REJECTED_ARGUMENTS:
+            case ActionResult.STATUS_REJECTED_ARGUMENTS:
                 return String.format("Action %s rejected its arguments", name);
-            case EXECUTION_ERROR:
+            case ActionResult.STATUS_EXECUTION_ERROR:
                 if (result.getException() != null) {
                     return result.getException().getMessage();
                 }
@@ -887,5 +887,14 @@ public class UAirshipPlugin extends CordovaPlugin {
                 editor.removeTags(group, tagSet);
             }
         }
+    }
+
+    /**
+     * Display the Message Center.
+     */
+    void displayMessageCenter(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        Logger.debug("Displaying Message Center");
+        UAirship.shared().getInbox().startInboxActivity();
+        callbackContext.success();
     }
 }

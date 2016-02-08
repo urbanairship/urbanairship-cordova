@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -25,10 +25,10 @@
 
 #import <CoreLocation/CoreLocation.h>
 #import "UALocationProviderDelegate.h"
-#import "UALocationProviderProtocol.h"
 #import "UALocationCommonValues.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
 
 /**
  * This is the base class for location providers. You should not

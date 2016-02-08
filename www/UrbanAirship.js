@@ -486,6 +486,16 @@ var plugin = {
   setVibrateEnabled: function(enabled, callback) {
     argscheck.checkArgs('*F', 'UAirship.setVibrateEnabled', arguments)
     callNative(callback, "setVibrateEnabled", [!!enabled])
+  },
+
+  /**
+   * Displays the message center.
+   *
+   * @param {Function} callback The function to call on completion.
+   */
+  displayMessageCenter: function(callback) {
+    argscheck.checkArgs('F', 'UAirship.displayMessageCenter', arguments)
+    callNative(callback, "displayMessageCenter")
   }
 }
 

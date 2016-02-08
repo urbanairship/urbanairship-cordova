@@ -63,22 +63,18 @@ public class CordovaAutopilot extends Autopilot {
 
     @Override
     public AirshipConfigOptions createAirshipConfigOptions(Context context) {
-        AirshipConfigOptions options = new AirshipConfigOptions();
+
         PluginConfig pluginConfig = getPluginConfig(context);
 
-        // Apply any overrides from the manifest
-        options.productionAppKey = pluginConfig.getString(PRODUCTION_KEY, options.productionAppKey);
-        options.productionAppSecret = pluginConfig.getString(PRODUCTION_SECRET, options.productionAppSecret);
-        options.developmentAppKey = pluginConfig.getString(DEVELOPMENT_KEY, options.developmentAppKey);
-        options.developmentAppSecret = pluginConfig.getString(DEVELOPMENT_SECRET, options.developmentAppSecret);
-        options.gcmSender = pluginConfig.getString(GCM_SENDER, options.gcmSender);
-        options.inProduction = pluginConfig.getBoolean(IN_PRODUCTION, options.inProduction);
-
-        // Analytics. Enabled by Default
-        options.analyticsEnabled = pluginConfig.getBoolean(ENABLE_ANALYTICS, true);
-
-        // Set the minSDK to 14.  It just controls logging error messages for different platform features.
-        options.minSdkVersion = 14;
+        AirshipConfigOptions options = new AirshipConfigOptions.Builder()
+                .setDevelopmentAppKey(pluginConfig.getString(DEVELOPMENT_KEY, ""))
+                .setDevelopmentAppSecret(pluginConfig.getString(DEVELOPMENT_SECRET, ""))
+                .setProductionAppKey(pluginConfig.getString(PRODUCTION_KEY, ""))
+                .setProductionAppSecret(pluginConfig.getString(PRODUCTION_SECRET, ""))
+                .setInProduction(pluginConfig.getBoolean(IN_PRODUCTION, false))
+                .setGcmSender(pluginConfig.getString(GCM_SENDER, ""))
+                .setAnalyticsEnabled(pluginConfig.getBoolean(ENABLE_ANALYTICS, true))
+                .build();
 
         return options;
     }
