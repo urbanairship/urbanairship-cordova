@@ -107,9 +107,11 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
-        
+
         <header-file src="src/ios/UAirshipPlugin.h" />
         <source-file src="src/ios/UAirshipPlugin.m" />
+        <header-file src="src/ios/UAMessageViewController.h" />
+        <source-file src="src/ios/UAMessageViewController.m" />
 
         <!-- Airship headers -->
         <header-file src="src/ios/Airship/AirshipLib.h" />

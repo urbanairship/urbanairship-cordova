@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPlugin.h>
 #import "UAPush.h"
+#import "UAInbox.h"
 
 /**
  * The Urban Airship Cordova plugin.
@@ -318,5 +319,55 @@
  */
 - (void)displayMessageCenter:(CDVInvokedUrlCommand*)command;
 
+/**
+ * Registers the inbox listener. Any inbox updates
+ * be sent to the command's callbackID.
+ *
+ * @param command The cordova command.
+ */
+- (void)registerInboxListener:(CDVInvokedUrlCommand*)command;
+
+/**
+ * Gets the inbox listing.
+ *
+ * @param command The cordova command.
+ */
+- (void)getInboxMessages:(CDVInvokedUrlCommand*)command;
+
+/**
+ * Marks an inbox message read.
+ *
+ * Expected arguments: String - message ID.
+ *
+ * @param command The cordova command.
+ */
+- (void)markInboxMessageRead:(CDVInvokedUrlCommand*)command;
+
+/**
+ * Deletes an inbox message.
+ *
+ * Expected arguments: String - message ID.
+ *
+ * @param command The cordova command.
+ */
+- (void)deleteInboxMessage:(CDVInvokedUrlCommand*)command;
+
+/**
+ * Displays an inbox message.
+ *
+ * Expected arguments: String - message ID.
+ *
+ * @param command The cordova command.
+ */
+- (void)displayInboxMessage:(CDVInvokedUrlCommand*)command;
+
+/**
+ * Displays an inbox message in the overlay.
+ *
+ * Expected arguments: String - message ID.
+ *
+ * @param command The cordova command.
+ */
+- (void)overlayInboxMessage:(CDVInvokedUrlCommand*)command;
 
 @end

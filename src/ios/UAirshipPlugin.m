@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,6 +32,12 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAActionRunner.h"
 #import "UADefaultMessageCenter.h"
+#import "UAInbox.h"
+#import "UAInboxMessageList.h"
+#import "UAInboxMessage.h"
+#import "UALandingPageOverlayController.h"
+#import "UAMessageViewController.h"
+#import "UAUtils.h"
 
 typedef id (^UACordovaCallbackBlock)(NSArray *args);
 typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
@@ -40,6 +46,9 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 @property (nonatomic, copy) NSDictionary *launchNotification;
 @property (nonatomic, copy) NSString *registrationCallbackID;
 @property (nonatomic, copy) NSString *pushCallbackID;
+@property (nonatomic, copy) NSString *inboxCallbackID;
+@property (nonatomic, copy) UADefaultMessageCenterMessageViewController *messageViewController;
+
 @end
 
 @implementation UAirshipPlugin
@@ -90,6 +99,11 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     if ([UALocationService airshipLocationServiceEnabled]) {
         [[UAirship shared].locationService startReportingSignificantLocationChanges];
     }
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(inboxUpdated)
+                                                 name:UAInboxMessageListUpdatedNotification
+                                               object:nil];
 }
 
 - (void)dealloc {
@@ -104,8 +118,6 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
  * @returns A CDVPluginResult with specified value.
  */
 - (CDVPluginResult *)pluginResultForValue:(id)value {
-    CDVPluginResult *result;
-
     /*
      NSString -> String
      NSNumber --> (Integer | Double)
@@ -114,29 +126,44 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
      NSNull --> no return value
      */
 
-    if ([value isKindOfClass:[NSString class]]) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
-                                   messageAsString:[value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
-    } else if ([value isKindOfClass:[NSNumber class]]) {
-        CFNumberType numberType = CFNumberGetType((CFNumberRef)value);
-        //note: underlyingly, BOOL values are typedefed as char
-        if (numberType == kCFNumberIntType || numberType == kCFNumberCharType) {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[value intValue]];
-        } else  {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:[value doubleValue]];
-        }
-    } else if ([value isKindOfClass:[NSArray class]]) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:value];
-    } else if ([value isKindOfClass:[NSDictionary class]]) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:value];
-    } else if ([value isKindOfClass:[NSNull class]]) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-    } else {
-        UA_LERR(@"Cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    }
+     if ([value isKindOfClass:[CDVPluginResult class]]) {
+          return value;
+     }
 
-    return result;
+     // String
+     if ([value isKindOfClass:[NSString class]]) {
+          return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
+                                     messageAsString:[value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+     }
+
+     // Number
+     if ([value isKindOfClass:[NSNumber class]]) {
+          CFNumberType numberType = CFNumberGetType((CFNumberRef)value);
+          //note: underlyingly, BOOL values are typedefed as char
+          if (numberType == kCFNumberIntType || numberType == kCFNumberCharType) {
+               return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsInt:[value intValue]];
+          } else  {
+               return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDouble:[value doubleValue]];
+          }
+     }
+
+     // Array
+     if ([value isKindOfClass:[NSArray class]]) {
+          return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:value];
+     }
+
+     // Object
+     if ([value isKindOfClass:[NSDictionary class]]) {
+          return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:value];
+     }
+
+     // Null
+     if ([value isKindOfClass:[NSNull class]]) {
+          return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+     }
+
+     UA_LERR(@"Cordova callback block returned unrecognized type: %@", NSStringFromClass([value class]));
+     return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
 }
 
 /**
@@ -648,5 +675,114 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     }];
 }
 
+#pragma mark Inbox
+
+- (void)registerInboxListener:(CDVInvokedUrlCommand*)command {
+    self.inboxCallbackID = command.callbackId;
+}
+
+- (void)inboxUpdated {
+    UA_LDEBUG(@"Inbox updated");
+
+    if (self.inboxCallbackID) {
+        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+        [result setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:result callbackId:self.inboxCallbackID];
+    }
+}
+
+- (void)getInboxMessages:(CDVInvokedUrlCommand *)command {
+     UA_LDEBUG(@"Getting messages");
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args){
+        NSMutableArray *messages = [NSMutableArray array];
+
+        for (UAInboxMessage *message in [UAirship inbox].messageList.messages) {
+
+            NSDictionary *icons = [message.rawMessageObject objectForKey:@"icons"];
+            NSString *iconUrl = [icons objectForKey:@"list_icon"];
+            NSNumber *sentDate = @([message.messageSent timeIntervalSince1970] * 1000);
+
+            NSMutableDictionary *messageInfo = [NSMutableDictionary dictionary];
+            [messageInfo setValue:message.title forKey:@"title"];
+            [messageInfo setValue:message.messageID forKey:@"id"];
+            [messageInfo setValue:sentDate forKey:@"sentDate"];
+            [messageInfo setValue:iconUrl forKey:@"listIconUrl"];
+            [messageInfo setValue:message.unread ? @NO : @YES  forKey:@"isRead"];
+            [messageInfo setValue:message.extra forKey:@"extras"];
+
+            [messages addObject:messageInfo];
+        }
+
+        return messages;
+    }];
+}
+
+- (void)markInboxMessageRead:(CDVInvokedUrlCommand*)command {
+     [self performCallbackWithCommand:command withBlock:^(NSArray *args){
+          NSString *messageID = [command.arguments firstObject];
+          UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+
+          if (!message) {
+               NSString *error = [NSString stringWithFormat:@"Unable to mark message read: %@", messageID];
+               return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+          }
+
+          [[UAirship inbox].messageList markMessagesRead:@[message] completionHandler:nil];
+          return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+     }];
+}
+
+- (void)deleteInboxMessage:(CDVInvokedUrlCommand*)command {
+     [self performCallbackWithCommand:command withBlock:^(NSArray *args){
+          NSString *messageID = [command.arguments firstObject];
+          UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+
+          if (!message) {
+               NSString *error = [NSString stringWithFormat:@"Unable to delete message: %@", messageID];
+               return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+          }
+
+          [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:nil];
+          return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+     }];
+}
+
+- (void)displayInboxMessage:(CDVInvokedUrlCommand*)command {
+     [self performCallbackWithCommand:command withBlock:^(NSArray *args){
+          NSString *messageID = [command.arguments firstObject];
+          UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+
+          if (!message) {
+               NSString *error = [NSString stringWithFormat:@"Unable to display message: %@", messageID];
+               return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+          }
+
+          UAMessageViewController *mvc = [[UAMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
+                                                                                   bundle:[UAirship resources]];
+          mvc.message = message;
+
+          UINavigationController *navController =  [[UINavigationController alloc] initWithRootViewController:mvc];
+
+          [[UAUtils topController] presentViewController:navController animated:YES completion:nil];
+          return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+     }];
+
+}
+
+- (void)overlayInboxMessage:(CDVInvokedUrlCommand*)command {
+     [self performCallbackWithCommand:command withBlock:^(NSArray *args){
+          NSString *messageID = [command.arguments firstObject];
+          UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+
+          if (!message) {
+               NSString *error = [NSString stringWithFormat:@"Unable to overlay message: %@", messageID];
+               return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
+          }
+
+          [UALandingPageOverlayController showMessage:message];
+          return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+     }];
+}
 
 @end
