@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -90,6 +90,12 @@ callNative(function(push) {
   console.log("Firing document event for push event.")
   cordova.fireDocumentEvent("urbanairship.push", push)
 }, "registerPushListener")
+
+// Listen for inbox updates
+callNative(function() {
+  console.log("Firing document event for inbox update.")
+  cordova.fireDocumentEvent("urbanairship.inbox_updated")
+}, "registerInboxListener")
 
 
 var plugin = {
@@ -371,6 +377,76 @@ var plugin = {
     callNative(callback, "recordCurrentLocation")
   },
 
+  /**
+   * Displays the message center.
+   *
+   * @param {Function} callback The function to call on completion.
+   */
+  displayMessageCenter: function(callback) {
+    argscheck.checkArgs('F', 'UAirship.displayMessageCenter', arguments)
+    callNative(callback, "displayMessageCenter")
+  },
+
+  /**
+   * Gets the array of inbox messages. Each message will have the following properties:
+   * "id": string - The messages Id. Needed to display, mark as read, or delete the message.
+   * "title": string - The message title.
+   * "sentDate": number - The message sent date in milliseconds.
+   * "listIconUrl": string, optional - The icon url for the message.
+   * "isRead": boolean - The unread/read status of the message.
+   * "extras": object - String to String map of any message extras.
+   *
+   * @param {Function} callback The function to call on completion with the messages.
+   */
+  getInboxMessages: function(callback) {
+    argscheck.checkArgs('f', 'UAirship.getInboxMessages', arguments)
+    callNative(callback, "getInboxMessages")
+  },
+
+  /**
+   * Marks an inbox message read.
+   *
+   * @param {String} messageId The id of the message to mark as read.
+   * @param {Function} callback The function to call on completion.
+   */
+  markInboxMessageRead: function(messageId, callback) {
+    argscheck.checkArgs('sF', 'UAirship.markInboxMessageRead', arguments)
+    callNative(callback, 'markInboxMessageRead', [messageId])
+  },
+
+  /**
+   * Deletes an inbox message.
+   *
+   * @param {String} messageId The id of the message to delete.
+   * @param {Function} callback The function to call on completion.
+   */
+  deleteInboxMessage: function(messageId, callback) {
+    argscheck.checkArgs('sF', 'UAirship.deleteInboxMessage', arguments)
+    callNative(callback, 'deleteInboxMessage', [messageId])
+  },
+
+  /**
+   * Displays the inbox message using a full screen view.
+   *
+   * @param {String} messageId The id of the message to display.
+   * @param {Function} callback The function to call on completion.
+   */
+  displayInboxMessage: function(messageId, callback) {
+    argscheck.checkArgs('sF', 'UAirship.displayInboxMessage', arguments)
+    callNative(callback, 'displayInboxMessage', [messageId])
+  },
+
+  /**
+   * Displays the inbox message using an overlay display.
+   *
+   * @param {String} messageId The id of the message to display.
+   * @param {Function} callback The function to call on completion.
+   */
+  overlayInboxMessage: function(messageId, callback) {
+    argscheck.checkArgs('sF', 'UAirship.overlayInboxMessage', arguments)
+    callNative(callback, 'overlayInboxMessage', [messageId])
+  },
+
   // iOS only
 
   /**
@@ -486,16 +562,6 @@ var plugin = {
   setVibrateEnabled: function(enabled, callback) {
     argscheck.checkArgs('*F', 'UAirship.setVibrateEnabled', arguments)
     callNative(callback, "setVibrateEnabled", [!!enabled])
-  },
-
-  /**
-   * Displays the message center.
-   *
-   * @param {Function} callback The function to call on completion.
-   */
-  displayMessageCenter: function(callback) {
-    argscheck.checkArgs('F', 'UAirship.displayMessageCenter', arguments)
-    callNative(callback, "displayMessageCenter")
   }
 }
 

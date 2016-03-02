@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Urban Airship Inc. All rights reserved.
+ Copyright 2009-2016 Urban Airship Inc. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
  modification, are permitted provided that the following conditions are met:
@@ -32,38 +32,39 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.os.RemoteException;
+import android.net.Uri;
 import android.os.Build;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
-import com.urbanairship.location.UALocationManager;
-import com.urbanairship.push.PushManager;
-import com.urbanairship.push.PushMessage;
-import com.urbanairship.push.TagGroupsEditor;
-import com.urbanairship.google.PlayServicesUtils;
-import com.urbanairship.util.UAStringUtil;
-
 import com.urbanairship.actions.Action;
 import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionCompletionCallback;
 import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.ActionRunRequest;
-import com.urbanairship.actions.ActionValueException;
 import com.urbanairship.actions.ActionValue;
+import com.urbanairship.actions.ActionValueException;
+import com.urbanairship.actions.LandingPageActivity;
+import com.urbanairship.google.PlayServicesUtils;
 import com.urbanairship.json.JsonMap;
 import com.urbanairship.json.JsonValue;
+import com.urbanairship.messagecenter.MessageActivity;
+import com.urbanairship.push.PushMessage;
+import com.urbanairship.push.TagGroupsEditor;
+import com.urbanairship.richpush.RichPushInbox;
+import com.urbanairship.richpush.RichPushMessage;
+import com.urbanairship.util.UAStringUtil;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,12 +81,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.apache.cordova.CordovaWebView;
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaInterface;
-import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.PluginResult;
 
 
 /**
@@ -129,7 +124,8 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
-            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter");
+            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter",
+            "registerInboxListener", "markInboxMessageRead", "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage");
 
     /**
      * The launch push message. Set from the IntentReceiver.
@@ -144,12 +140,14 @@ public class UAirshipPlugin extends CordovaPlugin {
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
     private BroadcastReceiver channelUpdateReceiver;
     private BroadcastReceiver pushReceiver;
+    private RichPushInbox.Listener inboxListener;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         Logger.info("Initializing Urban Airship cordova plugin.");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
+
     }
 
     @Override
@@ -523,7 +521,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     void getTags(JSONArray data, CallbackContext callbackContext) throws JSONException {
         Set<String> tags = UAirship.shared().getPushManager().getTags();
         Logger.debug("Returning tags");
-        callbackContext.success( new JSONArray(tags));
+        callbackContext.success(new JSONArray(tags));
     }
 
     /**
@@ -873,7 +871,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             String operationType = operation.getString("operation");
 
             HashSet<String> tagSet = new HashSet<String>();
-            for (int j=0; j<tags.length(); j++) {
+            for (int j = 0; j < tags.length(); j++) {
                 tagSet.add(tags.getString(j));
             }
 
@@ -890,11 +888,182 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Display the Message Center.
+     * Displays the message center.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
      */
     void displayMessageCenter(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        String messageId = data.optString(0);
+
         Logger.debug("Displaying Message Center");
-        UAirship.shared().getInbox().startInboxActivity();
+        if (messageId != null) {
+            UAirship.shared().getInbox().startMessageActivity(messageId);
+        } else {
+            UAirship.shared().getInbox().startInboxActivity();
+        }
         callbackContext.success();
+    }
+
+    /**
+     * Deletes an inbox message.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void deleteInboxMessage(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        String messageId = data.getString(0);
+        RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
+
+        if (message == null) {
+            callbackContext.error("Unable to delete message: " + messageId);
+        }
+
+        message.delete();
+        callbackContext.success();
+    }
+
+    /**
+     * Marks an inbox message read.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void markInboxMessageRead(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        String messageId = data.getString(0);
+        RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
+
+        if (message == null) {
+            callbackContext.error("Unable to mark message read: " + messageId);
+            return;
+        }
+
+        message.markRead();
+        callbackContext.success();
+    }
+
+    /**
+     * Gets the inbox listing.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void getInboxMessages(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        JSONArray messagesJson = new JSONArray();
+
+        for (RichPushMessage message : UAirship.shared().getInbox().getMessages()) {
+            JSONObject messageJson = new JSONObject();
+            messageJson.putOpt("id", message.getMessageId());
+            messageJson.putOpt("title", message.getTitle());
+            messageJson.putOpt("sentDate", message.getSentDateMS());
+            messageJson.putOpt("listIconUrl", message.getListIconUrl());
+            messageJson.putOpt("isRead", message.isRead());
+
+            JSONObject extrasJson = new JSONObject();
+            Bundle extras = message.getExtras();
+            for (String key : extras.keySet()) {
+                Object value = extras.get(key);
+                extrasJson.putOpt(key, value);
+            }
+
+            messageJson.put("extras", extrasJson);
+
+            messagesJson.put(messageJson);
+        }
+
+        callbackContext.success(messagesJson);
+    }
+
+    /**
+     * Displays an inbox message.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void displayInboxMessage(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        final String messageId = data.getString(0);
+        RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
+
+        if (message == null) {
+            callbackContext.error("Unable to display message: " + messageId);
+            return;
+        }
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(cordova.getActivity(), MessageActivity.class)
+                        .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
+                        .setPackage(cordova.getActivity().getPackageName())
+                        .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                cordova.getActivity().startActivity(intent);
+            }
+        });
+
+        callbackContext.success();
+    }
+
+    /**
+     * Displays an inbox message using the LandingPageActivity.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void overlayInboxMessage(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        final String messageId = data.getString(0);
+        RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
+
+        if (message == null) {
+            callbackContext.error("Unable to overlay message: " + messageId);
+        }
+
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(cordova.getActivity(), LandingPageActivity.class)
+                        .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
+                        .setPackage(cordova.getActivity().getPackageName())
+                        .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                cordova.getActivity().startActivity(intent);
+            }
+        });
+
+        callbackContext.success();
+    }
+
+    /**
+     * Registers the inbox listener.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void registerInboxListener(JSONArray data, final CallbackContext callbackContext) {
+        Logger.debug("Listening for inbox changes.");
+
+        if (inboxListener != null) {
+            UAirship.shared().getInbox().removeListener(inboxListener);
+        }
+
+        inboxListener = new RichPushInbox.Listener() {
+            @Override
+            public void onInboxUpdated() {
+                PluginResult result = new PluginResult(PluginResult.Status.OK, "inbox updated");
+                result.setKeepCallback(true);
+
+                callbackContext.sendPluginResult(result);
+            }
+        };
+
+        UAirship.shared().getInbox().addListener(inboxListener);
     }
 }
