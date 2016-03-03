@@ -39,14 +39,9 @@ var cardova = require("cordova"),
 // lowercase = required, uppercase = optional
 
 // Helper method to call into the native plugin
-function callNative(callback, name, args) {
+function callNative(success, failure, name, args) {
   args = args || []
-
-  var failure = function(e) {
-      console.log("Javascript Callback Error: " + e)
-  }
-
-  exec(callback, failure, "UAirship", name, args)
+  exec(success, failure, "UAirship", name, args)
 }
 
 // Helper method to edit tag groups
@@ -69,9 +64,9 @@ function tagGroupEditor(cordovaMethod, nativeMethod) {
         return editor
     }
 
-    editor.apply = function(callback) {
-        argscheck.checkArgs('F', cordovaMethod + ".apply", arguments)
-        callNative(callback, nativeMethod, [operations])
+    editor.apply = function(success, failure) {
+        argscheck.checkArgs('FF', cordovaMethod + ".apply", arguments)
+        callNative(success, failure, nativeMethod, [operations])
         operations = []
         return editor
     }
@@ -83,19 +78,19 @@ function tagGroupEditor(cordovaMethod, nativeMethod) {
 callNative(function(registration) {
   console.log("Firing document event for registration update.")
   cordova.fireDocumentEvent("urbanairship.registration", registration)
-}, "registerChannelListener")
+}, null, "registerChannelListener")
 
 // Listen for incoming push notifications
 callNative(function(push) {
   console.log("Firing document event for push event.")
   cordova.fireDocumentEvent("urbanairship.push", push)
-}, "registerPushListener")
+}, null, "registerPushListener")
 
 // Listen for inbox updates
 callNative(function() {
   console.log("Firing document event for inbox update.")
   cordova.fireDocumentEvent("urbanairship.inbox_updated")
-}, "registerInboxListener")
+}, null, "registerInboxListener")
 
 
 var plugin = {
@@ -104,115 +99,126 @@ var plugin = {
    * Enables or disables user notifications.
    *
    * @param {Boolean} enabled true to enable notifications, false to disable.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setUserNotificationsEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setUserNotificationsEnabled', arguments)
-    callNative(callback, "setUserNotificationsEnabled", [!!enabled])
+  setUserNotificationsEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setUserNotificationsEnabled', arguments)
+    callNative(success, failure, "setUserNotificationsEnabled", [!!enabled])
   },
 
   /**
    * Checks if user notifications are enabled or not.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  isUserNotificationsEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isUserNotificationsEnabled', arguments)
-    callNative(callback, "isUserNotificationsEnabled")
+  isUserNotificationsEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isUserNotificationsEnabled', arguments)
+    callNative(success, failure, "isUserNotificationsEnabled")
   },
 
   /**
    * Returns the channel ID.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  getChannelID: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getChannelID', arguments)
-    callNative(callback, "getChannelID")
+  getChannelID: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getChannelID', arguments)
+    callNative(success, failure, "getChannelID")
   },
 
   /**
    * Returns the last notification that launched the application.
    *
    * @param {Boolean} clear true to clear the notification.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  getLaunchNotification: function(clear, callback) {
-    argscheck.checkArgs('*f', 'UAirship.getLaunchNotification', arguments)
-    callNative(callback, "getLaunchNotification", [!!clear])
+  getLaunchNotification: function(clear, success, failure) {
+    argscheck.checkArgs('*fF', 'UAirship.getLaunchNotification', arguments)
+    callNative(success, failure, "getLaunchNotification", [!!clear])
   },
 
   /**
    * Returns the tags as an array.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  getTags: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getTags', arguments);
-    callNative(callback, "getTags")
+  getTags: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getTags', arguments);
+    callNative(success, failure, "getTags")
   },
 
   /**
    * Sets the tags.
    *
    * @param {Array} tags an array of strings.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setTags: function(tags, callback) {
-    argscheck.checkArgs('aF', 'UAirship.setTags', arguments);
-    callNative(callback, "setTags", [tags])
+  setTags: function(tags, success, failure) {
+    argscheck.checkArgs('aFF', 'UAirship.setTags', arguments);
+    callNative(success, failure, "setTags", [tags])
   },
 
   /**
    * Returns the alias.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  getAlias: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getAlias', arguments)
-    callNative(callback, "getAlias")
+  getAlias: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getAlias', arguments)
+    callNative(success, failure, "getAlias")
   },
 
   /**
    * Sets the alias.
    *
    * @param {String} alias string
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setAlias: function(alias, callback) {
-    argscheck.checkArgs('sF', 'UAirship.setAlias', arguments)
-    callNative(callback, "setAlias", [alias])
+  setAlias: function(alias, success, failure) {
+    argscheck.checkArgs('sFF', 'UAirship.setAlias', arguments)
+    callNative(success, failure, "setAlias", [alias])
   },
 
   /**
    * Checks if quiet time is enabled or not.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  isQuietTimeEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isQuietTimeEnabled', arguments)
-    callNative(callback, "isQuietTimeEnabled")
+  isQuietTimeEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isQuietTimeEnabled', arguments)
+    callNative(success, failure, "isQuietTimeEnabled")
   },
 
   /**
    * Enables or disables quiet time.
    *
    * @param {Boolean} enabled true to enable quiet time, false to disable.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setQuietTimeEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setQuietTimeEnabled', arguments)
-    callNative(callback, "setQuietTimeEnabled", [!!enabled])
+  setQuietTimeEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setQuietTimeEnabled', arguments)
+    callNative(success, failure, "setQuietTimeEnabled", [!!enabled])
   },
 
   /**
    * Checks if the device is currently in quiet time.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  isInQuietTime: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isInQuietTime', arguments)
-    callNative(callback, "isInQuietTime")
+  isInQuietTime: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isInQuietTime', arguments)
+    callNative(success, failure, "isInQuietTime")
   },
 
   /**
@@ -222,11 +228,12 @@ var plugin = {
    * "endHour": Number,
    * "endMinute": Number
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  getQuietTime: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getQuietTime', arguments)
-    callNative(callback, "getQuietTime")
+  getQuietTime: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getQuietTime', arguments)
+    callNative(success, failure, "getQuietTime")
   },
 
   /**
@@ -236,11 +243,12 @@ var plugin = {
    * @param {Number} startMinute for quiet time.
    * @param {Number} endHour for quiet time.
    * @param {Number} endMinute for quiet time.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setQuietTime: function(startHour, startMinute, endHour, endMinute, callback) {
-    argscheck.checkArgs('nnnnF', 'UAirship.setQuietTime', arguments)
-    callNative(callback, "setQuietTime", [startHour, startMinute, endHour, endMinute])
+  setQuietTime: function(startHour, startMinute, endHour, endMinute, success, failure) {
+    argscheck.checkArgs('nnnnFF', 'UAirship.setQuietTime', arguments)
+    callNative(success, failure, "setQuietTime", [startHour, startMinute, endHour, endMinute])
   },
 
   /**
@@ -252,42 +260,46 @@ var plugin = {
    * location segmentation, push to local time).
    *
    * @param {Boolean} enabled true to enable analytics, false to disable.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setAnalyticsEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setAnalyticsEnabled', arguments)
-    callNative(callback, "setAnalyticsEnabled", [!!enabled])
+  setAnalyticsEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setAnalyticsEnabled', arguments)
+    callNative(success, failure, "setAnalyticsEnabled", [!!enabled])
   },
 
   /**
    * Checks if analytics is enabled or not.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  isAnalyticsEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isAnalyticsEnabled', arguments)
-    callNative(callback, "isAnalyticsEnabled")
+  isAnalyticsEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isAnalyticsEnabled', arguments)
+    callNative(success, failure, "isAnalyticsEnabled")
   },
 
   /**
    * Returns the named user ID.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  getNamedUser: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getNamedUser', arguments)
-    callNative(callback, "getNamedUser")
+  getNamedUser: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getNamedUser', arguments)
+    callNative(success, failure, "getNamedUser")
   },
 
   /**
    * Sets the named user ID.
    *
    * @param {String} namedUser identifier string.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setNamedUser: function(namedUser, callback) {
-    argscheck.checkArgs('sF', 'UAirship.setNamedUser', arguments)
-    callNative(callback, "setNamedUser", [namedUser])
+  setNamedUser: function(namedUser, success, failure) {
+    argscheck.checkArgs('sFF', 'UAirship.setNamedUser', arguments)
+    callNative(success, failure, "setNamedUser", [namedUser])
   },
 
   /**
@@ -298,11 +310,12 @@ var plugin = {
    *
    * @param {String} actionName action as a string.
    * @param {*} actionValue
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  runAction: function(actionName, actionValue, callback) {
-    argscheck.checkArgs('s*F', 'UAirship.runAction', arguments)
-    callNative(callback, "runAction", [actionName, actionValue])
+  runAction: function(actionName, actionValue, success, failure) {
+    argscheck.checkArgs('s*FF', 'UAirship.runAction', arguments)
+    callNative(success, failure, "runAction", [actionName, actionValue])
   },
 
   /**
@@ -329,62 +342,68 @@ var plugin = {
    * Enables or disables Urban Airship location services.
    *
    * @param {Boolean} enabled true to enable location, false to disable.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setLocationEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setLocationEnabled', arguments)
-    callNative(callback, "setLocationEnabled", [!!enabled])
+  setLocationEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setLocationEnabled', arguments)
+    callNative(success, failure, "setLocationEnabled", [!!enabled])
   },
 
   /**
    * Checks if location is enabled or not.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  isLocationEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isLocationEnabled', arguments)
-    callNative(callback, "isLocationEnabled")
+  isLocationEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isLocationEnabled', arguments)
+    callNative(success, failure, "isLocationEnabled")
   },
 
   /**
    * Enables or disables background location.
    *
    * @param {Boolean} enabled true to enable background location, false to disable.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setBackgroundLocationEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setBackgroundLocationEnabled', arguments)
-    callNative(callback, "setBackgroundLocationEnabled", [!!enabled])
+  setBackgroundLocationEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setBackgroundLocationEnabled', arguments)
+    callNative(success, failure, "setBackgroundLocationEnabled", [!!enabled])
   },
 
   /**
    * Checks if background location is enabled or not.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  isBackgroundLocationEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isBackgroundLocationEnabled', arguments)
-    callNative(callback, "isBackgroundLocationEnabled")
+  isBackgroundLocationEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isBackgroundLocationEnabled', arguments)
+    callNative(success, failure, "isBackgroundLocationEnabled")
   },
 
   /**
    * Records the current location.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  recordCurrentLocation: function(callback) {
-    argscheck.checkArgs('F', 'UAirship.recordCurrentLocation', arguments)
-    callNative(callback, "recordCurrentLocation")
+  recordCurrentLocation: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.recordCurrentLocation', arguments)
+    callNative(success, failure, "recordCurrentLocation")
   },
 
   /**
    * Displays the message center.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  displayMessageCenter: function(callback) {
-    argscheck.checkArgs('F', 'UAirship.displayMessageCenter', arguments)
-    callNative(callback, "displayMessageCenter")
+  displayMessageCenter: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.displayMessageCenter', arguments)
+    callNative(success, failure, "displayMessageCenter")
   },
 
   /**
@@ -398,53 +417,57 @@ var plugin = {
    *
    * @param {Function} callback The function to call on completion with the messages.
    */
-  getInboxMessages: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getInboxMessages', arguments)
-    callNative(callback, "getInboxMessages")
+  getInboxMessages: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getInboxMessages', arguments)
+    callNative(success, failure, "getInboxMessages")
   },
 
   /**
    * Marks an inbox message read.
    *
    * @param {String} messageId The ID of the message to mark as read.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  markInboxMessageRead: function(messageId, callback) {
-    argscheck.checkArgs('sF', 'UAirship.markInboxMessageRead', arguments)
-    callNative(callback, 'markInboxMessageRead', [messageId])
+  markInboxMessageRead: function(messageId, success, failure) {
+    argscheck.checkArgs('sFF', 'UAirship.markInboxMessageRead', arguments)
+    callNative(success, failure, 'markInboxMessageRead', [messageId])
   },
 
   /**
    * Deletes an inbox message.
    *
    * @param {String} messageId The ID of the message to delete.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  deleteInboxMessage: function(messageId, callback) {
-    argscheck.checkArgs('sF', 'UAirship.deleteInboxMessage', arguments)
-    callNative(callback, 'deleteInboxMessage', [messageId])
+  deleteInboxMessage: function(messageId, success, failure) {
+    argscheck.checkArgs('sFF', 'UAirship.deleteInboxMessage', arguments)
+    callNative(success, failure, 'deleteInboxMessage', [messageId])
   },
 
   /**
    * Displays the inbox message using a full screen view.
    *
    * @param {String} messageId The ID of the message to display.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  displayInboxMessage: function(messageId, callback) {
-    argscheck.checkArgs('sF', 'UAirship.displayInboxMessage', arguments)
-    callNative(callback, 'displayInboxMessage', [messageId])
+  displayInboxMessage: function(messageId, success, failure) {
+    argscheck.checkArgs('sFF', 'UAirship.displayInboxMessage', arguments)
+    callNative(success, failure, 'displayInboxMessage', [messageId])
   },
 
   /**
    * Displays the inbox message using an overlay display.
    *
    * @param {String} messageId The ID of the message to display.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  overlayInboxMessage: function(messageId, callback) {
-    argscheck.checkArgs('sF', 'UAirship.overlayInboxMessage', arguments)
-    callNative(callback, 'overlayInboxMessage', [messageId])
+  overlayInboxMessage: function(messageId, success, failure) {
+    argscheck.checkArgs('sFF', 'UAirship.overlayInboxMessage', arguments)
+    callNative(success, failure, 'overlayInboxMessage', [messageId])
   },
 
   // iOS only
@@ -453,42 +476,46 @@ var plugin = {
    * Enables or disables auto badge. Defaults to `NO`.
    *
    * @param {Boolean} enabled true to enable auto badge, false to disable.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setAutobadgeEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setAutobadgeEnabled', arguments)
-    callNative(callback, "setAutobadgeEnabled", [!!enabled])
+  setAutobadgeEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setAutobadgeEnabled', arguments)
+    callNative(success, failure, "setAutobadgeEnabled", [!!enabled])
   },
 
   /**
    * Sets the badge number.
    *
    * @param {Number} number specified badge to set.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setBadgeNumber: function(number, callback) {
-    argscheck.checkArgs('nF', 'UAirship.setBadgeNumber', arguments)
-    callNative(callback, "setBadgeNumber", [number])
+  setBadgeNumber: function(number, success, failure) {
+    argscheck.checkArgs('nFF', 'UAirship.setBadgeNumber', arguments)
+    callNative(success, failure, "setBadgeNumber", [number])
   },
 
   /**
    * Returns the current badge number.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  getBadgeNumber: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.getBadgeNumber', arguments)
-    callNative(callback, "getBadgeNumber", [number])
+  getBadgeNumber: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getBadgeNumber', arguments)
+    callNative(success, failure, "getBadgeNumber")
   },
 
   /**
    * Clears the badge.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  resetBadge: function(callback) {
-    argscheck.checkArgs('F', 'UAirship.resetBadge', arguments)
-    callNative(callback, "resetBadge")
+  resetBadge: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.resetBadge', arguments)
+    callNative(success, failure, "resetBadge")
   },
 
   /**
@@ -496,11 +523,12 @@ var plugin = {
    * badges, sound and alerts are desired.
    *
    * @param {Number} types specified notification types.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setNotificationTypes: function(types, callback) {
-    argscheck.checkArgs('nF', 'UAirship.setNotificationTypes', arguments)
-    callNative(callback, "setNotificationTypes", [types])
+  setNotificationTypes: function(types, success, failure) {
+    argscheck.checkArgs('nFF', 'UAirship.setNotificationTypes', arguments)
+    callNative(success, failure, "setNotificationTypes", [types])
   },
 
   notificationType: {
@@ -515,53 +543,56 @@ var plugin = {
   /**
    * Clears all notifications posted by the application.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  clearNotifications: function(callback) {
-    argscheck.checkArgs('F', 'UAirship.clearNotifications', arguments)
-    callNative(callback, "clearNotifications")
+  clearNotifications: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.clearNotifications', arguments)
+    callNative(success, failure, "clearNotifications")
   },
 
   /**
    * Checks if notification sound is enabled or not.
    *
-   * @param {Function} callback The function to call on completion.
    */
-  isSoundEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isSoundEnabled', arguments)
-    callNative(callback, "isSoundEnabled")
+  isSoundEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isSoundEnabled', arguments)
+    callNative(success, failure, "isSoundEnabled")
   },
 
   /**
    * Enables or disables notification sound.
    *
    * @param {Boolean} enabled true to enable sound, false to disable.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setSoundEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setSoundEnabled', arguments)
-    callNative(callback, "setSoundEnabled", [!!enabled])
+  setSoundEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setSoundEnabled', arguments)
+    callNative(success, failure, "setSoundEnabled", [!!enabled])
   },
 
   /**
    * Checks if notification vibration is enabled or not.
    *
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  isVibrateEnabled: function(callback) {
-    argscheck.checkArgs('f', 'UAirship.isVibrateEnabled', arguments)
-    callNative(callback, "isVibrateEnabled")
+  isVibrateEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isVibrateEnabled', arguments)
+    callNative(success, failure, "isVibrateEnabled")
   },
 
   /**
    * Enables or disables notification vibration.
    *
    * @param {Boolean} enabled true to enable vibration, false to disable.
-   * @param {Function} callback The function to call on completion.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
-  setVibrateEnabled: function(enabled, callback) {
-    argscheck.checkArgs('*F', 'UAirship.setVibrateEnabled', arguments)
-    callNative(callback, "setVibrateEnabled", [!!enabled])
+  setVibrateEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setVibrateEnabled', arguments)
+    callNative(success, failure, "setVibrateEnabled", [!!enabled])
   }
 }
 

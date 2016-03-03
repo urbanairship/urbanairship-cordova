@@ -51,7 +51,6 @@ import com.urbanairship.actions.ActionValue;
 import com.urbanairship.actions.ActionValueException;
 import com.urbanairship.actions.LandingPageActivity;
 import com.urbanairship.google.PlayServicesUtils;
-import com.urbanairship.json.JsonMap;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.messagecenter.MessageActivity;
 import com.urbanairship.push.PushMessage;
@@ -147,7 +146,6 @@ public class UAirshipPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         Logger.info("Initializing Urban Airship cordova plugin.");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
-
     }
 
     @Override
@@ -763,11 +761,8 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Runs an Urban Airship action. An object will be returned with
-     * the following:
-     * "error": String
-     * "value": *
-     * <p/>
+     * Runs an Urban Airship action.
+     *
      * Expected arguments: String - action name, * - the action value
      *
      * @param data The call data.
@@ -777,28 +772,35 @@ public class UAirshipPlugin extends CordovaPlugin {
         final String actionName = data.getString(0);
         final Object actionValue = data.opt(1);
 
-
         ActionRunRequest.createRequest(actionName)
                 .setValue(actionValue)
                 .run(new ActionCompletionCallback() {
                     @Override
                     public void onFinish(ActionArguments arguments, ActionResult result) {
-                        Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
 
                         if (result.getStatus() == ActionResult.STATUS_COMPLETED) {
-                            resultMap.put("value", result.getValue().toJsonValue());
+                            try {
+                                JsonValue jsonValue = result.getValue().toJsonValue();
+                                if (jsonValue.isJsonMap()) {
+                                    callbackContext.success(new JSONObject(jsonValue.toString()));
+                                } else if (jsonValue.isJsonList()) {
+                                    callbackContext.success(new JSONArray(jsonValue.toString()));
+                                } else if (jsonValue.isString()) {
+                                    callbackContext.success(jsonValue.toString());
+                                } else if (jsonValue.isBoolean()) {
+                                    callbackContext.success(jsonValue.getBoolean(false) ? 1 : 0);
+                                } else if (jsonValue.isDouble()) {
+                                    callbackContext.success(jsonValue.toString());
+                                } else if (jsonValue.isNumber()) {
+                                    callbackContext.success(jsonValue.getInt(0));
+                                } else {
+                                    callbackContext.success();
+                                }
+                            } catch (JSONException e) {
+                                callbackContext.error("Failed to convert action results: " + e.getMessage());
+                            }
                         } else {
-                            String error = createActionErrorMessage(actionName, result);
-                            resultMap.put("error", JsonValue.wrap(error, JsonValue.NULL));
-                        }
-
-                        try {
-                            // Convert back to a JSONObject
-                            JSONObject jsonObject = new JSONObject(new JsonMap(resultMap).toString());
-                            callbackContext.success(jsonObject);
-                        } catch (JSONException e) {
-                            Logger.error("Failed to convert action results", e);
-                            callbackContext.error("Failed to convert action results: " + e.getMessage());
+                            callbackContext.error(createActionErrorMessage(actionName, result));
                         }
                     }
                 });
