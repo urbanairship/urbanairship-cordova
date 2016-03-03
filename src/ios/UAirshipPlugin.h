@@ -40,14 +40,14 @@
  *
  * @param command The cordova command.
  */
-- (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand*)command;
+- (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Checks if user push notifications are enabled or not.
  *
  * @param command The cordova command.
  */
-- (void)isUserNotificationsEnabled:(CDVInvokedUrlCommand*)command;
+- (void)isUserNotificationsEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Returns the last notification that launched the application.
@@ -56,21 +56,21 @@
  *
  * @param command The cordova command.
  */
-- (void)getLaunchNotification:(CDVInvokedUrlCommand*)command;
+- (void)getLaunchNotification:(CDVInvokedUrlCommand *)command;
 
 /**
  * Returns the channel ID.
  *
  * @param command The cordova command.
  */
-- (void)getChannelID:(CDVInvokedUrlCommand*)command;
+- (void)getChannelID:(CDVInvokedUrlCommand *)command;
 
 /**
  * Returns the tags as an array.
  *
  * @param command The cordova command.
  */
-- (void)getTags:(CDVInvokedUrlCommand*)command;
+- (void)getTags:(CDVInvokedUrlCommand *)command;
 
 /**
  * Sets the tags.
@@ -79,14 +79,14 @@
  *
  * @param command The cordova command.
  */
-- (void)setTags:(CDVInvokedUrlCommand*)command;
+- (void)setTags:(CDVInvokedUrlCommand *)command;
 
 /**
  * Returns the alias.
  *
  * @param command The cordova command.
  */
-- (void)getAlias:(CDVInvokedUrlCommand*)command;
+- (void)getAlias:(CDVInvokedUrlCommand *)command;
 
 /**
  * Sets the alias.
@@ -95,14 +95,14 @@
  *
  * @param command The cordova command.
  */
-- (void)setAlias:(CDVInvokedUrlCommand*)command;
+- (void)setAlias:(CDVInvokedUrlCommand *)command;
 
 /**
  * Returns the current badge number.
  *
  * @param command The cordova command.
  */
-- (void)getBadgeNumber:(CDVInvokedUrlCommand*)command;
+- (void)getBadgeNumber:(CDVInvokedUrlCommand *)command;
 
 /**
  * Enables or disables auto badge. Defaults to `NO`.
@@ -111,7 +111,7 @@
  *
  * @param command The cordova command.
  */
-- (void)setAutobadgeEnabled:(CDVInvokedUrlCommand*)command;
+- (void)setAutobadgeEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Sets the badge number.
@@ -120,14 +120,14 @@
  *
  * @param command The cordova command.
  */
-- (void)setBadgeNumber:(CDVInvokedUrlCommand*)command;
+- (void)setBadgeNumber:(CDVInvokedUrlCommand *)command;
 
 /**
  * Clears the badge.
  *
  * @param command The cordova command.
  */
-- (void)resetBadge:(CDVInvokedUrlCommand*)command;
+- (void)resetBadge:(CDVInvokedUrlCommand *)command;
 
 /**
  * Sets the named user ID.
@@ -136,7 +136,7 @@
  *
  * @param command The cordova command.
  */
-- (void)setNamedUser:(CDVInvokedUrlCommand*)command;
+- (void)setNamedUser:(CDVInvokedUrlCommand *)command;
 
 /**
  * Returns the named user ID.
@@ -145,7 +145,7 @@
  *
  * @param command The cordova command.
  */
-- (void)getNamedUser:(CDVInvokedUrlCommand*)command;
+- (void)getNamedUser:(CDVInvokedUrlCommand *)command;
 
 /**
  * Enables or disables quiet time.
@@ -154,14 +154,14 @@
  *
  * @param command The cordova command.
  */
-- (void)setQuietTimeEnabled:(CDVInvokedUrlCommand*)command;
+- (void)setQuietTimeEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Checks if quiet time is currently enabled.
  *
  * @param command The cordova command.
  */
-- (void)isQuietTimeEnabled:(CDVInvokedUrlCommand*)command;
+- (void)isQuietTimeEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Sets the quiet time.
@@ -171,7 +171,7 @@
  *
  * @param command The cordova command.
  */
-- (void)setQuietTime:(CDVInvokedUrlCommand*)command;
+- (void)setQuietTime:(CDVInvokedUrlCommand *)command;
 
 /**
  * Returns the quiet time as an object with the following:
@@ -182,14 +182,14 @@
  *
  * @param command The cordova command.
  */
-- (void)getQuietTime:(CDVInvokedUrlCommand*)command;
+- (void)getQuietTime:(CDVInvokedUrlCommand *)command;
 
 /**
  * Checks if the device is currently in quiet time.
  *
  * @param command The cordova command.
  */
-- (void)isInQuietTime:(CDVInvokedUrlCommand*)command;
+- (void)isInQuietTime:(CDVInvokedUrlCommand *)command;
 
 /**
  * Sets the user notification types. Defaults to all notification types.
@@ -198,7 +198,7 @@
  *
  * @param command The cordova command.
  */
-- (void)setNotificationTypes:(CDVInvokedUrlCommand*)command;
+- (void)setNotificationTypes:(CDVInvokedUrlCommand *)command;
 
 /**
  * Enables or disables analytics.
@@ -212,14 +212,14 @@
  *
  * @param command The cordova command.
  */
-- (void)setAnalyticsEnabled:(CDVInvokedUrlCommand*)command;
+- (void)setAnalyticsEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Checks if analytics is enabled or not.
  *
  * @param command The cordova command.
  */
-- (void)isAnalyticsEnabled:(CDVInvokedUrlCommand*)command;
+- (void)isAnalyticsEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Enables or disables location.
@@ -228,14 +228,14 @@
  *
  * @param command The cordova command.
  */
-- (void)setLocationEnabled:(CDVInvokedUrlCommand*)command;
+- (void)setLocationEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Checks if location is enabled or not.
  *
  * @param command The cordova command.
  */
-- (void)isLocationEnabled:(CDVInvokedUrlCommand*)command;
+- (void)isLocationEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Enables or disables background location.
@@ -244,21 +244,21 @@
  *
  * @param command The cordova command.
  */
-- (void)setBackgroundLocationEnabled:(CDVInvokedUrlCommand*)command;
+- (void)setBackgroundLocationEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Checks if background location is enabled or not.
  *
  * @param command The cordova command.
  */
-- (void)isBackgroundLocationEnabled:(CDVInvokedUrlCommand*)command;
+- (void)isBackgroundLocationEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Records the current location.
  *
  * @param command The cordova command.
  */
-- (void)recordCurrentLocation:(CDVInvokedUrlCommand*)command;
+- (void)recordCurrentLocation:(CDVInvokedUrlCommand *)command;
 
 /**
  * Runs an Urban Airship action. An object will be returned with
@@ -270,7 +270,7 @@
  *
  * @param command The cordova command.
  */
-- (void)runAction:(CDVInvokedUrlCommand*)command;
+- (void)runAction:(CDVInvokedUrlCommand *)command;
 
 /**
  * Edits the named user tag groups.
@@ -282,7 +282,7 @@
  *
  * @param command The cordova command.
  */
-- (void)editNamedUserTagGroups:(CDVInvokedUrlCommand*)command;
+- (void)editNamedUserTagGroups:(CDVInvokedUrlCommand *)command;
 
 /**
  * Edits the channel tag groups.
@@ -294,7 +294,7 @@
  *
  * @param command The cordova command.
  */
-- (void)editChannelTagGroups:(CDVInvokedUrlCommand*)command;
+- (void)editChannelTagGroups:(CDVInvokedUrlCommand *)command;
 
 /**
  * Registers the channel listener. Any channel registration updates will
@@ -302,7 +302,7 @@
  *
  * @param command The cordova command.
  */
-- (void)registerChannelListener:(CDVInvokedUrlCommand*)command;
+- (void)registerChannelListener:(CDVInvokedUrlCommand *)command;
 
 /**
  * Registers the push received listener. Any push received events will
@@ -310,14 +310,14 @@
  *
  * @param command The cordova command.
  */
-- (void)registerPushListener:(CDVInvokedUrlCommand*)command;
+- (void)registerPushListener:(CDVInvokedUrlCommand *)command;
 
 /**
  * Display the given message without animation.
  *
  * @pararm message The message.
  */
-- (void)displayMessageCenter:(CDVInvokedUrlCommand*)command;
+- (void)displayMessageCenter:(CDVInvokedUrlCommand *)command;
 
 /**
  * Registers the inbox listener. Any inbox updates
@@ -325,14 +325,14 @@
  *
  * @param command The cordova command.
  */
-- (void)registerInboxListener:(CDVInvokedUrlCommand*)command;
+- (void)registerInboxListener:(CDVInvokedUrlCommand *)command;
 
 /**
  * Gets the inbox listing.
  *
  * @param command The cordova command.
  */
-- (void)getInboxMessages:(CDVInvokedUrlCommand*)command;
+- (void)getInboxMessages:(CDVInvokedUrlCommand *)command;
 
 /**
  * Marks an inbox message read.
@@ -341,7 +341,7 @@
  *
  * @param command The cordova command.
  */
-- (void)markInboxMessageRead:(CDVInvokedUrlCommand*)command;
+- (void)markInboxMessageRead:(CDVInvokedUrlCommand *)command;
 
 /**
  * Deletes an inbox message.
@@ -350,7 +350,7 @@
  *
  * @param command The cordova command.
  */
-- (void)deleteInboxMessage:(CDVInvokedUrlCommand*)command;
+- (void)deleteInboxMessage:(CDVInvokedUrlCommand *)command;
 
 /**
  * Displays an inbox message.
@@ -359,7 +359,7 @@
  *
  * @param command The cordova command.
  */
-- (void)displayInboxMessage:(CDVInvokedUrlCommand*)command;
+- (void)displayInboxMessage:(CDVInvokedUrlCommand *)command;
 
 /**
  * Displays an inbox message in the overlay.
@@ -368,6 +368,6 @@
  *
  * @param command The cordova command.
  */
-- (void)overlayInboxMessage:(CDVInvokedUrlCommand*)command;
+- (void)overlayInboxMessage:(CDVInvokedUrlCommand *)command;
 
 @end
