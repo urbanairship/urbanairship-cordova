@@ -321,7 +321,7 @@
 
 /**
  * Registers the inbox listener. Any inbox updates
- * be sent to the command's callbackID.
+ * will be sent to the command's callbackID.
  *
  * @param command The cordova command.
  */

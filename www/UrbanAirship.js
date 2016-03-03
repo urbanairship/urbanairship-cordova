@@ -389,7 +389,7 @@ var plugin = {
 
   /**
    * Gets the array of inbox messages. Each message will have the following properties:
-   * "id": string - The messages Id. Needed to display, mark as read, or delete the message.
+   * "id": string - The messages ID. Needed to display, mark as read, or delete the message.
    * "title": string - The message title.
    * "sentDate": number - The message sent date in milliseconds.
    * "listIconUrl": string, optional - The icon url for the message.
@@ -406,7 +406,7 @@ var plugin = {
   /**
    * Marks an inbox message read.
    *
-   * @param {String} messageId The id of the message to mark as read.
+   * @param {String} messageId The ID of the message to mark as read.
    * @param {Function} callback The function to call on completion.
    */
   markInboxMessageRead: function(messageId, callback) {
@@ -417,7 +417,7 @@ var plugin = {
   /**
    * Deletes an inbox message.
    *
-   * @param {String} messageId The id of the message to delete.
+   * @param {String} messageId The ID of the message to delete.
    * @param {Function} callback The function to call on completion.
    */
   deleteInboxMessage: function(messageId, callback) {
@@ -428,7 +428,7 @@ var plugin = {
   /**
    * Displays the inbox message using a full screen view.
    *
-   * @param {String} messageId The id of the message to display.
+   * @param {String} messageId The ID of the message to display.
    * @param {Function} callback The function to call on completion.
    */
   displayInboxMessage: function(messageId, callback) {
@@ -439,7 +439,7 @@ var plugin = {
   /**
    * Displays the inbox message using an overlay display.
    *
-   * @param {String} messageId The id of the message to display.
+   * @param {String} messageId The ID of the message to display.
    * @param {Function} callback The function to call on completion.
    */
   overlayInboxMessage: function(messageId, callback) {
