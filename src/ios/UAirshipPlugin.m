@@ -47,8 +47,6 @@ typedef void (^UACordovaVoidCallbackBlock)(NSArray *args);
 @property (nonatomic, copy) NSString *registrationCallbackID;
 @property (nonatomic, copy) NSString *pushCallbackID;
 @property (nonatomic, copy) NSString *inboxCallbackID;
-@property (nonatomic, copy) UADefaultMessageCenterMessageViewController *messageViewController;
-
 @end
 
 @implementation UAirshipPlugin
