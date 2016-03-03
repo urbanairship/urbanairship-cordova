@@ -315,7 +315,14 @@ var plugin = {
    */
   runAction: function(actionName, actionValue, success, failure) {
     argscheck.checkArgs('s*FF', 'UAirship.runAction', arguments)
-    callNative(success, failure, "runAction", [actionName, actionValue])
+
+    var successWrapper = function(result) {
+      if (success) {
+        success(result.value)
+      }
+    }
+
+    callNative(successWrapper, failure, "runAction", [actionName, actionValue])
   },
 
   /**

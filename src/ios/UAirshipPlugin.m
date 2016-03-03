@@ -595,7 +595,15 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
                         completionHandler:^(UAActionResult *actionResult) {
 
                             if (actionResult.status == UAActionStatusCompleted) {
-                                completionHandler(CDVCommandStatus_OK, actionResult.value);
+
+                                /*
+                                 * We are wrapping the value in an object to be consistent
+                                 * with the Android implementation.
+                                 */
+
+                                NSMutableDictionary *result = [NSMutableDictionary dictionary];
+                                [result setValue:actionResult.value forKey:@"value"];
+                                completionHandler(CDVCommandStatus_OK, result);
                             } else {
                                 NSString *error = [self errorMessageForAction:actionName result:actionResult];
                                 completionHandler(CDVCommandStatus_ERROR, error);

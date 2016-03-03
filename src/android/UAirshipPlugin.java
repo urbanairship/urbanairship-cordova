@@ -779,23 +779,19 @@ public class UAirshipPlugin extends CordovaPlugin {
                     public void onFinish(ActionArguments arguments, ActionResult result) {
 
                         if (result.getStatus() == ActionResult.STATUS_COMPLETED) {
+
+                            /*
+                             * We are wrapping the value in an object to preserve the type of data
+                             * the action returns. CallbackContext.success does not allow all types.
+                             * The value will be pulled out in the UAirship.js file before passing
+                             * it back to the user.
+                             */
+
+                            Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
+                            resultMap.put("value", result.getValue().toJsonValue());
+
                             try {
-                                JsonValue jsonValue = result.getValue().toJsonValue();
-                                if (jsonValue.isJsonMap()) {
-                                    callbackContext.success(new JSONObject(jsonValue.toString()));
-                                } else if (jsonValue.isJsonList()) {
-                                    callbackContext.success(new JSONArray(jsonValue.toString()));
-                                } else if (jsonValue.isString()) {
-                                    callbackContext.success(jsonValue.toString());
-                                } else if (jsonValue.isBoolean()) {
-                                    callbackContext.success(jsonValue.getBoolean(false) ? 1 : 0);
-                                } else if (jsonValue.isDouble()) {
-                                    callbackContext.success(jsonValue.toString());
-                                } else if (jsonValue.isNumber()) {
-                                    callbackContext.success(jsonValue.getInt(0));
-                                } else {
-                                    callbackContext.success();
-                                }
+                                callbackContext.success(new JSONObject(resultMap.toString()));
                             } catch (JSONException e) {
                                 callbackContext.error("Failed to convert action results: " + e.getMessage());
                             }
