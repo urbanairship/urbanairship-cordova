@@ -919,6 +919,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         if (message == null) {
             callbackContext.error("Message not found: " + messageId);
+            return;
         }
 
         message.delete();
@@ -1023,6 +1024,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         if (message == null) {
             callbackContext.error("Message not found: " + messageId);
+            return;
         }
 
         cordova.getActivity().runOnUiThread(new Runnable() {
