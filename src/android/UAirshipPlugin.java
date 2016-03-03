@@ -918,7 +918,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
 
         if (message == null) {
-            callbackContext.error("Unable to delete message: " + messageId);
+            callbackContext.error("Message not found: " + messageId);
         }
 
         message.delete();
@@ -937,7 +937,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
 
         if (message == null) {
-            callbackContext.error("Unable to mark message read: " + messageId);
+            callbackContext.error("Message not found: " + messageId);
             return;
         }
 
@@ -990,7 +990,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
 
         if (message == null) {
-            callbackContext.error("Unable to display message: " + messageId);
+            callbackContext.error("Message not found: " + messageId);
             return;
         }
 
@@ -1022,7 +1022,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
 
         if (message == null) {
-            callbackContext.error("Unable to overlay message: " + messageId);
+            callbackContext.error("Message not found: " + messageId);
         }
 
         cordova.getActivity().runOnUiThread(new Runnable() {

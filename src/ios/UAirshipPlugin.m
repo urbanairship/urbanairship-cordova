@@ -724,7 +724,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
           UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
 
           if (!message) {
-               NSString *error = [NSString stringWithFormat:@"Unable to mark message read: %@", messageID];
+               NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
                return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
           }
 
@@ -739,7 +739,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
           UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
 
           if (!message) {
-               NSString *error = [NSString stringWithFormat:@"Unable to delete message: %@", messageID];
+               NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
                return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
           }
 
@@ -754,7 +754,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
           UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
 
           if (!message) {
-               NSString *error = [NSString stringWithFormat:@"Unable to display message: %@", messageID];
+               NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
                return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
           }
 
@@ -767,7 +767,6 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
           [[UAUtils topController] presentViewController:navController animated:YES completion:nil];
           return [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
      }];
-
 }
 
 - (void)overlayInboxMessage:(CDVInvokedUrlCommand*)command {
@@ -776,7 +775,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
           UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
 
           if (!message) {
-               NSString *error = [NSString stringWithFormat:@"Unable to overlay message: %@", messageID];
+               NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
                return [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:error];
           }
 
