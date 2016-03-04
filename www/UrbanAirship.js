@@ -92,8 +92,10 @@ callNative(function() {
   cordova.fireDocumentEvent("urbanairship.inbox_updated")
 }, null, "registerInboxListener")
 
-
-var plugin = {
+/**
+ * @module UrbanAirship
+ */
+module.exports = {
 
   /**
    * Enables or disables user notifications.
@@ -614,5 +616,3 @@ var plugin = {
     callNative(success, failure, "setVibrateEnabled", [!!enabled])
   }
 }
-
-module.exports = plugin
