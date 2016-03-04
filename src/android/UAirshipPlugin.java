@@ -51,7 +51,6 @@ import com.urbanairship.actions.ActionValue;
 import com.urbanairship.actions.ActionValueException;
 import com.urbanairship.actions.LandingPageActivity;
 import com.urbanairship.google.PlayServicesUtils;
-import com.urbanairship.json.JsonMap;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.messagecenter.MessageActivity;
 import com.urbanairship.push.PushMessage;
@@ -125,7 +124,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
             "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter",
-            "registerInboxListener", "markInboxMessageRead", "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage");
+            "registerInboxListener", "markInboxMessageRead", "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox");
 
     /**
      * The launch push message. Set from the IntentReceiver.
@@ -147,7 +146,6 @@ public class UAirshipPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         Logger.info("Initializing Urban Airship cordova plugin.");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
-
     }
 
     @Override
@@ -763,11 +761,8 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Runs an Urban Airship action. An object will be returned with
-     * the following:
-     * "error": String
-     * "value": *
-     * <p/>
+     * Runs an Urban Airship action.
+     *
      * Expected arguments: String - action name, * - the action value
      *
      * @param data The call data.
@@ -777,28 +772,31 @@ public class UAirshipPlugin extends CordovaPlugin {
         final String actionName = data.getString(0);
         final Object actionValue = data.opt(1);
 
-
         ActionRunRequest.createRequest(actionName)
                 .setValue(actionValue)
                 .run(new ActionCompletionCallback() {
                     @Override
                     public void onFinish(ActionArguments arguments, ActionResult result) {
-                        Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
 
                         if (result.getStatus() == ActionResult.STATUS_COMPLETED) {
-                            resultMap.put("value", result.getValue().toJsonValue());
-                        } else {
-                            String error = createActionErrorMessage(actionName, result);
-                            resultMap.put("error", JsonValue.wrap(error, JsonValue.NULL));
-                        }
 
-                        try {
-                            // Convert back to a JSONObject
-                            JSONObject jsonObject = new JSONObject(new JsonMap(resultMap).toString());
-                            callbackContext.success(jsonObject);
-                        } catch (JSONException e) {
-                            Logger.error("Failed to convert action results", e);
-                            callbackContext.error("Failed to convert action results: " + e.getMessage());
+                            /*
+                             * We are wrapping the value in an object to preserve the type of data
+                             * the action returns. CallbackContext.success does not allow all types.
+                             * The value will be pulled out in the UAirship.js file before passing
+                             * it back to the user.
+                             */
+
+                            Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
+                            resultMap.put("value", result.getValue().toJsonValue());
+
+                            try {
+                                callbackContext.success(new JSONObject(resultMap.toString()));
+                            } catch (JSONException e) {
+                                callbackContext.error("Failed to convert action results: " + e.getMessage());
+                            }
+                        } else {
+                            callbackContext.error(createActionErrorMessage(actionName, result));
                         }
                     }
                 });
@@ -1041,6 +1039,31 @@ public class UAirshipPlugin extends CordovaPlugin {
         });
 
         callbackContext.success();
+    }
+
+    /**
+     * Refreshes the inbox.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void refreshInbox(JSONArray data, final CallbackContext callbackContext) throws JSONException {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                UAirship.shared().getInbox().fetchMessages(new RichPushInbox.FetchMessagesCallback() {
+                    @Override
+                    public void onFinished(boolean success) {
+                        if (success) {
+                            callbackContext.success();
+                        } else {
+                            callbackContext.error("Inbox failed to refresh");
+                        }
+                    }
+                });
+            }
+        });
     }
 
     /**

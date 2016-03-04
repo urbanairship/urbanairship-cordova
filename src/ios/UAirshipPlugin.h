@@ -261,10 +261,7 @@
 - (void)recordCurrentLocation:(CDVInvokedUrlCommand *)command;
 
 /**
- * Runs an Urban Airship action. An object will be returned with
- * the following:
- * "error": String,
- * "value": *
+ * Runs an Urban Airship action.
  *
  * Expected arguments: String - action name, * - the action value
  *
@@ -369,5 +366,12 @@
  * @param command The cordova command.
  */
 - (void)overlayInboxMessage:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Refreshes the inbox.
+ *
+ * @param command The cordova command.
+ */
+- (void)refreshInbox:(CDVInvokedUrlCommand *)command;
 
 @end
