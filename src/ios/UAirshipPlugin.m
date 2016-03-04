@@ -812,4 +812,14 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
     }];
 }
 
+- (void)refreshInbox:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+            completionHandler(CDVCommandStatus_OK, nil);
+        } withFailureBlock:^{
+            completionHandler(CDVCommandStatus_ERROR, @"Inbox failed to refresh");
+        }];
+    }];
+}
+
 @end

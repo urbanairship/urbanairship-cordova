@@ -367,4 +367,11 @@
  */
 - (void)overlayInboxMessage:(CDVInvokedUrlCommand *)command;
 
+/**
+ * Refreshes the inbox.
+ *
+ * @param command The cordova command.
+ */
+- (void)refreshInbox:(CDVInvokedUrlCommand *)command;
+
 @end

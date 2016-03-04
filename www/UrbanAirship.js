@@ -464,6 +464,20 @@ var plugin = {
   },
 
   /**
+   * Forces the inbox to refresh. This is normally not needed as the inbox
+   * will automatically refresh on foreground or when a push arrives thats
+   * associated with a message, but it can be useful when providing a refresh
+   * button for the message listing.
+   *
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
+   */
+  refreshInbox: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.refreshInbox', arguments)
+    callNative(success, failure, 'refreshInbox')
+  },
+
+  /**
    * Displays the inbox message using an overlay display.
    *
    * @param {String} messageId The ID of the message to display.

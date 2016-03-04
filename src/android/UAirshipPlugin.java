@@ -124,7 +124,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
             "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter",
-            "registerInboxListener", "markInboxMessageRead", "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage");
+            "registerInboxListener", "markInboxMessageRead", "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox");
 
     /**
      * The launch push message. Set from the IntentReceiver.
@@ -1039,6 +1039,31 @@ public class UAirshipPlugin extends CordovaPlugin {
         });
 
         callbackContext.success();
+    }
+
+    /**
+     * Refreshes the inbox.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void refreshInbox(JSONArray data, final CallbackContext callbackContext) throws JSONException {
+        cordova.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                UAirship.shared().getInbox().fetchMessages(new RichPushInbox.FetchMessagesCallback() {
+                    @Override
+                    public void onFinished(boolean success) {
+                        if (success) {
+                            callbackContext.success();
+                        } else {
+                            callbackContext.error("Inbox failed to refresh");
+                        }
+                    }
+                });
+            }
+        });
     }
 
     /**
