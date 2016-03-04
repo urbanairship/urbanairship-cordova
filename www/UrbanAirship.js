@@ -92,24 +92,21 @@ callNative(function() {
   cordova.fireDocumentEvent("urbanairship.inbox_updated")
 }, null, "registerInboxListener")
 
+
+
+
 /**
  * @module UrbanAirship
  */
 module.exports = {
 
   /**
-   * Failure callback.
-   *
-   * @callback failureCallback
-   * @param {string} error The error message.
-   */
-
-  /**
    * Enables or disables user notifications.
    *
-   * @param {Boolean} enabled true to enable notifications, false to disable.
-   * @param {function} success The function to call on success.
-   * @param {failureCallback} [failure] The function to call on failure.
+   * @param {boolean} enabled true to enable notifications, false to disable.
+   * @param {function} [success] Sucess callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The failure message.
    */
   setUserNotificationsEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setUserNotificationsEnabled', arguments)
@@ -119,8 +116,10 @@ module.exports = {
   /**
    * Checks if user notifications are enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {UrbanAirship/failureCallback} [failure] The function to call on failure.
+   * @param {function(enabled)} [success] Success callback.
+   * @param {boolean} success.enabled Flag indicating if user notifications is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The failure message.
    */
   isUserNotificationsEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isUserNotificationsEnabled', arguments)
