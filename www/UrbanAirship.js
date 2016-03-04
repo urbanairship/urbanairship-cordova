@@ -303,10 +303,7 @@ var plugin = {
   },
 
   /**
-   * Runs an Urban Airship action. An object will be returned with
-   * the following:
-   * "error": String
-   * "value": *
+   * Runs an Urban Airship action.
    *
    * @param {String} actionName action as a string.
    * @param {*} actionValue
@@ -422,7 +419,8 @@ var plugin = {
    * "isRead": boolean - The unread/read status of the message.
    * "extras": object - String to String map of any message extras.
    *
-   * @param {Function} callback The function to call on completion with the messages.
+   * @param {Function} success The function to call on success.
+   * @param {Function} failure The function to call on failure.
    */
   getInboxMessages: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getInboxMessages', arguments)

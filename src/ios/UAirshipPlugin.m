@@ -162,7 +162,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 }
 
 /**
- * Helper method to perform a cordova command asynchrounously.
+ * Helper method to perform a cordova command asynchronously.
  *
  * @param command The cordova command.
  * @param block The UACordovaExecutionBlock to execute.
