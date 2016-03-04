@@ -104,9 +104,9 @@ module.exports = {
    * Enables or disables user notifications.
    *
    * @param {boolean} enabled true to enable notifications, false to disable.
-   * @param {function} [success] Sucess callback.
+   * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The failure message.
+   * @param {string} failure.message The error message.
    */
   setUserNotificationsEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setUserNotificationsEnabled', arguments)
@@ -116,10 +116,10 @@ module.exports = {
   /**
    * Checks if user notifications are enabled or not.
    *
-   * @param {function(enabled)} [success] Success callback.
+   * @param {function(enabled)} success Success callback.
    * @param {boolean} success.enabled Flag indicating if user notifications is enabled or not.
    * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The failure message.
+   * @param {string} failure.message The error message.
    */
   isUserNotificationsEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isUserNotificationsEnabled', arguments)
@@ -129,8 +129,10 @@ module.exports = {
   /**
    * Returns the channel ID.
    *
-   * @param {Function} success The function to call on success.
+   * @param {function(ID)} success The function to call on success.
+   * @param {string} success.ID The channel ID string
    * @param {failureCallback} [failure] The function to call on failure.
+   * @param {string} failure.message The error message.
    */
   getChannelID: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getChannelID', arguments)
@@ -141,8 +143,11 @@ module.exports = {
    * Returns the last notification that launched the application.
    *
    * @param {Boolean} clear true to clear the notification.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(push)} success The function to call on success.
+   * @param {object} success.push The push message object containing data associated with a push notification.
+   *        The extras dictionary can contain arbitrary key/value data that you use in your application.
+   * @param {failureCallback} [failure] The function to call on failure.
+   * @param {string} failure.message The error message.
    */
   getLaunchNotification: function(clear, success, failure) {
     argscheck.checkArgs('*fF', 'UAirship.getLaunchNotification', arguments)
@@ -152,8 +157,10 @@ module.exports = {
   /**
    * Returns the tags as an array.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(tags)} success The function to call on success.
+   * @param {array} success.tags The tags as an array.
+   * @param {failureCallback} [failure] The function to call on failure.
+   * @param {string} failure.message The error message.
    */
   getTags: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getTags', arguments);
@@ -164,8 +171,9 @@ module.exports = {
    * Sets the tags.
    *
    * @param {Array} tags an array of strings.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setTags: function(tags, success, failure) {
     argscheck.checkArgs('aFF', 'UAirship.setTags', arguments);
@@ -175,8 +183,10 @@ module.exports = {
   /**
    * Returns the alias.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(currentAlias)} success The function to call on success.
+   * @param {string} success.currentAlias The alias as a string.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getAlias: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getAlias', arguments)
@@ -187,8 +197,9 @@ module.exports = {
    * Sets the alias.
    *
    * @param {String} alias string
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setAlias: function(alias, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.setAlias', arguments)
@@ -198,8 +209,10 @@ module.exports = {
   /**
    * Checks if quiet time is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if quiet time is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isQuietTimeEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isQuietTimeEnabled', arguments)
@@ -210,8 +223,9 @@ module.exports = {
    * Enables or disables quiet time.
    *
    * @param {Boolean} enabled true to enable quiet time, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setQuietTimeEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setQuietTimeEnabled', arguments)
@@ -221,8 +235,10 @@ module.exports = {
   /**
    * Checks if the device is currently in quiet time.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(inQuietTime)} success Success callback.
+   * @param {boolean} success.inQuietTime Flag indicating if quiet time is currently in effect.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isInQuietTime: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isInQuietTime', arguments)
@@ -236,8 +252,11 @@ module.exports = {
    * "endHour": Number,
    * "endMinute": Number
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(quietTime)} success The function to call on success.
+   * @param {object} success.quietTime The quietTime object represents a timespan during
+   *        which notifications should be silenced.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getQuietTime: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getQuietTime', arguments)
@@ -251,8 +270,9 @@ module.exports = {
    * @param {Number} startMinute for quiet time.
    * @param {Number} endHour for quiet time.
    * @param {Number} endMinute for quiet time.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setQuietTime: function(startHour, startMinute, endHour, endMinute, success, failure) {
     argscheck.checkArgs('nnnnFF', 'UAirship.setQuietTime', arguments)
@@ -268,8 +288,9 @@ module.exports = {
    * location segmentation, push to local time).
    *
    * @param {Boolean} enabled true to enable analytics, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setAnalyticsEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setAnalyticsEnabled', arguments)
@@ -279,8 +300,10 @@ module.exports = {
   /**
    * Checks if analytics is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if analytics is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isAnalyticsEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isAnalyticsEnabled', arguments)
@@ -290,8 +313,10 @@ module.exports = {
   /**
    * Returns the named user ID.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(namedUser)} success The function to call on success.
+   * @param {string} success.namedUser The named user ID as a string.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getNamedUser: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getNamedUser', arguments)
@@ -302,8 +327,9 @@ module.exports = {
    * Sets the named user ID.
    *
    * @param {String} namedUser identifier string.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setNamedUser: function(namedUser, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.setNamedUser', arguments)
@@ -315,8 +341,10 @@ module.exports = {
    *
    * @param {String} actionName action as a string.
    * @param {*} actionValue
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(result)} [success] The function to call on success.
+   * @param {object} success.result The result's value.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   runAction: function(actionName, actionValue, success, failure) {
     argscheck.checkArgs('s*FF', 'UAirship.runAction', arguments)
@@ -354,8 +382,9 @@ module.exports = {
    * Enables or disables Urban Airship location services.
    *
    * @param {Boolean} enabled true to enable location, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setLocationEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setLocationEnabled', arguments)
@@ -365,8 +394,10 @@ module.exports = {
   /**
    * Checks if location is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if location is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isLocationEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isLocationEnabled', arguments)
@@ -377,8 +408,9 @@ module.exports = {
    * Enables or disables background location.
    *
    * @param {Boolean} enabled true to enable background location, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setBackgroundLocationEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setBackgroundLocationEnabled', arguments)
@@ -388,8 +420,10 @@ module.exports = {
   /**
    * Checks if background location is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if background location updates are enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isBackgroundLocationEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isBackgroundLocationEnabled', arguments)
@@ -399,8 +433,9 @@ module.exports = {
   /**
    * Records the current location.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   recordCurrentLocation: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.recordCurrentLocation', arguments)
@@ -410,8 +445,9 @@ module.exports = {
   /**
    * Displays the message center.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   displayMessageCenter: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.displayMessageCenter', arguments)
@@ -427,8 +463,10 @@ module.exports = {
    * "isRead": boolean - The unread/read status of the message.
    * "extras": object - String to String map of any message extras.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(messages)} success The function to call on success.
+   * @param {array} success.messages The array of inbox messages.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getInboxMessages: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getInboxMessages', arguments)
@@ -439,8 +477,9 @@ module.exports = {
    * Marks an inbox message read.
    *
    * @param {String} messageId The ID of the message to mark as read.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   markInboxMessageRead: function(messageId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.markInboxMessageRead', arguments)
@@ -451,8 +490,9 @@ module.exports = {
    * Deletes an inbox message.
    *
    * @param {String} messageId The ID of the message to delete.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   deleteInboxMessage: function(messageId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.deleteInboxMessage', arguments)
@@ -463,8 +503,9 @@ module.exports = {
    * Displays the inbox message using a full screen view.
    *
    * @param {String} messageId The ID of the message to display.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   displayInboxMessage: function(messageId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.displayInboxMessage', arguments)
@@ -477,8 +518,9 @@ module.exports = {
    * associated with a message, but it can be useful when providing a refresh
    * button for the message listing.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   refreshInbox: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.refreshInbox', arguments)
@@ -489,8 +531,9 @@ module.exports = {
    * Displays the inbox message using an overlay display.
    *
    * @param {String} messageId The ID of the message to display.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   overlayInboxMessage: function(messageId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.overlayInboxMessage', arguments)
@@ -503,8 +546,9 @@ module.exports = {
    * Enables or disables auto badge. Defaults to `NO`.
    *
    * @param {Boolean} enabled true to enable auto badge, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setAutobadgeEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setAutobadgeEnabled', arguments)
@@ -515,8 +559,9 @@ module.exports = {
    * Sets the badge number.
    *
    * @param {Number} number specified badge to set.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setBadgeNumber: function(number, success, failure) {
     argscheck.checkArgs('nFF', 'UAirship.setBadgeNumber', arguments)
@@ -526,8 +571,10 @@ module.exports = {
   /**
    * Returns the current badge number.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(badgeNumber)} success The function to call on success.
+   * @param {int} success.badgeNumber The current application badge number.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getBadgeNumber: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getBadgeNumber', arguments)
@@ -537,8 +584,9 @@ module.exports = {
   /**
    * Clears the badge.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   resetBadge: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.resetBadge', arguments)
@@ -550,8 +598,9 @@ module.exports = {
    * badges, sound and alerts are desired.
    *
    * @param {Number} types specified notification types.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setNotificationTypes: function(types, success, failure) {
     argscheck.checkArgs('nFF', 'UAirship.setNotificationTypes', arguments)
@@ -570,8 +619,9 @@ module.exports = {
   /**
    * Clears all notifications posted by the application.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   clearNotifications: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.clearNotifications', arguments)
@@ -581,6 +631,9 @@ module.exports = {
   /**
    * Checks if notification sound is enabled or not.
    *
+   * @param {boolean} success.enabled Flag indicating if sound is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isSoundEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isSoundEnabled', arguments)
@@ -591,8 +644,9 @@ module.exports = {
    * Enables or disables notification sound.
    *
    * @param {Boolean} enabled true to enable sound, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setSoundEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setSoundEnabled', arguments)
@@ -602,8 +656,9 @@ module.exports = {
   /**
    * Checks if notification vibration is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {boolean} success.enabled Flag indicating if vibration is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isVibrateEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isVibrateEnabled', arguments)
@@ -614,8 +669,9 @@ module.exports = {
    * Enables or disables notification vibration.
    *
    * @param {Boolean} enabled true to enable vibration, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setVibrateEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setVibrateEnabled', arguments)
