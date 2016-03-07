@@ -44,43 +44,83 @@ function callNative(success, failure, name, args) {
   exec(success, failure, "UAirship", name, args)
 }
 
-// Helper method to edit tag groups
-function tagGroupEditor(cordovaMethod, nativeMethod) {
+/**
+ * Helper object to edit tag groups.
+ *
+ * Normally not created directly. Instead use [UrbanAirship.editNamedUserTagGroups]{@link module:UrbanAirship.editNamedUserTagGroups} 
+ * or [UrbanAirship.editChannelTagGroups]{@link module:UrbanAirship.editChannelTagGroups}.
+ *
+ * @class TagGroupEditor
+ * @param nativeMethod The native method to call on apply.
+ */
+function TagGroupEditor(nativeMethod) {
+
     // Store the raw operations and let the SDK combine them
     var operations = []
+
     var editor = {}
 
+    /**
+     * Adds tags to a tag group.
+     * @instance
+     * @memberof TagGroupEditor
+     * @function addTags
+     *
+     * @param {string} tagGroup The tag group.
+     * @param {array<string>} tags Tags to add.
+     * @return {TagGroupEditor} The tag group editor instance.
+     */
     editor.addTags = function(tagGroup, tags) {
-        argscheck.checkArgs('sa', cordovaMethod + ".addTags", arguments)
-        var operation = { "operation": "add", "group": tagGroup, "tags": tags }
-        operations.push(operation)
-        return editor
+      argscheck.checkArgs('sa', "TagGroupEditor#addTags", arguments)
+      var operation = { "operation": "add", "group": tagGroup, "tags": tags }
+      operations.push(operation)
+      return editor
     }
 
+    /**
+     * Removes a tag from the tag group.
+     * @instance
+     * @memberof TagGroupEditor
+     * @function removeTags
+     *
+     * @param {string} tagGroup The tag group.
+     * @param {array<string>} tags Tags to remove.
+     * @return {TagGroupEditor} The tag group editor instance.
+     */
     editor.removeTags = function(tagGroup, tags) {
-        argscheck.checkArgs('sa', cordovaMethod + ".removeTags", arguments)
-        var operation = { "operation": "remove", "group": tagGroup, "tags": tags }
-        operations.push(operation)
-        return editor
+      argscheck.checkArgs('sa', "TagGroupEditor#removeTags", arguments)
+      var operation = { "operation": "remove", "group": tagGroup, "tags": tags }
+      operations.push(operation)
+      return editor
     }
 
+    /**
+     * Applies the tag changes.
+     * @instance
+     * @memberof TagGroupEditor
+     * @function apply
+     *
+     * @param {function} [success] Success callback.
+     * @param {function(message)} [failure] Failure callback.
+     * @param {string} failure.message The failure message.
+     * @return {TagGroupEditor} The tag group editor instance.
+     */
     editor.apply = function(success, failure) {
-        argscheck.checkArgs('FF', cordovaMethod + ".apply", arguments)
-        callNative(success, failure, nativeMethod, [operations])
-        operations = []
-        return editor
+      argscheck.checkArgs('FF', "TagGroupEditor#apply", arguments)
+      callNative(success, failure, nativeMethod, [operations])
+      operations = []
+      return editor
     }
 
     return editor
 }
 
-// Listen for channel registration updates
 callNative(function(registration) {
   console.log("Firing document event for registration update.")
   cordova.fireDocumentEvent("urbanairship.registration", registration)
 }, null, "registerChannelListener")
 
-// Listen for incoming push notifications
+
 callNative(function(push) {
   console.log("Firing document event for push event.")
   cordova.fireDocumentEvent("urbanairship.push", push)
@@ -93,14 +133,44 @@ callNative(function() {
 }, null, "registerInboxListener")
 
 
-var plugin = {
+/**
+ * @module UrbanAirship
+ */
+module.exports = {
+
+
+  /**
+   * Event fired when a channel registration occurs.
+   *
+   * @event "urbanairship.registration"
+   * @type {object}
+   * @param {string} [channelID] The channel ID.
+   * @param {string} [error] Error message if an error occurred.
+   */
+
+  /**
+   * Event fired when the inbox is updated.
+   *
+   * @event "urbanairship.inbox_updated"
+   */
+
+  /**
+   * Event fired when a push is received.
+   *
+   * @event "urbanairship.push"
+   * @type {object}
+   * @param {string} message The push alert message.
+   * @param {object} extras Any push extras.
+   * @param {number} [notification_id] The Android notification ID.
+   */
 
   /**
    * Enables or disables user notifications.
    *
-   * @param {Boolean} enabled true to enable notifications, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {boolean} enabled true to enable notifications, false to disable.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setUserNotificationsEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setUserNotificationsEnabled', arguments)
@@ -110,8 +180,10 @@ var plugin = {
   /**
    * Checks if user notifications are enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if user notifications is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isUserNotificationsEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isUserNotificationsEnabled', arguments)
@@ -121,8 +193,10 @@ var plugin = {
   /**
    * Returns the channel ID.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(ID)} success The function to call on success.
+   * @param {string} success.ID The channel ID string
+   * @param {failureCallback} [failure] The function to call on failure.
+   * @param {string} failure.message The error message.
    */
   getChannelID: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getChannelID', arguments)
@@ -133,8 +207,13 @@ var plugin = {
    * Returns the last notification that launched the application.
    *
    * @param {Boolean} clear true to clear the notification.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(push)} success The function to call on success.
+   * @param {object} success.push The push message object containing data associated with a push notification.
+   * @param {string} success.push.message The push alert message.
+   * @param {object} success.push.extras Any push extras.
+   * @param {number} [success.push.notification_id] The Android notification ID.
+   * @param {failureCallback} [failure] The function to call on failure.
+   * @param {string} failure.message The error message.
    */
   getLaunchNotification: function(clear, success, failure) {
     argscheck.checkArgs('*fF', 'UAirship.getLaunchNotification', arguments)
@@ -144,8 +223,10 @@ var plugin = {
   /**
    * Returns the tags as an array.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(tags)} success The function to call on success.
+   * @param {array} success.tags The tags as an array.
+   * @param {failureCallback} [failure] The function to call on failure.
+   * @param {string} failure.message The error message.
    */
   getTags: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getTags', arguments);
@@ -156,8 +237,9 @@ var plugin = {
    * Sets the tags.
    *
    * @param {Array} tags an array of strings.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setTags: function(tags, success, failure) {
     argscheck.checkArgs('aFF', 'UAirship.setTags', arguments);
@@ -167,8 +249,10 @@ var plugin = {
   /**
    * Returns the alias.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(currentAlias)} success The function to call on success.
+   * @param {string} success.currentAlias The alias as a string.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getAlias: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getAlias', arguments)
@@ -179,8 +263,9 @@ var plugin = {
    * Sets the alias.
    *
    * @param {String} alias string
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setAlias: function(alias, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.setAlias', arguments)
@@ -190,8 +275,10 @@ var plugin = {
   /**
    * Checks if quiet time is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if quiet time is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isQuietTimeEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isQuietTimeEnabled', arguments)
@@ -202,8 +289,9 @@ var plugin = {
    * Enables or disables quiet time.
    *
    * @param {Boolean} enabled true to enable quiet time, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setQuietTimeEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setQuietTimeEnabled', arguments)
@@ -213,8 +301,10 @@ var plugin = {
   /**
    * Checks if the device is currently in quiet time.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(inQuietTime)} success Success callback.
+   * @param {boolean} success.inQuietTime Flag indicating if quiet time is currently in effect.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isInQuietTime: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isInQuietTime', arguments)
@@ -228,8 +318,11 @@ var plugin = {
    * "endHour": Number,
    * "endMinute": Number
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(quietTime)} success The function to call on success.
+   * @param {object} success.quietTime The quietTime object represents a timespan during
+   *        which notifications should be silenced.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getQuietTime: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getQuietTime', arguments)
@@ -243,8 +336,9 @@ var plugin = {
    * @param {Number} startMinute for quiet time.
    * @param {Number} endHour for quiet time.
    * @param {Number} endMinute for quiet time.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setQuietTime: function(startHour, startMinute, endHour, endMinute, success, failure) {
     argscheck.checkArgs('nnnnFF', 'UAirship.setQuietTime', arguments)
@@ -260,8 +354,9 @@ var plugin = {
    * location segmentation, push to local time).
    *
    * @param {Boolean} enabled true to enable analytics, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setAnalyticsEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setAnalyticsEnabled', arguments)
@@ -271,8 +366,10 @@ var plugin = {
   /**
    * Checks if analytics is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if analytics is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isAnalyticsEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isAnalyticsEnabled', arguments)
@@ -282,8 +379,10 @@ var plugin = {
   /**
    * Returns the named user ID.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(namedUser)} success The function to call on success.
+   * @param {string} success.namedUser The named user ID as a string.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getNamedUser: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getNamedUser', arguments)
@@ -294,8 +393,9 @@ var plugin = {
    * Sets the named user ID.
    *
    * @param {String} namedUser identifier string.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setNamedUser: function(namedUser, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.setNamedUser', arguments)
@@ -307,8 +407,10 @@ var plugin = {
    *
    * @param {String} actionName action as a string.
    * @param {*} actionValue
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(result)} [success] The function to call on success.
+   * @param {object} success.result The result's value.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   runAction: function(actionName, actionValue, success, failure) {
     argscheck.checkArgs('s*FF', 'UAirship.runAction', arguments)
@@ -325,19 +427,19 @@ var plugin = {
   /**
    * Creates an editor to modify the named user tag groups.
    *
-   * @return A tag group editor.
+   * @return {TagGroupEditor} A tag group editor instance.
    */
   editNamedUserTagGroups: function() {
-    return tagGroupEditor('UAirship.editNamedUserTagGroups', 'editNamedUserTagGroups')
+    return new TagGroupEditor('editNamedUserTagGroups')
   },
 
   /**
    * Creates an editor to modify the channel tag groups.
    *
-   * @return A tag group editor.
+   * @return {TagGroupEditor} A tag group editor instance.
    */
   editChannelTagGroups: function() {
-    return tagGroupEditor('UAirship.editTagGroups', 'editChannelTagGroups')
+    return new TagGroupEditor('editChannelTagGroups')
   },
 
   // Location
@@ -346,8 +448,9 @@ var plugin = {
    * Enables or disables Urban Airship location services.
    *
    * @param {Boolean} enabled true to enable location, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setLocationEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setLocationEnabled', arguments)
@@ -357,8 +460,10 @@ var plugin = {
   /**
    * Checks if location is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if location is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isLocationEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isLocationEnabled', arguments)
@@ -369,8 +474,9 @@ var plugin = {
    * Enables or disables background location.
    *
    * @param {Boolean} enabled true to enable background location, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setBackgroundLocationEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setBackgroundLocationEnabled', arguments)
@@ -380,8 +486,10 @@ var plugin = {
   /**
    * Checks if background location is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if background location updates are enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isBackgroundLocationEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isBackgroundLocationEnabled', arguments)
@@ -391,8 +499,9 @@ var plugin = {
   /**
    * Records the current location.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   recordCurrentLocation: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.recordCurrentLocation', arguments)
@@ -402,8 +511,9 @@ var plugin = {
   /**
    * Displays the message center.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   displayMessageCenter: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.displayMessageCenter', arguments)
@@ -419,8 +529,10 @@ var plugin = {
    * "isRead": boolean - The unread/read status of the message.
    * "extras": object - String to String map of any message extras.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(messages)} success The function to call on success.
+   * @param {array} success.messages The array of inbox messages.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getInboxMessages: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getInboxMessages', arguments)
@@ -431,8 +543,9 @@ var plugin = {
    * Marks an inbox message read.
    *
    * @param {String} messageId The ID of the message to mark as read.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   markInboxMessageRead: function(messageId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.markInboxMessageRead', arguments)
@@ -443,8 +556,9 @@ var plugin = {
    * Deletes an inbox message.
    *
    * @param {String} messageId The ID of the message to delete.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   deleteInboxMessage: function(messageId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.deleteInboxMessage', arguments)
@@ -455,8 +569,9 @@ var plugin = {
    * Displays the inbox message using a full screen view.
    *
    * @param {String} messageId The ID of the message to display.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   displayInboxMessage: function(messageId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.displayInboxMessage', arguments)
@@ -469,8 +584,9 @@ var plugin = {
    * associated with a message, but it can be useful when providing a refresh
    * button for the message listing.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   refreshInbox: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.refreshInbox', arguments)
@@ -481,8 +597,9 @@ var plugin = {
    * Displays the inbox message using an overlay display.
    *
    * @param {String} messageId The ID of the message to display.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   overlayInboxMessage: function(messageId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.overlayInboxMessage', arguments)
@@ -495,8 +612,9 @@ var plugin = {
    * Enables or disables auto badge. Defaults to `NO`.
    *
    * @param {Boolean} enabled true to enable auto badge, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setAutobadgeEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setAutobadgeEnabled', arguments)
@@ -507,8 +625,9 @@ var plugin = {
    * Sets the badge number.
    *
    * @param {Number} number specified badge to set.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setBadgeNumber: function(number, success, failure) {
     argscheck.checkArgs('nFF', 'UAirship.setBadgeNumber', arguments)
@@ -518,8 +637,10 @@ var plugin = {
   /**
    * Returns the current badge number.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function(badgeNumber)} success The function to call on success.
+   * @param {int} success.badgeNumber The current application badge number.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   getBadgeNumber: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.getBadgeNumber', arguments)
@@ -529,8 +650,9 @@ var plugin = {
   /**
    * Clears the badge.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   resetBadge: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.resetBadge', arguments)
@@ -541,15 +663,21 @@ var plugin = {
    * Sets the iOS notification types. Specify the combination of
    * badges, sound and alerts are desired.
    *
-   * @param {Number} types specified notification types.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {notificationType} types specified notification types.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setNotificationTypes: function(types, success, failure) {
     argscheck.checkArgs('nFF', 'UAirship.setNotificationTypes', arguments)
     callNative(success, failure, "setNotificationTypes", [types])
   },
 
+  /**
+   * Enum for notification types.
+   * @readonly
+   * @enum {number}
+   */
   notificationType: {
     none: 0,
     badge: 1,
@@ -562,8 +690,9 @@ var plugin = {
   /**
    * Clears all notifications posted by the application.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   clearNotifications: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.clearNotifications', arguments)
@@ -573,6 +702,9 @@ var plugin = {
   /**
    * Checks if notification sound is enabled or not.
    *
+   * @param {boolean} success.enabled Flag indicating if sound is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isSoundEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isSoundEnabled', arguments)
@@ -583,8 +715,9 @@ var plugin = {
    * Enables or disables notification sound.
    *
    * @param {Boolean} enabled true to enable sound, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setSoundEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setSoundEnabled', arguments)
@@ -594,8 +727,9 @@ var plugin = {
   /**
    * Checks if notification vibration is enabled or not.
    *
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {boolean} success.enabled Flag indicating if vibration is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   isVibrateEnabled: function(success, failure) {
     argscheck.checkArgs('fF', 'UAirship.isVibrateEnabled', arguments)
@@ -606,13 +740,12 @@ var plugin = {
    * Enables or disables notification vibration.
    *
    * @param {Boolean} enabled true to enable vibration, false to disable.
-   * @param {Function} success The function to call on success.
-   * @param {Function} failure The function to call on failure.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
    */
   setVibrateEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setVibrateEnabled', arguments)
     callNative(success, failure, "setVibrateEnabled", [!!enabled])
   }
 }
-
-module.exports = plugin

@@ -35,5 +35,12 @@
   "bugs": {
     "email": "support@urbanairship.com"
   },
-  "homepage": "https://github.com/urbanairship/phonegap-ua-push#readme"
+  "homepage": "https://github.com/urbanairship/phonegap-ua-push#readme",
+  "devDependencies": {
+    "jsdoc": "3.4.0",
+    "minami": "1.1.1"
+  },
+  "scripts": {
+    "generate-docs": "node_modules/.bin/jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md"
+  }
 }

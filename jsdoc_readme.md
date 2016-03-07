@@ -1,26 +1,10 @@
-# Urban Airship PhoneGap/Cordova Plugin
-
-This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
+# Urban Airship Cordova Plugin
 
 ### Resources:
  - [Getting started guide](http://docs.urbanairship.com/platform/phonegap.html)
- - [JSDocs](http://docs.urbanairship.com/reference/libraries/urbanairship-cordova/latest/)
- - [Migration docs](MIGRATION.md)
+ - [Github repo](https://github.com/urbanairship/phonegap-ua-push)
 
-### Contributing Code
-
-We accept pull requests! If you would like to submit a pull request, please fill out and submit a
-[Code Contribution Agreement](http://docs.urbanairship.com/contribution-agreement.html).
-
-### Issues
-
-Please contact support@urbanairship.com for any issues integrating or using this plugin.
-
-### Requirements:
- - Android [GCM Setup](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup)
- - iOS [APNS Setup](http://docs.urbanairship.com/reference/push-providers/apns.html)
-
-### Quickstart
+### Installation
 
 1. Install this plugin using PhoneGap/Cordova CLI:
 
@@ -60,20 +44,3 @@ Please contact support@urbanairship.com for any issues integrating or using this
 
         <!-- Clear the iOS badge on launch -->
         <preference name="com.urbanairship.clear_badge_onlaunch" value="true | false" />
-
-
-3. Enable user notifications
-
-    // Enable user notifications (will prompt the user to accept push notifications)
-    UAirship.setUserNotificationsEnabled(true, function (enabled) {
-        console.log("User notifications are enabled! Fire away!")
-    })
-
-### Sample
-
-A sample can be found in Example. To run it, copy the files:
-- Example/index.html to www/index.html
-- Example/css/* to www/css
-- Example/js/* to www/js
-
-Add the device plugin: `cordova plugin add cordova-plugin-device`
