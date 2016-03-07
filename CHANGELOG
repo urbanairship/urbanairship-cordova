@@ -1,12 +1,12 @@
 ==============================
-Version 5.0.0 - Mar 4, 2016
+Version 5.0.0 - Mar 7, 2016
 ==============================
  - Updated Android Urban Airship SDK to 7.0.3
  - All functions now take an optional failure callback. The method runAction now
    returns just the result's value in the success callback and the result's error
    in the failure callback.
- - Fixed getBadgeNumber's parameters.
  - Added methods to access and modify the inbox listing.
+ - Generated JSDocs are now available - http://docs.urbanairship.com/reference/libraries/urbanairship-cordova/latest/
 
 ==============================
 Version 4.1.1 - Feb 12, 2016
