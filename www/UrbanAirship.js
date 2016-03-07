@@ -663,7 +663,7 @@ module.exports = {
    * Sets the iOS notification types. Specify the combination of
    * badges, sound and alerts are desired.
    *
-   * @param {Number} types specified notification types.
+   * @param {notificationType} types specified notification types.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
@@ -673,6 +673,11 @@ module.exports = {
     callNative(success, failure, "setNotificationTypes", [types])
   },
 
+  /**
+   * Enum for notification types.
+   * @readonly
+   * @enum {number}
+   */
   notificationType: {
     none: 0,
     badge: 1,
