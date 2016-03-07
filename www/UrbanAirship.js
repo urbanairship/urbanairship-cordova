@@ -427,8 +427,6 @@ module.exports = {
   /**
    * Creates an editor to modify the named user tag groups.
    *
-   * @return {object} A tag group editor.
-   * @param {function(tagGroup, tags)} object.addTags Adds tags to a tag group.
    * @return {TagGroupEditor} A tag group editor instance.
    */
   editNamedUserTagGroups: function() {
