@@ -78,7 +78,7 @@ function TagGroupEditor(nativeMethod) {
     }
 
     /**
-     * Removes a tag to the tag group.
+     * Removes a tag from the tag group.
      * @instance
      * @memberof TagGroupEditor
      * @function removeTags
@@ -100,8 +100,8 @@ function TagGroupEditor(nativeMethod) {
      * @memberof TagGroupEditor
      * @function apply
      *
-     * @param {function} success Success callback.
-     * @param {function(message)} failure Failure callback.
+     * @param {function} [success] Success callback.
+     * @param {function(message)} [failure] Failure callback.
      * @param {string} failure.message The failure message.
      * @return {TagGroupEditor} The tag group editor instance.
      */
@@ -144,12 +144,12 @@ module.exports = {
    *
    * @event "urbanairship.registration"
    * @type {object}
-   * @param {string} channelID The channel ID.
-   * @param {string} error Error message if an error occurred.
+   * @param {string} [channelID] The channel ID.
+   * @param {string} [error] Error message if an error occurred.
    */
 
   /**
-   * Event fired when the inbox is update.
+   * Event fired when the inbox is updated.
    *
    * @event "urbanairship.inbox_updated"
    */
@@ -161,7 +161,7 @@ module.exports = {
    * @type {object}
    * @param {string} message The push alert message.
    * @param {object} extras Any push extras.
-   * @param {number} notification_id The Android notification ID.
+   * @param {number} [notification_id] The Android notification ID.
    */
 
   /**
@@ -211,7 +211,7 @@ module.exports = {
    * @param {object} success.push The push message object containing data associated with a push notification.
    * @param {string} success.push.message The push alert message.
    * @param {object} success.push.extras Any push extras.
-   * @param {number} success.push.notification_id The Android notification ID.
+   * @param {number} [success.push.notification_id] The Android notification ID.
    * @param {failureCallback} [failure] The function to call on failure.
    * @param {string} failure.message The error message.
    */
