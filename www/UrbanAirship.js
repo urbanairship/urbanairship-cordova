@@ -81,7 +81,7 @@ function TagGroupEditor(nativeMethod) {
      * Removes a tag to the tag group.
      * @instance
      * @memberof TagGroupEditor
-     * @function removeTags.
+     * @function removeTags
      *
      * @param {string} tagGroup The tag group.
      * @param {array<string>} tags Tags to remove.
