@@ -44,43 +44,83 @@ function callNative(success, failure, name, args) {
   exec(success, failure, "UAirship", name, args)
 }
 
-// Helper method to edit tag groups
-function tagGroupEditor(cordovaMethod, nativeMethod) {
+/**
+ * Helper object to edit tag groups.
+ *
+ * Normally not created directly. Instead use [UrbanAirship.editNamedUserTagGroups]{@link module:UrbanAirship.editNamedUserTagGroups} 
+ * or [UrbanAirship.editChannelTagGroups]{@link module:UrbanAirship.editChannelTagGroups}.
+ *
+ * @class TagGroupEditor
+ * @param nativeMethod The native method to call on apply.
+ */
+function TagGroupEditor(nativeMethod) {
+
     // Store the raw operations and let the SDK combine them
     var operations = []
+
     var editor = {}
 
+    /**
+     * Adds tags to a tag group.
+     * @instance
+     * @memberof TagGroupEditor
+     * @function addTags
+     *
+     * @param {string} tagGroup The tag group.
+     * @param {array<string>} tags Tags to add.
+     * @return {TagGroupEditor} The tag group editor instance.
+     */
     editor.addTags = function(tagGroup, tags) {
-        argscheck.checkArgs('sa', cordovaMethod + ".addTags", arguments)
-        var operation = { "operation": "add", "group": tagGroup, "tags": tags }
-        operations.push(operation)
-        return editor
+      argscheck.checkArgs('sa', "TagGroupEditor#addTags", arguments)
+      var operation = { "operation": "add", "group": tagGroup, "tags": tags }
+      operations.push(operation)
+      return editor
     }
 
+    /**
+     * Removes a tag to the tag group.
+     * @instance
+     * @memberof TagGroupEditor
+     * @function removeTags.
+     *
+     * @param {string} tagGroup The tag group.
+     * @param {array<string>} tags Tags to remove.
+     * @return {TagGroupEditor} The tag group editor instance.
+     */
     editor.removeTags = function(tagGroup, tags) {
-        argscheck.checkArgs('sa', cordovaMethod + ".removeTags", arguments)
-        var operation = { "operation": "remove", "group": tagGroup, "tags": tags }
-        operations.push(operation)
-        return editor
+      argscheck.checkArgs('sa', "TagGroupEditor#removeTags", arguments)
+      var operation = { "operation": "remove", "group": tagGroup, "tags": tags }
+      operations.push(operation)
+      return editor
     }
 
+    /**
+     * Applies the tag changes.
+     * @instance
+     * @memberof TagGroupEditor
+     * @function apply
+     *
+     * @param {function} success Success callback.
+     * @param {function(message)} failure Failure callback.
+     * @param {string} failure.message The failure message.
+     * @return {TagGroupEditor} The tag group editor instance.
+     */
     editor.apply = function(success, failure) {
-        argscheck.checkArgs('FF', cordovaMethod + ".apply", arguments)
-        callNative(success, failure, nativeMethod, [operations])
-        operations = []
-        return editor
+      argscheck.checkArgs('FF', "TagGroupEditor#apply", arguments)
+      callNative(success, failure, nativeMethod, [operations])
+      operations = []
+      return editor
     }
 
     return editor
 }
 
-// Listen for channel registration updates
 callNative(function(registration) {
   console.log("Firing document event for registration update.")
   cordova.fireDocumentEvent("urbanairship.registration", registration)
 }, null, "registerChannelListener")
 
-// Listen for incoming push notifications
+
 callNative(function(push) {
   console.log("Firing document event for push event.")
   cordova.fireDocumentEvent("urbanairship.push", push)
@@ -93,12 +133,36 @@ callNative(function() {
 }, null, "registerInboxListener")
 
 
-
-
 /**
  * @module UrbanAirship
  */
 module.exports = {
+
+
+  /**
+   * Event fired when a channel registration occurs.
+   *
+   * @event "urbanairship.registration"
+   * @type {object}
+   * @param {string} channelID The channel ID.
+   * @param {string} error Error message if an error occurred.
+   */
+
+  /**
+   * Event fired when the inbox is update.
+   *
+   * @event "urbanairship.inbox_updated"
+   */
+
+  /**
+   * Event fired when a push is received.
+   *
+   * @event "urbanairship.push"
+   * @type {object}
+   * @param {string} message The push alert message.
+   * @param {object} extras Any push extras.
+   * @param {number} notification_id The Android notification ID.
+   */
 
   /**
    * Enables or disables user notifications.
@@ -145,7 +209,9 @@ module.exports = {
    * @param {Boolean} clear true to clear the notification.
    * @param {function(push)} success The function to call on success.
    * @param {object} success.push The push message object containing data associated with a push notification.
-   *        The extras dictionary can contain arbitrary key/value data that you use in your application.
+   * @param {string} success.push.message The push alert message.
+   * @param {object} success.push.extras Any push extras.
+   * @param {number} success.push.notification_id The Android notification ID.
    * @param {failureCallback} [failure] The function to call on failure.
    * @param {string} failure.message The error message.
    */
@@ -361,19 +427,21 @@ module.exports = {
   /**
    * Creates an editor to modify the named user tag groups.
    *
-   * @return A tag group editor.
+   * @return {object} A tag group editor.
+   * @param {function(tagGroup, tags)} object.addTags Adds tags to a tag group.
+   * @return {TagGroupEditor} A tag group editor instance.
    */
   editNamedUserTagGroups: function() {
-    return tagGroupEditor('UAirship.editNamedUserTagGroups', 'editNamedUserTagGroups')
+    return new TagGroupEditor('editNamedUserTagGroups')
   },
 
   /**
    * Creates an editor to modify the channel tag groups.
    *
-   * @return A tag group editor.
+   * @return {TagGroupEditor} A tag group editor instance.
    */
   editChannelTagGroups: function() {
-    return tagGroupEditor('UAirship.editTagGroups', 'editChannelTagGroups')
+    return new TagGroupEditor('editChannelTagGroups')
   },
 
   // Location
