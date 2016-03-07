@@ -1,5 +1,35 @@
 # Migration Guide
 
+## 4.x to 5.0.0
+
+
+All functions now take an optional failure callback.
+
+
+### Run Action
+
+The method ``runAction`` now returns the result's value in the success callback
+and the result's error in the failure callback.
+
+4.x example:
+
+    UAirship.runAction("some_action", "some value", function (result) {
+      if (result.error) {
+         console.log("action failed": + result.error);
+      } else {
+         console.log("action finished": + result.value);
+      }
+    });
+
+5.x example:
+
+    UAirship.runAction("some_action", "some value", function (value) {
+        console.log("action finished": + value);
+    }, function (error) {
+         console.log("action failed": + error);
+    });
+
+
 ## 3.6.0 to 4.0.0
 
 ### Installation changes:
