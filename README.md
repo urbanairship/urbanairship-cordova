@@ -63,11 +63,12 @@ Please contact support@urbanairship.com for any issues integrating or using this
 
 
 3. Enable user notifications
-
+```
     // Enable user notifications (will prompt the user to accept push notifications)
     UAirship.setUserNotificationsEnabled(true, function (enabled) {
         console.log("User notifications are enabled! Fire away!")
     })
+```
 
 ### Sample
 
