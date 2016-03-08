@@ -702,6 +702,7 @@ module.exports = {
   /**
    * Checks if notification sound is enabled or not.
    *
+   * @param {function(enabled)} success Success callback.
    * @param {boolean} success.enabled Flag indicating if sound is enabled or not.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
@@ -727,6 +728,7 @@ module.exports = {
   /**
    * Checks if notification vibration is enabled or not.
    *
+   * @param {function(enabled)} success Success callback.
    * @param {boolean} success.enabled Flag indicating if vibration is enabled or not.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
