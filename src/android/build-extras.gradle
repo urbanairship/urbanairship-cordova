@@ -2,7 +2,7 @@ def packageName = getPackageName()
 
 repositories {
     jcenter()
-    maven { url 'http://dl.bintray.com/urbanairship/android' }
+    maven { url 'https://urbanairship.bintray.com/android' }
 }
 
 android {

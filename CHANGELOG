@@ -1,4 +1,9 @@
 ==============================
+Version 5.0.1 - Mar 17, 2016
+==============================
+ - Updated Android maven URL to https
+
+==============================
 Version 5.0.0 - Mar 7, 2016
 ==============================
  - Updated Android Urban Airship SDK to 7.0.3
