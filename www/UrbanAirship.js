@@ -115,22 +115,10 @@ function TagGroupEditor(nativeMethod) {
     return editor
 }
 
-callNative(function(registration) {
-  console.log("Firing document event for registration update.")
-  cordova.fireDocumentEvent("urbanairship.registration", registration)
-}, null, "registerChannelListener")
-
-
-callNative(function(push) {
-  console.log("Firing document event for push event.")
-  cordova.fireDocumentEvent("urbanairship.push", push)
-}, null, "registerPushListener")
-
-// Listen for inbox updates
-callNative(function() {
-  console.log("Firing document event for inbox update.")
-  cordova.fireDocumentEvent("urbanairship.inbox_updated")
-}, null, "registerInboxListener")
+callNative(function(e) {
+  console.log("Firing document event: " + e.eventType)
+  cordova.fireDocumentEvent(e.eventType, e.eventData);
+}, null, "registerListener")
 
 
 /**
