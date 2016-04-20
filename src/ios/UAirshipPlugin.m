@@ -38,6 +38,7 @@
 #import "UALandingPageOverlayController.h"
 #import "UAMessageViewController.h"
 #import "UAUtils.h"
+#import "UADefaultMessageCenter.h"
 
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
@@ -46,6 +47,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 @property (nonatomic, copy) NSDictionary *launchNotification;
 @property (nonatomic, copy) NSString *listenerCallbackID;
 @property (nonatomic, copy) NSString *deepLink;
+@property (nonatomic, assign) BOOL autoLaunchMessageCenter;
+
 @end
 
 @implementation UAirshipPlugin
@@ -59,6 +62,7 @@ NSString *const ProductionConfigKey = @"com.urbanairship.in_production";
 NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onlaunch";
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
 NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
+NSString *const AutoLaunchMessageCenterKey = @"com.urbanairship.auto_launch_message_center";
 
 // Events
 NSString *const EventPushReceived = @"urbanairship.push";
@@ -70,6 +74,12 @@ NSString *const EventRegistration = @"urbanairship.registration";
     UA_LINFO("Initializing UrbanAirship cordova plugin.");
 
     NSDictionary *settings = self.commandDelegate.settings;
+
+    if (settings[AutoLaunchMessageCenterKey]) {
+        self.autoLaunchMessageCenter = [settings[AutoLaunchMessageCenterKey] boolValue];
+    } else {
+        self.autoLaunchMessageCenter = YES;
+    }
 
     UAConfig *config = [UAConfig config];
     config.productionAppKey = settings[ProductionAppKeyConfigKey];
@@ -97,6 +107,7 @@ NSString *const EventRegistration = @"urbanairship.registration";
 
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
+    [UAirship inbox].delegate = self;
 
     if ([UALocationService airshipLocationServiceEnabled]) {
         [[UAirship shared].locationService startReportingSignificantLocationChanges];
@@ -129,7 +140,6 @@ NSString *const EventRegistration = @"urbanairship.registration";
     }];
 
     [[UAirship shared].actionRegistry updateAction:customDLA forEntryWithName:kUADeepLinkActionDefaultRegistryName];
-
 }
 
 - (void)dealloc {
@@ -711,6 +721,20 @@ NSString *const EventRegistration = @"urbanairship.registration";
     [data setValue:[self extrasForUserInfo:notification] forKey:@"extras"];
 
     [self notifyListener:EventPushReceived data:data];
+}
+
+#pragma mark UAInboxDelegate
+
+- (void)showInboxMessage:(UAInboxMessage *)message {
+    if (self.autoLaunchMessageCenter) {
+        [[UAirship defaultMessageCenter] displayMessage:message];
+    }
+}
+
+- (void)showInbox {
+    if (self.autoLaunchMessageCenter) {
+        [[UAirship defaultMessageCenter] display];
+    }
 }
 
 #pragma mark Message Center
