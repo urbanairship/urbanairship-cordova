@@ -129,7 +129,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerListener", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
-            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox");
+            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink");
 
     /**
      * The launch push message. Set from the IntentReceiver.
@@ -140,6 +140,11 @@ public class UAirshipPlugin extends CordovaPlugin {
      * The launch notification ID. Set from the IntentReceiver.
      */
     public static Integer launchNotificationId = null;
+
+    /**
+     * The deep link. Set from the modifed deep link action in CordovaAutopilot.
+     */
+    public static String deepLink = null;
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -153,7 +158,6 @@ public class UAirshipPlugin extends CordovaPlugin {
         registerPushListener();
         registerChannelListener();
         registerInboxListener();
-
     }
 
     @Override
@@ -498,6 +502,24 @@ public class UAirshipPlugin extends CordovaPlugin {
         }
 
         callbackContext.success(notificationObject);
+    }
+
+    /**
+     * Returns the last deep link.
+     * <p/>
+     * Expected arguments: Boolean - `YES` to clear the deep link
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void getDeepLink(JSONArray data, CallbackContext callbackContext) {
+        String deepLink = UAirshipPlugin.deepLink;
+
+        if (data.optBoolean(0, false)) {
+            UAirshipPlugin.deepLink = null;
+        }
+
+        callbackContext.success(deepLink);
     }
 
     /**

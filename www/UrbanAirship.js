@@ -209,6 +209,20 @@ module.exports = {
   },
 
   /**
+   * Returns the last received deep link.
+   *
+   * @param {Boolean} clear true to clear the deep link.
+   * @param {function(push)} success The function to call on success.
+   * @param {string} success.deepLink The deep link.
+   * @param {failureCallback} [failure] The function to call on failure.
+   * @param {string} failure.message The error message.
+   */
+  getDeepLink: function(clear, success, failure) {
+    argscheck.checkArgs('*fF', 'UAirship.getDeepLink', arguments)
+    callNative(success, failure, "getDeepLink", [!!clear])
+  },
+
+  /**
    * Returns the tags as an array.
    *
    * @param {function(tags)} success The function to call on success.

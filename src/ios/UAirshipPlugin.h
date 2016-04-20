@@ -59,6 +59,15 @@
 - (void)getLaunchNotification:(CDVInvokedUrlCommand *)command;
 
 /**
+ * Returns the last received deep link.
+ *
+ * Expected arguments: Boolean - `YES` to clear the deep link.
+ *
+ * @param command The cordova command.
+ */
+- (void)getDeepLink:(CDVInvokedUrlCommand *)command;
+
+/**
  * Returns the channel ID.
  *
  * @param command The cordova command.

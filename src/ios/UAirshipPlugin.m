@@ -45,6 +45,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 @interface UAirshipPlugin()
 @property (nonatomic, copy) NSDictionary *launchNotification;
 @property (nonatomic, copy) NSString *listenerCallbackID;
+@property (nonatomic, copy) NSString *deepLink;
 @end
 
 @implementation UAirshipPlugin
@@ -105,6 +106,30 @@ NSString *const EventRegistration = @"urbanairship.registration";
                                              selector:@selector(inboxUpdated)
                                                  name:UAInboxMessageListUpdatedNotification
                                                object:nil];
+
+    __weak UAirshipPlugin *weakSelf = self;
+    UAAction *customDLA = [UAAction actionWithBlock: ^(UAActionArguments *args, UAActionCompletionHandler handler)  {
+        if ([args.value isKindOfClass:[NSURL class]]) {
+            weakSelf.deepLink = [args.value absoluteString];
+        } else {
+            weakSelf.deepLink = args.value;
+        }
+
+        handler([UAActionResult resultWithValue:args.value]);
+    } acceptingArguments:^BOOL(UAActionArguments *arg)  {
+        if (arg.situation == UASituationBackgroundPush || arg.situation == UASituationBackgroundInteractiveButton) {
+            return NO;
+        }
+
+        if ([arg.value isKindOfClass:[NSString class]]) {
+            return [NSURL URLWithString:arg.value] != nil;
+        }
+
+        return [arg.value isKindOfClass:[NSURL class]];
+    }];
+
+    [[UAirship shared].actionRegistry updateAction:customDLA forEntryWithName:kUADeepLinkActionDefaultRegistryName];
+
 }
 
 - (void)dealloc {
@@ -373,6 +398,18 @@ NSString *const EventRegistration = @"urbanairship.registration";
         }
 
         completionHandler(CDVCommandStatus_OK, returnDictionary);
+    }];
+}
+
+- (void)getDeepLink:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *deepLink = self.deepLink;
+
+        if ([args firstObject]) {
+            self.deepLink = nil;
+        }
+
+        completionHandler(CDVCommandStatus_OK, deepLink);
     }];
 }
 

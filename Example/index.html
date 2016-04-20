@@ -53,6 +53,12 @@
         document.addEventListener("resume", function() {
           console.log("Device resume!")
           
+          UAirship.getDeepLink(true, function(deepLink) {
+            if (deepLink) {
+              console.log("Deep link: " + deepLink)
+            }
+          })
+
           UAirship.resetBadge()
           UAirship.getLaunchNotification(true, onLaunchedFromPush)
 
