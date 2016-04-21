@@ -1,4 +1,11 @@
 ==============================
+Version 5.1.0 - April 21, 2016
+==============================
+ - Updated Android and iOS Urban Airship SDK to 7.1.0
+ - Added deep linking support.
+ - Added flag to disable auto launching the Message Center when the corresponding push is opened.
+
+==============================
 Version 5.0.1 - Mar 17, 2016
 ==============================
  - Updated Android maven URL to https
