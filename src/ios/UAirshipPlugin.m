@@ -38,15 +38,17 @@
 #import "UALandingPageOverlayController.h"
 #import "UAMessageViewController.h"
 #import "UAUtils.h"
+#import "UADefaultMessageCenter.h"
 
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
 
 @interface UAirshipPlugin()
 @property (nonatomic, copy) NSDictionary *launchNotification;
-@property (nonatomic, copy) NSString *registrationCallbackID;
-@property (nonatomic, copy) NSString *pushCallbackID;
-@property (nonatomic, copy) NSString *inboxCallbackID;
+@property (nonatomic, copy) NSString *listenerCallbackID;
+@property (nonatomic, copy) NSString *deepLink;
+@property (nonatomic, assign) BOOL autoLaunchMessageCenter;
+
 @end
 
 @implementation UAirshipPlugin
@@ -59,13 +61,25 @@ NSString *const DevelopmentAppSecretConfigKey = @"com.urbanairship.development_a
 NSString *const ProductionConfigKey = @"com.urbanairship.in_production";
 NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onlaunch";
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
-
 NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
+NSString *const AutoLaunchMessageCenterKey = @"com.urbanairship.auto_launch_message_center";
+
+// Events
+NSString *const EventPushReceived = @"urbanairship.push";
+NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
+NSString *const EventRegistration = @"urbanairship.registration";
+
 
 - (void)pluginInitialize {
     UA_LINFO("Initializing UrbanAirship cordova plugin.");
 
     NSDictionary *settings = self.commandDelegate.settings;
+
+    if (settings[AutoLaunchMessageCenterKey]) {
+        self.autoLaunchMessageCenter = [settings[AutoLaunchMessageCenterKey] boolValue];
+    } else {
+        self.autoLaunchMessageCenter = YES;
+    }
 
     UAConfig *config = [UAConfig config];
     config.productionAppKey = settings[ProductionAppKeyConfigKey];
@@ -93,6 +107,7 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
+    [UAirship inbox].delegate = self;
 
     if ([UALocationService airshipLocationServiceEnabled]) {
         [[UAirship shared].locationService startReportingSignificantLocationChanges];
@@ -102,6 +117,29 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
                                              selector:@selector(inboxUpdated)
                                                  name:UAInboxMessageListUpdatedNotification
                                                object:nil];
+
+    __weak UAirshipPlugin *weakSelf = self;
+    UAAction *customDLA = [UAAction actionWithBlock: ^(UAActionArguments *args, UAActionCompletionHandler handler)  {
+        if ([args.value isKindOfClass:[NSURL class]]) {
+            weakSelf.deepLink = [args.value absoluteString];
+        } else {
+            weakSelf.deepLink = args.value;
+        }
+
+        handler([UAActionResult resultWithValue:args.value]);
+    } acceptingArguments:^BOOL(UAActionArguments *arg)  {
+        if (arg.situation == UASituationBackgroundPush || arg.situation == UASituationBackgroundInteractiveButton) {
+            return NO;
+        }
+
+        if ([arg.value isKindOfClass:[NSString class]]) {
+            return [NSURL URLWithString:arg.value] != nil;
+        }
+
+        return [arg.value isKindOfClass:[NSURL class]];
+    }];
+
+    [[UAirship shared].actionRegistry updateAction:customDLA forEntryWithName:kUADeepLinkActionDefaultRegistryName];
 }
 
 - (void)dealloc {
@@ -226,12 +264,8 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 
 #pragma mark Phonegap bridge
 
-- (void)registerChannelListener:(CDVInvokedUrlCommand *)command {
-    self.registrationCallbackID = command.callbackId;
-}
-
-- (void)registerPushListener:(CDVInvokedUrlCommand *)command {
-    self.pushCallbackID = command.callbackId;
+- (void)registerListener:(CDVInvokedUrlCommand *)command {
+    self.listenerCallbackID = command.callbackId;
 }
 
 - (void)setNotificationTypes:(CDVInvokedUrlCommand *)command {
@@ -374,6 +408,18 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
         }
 
         completionHandler(CDVCommandStatus_OK, returnDictionary);
+    }];
+}
+
+- (void)getDeepLink:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *deepLink = self.deepLink;
+
+        if ([args firstObject]) {
+            self.deepLink = nil;
+        }
+
+        completionHandler(CDVCommandStatus_OK, deepLink);
     }];
 }
 
@@ -643,28 +689,19 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
     UA_LINFO(@"Channel registration successful %@.", channelID);
 
-    if (self.registrationCallbackID) {
-        NSDictionary *data;
-        if (deviceToken) {
-            data = @{ @"channelID":channelID, @"deviceToken":deviceToken };
-        } else {
-            data = @{ @"channelID":channelID };
-        }
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
-        [result setKeepCallbackAsBool:YES];
-        [self.commandDelegate sendPluginResult:result callbackId:self.registrationCallbackID];
+    NSDictionary *data;
+    if (deviceToken) {
+        data = @{ @"channelID":channelID, @"deviceToken":deviceToken };
+    } else {
+        data = @{ @"channelID":channelID };
     }
+
+    [self notifyListener:EventRegistration data:data];
 }
 
 - (void)registrationFailed {
     UA_LINFO(@"Channel registration failed.");
-
-    if (self.registrationCallbackID) {
-        NSDictionary *data = @{ @"error": @"Registration failed." };
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
-        [result setKeepCallbackAsBool:YES];
-        [self.commandDelegate sendPluginResult:result callbackId:self.registrationCallbackID];
-    }
+    [self notifyListener:EventRegistration data:@{ @"error": @"Registration failed." }];
 }
 
 #pragma mark UAPushNotificationDelegate
@@ -679,14 +716,24 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 
     [[UAirship push] setBadgeNumber:0]; // zero badge after push received
 
-    if (self.pushCallbackID) {
-        NSMutableDictionary *data = [NSMutableDictionary dictionary];
-        [data setValue:[self alertForUserInfo:notification] forKey:@"message"];
-        [data setValue:[self extrasForUserInfo:notification] forKey:@"extras"];
+    NSMutableDictionary *data = [NSMutableDictionary dictionary];
+    [data setValue:[self alertForUserInfo:notification] forKey:@"message"];
+    [data setValue:[self extrasForUserInfo:notification] forKey:@"extras"];
 
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:data];
-        [result setKeepCallbackAsBool:YES];
-        [self.commandDelegate sendPluginResult:result callbackId:self.pushCallbackID];
+    [self notifyListener:EventPushReceived data:data];
+}
+
+#pragma mark UAInboxDelegate
+
+- (void)showInboxMessage:(UAInboxMessage *)message {
+    if (self.autoLaunchMessageCenter) {
+        [[UAirship defaultMessageCenter] displayMessage:message];
+    }
+}
+
+- (void)showInbox {
+    if (self.autoLaunchMessageCenter) {
+        [[UAirship defaultMessageCenter] display];
     }
 }
 
@@ -701,18 +748,9 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 
 #pragma mark Inbox
 
-- (void)registerInboxListener:(CDVInvokedUrlCommand *)command {
-    self.inboxCallbackID = command.callbackId;
-}
-
 - (void)inboxUpdated {
     UA_LDEBUG(@"Inbox updated");
-
-    if (self.inboxCallbackID) {
-        CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-        [result setKeepCallbackAsBool:YES];
-        [self.commandDelegate sendPluginResult:result callbackId:self.inboxCallbackID];
-    }
+    [self notifyListener:EventInboxUpdated data:nil];
 }
 
 - (void)getInboxMessages:(CDVInvokedUrlCommand *)command {
@@ -820,6 +858,22 @@ NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
             completionHandler(CDVCommandStatus_ERROR, @"Inbox failed to refresh");
         }];
     }];
+}
+
+- (void)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
+    if (!self.listenerCallbackID) {
+        UA_LDEBUG(@"Listener callback unavailable. Unable to send event %@", eventType);
+        return;
+    }
+
+    NSMutableDictionary *message = [NSMutableDictionary dictionary];
+    [message setValue:eventType forKey:@"eventType"];
+    [message setValue:data forKey:@"eventData"];
+
+    CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:message];
+    [result setKeepCallbackAsBool:YES];
+
+    [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
 }
 
 @end

@@ -29,12 +29,19 @@ import android.content.Context;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
+import android.support.annotation.NonNull;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
+import com.urbanairship.actions.Action;
+import com.urbanairship.actions.ActionArguments;
+import com.urbanairship.actions.ActionRegistry;
+import com.urbanairship.actions.ActionResult;
+import com.urbanairship.actions.DeepLinkAction;
+import com.urbanairship.actions.OpenRichPushInboxAction;
+import com.urbanairship.actions.OverlayRichPushMessageAction;
 import com.urbanairship.push.notifications.DefaultNotificationFactory;
 import com.urbanairship.util.UAStringUtil;
 
@@ -57,6 +64,7 @@ public class CordovaAutopilot extends Autopilot {
     static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
     static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
     static final String NOTIFICATION_SOUND = "com.urbanairship.notification_sound";
+    static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
 
     // Enable/Disable features
     static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
@@ -126,6 +134,42 @@ public class CordovaAutopilot extends Autopilot {
                 Logger.error("Unable to find notification sound with name: " + notificationSoundName);
             }
         }
+
+        airship.getActionRegistry().getEntry(DeepLinkAction.DEFAULT_REGISTRY_NAME).setDefaultAction(new DeepLinkAction() {
+            @Override
+            public ActionResult perform(@NonNull ActionArguments arguments) {
+                UAirshipPlugin.deepLink = arguments.getValue().getString();
+                return ActionResult.newResult(arguments.getValue());
+            }
+        });
+
+
+        final boolean autoLaunchMessageCenter = pluginConfig.getBoolean(AUTO_LAUNCH_MESSAGE_CENTER, true);
+        airship.getActionRegistry()
+                .getEntry(OverlayRichPushMessageAction.DEFAULT_REGISTRY_NAME)
+                .setPredicate(new ActionRegistry.Predicate() {
+                    @Override
+                    public boolean apply(ActionArguments actionArguments) {
+                        if (actionArguments.getSituation() == Action.SITUATION_PUSH_OPENED) {
+                            return autoLaunchMessageCenter;
+                        }
+
+                        return true;
+                    }
+                });
+
+        airship.getActionRegistry()
+                .getEntry(OpenRichPushInboxAction.DEFAULT_REGISTRY_NAME)
+                .setPredicate(new ActionRegistry.Predicate() {
+                    @Override
+                    public boolean apply(ActionArguments actionArguments) {
+                        if (actionArguments.getSituation() == Action.SITUATION_PUSH_OPENED) {
+                            return autoLaunchMessageCenter;
+                        }
+
+                        return true;
+                    }
+                });
 
         airship.getPushManager().setNotificationFactory(factory);
     }

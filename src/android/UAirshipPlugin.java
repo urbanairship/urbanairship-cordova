@@ -87,6 +87,11 @@ import java.util.concurrent.Executors;
  */
 public class UAirshipPlugin extends CordovaPlugin {
 
+    private static final String EVENT_CHANNEL_UPDATED = "urbanairship.registration";
+    private static final String EVENT_INBOX_UPDATED = "urbanairship.inbox_updated";
+    private static final String EVENT_PUSH_RECEIVED = "urbanairship.push";
+
+
     /**
      * Local broadcast action for channel registration updates.
      */
@@ -122,9 +127,9 @@ public class UAirshipPlugin extends CordovaPlugin {
     private final static List<String> knownActions = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
-            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerPushListener", "registerChannelListener",
-            "setAnalyticsEnabled", "isAnalyticsEnabled", "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter",
-            "registerInboxListener", "markInboxMessageRead", "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox");
+            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerListener", "setAnalyticsEnabled", "isAnalyticsEnabled",
+            "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
+            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink");
 
     /**
      * The launch push message. Set from the IntentReceiver.
@@ -136,16 +141,23 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     public static Integer launchNotificationId = null;
 
+    /**
+     * The deep link. Set from the modifed deep link action in CordovaAutopilot.
+     */
+    public static String deepLink = null;
+
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
-    private BroadcastReceiver channelUpdateReceiver;
-    private BroadcastReceiver pushReceiver;
-    private RichPushInbox.Listener inboxListener;
+
+    private CallbackContext listenerCallbackContext;
 
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
         Logger.info("Initializing Urban Airship cordova plugin.");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
+        registerPushListener();
+        registerChannelListener();
+        registerInboxListener();
     }
 
     @Override
@@ -183,24 +195,14 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Registers the push received listener. Any push received events will
-     * be sent to the callbackContext.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
+     * Registers the push received listener.
      */
-    void registerPushListener(JSONArray data, final CallbackContext callbackContext) {
-        Logger.debug("Listening for push events.");
-
+    void registerPushListener() {
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(cordova.getActivity());
-
-        if (pushReceiver != null) {
-            manager.unregisterReceiver(pushReceiver);
-        }
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_PUSH_RECEIVED);
-        pushReceiver = new BroadcastReceiver() {
+        BroadcastReceiver pushReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Logger.debug("Received push.");
@@ -209,10 +211,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                 int notificationId = intent.getIntExtra(EXTRA_NOTIFICATION_ID, -1);
                 JSONObject data = notificationObject(message, notificationId != -1 ? notificationId : null);
 
-                PluginResult result = new PluginResult(PluginResult.Status.OK, data);
-                result.setKeepCallback(true);
-
-                callbackContext.sendPluginResult(result);
+                notifyListener(EVENT_PUSH_RECEIVED, data);
             }
         };
 
@@ -222,22 +221,13 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Registers the channel listener. Any channel registration updates will
      * be sent to the callbackContext.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
      */
-    void registerChannelListener(JSONArray data, final CallbackContext callbackContext) {
-        Logger.debug("Listening for channel updates.");
-
+    void registerChannelListener() {
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(cordova.getActivity());
-
-        if (channelUpdateReceiver != null) {
-            manager.unregisterReceiver(channelUpdateReceiver);
-        }
 
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_CHANNEL_REGISTRATION);
-        channelUpdateReceiver = new BroadcastReceiver() {
+        BroadcastReceiver channelUpdateReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Logger.debug("Received channel update.");
@@ -253,14 +243,70 @@ public class UAirshipPlugin extends CordovaPlugin {
                     Logger.error("Error in channel registration", e);
                 }
 
-                PluginResult result = new PluginResult(PluginResult.Status.OK, data);
-                result.setKeepCallback(true);
-
-                callbackContext.sendPluginResult(result);
+                notifyListener(EVENT_CHANNEL_UPDATED, data);
             }
         };
 
         manager.registerReceiver(channelUpdateReceiver, intentFilter);
+    }
+
+
+    /**
+     * Registers the inbox listener.
+     */
+    void registerInboxListener() {
+        RichPushInbox.Listener inboxListener = new RichPushInbox.Listener() {
+            @Override
+            public void onInboxUpdated() {
+                notifyListener(EVENT_INBOX_UPDATED);
+            }
+        };
+
+        UAirship.shared().getInbox().addListener(inboxListener);
+    }
+
+    /**
+     * Sends the event to the plugin listener.
+     * @param eventType The event type.
+     */
+    private void notifyListener(String eventType) {
+        notifyListener(eventType, null);
+    }
+
+    /**
+     * Sends the event to the plugin listener.
+     * @param eventType The event type.
+     * @param data Optional event data.
+     */
+    private void notifyListener(String eventType, JSONObject data) {
+        if (listenerCallbackContext == null) {
+            Logger.debug("Listener callback unavailable. Unable to send event " + eventType);
+            return;
+        }
+
+        JSONObject eventData = new JSONObject();
+
+        try {
+            eventData.putOpt("eventType", eventType);
+            eventData.putOpt("eventData", data);
+        } catch (JSONException e) {
+            Logger.error("Failed to create event: " + eventType);
+            return;
+        }
+
+        PluginResult result = new PluginResult(PluginResult.Status.OK, eventData);
+        result.setKeepCallback(true);
+        listenerCallbackContext.sendPluginResult(result);
+    }
+
+    /**
+     * Registers for events.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void registerListener(JSONArray data, CallbackContext callbackContext) {
+        this.listenerCallbackContext = callbackContext;
     }
 
     /**
@@ -456,6 +502,24 @@ public class UAirshipPlugin extends CordovaPlugin {
         }
 
         callbackContext.success(notificationObject);
+    }
+
+    /**
+     * Returns the last deep link.
+     * <p/>
+     * Expected arguments: Boolean - `YES` to clear the deep link
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void getDeepLink(JSONArray data, CallbackContext callbackContext) {
+        String deepLink = UAirshipPlugin.deepLink;
+
+        if (data.optBoolean(0, false)) {
+            UAirshipPlugin.deepLink = null;
+        }
+
+        callbackContext.success(deepLink);
     }
 
     /**
@@ -1064,31 +1128,5 @@ public class UAirshipPlugin extends CordovaPlugin {
                 });
             }
         });
-    }
-
-    /**
-     * Registers the inbox listener.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     */
-    void registerInboxListener(JSONArray data, final CallbackContext callbackContext) {
-        Logger.debug("Listening for inbox changes.");
-
-        if (inboxListener != null) {
-            UAirship.shared().getInbox().removeListener(inboxListener);
-        }
-
-        inboxListener = new RichPushInbox.Listener() {
-            @Override
-            public void onInboxUpdated() {
-                PluginResult result = new PluginResult(PluginResult.Status.OK, "inbox updated");
-                result.setKeepCallback(true);
-
-                callbackContext.sendPluginResult(result);
-            }
-        };
-
-        UAirship.shared().getInbox().addListener(inboxListener);
     }
 }

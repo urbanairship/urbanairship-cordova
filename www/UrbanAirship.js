@@ -115,22 +115,10 @@ function TagGroupEditor(nativeMethod) {
     return editor
 }
 
-callNative(function(registration) {
-  console.log("Firing document event for registration update.")
-  cordova.fireDocumentEvent("urbanairship.registration", registration)
-}, null, "registerChannelListener")
-
-
-callNative(function(push) {
-  console.log("Firing document event for push event.")
-  cordova.fireDocumentEvent("urbanairship.push", push)
-}, null, "registerPushListener")
-
-// Listen for inbox updates
-callNative(function() {
-  console.log("Firing document event for inbox update.")
-  cordova.fireDocumentEvent("urbanairship.inbox_updated")
-}, null, "registerInboxListener")
+callNative(function(e) {
+  console.log("Firing document event: " + e.eventType)
+  cordova.fireDocumentEvent(e.eventType, e.eventData);
+}, null, "registerListener")
 
 
 /**
@@ -218,6 +206,20 @@ module.exports = {
   getLaunchNotification: function(clear, success, failure) {
     argscheck.checkArgs('*fF', 'UAirship.getLaunchNotification', arguments)
     callNative(success, failure, "getLaunchNotification", [!!clear])
+  },
+
+  /**
+   * Returns the last received deep link.
+   *
+   * @param {Boolean} clear true to clear the deep link.
+   * @param {function(push)} success The function to call on success.
+   * @param {string} success.deepLink The deep link.
+   * @param {failureCallback} [failure] The function to call on failure.
+   * @param {string} failure.message The error message.
+   */
+  getDeepLink: function(clear, success, failure) {
+    argscheck.checkArgs('*fF', 'UAirship.getDeepLink', arguments)
+    callNative(success, failure, "getDeepLink", [!!clear])
   },
 
   /**

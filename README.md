@@ -61,6 +61,10 @@ Please contact support@urbanairship.com for any issues integrating or using this
         <!-- Clear the iOS badge on launch -->
         <preference name="com.urbanairship.clear_badge_onlaunch" value="true | false" />
 
+        <!-- Enables/disables auto launching the message center when the corresponding push is opened. -->
+        <preference name="com.urbanairship.auto_launch_message_center" value="true | false" />
+
+
 
 3. Enable user notifications
 ```

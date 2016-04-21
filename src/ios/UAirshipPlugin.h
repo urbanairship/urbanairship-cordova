@@ -59,6 +59,15 @@
 - (void)getLaunchNotification:(CDVInvokedUrlCommand *)command;
 
 /**
+ * Returns the last received deep link.
+ *
+ * Expected arguments: Boolean - `YES` to clear the deep link.
+ *
+ * @param command The cordova command.
+ */
+- (void)getDeepLink:(CDVInvokedUrlCommand *)command;
+
+/**
  * Returns the channel ID.
  *
  * @param command The cordova command.
@@ -294,20 +303,11 @@
 - (void)editChannelTagGroups:(CDVInvokedUrlCommand *)command;
 
 /**
- * Registers the channel listener. Any channel registration updates will
- * be sent to the command's callbackID.
+ * Registers a listener for events.
  *
  * @param command The cordova command.
  */
-- (void)registerChannelListener:(CDVInvokedUrlCommand *)command;
-
-/**
- * Registers the push received listener. Any push received events will
- * be sent to the command's callbackID.
- *
- * @param command The cordova command.
- */
-- (void)registerPushListener:(CDVInvokedUrlCommand *)command;
+- (void)registerListener:(CDVInvokedUrlCommand *)command;
 
 /**
  * Display the given message without animation.
@@ -315,14 +315,6 @@
  * @pararm message The message.
  */
 - (void)displayMessageCenter:(CDVInvokedUrlCommand *)command;
-
-/**
- * Registers the inbox listener. Any inbox updates
- * will be sent to the command's callbackID.
- *
- * @param command The cordova command.
- */
-- (void)registerInboxListener:(CDVInvokedUrlCommand *)command;
 
 /**
  * Gets the inbox listing.
