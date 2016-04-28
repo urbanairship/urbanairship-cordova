@@ -16,7 +16,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.android.support:support-annotations:23.1.1'
     compile 'com.google.android.gms:play-services-location:8.4.0'
-    compile 'com.urbanairship.android:urbanairship-sdk:7.1.1'
+    compile 'com.urbanairship.android:urbanairship-sdk:7.1.2'
 }
 
 def getPackageName() {

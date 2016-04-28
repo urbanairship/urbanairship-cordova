@@ -904,6 +904,9 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         Map<String, String> extras = new HashMap<String, String>();
         for (String key : message.getPushBundle().keySet()) {
+            if ("android.support.content.wakelockid".equals(key)) {
+                continue;
+            }
             extras.put(key, message.getPushBundle().getString(key));
         }
 
