@@ -161,6 +161,7 @@ NSString *const EventRegistration = @"urbanairship.registration";
      NSArray --> Array
      NSDictionary --> Object
      NSNull --> no return value
+     nil -> no return value
      */
 
     // String
@@ -192,6 +193,11 @@ NSString *const EventRegistration = @"urbanairship.registration";
 
     // Null
     if ([value isKindOfClass:[NSNull class]]) {
+        return [CDVPluginResult resultWithStatus:status];
+    }
+
+    // Nil
+    if (!value) {
         return [CDVPluginResult resultWithStatus:status];
     }
 
