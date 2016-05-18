@@ -161,6 +161,7 @@ NSString *const EventRegistration = @"urbanairship.registration";
      NSArray --> Array
      NSDictionary --> Object
      NSNull --> no return value
+     nil -> no return value
      */
 
     // String
@@ -192,6 +193,11 @@ NSString *const EventRegistration = @"urbanairship.registration";
 
     // Null
     if ([value isKindOfClass:[NSNull class]]) {
+        return [CDVPluginResult resultWithStatus:status];
+    }
+
+    // Nil
+    if (!value) {
         return [CDVPluginResult resultWithStatus:status];
     }
 
@@ -741,7 +747,9 @@ NSString *const EventRegistration = @"urbanairship.registration";
 
 - (void)displayMessageCenter:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship defaultMessageCenter] display];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UAirship defaultMessageCenter] display];
+        });
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -829,7 +837,10 @@ NSString *const EventRegistration = @"urbanairship.registration";
 
         UINavigationController *navController =  [[UINavigationController alloc] initWithRootViewController:mvc];
 
-        [[UAUtils topController] presentViewController:navController animated:YES completion:nil];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UAUtils topController] presentViewController:navController animated:YES completion:nil];
+        });
+
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -845,7 +856,10 @@ NSString *const EventRegistration = @"urbanairship.registration";
             return;
         }
 
-        [UALandingPageOverlayController showMessage:message];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UALandingPageOverlayController showMessage:message];
+        });
+
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -862,7 +876,7 @@ NSString *const EventRegistration = @"urbanairship.registration";
 
 - (void)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
     if (!self.listenerCallbackID) {
-        UA_LDEBUG(@"Listener callback unavailable. Unable to send event %@", eventType);
+        UA_LTRACE(@"Listener callback unavailable.  event %@", eventType);
         return;
     }
 
