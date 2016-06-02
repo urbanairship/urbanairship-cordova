@@ -69,7 +69,6 @@
 #import "UAUser.h"
 #import "UAUserAPIClient.h"
 #import "UAUtils.h"
-#import "UAWalletAction.h"
 #import "UAWebViewCallData.h"
 #import "UAWebViewDelegate.h"
 #import "UAWhitelist.h"
