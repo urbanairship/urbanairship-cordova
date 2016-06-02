@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="5.1.4">
+    version="5.2.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -186,7 +186,6 @@
         <header-file src="src/ios/Airship/Common/UAUser.h" />
         <header-file src="src/ios/Airship/Common/UAUserAPIClient.h" />
         <header-file src="src/ios/Airship/Common/UAUtils.h" />
-        <header-file src="src/ios/Airship/Common/UAWalletAction.h" />
         <header-file src="src/ios/Airship/Common/UAWebViewCallData.h" />
         <header-file src="src/ios/Airship/Common/UAWebViewDelegate.h" />
         <header-file src="src/ios/Airship/Common/UAWhitelist.h" />
@@ -209,7 +208,7 @@
         <resource-file src="src/ios/Airship/AirshipResources.bundle" />
 
         <!-- Airship library -->
-        <source-file src="src/ios/Airship/libUAirship-7.1.2.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-7.2.0.a" framework="true"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
@@ -225,6 +224,5 @@
         <framework src="MobileCoreServices.framework" weak="true" />
         <framework src="CoreLocation.framework" weak="true" />
         <framework src="CoreData.framework" weak="true" />
-        <framework src="PassKit.framework" weak="true" />
     </platform>
 </plugin>
