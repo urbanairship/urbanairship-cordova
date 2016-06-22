@@ -49,8 +49,16 @@ public class CordovaAirshipReceiver extends AirshipReceiver {
     private static final String TAG = "CordovaAirshipReceiver";
 
     @Override
-    protected void onChannelRegistrationSucceeded(Context context, String channelId) {
-        Log.i(TAG, "Channel registration updated. Channel ID: " + channelId + ".");
+    protected void onChannelCreated(Context context, String channelId) {
+        Log.i(TAG, "Channel created. Channel ID: " + channelId + ".");
+
+        Intent intent = new Intent(UAirshipPlugin.ACTION_CHANNEL_REGISTRATION);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
+    @Override
+    protected void onChannelUpdated(Context context, String channelId) {
+        Log.i(TAG, "Channel updated. Channel ID: " + channelId + ".");
 
         Intent intent = new Intent(UAirshipPlugin.ACTION_CHANNEL_REGISTRATION);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
