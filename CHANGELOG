@@ -1,4 +1,9 @@
 =============================
+Version 5.3.1 - July 18, 2016
+=============================
+ - Update Android Urban Airship SDK to use latest version of play services.
+
+=============================
 Version 5.3.0 - June 22, 2016
 =============================
  - Updated Android Urban Airship SDK to 7.2.0
