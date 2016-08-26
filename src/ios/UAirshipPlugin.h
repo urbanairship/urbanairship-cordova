@@ -224,6 +224,17 @@
 - (void)setAnalyticsEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
+ * Sets associated custom identifiers for use with the Connect data stream.
+ *
+ * Previous identifiers will be replaced by the new identifiers each time associateIdentifiers is called. It is a set operation.
+ *
+ * Expected arguments: An array of strings containing the identifier and key.
+ *
+ * @param command The cordova command.
+ */
+- (void)setAssociatedIdentifier:(CDVInvokedUrlCommand *)command;
+
+/**
  * Checks if analytics is enabled or not.
  *
  * @param command The cordova command.
