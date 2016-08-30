@@ -444,18 +444,18 @@ module.exports = {
     return new TagGroupEditor('editChannelTagGroups')
   },
 
-    /**
-   * Sets an associated identifer for the Connect data stream.
+  /**
+   * Sets an associated identifier for the Connect data stream.
    *
    * @param {string} Custom key for identifier.
-   * @param {string} The identifer value.
+   * @param {string} The identifier value.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
    */
-  setAssociatedIdentifier: function(key, identifer, success, failure) {
+  setAssociatedIdentifier: function(key, identifier, success, failure) {
     argscheck.checkArgs('ssFF', 'UAirship.setAssociatedIdentifier', arguments)
-    callNative(success, failure, "setAssociatedIdentifier", [key, identifer])
+    callNative(success, failure, "setAssociatedIdentifier", [key, identifier])
   },
 
   // Location

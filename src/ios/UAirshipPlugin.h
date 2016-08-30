@@ -226,7 +226,7 @@
 /**
  * Sets associated custom identifiers for use with the Connect data stream.
  *
- * Previous identifiers will be replaced by the new identifiers each time associateIdentifiers is called. It is a set operation.
+ * Previous identifiers will be replaced by the new identifiers each time setAssociateIdentifier is called. It is a set operation.
  *
  * Expected arguments: An array of strings containing the identifier and key.
  *
