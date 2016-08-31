@@ -129,7 +129,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerListener", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
-            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink");
+            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier");
 
     /**
      * The launch push message. Set from the IntentReceiver.
@@ -753,6 +753,28 @@ public class UAirshipPlugin extends CordovaPlugin {
     void isAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) {
         int value = UAirship.shared().getAnalytics().isEnabled() ? 1 : 0;
         callbackContext.success(value);
+    }
+
+    /**
+     * Sets associated custom identifiers for use with the Connect data stream.
+     * <p/>
+     * Previous identifiers will be replaced by the new identifiers each time setAssociateIdentifier is called. It is a set operation.
+     * <p/>
+     * Expected arguments: String
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void setAssociatedIdentifier(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        String key = data.getString(0);
+        String identifier = data.getString(1);
+        
+        UAirship.shared().getAnalytics()
+           .editAssociatedIdentifiers()
+           .addIdentifier(key, identifier)
+           .apply();
+
+        callbackContext.success();
     }
 
     /**

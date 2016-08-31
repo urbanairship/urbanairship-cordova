@@ -39,6 +39,7 @@
 #import "UAMessageViewController.h"
 #import "UAUtils.h"
 #import "UADefaultMessageCenter.h"
+#import "UAAssociatedIdentifiers.h"
 
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
@@ -327,6 +328,19 @@ NSString *const EventRegistration = @"urbanairship.registration";
         NSNumber *value = [args objectAtIndex:0];
         BOOL enabled = [value boolValue];
         [UAirship shared].analytics.enabled = enabled;
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)setAssociatedIdentifier:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *key = [args objectAtIndex:0];
+        NSString *identifier = [args objectAtIndex:1];
+
+        UAAssociatedIdentifiers *identifiers = [[UAirship shared].analytics currentAssociatedDeviceIdentifiers];
+        [identifiers setIdentifier:identifier forKey:key];
+        [[UAirship shared].analytics associateDeviceIdentifiers:identifiers];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
