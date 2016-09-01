@@ -277,6 +277,7 @@
  * Records the current location.
  *
  * @param command The cordova command.
+ * @deprecated since 5.4.0
  */
 - (void)recordCurrentLocation:(CDVInvokedUrlCommand *)command;
 

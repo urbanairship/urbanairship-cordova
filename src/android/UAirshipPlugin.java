@@ -655,7 +655,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Sets the named user ID.
+     * Returns the named user ID.
      * <p/>
      * Expected arguments: String
      *
@@ -663,13 +663,13 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      */
     void getNamedUser(JSONArray data, CallbackContext callbackContext) {
-        String namedUserId = UAirship.shared().getPushManager().getNamedUser().getId();
+        String namedUserId = UAirship.shared().getNamedUser().getId();
         namedUserId = namedUserId != null ? namedUserId : "";
         callbackContext.success(namedUserId);
     }
 
     /**
-     * Returns the named user ID.
+     * Sets the named user ID.
      *
      * @param data The call data.
      * @param callbackContext The callback context.
@@ -680,9 +680,9 @@ public class UAirshipPlugin extends CordovaPlugin {
             namedUserId = null;
         }
 
-        Logger.debug("Settings named user: " + namedUserId);
+        Logger.debug("Setting named user: " + namedUserId);
 
-        UAirship.shared().getPushManager().getNamedUser().setId(namedUserId);
+        UAirship.shared().getNamedUser().setId(namedUserId);
 
         callbackContext.success();
     }
@@ -698,7 +698,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         Logger.debug("Editing named user tag groups: " + operations);
 
-        TagGroupsEditor editor = UAirship.shared().getPushManager().getNamedUser().editTagGroups();
+        TagGroupsEditor editor = UAirship.shared().getNamedUser().editTagGroups();
         applyTagGroupOperations(editor, operations);
         editor.apply();
 

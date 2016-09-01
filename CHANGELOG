@@ -1,3 +1,13 @@
+============================
+Version 5.4.0 - Sept 1, 2016
+============================
+ - Updated iOS Urban Airship SDK to 7.3.0
+ - Updated Android Urban Airship SDK to 7.3.0
+ - All events are now fired after the 'deviceready' event
+ - Added document event 'urbanairship.deep_link' when a new deep link is received
+ - Added `isAppNotificationsEnabled` to check if the user opted in to notifications for the device
+ - Added `setAssociatedIdentifier` to set device identifiers for connect
+
 =============================
 Version 5.3.1 - July 18, 2016
 =============================
