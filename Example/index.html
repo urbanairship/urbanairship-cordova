@@ -45,20 +45,20 @@
           }
         }
 
+        //Deep link callback
+        var handleDeepLink = function(event)  {
+            console.log("Deep link: " + event.deepLink)
+        }
+
         // Register for any urban airship events
         document.addEventListener("urbanairship.registration", onRegistration, false)
         document.addEventListener("urbanairship.push", onPushReceived, false)
+        document.addEventListener("urbanairship.deep_link", handleDeepLink, false)
         
         // Handle resume
         document.addEventListener("resume", function() {
           console.log("Device resume!")
           
-          UAirship.getDeepLink(true, function(deepLink) {
-            if (deepLink) {
-              console.log("Deep link: " + deepLink)
-            }
-          })
-
           UAirship.resetBadge()
           UAirship.getLaunchNotification(true, onLaunchedFromPush)
 

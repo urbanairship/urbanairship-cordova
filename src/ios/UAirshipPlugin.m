@@ -48,7 +48,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 @property (nonatomic, copy) NSString *listenerCallbackID;
 @property (nonatomic, copy) NSString *deepLink;
 @property (nonatomic, assign) BOOL autoLaunchMessageCenter;
-
+@property (nonatomic, strong) NSMutableDictionary *pendingEvents;
 @end
 
 @implementation UAirshipPlugin
@@ -68,10 +68,14 @@ NSString *const AutoLaunchMessageCenterKey = @"com.urbanairship.auto_launch_mess
 NSString *const EventPushReceived = @"urbanairship.push";
 NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
 NSString *const EventRegistration = @"urbanairship.registration";
+NSString *const EventDeepLink = @"urbanairship.deep_link";
+
 
 
 - (void)pluginInitialize {
     UA_LINFO("Initializing UrbanAirship cordova plugin.");
+
+    self.pendingEvents = [NSMutableDictionary dictionary];
 
     NSDictionary *settings = self.commandDelegate.settings;
 
@@ -125,6 +129,13 @@ NSString *const EventRegistration = @"urbanairship.registration";
         } else {
             weakSelf.deepLink = args.value;
         }
+        
+        NSDictionary *data;
+        data = @{ @"deepLink":weakSelf.deepLink};
+
+        if (![weakSelf notifyListener:EventDeepLink data:data]) {
+            [weakSelf.pendingEvents setValue:data forKey:EventDeepLink];
+        }
 
         handler([UAActionResult resultWithValue:args.value]);
     } acceptingArguments:^BOOL(UAActionArguments *arg)  {
@@ -145,6 +156,7 @@ NSString *const EventRegistration = @"urbanairship.registration";
 - (void)dealloc {
     [UAirship push].pushNotificationDelegate = nil;
     [UAirship push].registrationDelegate = nil;
+    [UAirship inbox].delegate = nil;
 }
 
 /**
@@ -272,6 +284,12 @@ NSString *const EventRegistration = @"urbanairship.registration";
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
     self.listenerCallbackID = command.callbackId;
+
+    for (NSString *event in self.pendingEvents) {
+        [self notifyListener:event data:self.pendingEvents[event]];
+    }
+
+    [self.pendingEvents removeAllObjects];
 }
 
 - (void)setNotificationTypes:(CDVInvokedUrlCommand *)command {
@@ -874,10 +892,10 @@ NSString *const EventRegistration = @"urbanairship.registration";
     }];
 }
 
-- (void)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
+- (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
     if (!self.listenerCallbackID) {
         UA_LTRACE(@"Listener callback unavailable.  event %@", eventType);
-        return;
+        return NO;
     }
 
     NSMutableDictionary *message = [NSMutableDictionary dictionary];
@@ -888,6 +906,7 @@ NSString *const EventRegistration = @"urbanairship.registration";
     [result setKeepCallbackAsBool:YES];
 
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
+    return YES;
 }
 
 @end

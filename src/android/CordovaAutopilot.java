@@ -43,6 +43,7 @@ import com.urbanairship.actions.DeepLinkAction;
 import com.urbanairship.actions.OpenRichPushInboxAction;
 import com.urbanairship.actions.OverlayRichPushMessageAction;
 import com.urbanairship.push.notifications.DefaultNotificationFactory;
+import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.util.UAStringUtil;
 
 import java.util.HashMap;
@@ -53,6 +54,7 @@ import java.util.Map;
  * The Urban Airship autopilot to automatically handle takeOff.
  */
 public class CordovaAutopilot extends Autopilot {
+
     static final String UA_PREFIX = "com.urbanairship";
     static final String PRODUCTION_KEY = "com.urbanairship.production_app_key";
     static final String PRODUCTION_SECRET = "com.urbanairship.production_app_secret";
@@ -138,7 +140,10 @@ public class CordovaAutopilot extends Autopilot {
         airship.getActionRegistry().getEntry(DeepLinkAction.DEFAULT_REGISTRY_NAME).setDefaultAction(new DeepLinkAction() {
             @Override
             public ActionResult perform(@NonNull ActionArguments arguments) {
-                UAirshipPlugin.deepLink = arguments.getValue().getString();
+                String deepLink = arguments.getValue().getString();
+                if (deepLink != null) {
+                    UAirshipPluginManager.shared().deepLinkReceived(deepLink);
+                }
                 return ActionResult.newResult(arguments.getValue());
             }
         });
@@ -172,6 +177,15 @@ public class CordovaAutopilot extends Autopilot {
                 });
 
         airship.getPushManager().setNotificationFactory(factory);
+
+
+        UAirship.shared().getInbox().addListener(new RichPushInbox.Listener() {
+            @Override
+            public void onInboxUpdated() {
+                UAirshipPluginManager.shared().inboxUpdated();
+            }
+        });
+
     }
 
     /**
