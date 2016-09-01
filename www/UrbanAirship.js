@@ -187,6 +187,21 @@ module.exports = {
     callNative(success, failure, "isUserNotificationsEnabled")
   },
 
+
+  /**
+   * Checks if app notifications are enabled or not. Its possible to have `userNotificationsEnabled`
+   * but app notifications being disabled if the user opted out of notifications.
+   *
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if app notifications is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  isAppNotificationsEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isAppNotificationsEnabled', arguments)
+    callNative(success, failure, "isAppNotificationsEnabled")
+  },
+
   /**
    * Returns the channel ID.
    *
