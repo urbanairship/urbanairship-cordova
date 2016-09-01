@@ -99,8 +99,8 @@ public class UAirshipPlugin extends CordovaPlugin {
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerListener", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
-            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier");
-
+            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
+            "isAppNotificationsEnabled");
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -1030,5 +1030,17 @@ public class UAirshipPlugin extends CordovaPlugin {
                 });
             }
         });
+    }
+
+    /**
+     * Checks if app notifications are enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void isAppNotificationsEnabled(JSONArray data, final CallbackContext callbackContext) throws JSONException {
+        int value = UAirship.shared().getPushManager().isOptIn() ? 1 : 0;
+        callbackContext.success(value);
     }
 }

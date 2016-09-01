@@ -697,6 +697,13 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }];
 }
 
+- (void)isAppNotificationsEnabled:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        BOOL optedIn = [UAirship push].currentEnabledNotificationTypes != 0;
+        completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:optedIn]);
+    }];
+}
+
 /**
  * Helper method to create an error message from an action result.
  *

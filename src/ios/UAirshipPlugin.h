@@ -377,4 +377,11 @@
  */
 - (void)refreshInbox:(CDVInvokedUrlCommand *)command;
 
+/**
+ * Checks if app notifications are enabled or not.
+ *
+ * @param command The cordova command.
+ */
+- (void)isAppNotificationsEnabled:(CDVInvokedUrlCommand *)command;
+
 @end
