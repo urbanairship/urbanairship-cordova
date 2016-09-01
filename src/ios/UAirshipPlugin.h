@@ -31,7 +31,7 @@
 /**
  * The Urban Airship Cordova plugin.
  */
-@interface UAirshipPlugin : CDVPlugin <UARegistrationDelegate, UAPushNotificationDelegate>
+@interface UAirshipPlugin : CDVPlugin <UARegistrationDelegate, UAPushNotificationDelegate, UAInboxDelegate>
 
 /**
  * Enables or disables user push notifications.

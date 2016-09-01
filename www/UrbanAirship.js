@@ -115,17 +115,26 @@ function TagGroupEditor(nativeMethod) {
     return editor
 }
 
-callNative(function(e) {
-  console.log("Firing document event: " + e.eventType)
-  cordova.fireDocumentEvent(e.eventType, e.eventData);
-}, null, "registerListener")
-
+document.addEventListener("deviceready", function() {
+    callNative(function(e) {
+      console.log("Firing document event: " + e.eventType)
+      cordova.fireDocumentEvent(e.eventType, e.eventData)
+    }, null, "registerListener")
+}, false)
 
 /**
  * @module UrbanAirship
  */
 module.exports = {
 
+
+  /**
+   * Event fired when a new deep link is received.
+   *
+   * @event "urbanairship.deep_link"
+   * @type {object}
+   * @param {string} [deepLink] The deep link.
+   */
 
   /**
    * Event fired when a channel registration occurs.

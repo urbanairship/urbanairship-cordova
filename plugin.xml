@@ -77,6 +77,12 @@
         <source-file src="src/android/CordovaAirshipReceiver.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaAutopilot.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaLandingPageView.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/UAirshipPluginManager.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/events/ChannelEvent.java" target-dir="src/com/urbanairship/cordova/events" />
+        <source-file src="src/android/events/DeepLinkEvent.java" target-dir="src/com/urbanairship/cordova/events" />
+        <source-file src="src/android/events/InboxEvent.java" target-dir="src/com/urbanairship/cordova/events" />
+        <source-file src="src/android/events/PushEvent.java" target-dir="src/com/urbanairship/cordova/events" />
+        <source-file src="src/android/events/Event.java" target-dir="src/com/urbanairship/cordova/events" />
 
         <source-file src="src/android/res/layout/ua_activity_landing_page.xml" target-dir="res/layout"/>
         <source-file src="src/android/res/values/ua_styles.xml" target-dir="res/values"/>
