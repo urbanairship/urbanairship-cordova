@@ -27,6 +27,7 @@
 #import "UAPush.h"
 #import "UAirship.h"
 #import "UAAnalytics.h"
+#import "UALocation.h"
 #import "UALocationService.h"
 #import "UAConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
@@ -113,10 +114,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
     [UAirship inbox].delegate = self;
-
-    if ([UALocationService airshipLocationServiceEnabled]) {
-        [[UAirship shared].locationService startReportingSignificantLocationChanges];
-    }
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(inboxUpdated)
@@ -320,13 +317,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 - (void)setLocationEnabled:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
-        [UALocationService setAirshipLocationServiceEnabled:enabled];
-
-        if (enabled) {
-            [[UAirship shared].locationService startReportingSignificantLocationChanges];
-        } else {
-            [[UAirship shared].locationService stopReportingSignificantLocationChanges];
-        }
+        [UAirship location].locationUpdatesEnabled = enabled;
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -335,7 +326,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 - (void)setBackgroundLocationEnabled:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
-        [UAirship shared].locationService.backgroundLocationServiceEnabled = enabled;
+        [UAirship location].backgroundLocationUpdatesAllowed = enabled;
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -414,14 +405,14 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 - (void)isLocationEnabled:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [UALocationService airshipLocationServiceEnabled];
+        BOOL enabled = [UAirship location].locationUpdatesEnabled;
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
     }];
 }
 
 - (void)isBackgroundLocationEnabled:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [UAirship shared].locationService.backgroundLocationServiceEnabled;
+        BOOL enabled = [UAirship location].backgroundLocationUpdatesAllowed;
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
     }];
 }
@@ -525,7 +516,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 - (void)getNamedUser:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, [UAirship push].namedUser.identifier ?: @"");
+        completionHandler(CDVCommandStatus_OK, [UAirship namedUser].identifier ?: @"");
     }];
 }
 
@@ -608,7 +599,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
         NSString *namedUserID = [args objectAtIndex:0];
         namedUserID = [namedUserID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-        [UAirship push].namedUser.identifier = [namedUserID length] ? namedUserID : nil;
+        [UAirship namedUser].identifier = [namedUserID length] ? namedUserID : nil;
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -617,7 +608,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 - (void)editNamedUserTagGroups:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
-        UANamedUser *namedUser = [UAirship push].namedUser;
+        UANamedUser *namedUser = [UAirship namedUser];
         for (NSDictionary *operation in [args objectAtIndex:0]) {
             NSString *group = operation[@"group"];
             if ([operation[@"operation"] isEqualToString:@"add"]) {

@@ -542,6 +542,7 @@ module.exports = {
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
+   * @deprecated since 5.4.0
    */
   recordCurrentLocation: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.recordCurrentLocation', arguments)

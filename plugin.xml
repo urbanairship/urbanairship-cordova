@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="5.3.1">
+    version="5.4.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -107,6 +107,14 @@
             </array>
         </config-file>
 
+        <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
+            <string>Sample location</string>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
+            <string>Sample location, when in use</string>
+        </config-file>
+
         <config-file target="config.xml" parent="/widget">
              <feature name="UAirship">
                 <param name="ios-package" value="UAirshipPlugin" />
@@ -126,6 +134,10 @@
         <header-file src="src/ios/Airship/Common/NSJSONSerialization+UAAdditions.h" />
         <header-file src="src/ios/Airship/Common/NSString+UALocalizationAdditions.h" />
         <header-file src="src/ios/Airship/Common/NSString+UAURLEncoding.h" />
+        <header-file src="src/ios/Airship/Common/UAAccountEventTemplate.h" />
+        <header-file src="src/ios/Airship/Common/UAActionSchedule.h" />
+        <header-file src="src/ios/Airship/Common/UAActionScheduleInfo.h" />
+        <header-file src="src/ios/Airship/Common/UAAutomation.h" />
         <header-file src="src/ios/Airship/Common/UAAction+Operators.h" />
         <header-file src="src/ios/Airship/Common/UAAction.h" />
         <header-file src="src/ios/Airship/Common/UAActionArguments.h" />
@@ -144,6 +156,7 @@
         <header-file src="src/ios/Airship/Common/UABaseLocationProvider.h" />
         <header-file src="src/ios/Airship/Common/UABespokeCloseView.h" />
         <header-file src="src/ios/Airship/Common/UABeveledLoadingIndicator.h" />
+        <header-file src="src/ios/Airship/Common/UACancelSchedulesAction.h" />
         <header-file src="src/ios/Airship/Common/UAChannelCapture.h" />
         <header-file src="src/ios/Airship/Common/UACircularRegion.h" />
         <header-file src="src/ios/Airship/Common/UAConfig.h" />
@@ -168,12 +181,17 @@
         <header-file src="src/ios/Airship/Common/UAInstallAttributionEvent.h" />
         <header-file src="src/ios/Airship/Common/UAirship.h" />
         <header-file src="src/ios/Airship/Common/UAJavaScriptDelegate.h" />
+        <header-file src="src/ios/Airship/Common/UAJSONMatcher.h" />
+        <header-file src="src/ios/Airship/Common/UAJSONPredicate.h" />
+        <header-file src="src/ios/Airship/Common/UAJSONValueMatcher.h" />
         <header-file src="src/ios/Airship/Common/UALandingPageOverlayController.h" />
         <header-file src="src/ios/Airship/Common/UALocationCommonValues.h" />
+        <header-file src="src/ios/Airship/Common/UALocation.h" />
         <header-file src="src/ios/Airship/Common/UALocationEvent.h" />
         <header-file src="src/ios/Airship/Common/UALocationProviderDelegate.h" />
         <header-file src="src/ios/Airship/Common/UALocationProviderProtocol.h" />
         <header-file src="src/ios/Airship/Common/UALocationService.h" />
+        <header-file src="src/ios/Airship/Common/UAMediaEventTemplate.h" />
         <header-file src="src/ios/Airship/Common/UAMessageCenterDateUtils.h" />
         <header-file src="src/ios/Airship/Common/UAMessageCenterLocalization.h" />
         <header-file src="src/ios/Airship/Common/UAModifyTagsAction.h" />
@@ -183,7 +201,10 @@
         <header-file src="src/ios/Airship/Common/UAProximityRegion.h" />
         <header-file src="src/ios/Airship/Common/UARegionEvent.h" />
         <header-file src="src/ios/Airship/Common/UARemoveTagsAction.h" />
+        <header-file src="src/ios/Airship/Common/UARetailEventTemplate.h" />
         <header-file src="src/ios/Airship/Common/UARichContentWindow.h" />
+        <header-file src="src/ios/Airship/Common/UAScheduleAction.h" />
+        <header-file src="src/ios/Airship/Common/UAScheduleTrigger.h" />
         <header-file src="src/ios/Airship/Common/UAShareAction.h" />
         <header-file src="src/ios/Airship/Common/UASignificantChangeProvider.h" />
         <header-file src="src/ios/Airship/Common/UAStandardLocationProvider.h" />
@@ -214,7 +235,7 @@
         <resource-file src="src/ios/Airship/AirshipResources.bundle" />
 
         <!-- Airship library -->
-        <source-file src="src/ios/Airship/libUAirship-7.2.0.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-7.3.0.a" framework="true"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
