@@ -537,19 +537,6 @@ module.exports = {
   },
 
   /**
-   * Records the current location.
-   *
-   * @param {function} [success] Success callback.
-   * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The error message.
-   * @deprecated since 5.4.0
-   */
-  recordCurrentLocation: function(success, failure) {
-    argscheck.checkArgs('FF', 'UAirship.recordCurrentLocation', arguments)
-    callNative(success, failure, "recordCurrentLocation")
-  },
-
-  /**
    * Displays the message center.
    *
    * @param {function} [success] Success callback.

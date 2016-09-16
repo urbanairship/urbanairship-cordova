@@ -36,10 +36,10 @@
 #import <Security/Security.h>
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
+#import <UserNotifications/UserNotifications.h>
 
 @class UAConfig;
 @class UAAnalytics;
-@class UALocationService;
 @class UAApplicationMetrics;
 @class UAPush;
 @class UAUser;
@@ -94,8 +94,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 
 /**
  * This flag is set to `YES` if the application is set up 
- * with the "remote-notification" background mode and is running
- * iOS7 or greater.
+ * with the "remote-notification" background mode
  */
 @property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 
@@ -111,13 +110,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * The whitelist used for validating webview URLs.
  */
 @property (nonatomic, strong, readonly) UAWhitelist *whitelist;
-
-
-/**
- * Location services.
- * @deprecated Use UALocation instead.
- */
-@property (nonatomic, strong, readonly) UALocationService *locationService __attribute__ ((deprecated("Use UALocation instead")));
 
 
 ///---------------------------------------------------------------------------------------

@@ -151,9 +151,9 @@
         <header-file src="src/ios/Airship/Common/UAAddTagsAction.h" />
         <header-file src="src/ios/Airship/Common/UAAggregateActionResult.h" />
         <header-file src="src/ios/Airship/Common/UAAnalytics.h" />
+        <header-file src="src/ios/Airship/Common/UAAppIntegration.h" />
         <header-file src="src/ios/Airship/Common/UAApplicationMetrics.h" />
         <header-file src="src/ios/Airship/Common/UAAssociatedIdentifiers.h" />
-        <header-file src="src/ios/Airship/Common/UABaseLocationProvider.h" />
         <header-file src="src/ios/Airship/Common/UABespokeCloseView.h" />
         <header-file src="src/ios/Airship/Common/UABeveledLoadingIndicator.h" />
         <header-file src="src/ios/Airship/Common/UACancelSchedulesAction.h" />
@@ -185,12 +185,8 @@
         <header-file src="src/ios/Airship/Common/UAJSONPredicate.h" />
         <header-file src="src/ios/Airship/Common/UAJSONValueMatcher.h" />
         <header-file src="src/ios/Airship/Common/UALandingPageOverlayController.h" />
-        <header-file src="src/ios/Airship/Common/UALocationCommonValues.h" />
         <header-file src="src/ios/Airship/Common/UALocation.h" />
         <header-file src="src/ios/Airship/Common/UALocationEvent.h" />
-        <header-file src="src/ios/Airship/Common/UALocationProviderDelegate.h" />
-        <header-file src="src/ios/Airship/Common/UALocationProviderProtocol.h" />
-        <header-file src="src/ios/Airship/Common/UALocationService.h" />
         <header-file src="src/ios/Airship/Common/UAMediaEventTemplate.h" />
         <header-file src="src/ios/Airship/Common/UAMessageCenterDateUtils.h" />
         <header-file src="src/ios/Airship/Common/UAMessageCenterLocalization.h" />
@@ -206,8 +202,6 @@
         <header-file src="src/ios/Airship/Common/UAScheduleAction.h" />
         <header-file src="src/ios/Airship/Common/UAScheduleTrigger.h" />
         <header-file src="src/ios/Airship/Common/UAShareAction.h" />
-        <header-file src="src/ios/Airship/Common/UASignificantChangeProvider.h" />
-        <header-file src="src/ios/Airship/Common/UAStandardLocationProvider.h" />
         <header-file src="src/ios/Airship/Common/UATagUtils.h" />
         <header-file src="src/ios/Airship/Common/UAURLProtocol.h" />
         <header-file src="src/ios/Airship/Common/UAUser.h" />
@@ -223,19 +217,19 @@
         <header-file src="src/ios/Airship/Inbox/UAInboxMessageList.h" />
         <header-file src="src/ios/Airship/Inbox/UAInboxUtils.h" />
         <header-file src="src/ios/Airship/Push/UAChannelRegistrar.h" />
-        <header-file src="src/ios/Airship/Push/UAMutableUserNotificationAction.h" />
-        <header-file src="src/ios/Airship/Push/UAMutableUserNotificationCategory.h" />
+        <header-file src="src/ios/Airship/Push/UANotificationAction.h" />
+        <header-file src="src/ios/Airship/Push/UANotificationCategories.h" />
+        <header-file src="src/ios/Airship/Push/UANotificationCategory.h" />
+        <header-file src="src/ios/Airship/Push/UANotificationContent.h" />
+        <header-file src="src/ios/Airship/Push/UANotificationResponse.h" />
         <header-file src="src/ios/Airship/Push/UANamedUser.h" />
         <header-file src="src/ios/Airship/Push/UAPush.h" />
-        <header-file src="src/ios/Airship/Push/UAUserNotificationAction.h" />
-        <header-file src="src/ios/Airship/Push/UAUserNotificationCategories.h" />
-        <header-file src="src/ios/Airship/Push/UAUserNotificationCategory.h" />
 
         <!-- Resource bundle -->
         <resource-file src="src/ios/Airship/AirshipResources.bundle" />
 
         <!-- Airship library -->
-        <source-file src="src/ios/Airship/libUAirship-7.3.0.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-8.0.0.a" framework="true"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
