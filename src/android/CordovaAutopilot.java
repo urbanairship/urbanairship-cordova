@@ -119,7 +119,7 @@ public class CordovaAutopilot extends Autopilot {
         String notificationIconName = pluginConfig.getString(NOTIFICATION_ICON, null);
         if (!UAStringUtil.isEmpty(notificationIconName)) {
             int id  = context.getResources().getIdentifier(notificationIconName, "drawable", context.getPackageName());
-            if (id > 0) {
+            if (id != 0) {
                 factory.setSmallIconId(id);
             } else {
                 Logger.error("Unable to find notification icon with name: " + notificationIconName);
@@ -130,7 +130,7 @@ public class CordovaAutopilot extends Autopilot {
         String notificationLargeIconName = pluginConfig.getString(NOTIFICATION_LARGE_ICON, null);
         if (!UAStringUtil.isEmpty(notificationLargeIconName)) {
             int id  = context.getResources().getIdentifier(notificationLargeIconName, "drawable", context.getPackageName());
-            if (id > 0) {
+            if (id != 0) {
                 factory.setLargeIcon(id);
             } else {
                 Logger.error("Unable to find notification large icon with name: " + notificationLargeIconName);
