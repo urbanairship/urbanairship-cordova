@@ -2,7 +2,8 @@
 Version 6.0.0 - Sept 19, 2016
 =============================
  - Updated Android Urban Airship SDK to 8.0.1
- - Updated iOS Urban Airship SDK to 8.0.1
+ - Updated iOS Urban Airship SDK to 8.0.1 (requires Xcode 8).
+ - Added support for setting large notification icon in Android.
 
 ============================
 Version 5.4.0 - Sept 1, 2016
