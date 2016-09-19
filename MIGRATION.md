@@ -7,7 +7,9 @@
 Urban Airship Android 8.0.0 SDK requires the minimum sdk version to be 16.
 Modify the config.xml file to contain:
 
-    <preference name="android-minSdkVersion" value="16" />
+    <platform name="android">
+        <preference name="android-minSdkVersion" value="16" />
+    </platform>
 
 ### Location Changes
 
