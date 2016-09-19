@@ -105,10 +105,10 @@
           })
         }
 
-        // Set the alias in the UI
-        var setAlias = function(alias) {
-          $("#alias").text(alias)
-          $("#setAliasField").val("")
+        // Set the namedUser in the UI
+        var setNamedUser = function(namedUser) {
+          $("#namedUser").text(namedUser)
+          $("#setNamedUserField").val("")
         }
 
         // Vibrate and Sound is only available on Android
@@ -145,10 +145,10 @@
           }
         })
 
-        UAirship.getAlias(function(alias) {
-          if(alias) {
-            console.log("Got alias: " + alias)
-            setAlias(alias)
+        UAirship.getNamedUser(function(namedUser) {
+          if(namedUser) {
+            console.log("Got namedUser: " + namedUser)
+            setNamedUser(namedUser)
           }
         })
 
@@ -225,10 +225,10 @@
           })
         })
 
-        $("#setAliasButton").click(function(ev) {
-          var alias = $("#setAliasField").val()
-          UAirship.setAlias(alias, function() {
-            setAlias(alias)
+        $("#setNamedUserButton").click(function(ev) {
+          var namedUser = $("#setNamedUserField").val()
+          UAirship.setNamedUser(namedUser, function() {
+            setNamedUser(namedUser)
           })
         })
       }
@@ -254,9 +254,9 @@
             <label for="id">Channel ID:</label><br />
             <span name="id" id="id" style="word-wrap: break-word;"></span>
             <center><h3>Push Settings</h3></center>
-            <label>Alias: </label>
-            <span name="alias" id="alias"></span><hr />
-            <input type="text" name="setAliasField" id="setAliasField" style="width:96.5%;" /> <input type="button" id="setAliasButton" value="Set alias" />
+            <label>NamedUser: </label>
+            <span name="namedUser" id="namedUser"></span><hr />
+            <input type="text" name="setNamedUserField" id="setNamedUserField" style="width:96.5%;" /> <input type="button" id="setNamedUserButton" value="Set namedUser" />
           </div>
 
           <div data-role="controlgroup">
