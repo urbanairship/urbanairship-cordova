@@ -274,14 +274,6 @@
 - (void)isBackgroundLocationEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
- * Records the current location.
- *
- * @param command The cordova command.
- * @deprecated since 5.4.0
- */
-- (void)recordCurrentLocation:(CDVInvokedUrlCommand *)command;
-
-/**
  * Runs an Urban Airship action.
  *
  * Expected arguments: String - action name, * - the action value

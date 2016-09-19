@@ -30,6 +30,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -58,6 +59,7 @@ import com.urbanairship.push.TagGroupsEditor;
 import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.richpush.RichPushMessage;
 import com.urbanairship.util.UAStringUtil;
+import com.urbanairship.util.HelperActivity;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -69,6 +71,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Method;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -239,30 +242,13 @@ public class UAirshipPlugin extends CordovaPlugin {
         boolean enabled = data.getBoolean(0);
 
         if (enabled && shouldRequestPermissions()) {
-            ActionRunRequest.createRequest(new Action() {
-                @NonNull
+            RequestPermissionsTask task = new RequestPermissionsTask(UAirship.getApplicationContext(), new RequestPermissionsTask.Callback() {
                 @Override
-                public ActionResult perform(ActionArguments arguments) {
-                    int[] result = requestPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
-                    for (int i = 0; i < result.length; i++) {
-                        if (result[i] == PackageManager.PERMISSION_GRANTED) {
-                            return ActionResult.newResult(ActionValue.wrap(true));
-                        }
-                    }
-
-                    return ActionResult.newResult(ActionValue.wrap(false));
-                }
-            }).run(new ActionCompletionCallback() {
-                @Override
-                public void onFinish(ActionArguments arguments, ActionResult result) {
-                    if (result.getValue().getBoolean(false)) {
-                        UAirship.shared().getLocationManager().setLocationUpdatesEnabled(true);
-                    }
-
-                    callbackContext.success();
+                public void onResult(boolean enabled) {
+                    UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
                 }
             });
-
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
             callbackContext.success();
@@ -283,6 +269,40 @@ public class UAirshipPlugin extends CordovaPlugin {
         Context context = UAirship.getApplicationContext();
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED &&
                 ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED;
+    }
+
+    private static class RequestPermissionsTask extends AsyncTask<String[], Void, Boolean> {
+
+        private final Context context;
+        private Callback callback;
+
+        public interface Callback {
+            void onResult(boolean enabled);
+        }
+
+        RequestPermissionsTask(Context context, Callback callback) {
+            this.context = context;
+            this.callback = callback;
+        }
+
+        @Override
+        protected Boolean doInBackground(String[]... strings) {
+            int[] result = HelperActivity.requestPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
+            for (int element : result) {
+                if (element == PackageManager.PERMISSION_GRANTED) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if (callback != null) {
+                callback.onResult(result);
+            }
+        }
     }
 
     /**

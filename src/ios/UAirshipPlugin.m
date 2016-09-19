@@ -28,7 +28,6 @@
 #import "UAirship.h"
 #import "UAAnalytics.h"
 #import "UALocation.h"
-#import "UALocationService.h"
 #import "UAConfig.h"
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAActionRunner.h"
@@ -292,10 +291,10 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 - (void)setNotificationTypes:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        UIUserNotificationType types = [[args objectAtIndex:0] intValue];
+        UANotificationOptions types = [[args objectAtIndex:0] intValue];
 
         UA_LDEBUG(@"Setting notification types: %ld", (long)types);
-        [UAirship push].userNotificationTypes = types;
+        [UAirship push].notificationOptions = types;
         [[UAirship push] updateRegistration];
 
         completionHandler(CDVCommandStatus_OK, nil);
@@ -651,14 +650,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }];
 }
 
-- (void)recordCurrentLocation:(CDVInvokedUrlCommand *)command {
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship shared].locationService reportCurrentLocation];
-
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
 - (void)runAction:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *actionName = [args firstObject];
@@ -690,7 +681,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 - (void)isAppNotificationsEnabled:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL optedIn = [UAirship push].currentEnabledNotificationTypes != 0;
+        BOOL optedIn = [UAirship push].authorizedNotificationOptions != 0;
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:optedIn]);
     }];
 }

@@ -37,6 +37,9 @@ Please contact support@urbanairship.com for any issues integrating or using this
         <!-- Required for Android. -->
         <preference name="com.urbanairship.gcm_sender" value="Your GCM Sender ID" />
 
+        <!-- Urban Airship requires the minimum sdk version to be 16 -->
+        <preference name="android-minSdkVersion" value="16" />
+
         <!-- If the app is in production or not -->
         <preference name="com.urbanairship.in_production" value="true | false" />
 
@@ -51,6 +54,9 @@ Please contact support@urbanairship.com for any issues integrating or using this
 
         <!-- Override the Android notification icon -->
         <preference name="com.urbanairship.notification_icon" value="ic_notification" />
+
+        <!-- Override the Android notification large icon -->
+        <preference name="com.urbanairship.notification_large_icon" value="ic_notification_large" />
     
         <!-- Override the Android notification sound (sound file should be in res/raw)-->
         <preference name="com.urbanairship.notification_sound" value="push" />

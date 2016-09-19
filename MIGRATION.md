@@ -1,5 +1,18 @@
 # Migration Guide
 
+## 5.x to 6.0.0
+
+### Android Minimum SDK Version
+
+Urban Airship Android 8.0.0 SDK requires the minimum sdk version to be 16.
+Modify the config.xml file to contain:
+
+    <preference name="android-minSdkVersion" value="16" />
+
+### Location Changes
+
+The method `recordCurrentLocation` has been removed.
+
 ## 4.x to 5.0.0
 
 
@@ -43,12 +56,12 @@ The iOS Airship library is bitcode enabled for Xcode 7+.
 
 The plugin is now attached to the window as `UAirship` instead of `PushNotification`.
 
-## Installation changes
+### Installation changes
 
 Plugin ID has been changed from `com.urbanairship.phonegap.PushNotification` to `com.urbanairship.cordova`. The old version
 may need to be uninstalled manually before updating to the new version.
 
-## Push Changes
+### Push Changes
 
 To enable or disable push, use `setUserNotificationsEnabled` instead of `enablePush` or `disablePush`. The app will
 continue to not prompt for push until user notifications is enabled. `registerNotificationTypes` has been renamed to
@@ -74,8 +87,6 @@ Example:
 			console.log("tag: " + tag);
 		})
 	})
-
-
 
 
 ### Location Changes:
@@ -174,5 +185,3 @@ Example:
 **Note:** If your application supports Android and it listens to any of the events, you should start 
 listening for events on both 'deviceReady' and 'resume' and stop listening for events on 'pause'. 
 This will prevent the events from being handled in the background.
-
-

@@ -64,6 +64,7 @@ public class CordovaAutopilot extends Autopilot {
     static final String GCM_SENDER = "com.urbanairship.gcm_sender";
     static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
     static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
+    static final String NOTIFICATION_LARGE_ICON = "com.urbanairship.notification_large_icon";
     static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
     static final String NOTIFICATION_SOUND = "com.urbanairship.notification_sound";
     static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
@@ -118,10 +119,21 @@ public class CordovaAutopilot extends Autopilot {
         String notificationIconName = pluginConfig.getString(NOTIFICATION_ICON, null);
         if (!UAStringUtil.isEmpty(notificationIconName)) {
             int id  = context.getResources().getIdentifier(notificationIconName, "drawable", context.getPackageName());
-            if (id > 0) {
+            if (id != 0) {
                 factory.setSmallIconId(id);
             } else {
                 Logger.error("Unable to find notification icon with name: " + notificationIconName);
+            }
+        }
+
+        // Notification large icon
+        String notificationLargeIconName = pluginConfig.getString(NOTIFICATION_LARGE_ICON, null);
+        if (!UAStringUtil.isEmpty(notificationLargeIconName)) {
+            int id  = context.getResources().getIdentifier(notificationLargeIconName, "drawable", context.getPackageName());
+            if (id != 0) {
+                factory.setLargeIcon(id);
+            } else {
+                Logger.error("Unable to find notification large icon with name: " + notificationLargeIconName);
             }
         }
 

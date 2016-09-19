@@ -35,6 +35,9 @@
 
         <!-- Override the Android notification icon -->
         <preference name="com.urbanairship.notification_icon" value="ic_notification" />
+
+        <!-- Override the Android notification large icon -->
+        <preference name="com.urbanairship.notification_large_icon" value="ic_notification_large" />
     
         <!-- Override the Android notification sound (sound file should be in res/raw)-->
         <preference name="com.urbanairship.notification_sound" value="push" />
