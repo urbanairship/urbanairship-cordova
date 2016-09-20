@@ -7,7 +7,6 @@ repositories {
 android {
     defaultConfig {
         applicationId packageName
-        minSdkVersion 16
     }
 }
 
