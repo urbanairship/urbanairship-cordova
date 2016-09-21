@@ -140,11 +140,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
             return NO;
         }
 
-        if ([arg.value isKindOfClass:[NSString class]]) {
-            return [NSURL URLWithString:arg.value] != nil;
-        }
-
-        return [arg.value isKindOfClass:[NSURL class]];
+        return [arg.value isKindOfClass:[NSURL class]] || [arg.value isKindOfClass:[NSString class]];
     }];
 
     [[UAirship shared].actionRegistry updateAction:customDLA forEntryWithName:kUADeepLinkActionDefaultRegistryName];
