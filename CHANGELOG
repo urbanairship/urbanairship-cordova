@@ -1,4 +1,11 @@
 =============================
+Version 6.0.1 - Sept 21, 2016
+=============================
+ - Fixed getLaunchNotification and push events for iOS.
+ - Fixed iOS deep link not accepting non url deep links.
+ - Removed overriding the Android minSDK to 16.
+
+=============================
 Version 6.0.0 - Sept 19, 2016
 =============================
  - Updated Android Urban Airship SDK to 8.0.1
