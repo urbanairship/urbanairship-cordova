@@ -733,19 +733,19 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 #pragma mark UAPushNotificationDelegate
 
-- (void)launchedFromNotification:(NSDictionary *)notification {
-    UA_LDEBUG(@"The application was launched or resumed from a notification %@", [notification description]);
-    self.launchNotification = notification;
+- (void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void(^)())completionHandler {
+    UA_LDEBUG(@"The application was launched or resumed from a notification %@", notificationResponse);
+    self.launchNotification = notificationResponse.notificationContent.notificationInfo;
 }
 
-- (void)receivedForegroundNotification:(NSDictionary *)notification {
-    UA_LDEBUG(@"Received a notification while the app was already in the foreground %@", [notification description]);
+- (void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void(^)())completionHandler {
+    UA_LDEBUG(@"Received a notification while the app was already in the foreground %@", notificationContent);
 
     [[UAirship push] setBadgeNumber:0]; // zero badge after push received
 
     NSMutableDictionary *data = [NSMutableDictionary dictionary];
-    [data setValue:[self alertForUserInfo:notification] forKey:@"message"];
-    [data setValue:[self extrasForUserInfo:notification] forKey:@"extras"];
+    [data setValue:notificationContent.alertBody forKey:@"message"];
+    [data setValue:[self extrasForUserInfo:notificationContent.notificationInfo] forKey:@"extras"];
 
     [self notifyListener:EventPushReceived data:data];
 }
