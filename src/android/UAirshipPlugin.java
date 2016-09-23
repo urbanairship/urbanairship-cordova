@@ -103,7 +103,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerListener", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
-            "isAppNotificationsEnabled");
+            "isAppNotificationsEnabled", "setDisplayASAPEnabled");
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
