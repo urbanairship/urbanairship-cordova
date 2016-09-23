@@ -229,7 +229,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     void setDisplayASAPEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
-        UAirship.shared().getPushManager().setDisplayASAPEnabled(enabled);
+        UAirship.shared().getInAppMessageManager().setDisplayAsapEnabled(enabled);
         callbackContext.success();
     }
 
