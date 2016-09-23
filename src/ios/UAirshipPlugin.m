@@ -114,6 +114,8 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [UAirship push].registrationDelegate = self;
     [UAirship inbox].delegate = self;
 
+    [UAirship inAppMessaging].displayASAPEnabled = TRUE;
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(inboxUpdated)
                                                  name:UAInboxMessageListUpdatedNotification
