@@ -220,6 +220,20 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
+     * Enables or disables display ASAP mode for in-app messages.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void setDisplayASAPEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        boolean enabled = data.getBoolean(0);
+        UAirship.shared().getPushManager().setDisplayASAPEnabled(enabled);
+        callbackContext.success();
+    }
+
+    /**
      * Checks if user notifications are enabled or not.
      *
      * @param data The call data.
