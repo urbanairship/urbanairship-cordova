@@ -175,6 +175,19 @@ module.exports = {
   },
 
   /**
+   * Enables or disables display ASAP mode for in-app messages.
+   *
+   * @param {boolean} enabled true to enable display ASAP mode, false to disable.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  setDisplayASAPEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setDisplayASAPEnabled', arguments)
+    callNative(success, failure, "setDisplayASAPEnabled", [!!enabled])
+  },
+
+  /**
    * Checks if user notifications are enabled or not.
    *
    * @param {function(enabled)} success Success callback.

@@ -115,8 +115,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [UAirship push].registrationDelegate = self;
     [UAirship inbox].delegate = self;
 
-    [UAirship inAppMessaging].displayASAPEnabled = TRUE;
-
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(inboxUpdated)
                                                  name:UAInboxMessageListUpdatedNotification
@@ -308,6 +306,15 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
         //forces a reregistration
         [[UAirship push] updateRegistration];
 
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)setDisplayASAPEnabled:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        BOOL enabled = [[args objectAtIndex:0] boolValue];
+        [UAirship inAppMessaging].displayASAPEnabled = enabled;
+        
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
