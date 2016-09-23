@@ -49,7 +49,7 @@
  *
  * @param command The cordova command.
  */
-- (void)setDisplayASAPEnabled:(CDVInvokedUrlCommand *)command
+- (void)setDisplayASAPEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
  * Checks if user push notifications are enabled or not.
