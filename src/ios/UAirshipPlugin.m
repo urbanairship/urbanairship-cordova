@@ -32,7 +32,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAActionRunner.h"
 #import "UADefaultMessageCenter.h"
-#import "UInAppMessaging.h"
+#import "UAInAppMessaging.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxMessage.h"
