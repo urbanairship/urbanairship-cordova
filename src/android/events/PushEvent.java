@@ -63,6 +63,10 @@ public class PushEvent implements Event {
             if ("android.support.content.wakelockid".equals(key)) {
                 continue;
             }
+            if ("google.sent_time".equals(key)) {
+                extras.put(key, Long.toString(message.getPushBundle().getLong(key)));
+                continue;
+            }
             extras.put(key, message.getPushBundle().getString(key));
         }
 
