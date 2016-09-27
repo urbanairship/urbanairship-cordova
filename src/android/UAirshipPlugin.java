@@ -103,7 +103,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerListener", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
-            "isAppNotificationsEnabled");
+            "isAppNotificationsEnabled", "setDisplayASAPEnabled");
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -216,6 +216,20 @@ public class UAirshipPlugin extends CordovaPlugin {
     void setUserNotificationsEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         UAirship.shared().getPushManager().setUserNotificationsEnabled(enabled);
+        callbackContext.success();
+    }
+
+    /**
+     * Enables or disables display ASAP mode for in-app messages.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void setDisplayASAPEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        boolean enabled = data.getBoolean(0);
+        UAirship.shared().getInAppMessageManager().setDisplayAsapEnabled(enabled);
         callbackContext.success();
     }
 

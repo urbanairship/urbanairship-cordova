@@ -32,6 +32,7 @@
 #import "NSJSONSerialization+UAAdditions.h"
 #import "UAActionRunner.h"
 #import "UADefaultMessageCenter.h"
+#import "UAInAppMessaging.h"
 #import "UAInbox.h"
 #import "UAInboxMessageList.h"
 #import "UAInboxMessage.h"
@@ -305,6 +306,15 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
         //forces a reregistration
         [[UAirship push] updateRegistration];
 
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)setDisplayASAPEnabled:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        BOOL enabled = [[args objectAtIndex:0] boolValue];
+        [UAirship inAppMessaging].displayASAPEnabled = enabled;
+        
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
