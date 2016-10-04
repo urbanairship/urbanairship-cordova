@@ -1,3 +1,9 @@
+===========================
+Version 6.1.0 - Oct 4, 2016
+===========================
+ - Updated iOS Urban Airship SDK to 8.0.2
+ - Added support for enabling/disabling the "displayASAPEnabled" property for in-app messages
+
 =============================
 Version 6.0.1 - Sept 21, 2016
 =============================
