@@ -65,6 +65,9 @@ NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onl
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
 NSString *const EnableAnalyticsConfigKey = @"com.urbanairship.enable_analytics";
 NSString *const AutoLaunchMessageCenterKey = @"com.urbanairship.auto_launch_message_center";
+NSString *const NotificationPresentationAlertKey = @"com.urbanairship.ios_foreground_notification_presentation_alert";
+NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foreground_notification_presentation_badge";
+NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 
 // Events
 NSString *const EventPushReceived = @"urbanairship.push";
@@ -114,6 +117,30 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
     [UAirship inbox].delegate = self;
+
+    // Set the iOS default foreground presentation options if specified in the config else default to None
+    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
+
+    if (settings[NotificationPresentationAlertKey] != nil) {
+        if ([settings[NotificationPresentationAlertKey] boolValue]) {
+            options = options | UNNotificationPresentationOptionAlert;
+        }
+    }
+
+    if (settings[NotificationPresentationBadgeKey] != nil) {
+        if ([settings[NotificationPresentationBadgeKey] boolValue]) {
+            options = options | UNNotificationPresentationOptionBadge;
+        }
+    }
+
+    if (settings[NotificationPresentationSoundKey] != nil) {
+        if ([settings[NotificationPresentationSoundKey] boolValue]) {
+            options = options | UNNotificationPresentationOptionSound;
+        }
+    }
+
+    UA_LDEBUG(@"Foreground presentation options from the config: %lu", (unsigned long)options);
+    [UAirship push].defaultPresentationOptions = options;
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(inboxUpdated)
@@ -742,6 +769,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 - (void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void(^)())completionHandler {
     UA_LDEBUG(@"The application was launched or resumed from a notification %@", notificationResponse);
     self.launchNotification = notificationResponse.notificationContent.notificationInfo;
+    completionHandler();
 }
 
 - (void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void(^)())completionHandler {
@@ -754,6 +782,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [data setValue:[self extrasForUserInfo:notificationContent.notificationInfo] forKey:@"extras"];
 
     [self notifyListener:EventPushReceived data:data];
+    completionHandler();
 }
 
 #pragma mark UAInboxDelegate
