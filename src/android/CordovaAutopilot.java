@@ -26,6 +26,7 @@
 package com.urbanairship.cordova;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.Uri;
@@ -54,6 +55,8 @@ import java.util.Map;
  * The Urban Airship autopilot to automatically handle takeOff.
  */
 public class CordovaAutopilot extends Autopilot {
+
+    private static final String ACTION_AIRSHIP_READY = "com.urbanairship.AIRSHIP_READY";
 
     static final String UA_PREFIX = "com.urbanairship";
     static final String PRODUCTION_KEY = "com.urbanairship.production_app_key";
@@ -198,6 +201,12 @@ public class CordovaAutopilot extends Autopilot {
             }
         });
 
+        // Send AirshipReady intent for other plugins that depend on UA
+        Intent readyIntent = new Intent(ACTION_AIRSHIP_READY)
+                .setPackage(UAirship.getPackageName())
+                .addCategory(UAirship.getPackageName());
+
+        context.sendBroadcast(readyIntent, UAirship.getUrbanAirshipPermission());
     }
 
     /**
