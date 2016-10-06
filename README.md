@@ -73,6 +73,15 @@ Please contact support@urbanairship.com for any issues integrating or using this
         <!-- Enables/disables auto launching the message center when the corresponding push is opened. -->
         <preference name="com.urbanairship.auto_launch_message_center" value="true | false" />
 
+        <!-- iOS 10 alert foreground notification presentation option -->
+        <preference name="com.urbanairship.ios_foreground_notification_presentation_alert" value="true"/>
+
+        <!-- iOS 10 badge foreground notification presentation option -->
+        <preference name="com.urbanairship.ios_foreground_notification_presentation_badge" value="true"/>
+
+        <!-- iOS 10 sound foreground notification presentation option -->
+        <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true"/>
+
 
 4. Enable user notifications
 ```
