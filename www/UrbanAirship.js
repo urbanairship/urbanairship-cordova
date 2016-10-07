@@ -44,6 +44,17 @@ function callNative(success, failure, name, args) {
   exec(success, failure, "UAirship", name, args)
 }
 
+// Helper method to run an action
+function _runAction(actionName, actionValue, success, failure) {
+  var successWrapper = function(result) {
+    if (success) {
+      success(result.value)
+    }
+  }
+
+  callNative(successWrapper, failure, "runAction", [actionName, actionValue])
+}
+
 /**
  * Helper object to edit tag groups.
  *
@@ -463,14 +474,7 @@ module.exports = {
    */
   runAction: function(actionName, actionValue, success, failure) {
     argscheck.checkArgs('s*FF', 'UAirship.runAction', arguments)
-
-    var successWrapper = function(result) {
-      if (success) {
-        success(result.value)
-      }
-    }
-
-    callNative(successWrapper, failure, "runAction", [actionName, actionValue])
+    _runAction(actionName, actionValue, success, failure)
   },
 
   /**
@@ -800,5 +804,30 @@ module.exports = {
   setVibrateEnabled: function(enabled, success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.setVibrateEnabled', arguments)
     callNative(success, failure, "setVibrateEnabled", [!!enabled])
+  },
+
+  /**
+   * Adds a custom event.
+   *
+   * @param {object} event The custom event object.
+   * @param {string} event.name The event's name.
+   * @param {number} [event.value] The event's value.
+   * @param {string} [event.transactionId] The event's transaction ID.
+   * @param {object} [event.properties] The event's properties. Only numbers, booleans, strings, and array of strings are supported.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  addCustomEvent: function(event, success, failure) {
+    argscheck.checkArgs('oFF', 'UAirship.addCustomEvent', arguments)
+
+    var actionArg = {
+      event_name: event.name,
+      event_value: event.value,
+      transaction_id: event.transactionId,
+      properties: event.properties
+    }
+
+    _runAction("add_custom_event_action", actionArg, success, failure)
   }
 }
