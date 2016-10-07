@@ -30,6 +30,7 @@ import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.InboxEvent;
 import com.urbanairship.cordova.events.PushEvent;
+import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.push.PushMessage;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class UAirshipPluginManager {
 
     private static final UAirshipPluginManager shared = new UAirshipPluginManager();
 
-    private PushEvent launchNotificationEvent;
+    private NotificationOpenedEvent notificationOpenedEvent;
     private DeepLinkEvent deepLinkEvent = null;
     private Listener listener = null;
 
@@ -101,16 +102,19 @@ public class UAirshipPluginManager {
     }
 
     /**
-     * Called when the app is launched from a push.
+     * Called when the notification is opened.
      *
      * @param notificationId The notification ID.
      * @param pushMessage The push message.
      */
-    void launchedFromPush(int notificationId, PushMessage pushMessage) {
+    void notificationOpened(int notificationId, PushMessage pushMessage) {
         synchronized (shared) {
-            PushEvent event = new PushEvent(notificationId, pushMessage);
-            this.launchNotificationEvent = event;
-            notifyListener(event);
+            NotificationOpenedEvent event = new NotificationOpenedEvent(notificationId, pushMessage);
+            this.notificationOpenedEvent = event;
+
+            if (!notifyListener(event)) {
+                pendingEvents.add(event);
+            }
         }
     }
 
@@ -142,16 +146,16 @@ public class UAirshipPluginManager {
     }
 
     /**
-     * Returns the last launch notification event.
+     * Returns the last notification opened event.
      *
      * @param clear {@code true} to clear the event, otherwise {@code false}.
-     * @return The deep link event, or null if the event is not available.
+     * @return The notification opened event, or null if the event is not available.
      */
-    public PushEvent getLastLaunchNotificationEvent(boolean clear) {
+    public NotificationOpenedEvent getLastLaunchNotificationEvent(boolean clear) {
         synchronized (shared) {
-            PushEvent event = this.launchNotificationEvent;
+            NotificationOpenedEvent event = this.notificationOpenedEvent;
             if (clear) {
-                this.launchNotificationEvent = null;
+                this.notificationOpenedEvent = null;
             }
 
             return event;

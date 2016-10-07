@@ -51,6 +51,7 @@ import com.urbanairship.actions.LandingPageActivity;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.PushEvent;
+import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.google.PlayServicesUtils;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.messagecenter.MessageActivity;
@@ -409,7 +410,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     void getLaunchNotification(JSONArray data, CallbackContext callbackContext) {
         boolean clear = data.optBoolean(0, false);
-        PushEvent event = UAirshipPluginManager.shared().getLastLaunchNotificationEvent(clear);
+        NotificationOpenedEvent event = UAirshipPluginManager.shared().getLastLaunchNotificationEvent(clear);
 
         if (event != null) {
             callbackContext.success(event.getEventData());
