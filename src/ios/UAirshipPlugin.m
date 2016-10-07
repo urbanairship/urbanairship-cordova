@@ -46,7 +46,7 @@ typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
 
 @interface UAirshipPlugin()
-@property (nonatomic, copy) NSDictionary *launchNotification;
+@property (nonatomic, strong) UANotificationResponse *launchNotificationResponse;
 @property (nonatomic, copy) NSString *listenerCallbackID;
 @property (nonatomic, copy) NSString *deepLink;
 @property (nonatomic, assign) BOOL autoLaunchMessageCenter;
@@ -71,6 +71,7 @@ NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foregr
 
 // Events
 NSString *const EventPushReceived = @"urbanairship.push";
+NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
 NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
 NSString *const EventRegistration = @"urbanairship.registration";
 NSString *const EventDeepLink = @"urbanairship.deep_link";
@@ -259,48 +260,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }];
 }
 
-
-/**
- * Helper method to parse the alert from a notification.
- *
- * @param userInfo The notification.
- * @return The notification's alert.
- */
-- (NSString *)alertForUserInfo:(NSDictionary *)userInfo {
-    NSString *alert = @"";
-
-    if ([[userInfo allKeys] containsObject:@"aps"]) {
-        NSDictionary *apsDict = [userInfo objectForKey:@"aps"];
-        //TODO: what do we want to do in the case of a localized alert dictionary?
-        if ([[apsDict valueForKey:@"alert"] isKindOfClass:[NSString class]]) {
-            alert = [apsDict valueForKey:@"alert"];
-        }
-    }
-
-    return alert;
-}
-
-/**
- * Helper method to parse the extras from a notification.
- *
- * @param userInfo The notification.
- * @return The notification's extras.
- */
-- (NSMutableDictionary *)extrasForUserInfo:(NSDictionary *)userInfo {
-
-    // remove extraneous key/value pairs
-    NSMutableDictionary *extras = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-
-    if([[extras allKeys] containsObject:@"aps"]) {
-        [extras removeObjectForKey:@"aps"];
-    }
-    if([[extras allKeys] containsObject:@"_"]) {
-        [extras removeObjectForKey:@"_"];
-    }
-
-    return extras;
-}
-
 #pragma mark Phonegap bridge
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
@@ -451,24 +410,13 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 - (void)getLaunchNotification:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *incomingAlert = @"";
-        NSMutableDictionary *incomingExtras = [NSMutableDictionary dictionary];
-
-        if (self.launchNotification) {
-            incomingAlert = [self alertForUserInfo:self.launchNotification];
-            [incomingExtras setDictionary:[self extrasForUserInfo:self.launchNotification]];
-        }
-
-        NSMutableDictionary *returnDictionary = [NSMutableDictionary dictionary];
-
-        [returnDictionary setObject:incomingAlert forKey:@"message"];
-        [returnDictionary setObject:incomingExtras forKey:@"extras"];
+        id event = [self pushEventFromNotification:self.launchNotificationResponse.notificationContent];
 
         if ([args firstObject]) {
-            self.launchNotification = nil;
+            self.launchNotificationResponse = nil;
         }
 
-        completionHandler(CDVCommandStatus_OK, returnDictionary);
+        completionHandler(CDVCommandStatus_OK, event);
     }];
 }
 
@@ -767,8 +715,17 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 #pragma mark UAPushNotificationDelegate
 
 - (void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void(^)())completionHandler {
-    UA_LDEBUG(@"The application was launched or resumed from a notification %@", notificationResponse);
-    self.launchNotification = notificationResponse.notificationContent.notificationInfo;
+    if ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
+        UA_LDEBUG(@"The application was launched or resumed from a notification %@", notificationResponse);
+
+        self.launchNotificationResponse = notificationResponse;
+
+        id event = [self pushEventFromNotification:notificationResponse.notificationContent];
+        if (![self notifyListener:EventNotificationOpened data:event]) {
+            [self.pendingEvents setValue:event forKey:EventNotificationOpened];
+        }
+    }
+
     completionHandler();
 }
 
@@ -777,11 +734,8 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
     [[UAirship push] setBadgeNumber:0]; // zero badge after push received
 
-    NSMutableDictionary *data = [NSMutableDictionary dictionary];
-    [data setValue:notificationContent.alertBody forKey:@"message"];
-    [data setValue:[self extrasForUserInfo:notificationContent.notificationInfo] forKey:@"extras"];
-
-    [self notifyListener:EventPushReceived data:data];
+    id event = [self pushEventFromNotification:notificationContent];
+    [self notifyListener:EventPushReceived data:event];
     completionHandler();
 }
 
@@ -946,5 +900,29 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
     return YES;
 }
+
+
+- (id)pushEventFromNotification:(UANotificationContent *)notificationContent {
+    if (!notificationContent) {
+        return @{ @"message": @"", @"extras": @{}};
+    }
+
+    // remove extraneous key/value pairs
+    NSMutableDictionary *extras = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
+
+    if([[extras allKeys] containsObject:@"aps"]) {
+        [extras removeObjectForKey:@"aps"];
+    }
+
+    if([[extras allKeys] containsObject:@"_"]) {
+        [extras removeObjectForKey:@"_"];
+    }
+
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    result[@"message"] = notificationContent.alertBody ?: @"";
+    result[@"extras"] = extras;
+    return result;
+}
+
 
 @end

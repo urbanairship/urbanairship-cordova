@@ -26,10 +26,10 @@
           }
         }
 
-         // Incoming message callback
-        var onLaunchedFromPush = function(event) {
+         // Notification opened callback
+        var notificationOpened = function(event) {
           if (event.message) {
-            console.log("Launched from push: " + event.message)
+            console.log("Notification opened: " + event.message)
           } else {
             console.log("No incoming message")
           }
@@ -45,7 +45,7 @@
           }
         }
 
-        //Deep link callback
+        // Deep link callback
         var handleDeepLink = function(event)  {
             console.log("Deep link: " + event.deepLink)
         }
@@ -53,6 +53,7 @@
         // Register for any urban airship events
         document.addEventListener("urbanairship.registration", onRegistration, false)
         document.addEventListener("urbanairship.push", onPushReceived, false)
+        document.addEventListener("urbanairship.notification_opened", notificationOpened, false)
         document.addEventListener("urbanairship.deep_link", handleDeepLink, false)
         
         // Handle resume
@@ -60,7 +61,6 @@
           console.log("Device resume!")
           
           UAirship.resetBadge()
-          UAirship.getLaunchNotification(true, onLaunchedFromPush)
 
           // Reregister for urbanairship events if they were removed in pause event
           document.addEventListener("urbanairship.registration", onRegistration, false)
@@ -80,7 +80,6 @@
         initiateUI()
         
         // Get the launch notification if its available.
-        UAirship.getLaunchNotification(true, onLaunchedFromPush)
       }
 
       // Initiates the UI and sets up any UI callbacks

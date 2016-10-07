@@ -162,6 +162,16 @@ module.exports = {
    */
 
   /**
+   * Event fired when notification opened.
+   *
+   * @event "urbanairship.notification_opened"
+   * @type {object}
+   * @param {string} message The push alert message.
+   * @param {object} extras Any push extras.
+   * @param {number} [notification_id] The Android notification ID.
+   */
+
+  /**
    * Enables or disables user notifications.
    *
    * @param {boolean} enabled true to enable notifications, false to disable.

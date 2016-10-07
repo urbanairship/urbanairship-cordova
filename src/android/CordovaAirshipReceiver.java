@@ -79,7 +79,7 @@ public class CordovaAirshipReceiver extends AirshipReceiver {
     protected boolean onNotificationOpened(@NonNull Context context, @NonNull NotificationInfo notificationInfo) {
         Log.i(TAG, "Notification opened. Alert: " + notificationInfo.getMessage().getAlert() + ". NotificationId: " + notificationInfo.getNotificationId());
 
-        UAirshipPluginManager.shared().launchedFromPush(notificationInfo.getNotificationId(), notificationInfo.getMessage());
+        UAirshipPluginManager.shared().notificationOpened(notificationInfo.getNotificationId(), notificationInfo.getMessage());
 
         // Return false here to allow Urban Airship to auto launch the launcher activity
         return false;
@@ -89,7 +89,7 @@ public class CordovaAirshipReceiver extends AirshipReceiver {
     protected boolean onNotificationOpened(@NonNull Context context, @NonNull NotificationInfo notificationInfo, @NonNull ActionButtonInfo actionButtonInfo) {
         Log.i(TAG, "Notification action button opened. Button ID: " + actionButtonInfo.getButtonId() + ". NotificationId: " + notificationInfo.getNotificationId());
 
-        UAirshipPluginManager.shared().launchedFromPush(notificationInfo.getNotificationId(), notificationInfo.getMessage());
+        UAirshipPluginManager.shared().notificationOpened(notificationInfo.getNotificationId(), notificationInfo.getMessage());
 
         // Return false here to allow Urban Airship to auto launch the launcher
         // activity for foreground notification action buttons
