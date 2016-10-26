@@ -14,7 +14,7 @@ We accept pull requests! If you would like to submit a pull request, please fill
 
 ### Issues
 
-Please contact support@urbanairship.com for any issues integrating or using this plugin.
+Please visit http://support.urbanairship.com/ for any issues integrating or using this plugin.
 
 ### Requirements:
  - Android [GCM Setup](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup)
