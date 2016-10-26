@@ -32,9 +32,6 @@
   ],
   "author": "Urban Airship",
   "license": "Apache 2.0",
-  "bugs": {
-    "email": "support@urbanairship.com"
-  },
   "homepage": "https://github.com/urbanairship/phonegap-ua-push#readme",
   "devDependencies": {
     "jsdoc": "3.4.0",
