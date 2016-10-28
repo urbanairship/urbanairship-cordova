@@ -23,7 +23,7 @@
  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "UADefaultMessageCenterMessageViewController.h"
+#import "AirshipLib.h"
 
 @interface UAMessageViewController : UADefaultMessageCenterMessageViewController
 
