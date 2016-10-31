@@ -91,11 +91,6 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
     })
 ```
 
-#### iOS
-Enable Push Notifications in the project editor's Capabilities pane:
-
-![Alt text](phonegap-enable-push.png?raw=true "Enable Push Notifications")
-
 ### Sample
 
 A sample can be found in Example. To run it, copy the files:

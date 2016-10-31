@@ -25,8 +25,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPlugin.h>
-#import "UAPush.h"
-#import "UAInbox.h"
+#import "AirshipLib.h"
 
 /**
  * The Urban Airship Cordova plugin.
