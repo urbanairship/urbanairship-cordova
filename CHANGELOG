@@ -396,7 +396,7 @@ Version 1.0.3 - December 7, 2012
 - FIXED: getIncoming now only returns incoming push data once
 - Improved Intent flags in Android sample application when launching
   from a notification
-- Sample applciations now log push data to the console instead of
+- Sample applications now log push data to the console instead of
   displaying alert dialogs
 
 =================================
