@@ -75,13 +75,13 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         <preference name="com.urbanairship.auto_launch_message_center" value="true | false" />
 
         <!-- iOS 10 alert foreground notification presentation option -->
-        <preference name="com.urbanairship.ios_foreground_notification_presentation_alert" value="true"/>
+        <preference name="com.urbanairship.ios_foreground_notification_presentation_alert" value="true | false"/>
 
         <!-- iOS 10 badge foreground notification presentation option -->
-        <preference name="com.urbanairship.ios_foreground_notification_presentation_badge" value="true"/>
+        <preference name="com.urbanairship.ios_foreground_notification_presentation_badge" value="true | false"/>
 
         <!-- iOS 10 sound foreground notification presentation option -->
-        <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true"/>
+        <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true | false"/>
 
 
 4. Enable user notifications
