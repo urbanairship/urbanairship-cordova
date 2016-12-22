@@ -92,6 +92,11 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
     })
 ```
 
+To add support for iOS 10 notification attachments, you will need to create a
+notification service extension. Detailed steps can be found
+[here](http://docs.urbanairship.com/platform/phonegap.html#setup).
+
+
 ### Sample
 
 A sample can be found in Example. To run it, copy the files:
