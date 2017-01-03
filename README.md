@@ -84,7 +84,9 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true"/>
 
 
-4. Enable user notifications
+4. The plugin uses cocoapods, so open the xcworkspace instead of the xcodeproj if Xcode is used directly
+
+5. Enable user notifications
 ```
     // Enable user notifications (will prompt the user to accept push notifications)
     UAirship.setUserNotificationsEnabled(true, function (enabled) {
