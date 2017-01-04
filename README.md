@@ -17,9 +17,15 @@ We accept pull requests! If you would like to submit a pull request, please fill
 Please visit http://support.urbanairship.com/ for any issues integrating or using this plugin.
 
 ### Requirements:
- - Cordova-CLI 6.4.0
+ - Cordova-CLI >= 6.4.0
+ - CocoaPods version >= 1.1.1
  - Android [GCM Setup](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup)
  - iOS [APNS Setup](http://docs.urbanairship.com/reference/push-providers/apns.html)
+
+### CocoaPods:
+   This plugin uses cocoapods which is supported in cordova-ios 4.3.0. Ensure cocoapods is installed and
+   the pod repo is updated via `pod repo update`. If using Xcode directly, open the xcworkspace instead
+   of the xcodeproj.
 
 ### Quickstart
 
@@ -83,10 +89,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         <!-- iOS 10 sound foreground notification presentation option -->
         <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true"/>
 
-
-4. The plugin uses cocoapods, so open the xcworkspace instead of the xcodeproj if Xcode is used directly
-
-5. Enable user notifications
+4. Enable user notifications
 ```
     // Enable user notifications (will prompt the user to accept push notifications)
     UAirship.setUserNotificationsEnabled(true, function (enabled) {
