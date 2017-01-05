@@ -31,6 +31,7 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
@@ -92,8 +93,8 @@ public class CordovaAutopilot extends Autopilot {
                 .setInProduction(pluginConfig.getBoolean(IN_PRODUCTION, false))
                 .setGcmSender(pluginConfig.getString(GCM_SENDER, ""))
                 .setAnalyticsEnabled(pluginConfig.getBoolean(ENABLE_ANALYTICS, true))
-                .setDevelopmentLogLevel(androidLogLevel(pluginConfig.getString(DEVELOPMENT_LOG_LEVEL, "debug")))
-                .setProductionLogLevel(androidLogLevel(pluginConfig.getString(PRODUCTION_LOG_LEVEL, "error")))
+                .setDevelopmentLogLevel(parseLogLevel(pluginConfig.getString(DEVELOPMENT_LOG_LEVEL, ""), Log.DEBUG))
+                .setProductionLogLevel(parseLogLevel(pluginConfig.getString(PRODUCTION_LOG_LEVEL, ""), Log.ERROR))
                 .build();
 
         return options;
@@ -230,25 +231,29 @@ public class CordovaAutopilot extends Autopilot {
     /**
      * Convert the log level string to an int.
      *
-     * @param logLevel The log level string.
+     * @param logLevel The log level as a string.
+     * @param defaultLogLevel Default log level.
      * @return The log level.
      */
-    public int androidLogLevel(String logLevel) {
-        String logString = logLevel.toLowerCase();
+    int parseLogLevel(String logLevel, int defaultLogLevel) {
+        if (logLevel == null || logLevel.length() == 0) {
+            return defaultLogLevel;
+        }
+        String logString = logLevel.trim().toLowerCase();
         if (logString.equals("verbose")) {
-            return 2;
+            return Log.VERBOSE;
         } else if (logString.equals("debug")) {
-            return 3;
+            return Log.DEBUG;
         } else if (logString.equals("info")) {
-            return 4;
+            return Log.INFO;
         } else if (logString.equals("warn")) {
-            return 5;
+            return Log.WARN;
         } else if (logString.equals("error")) {
-            return 6;
+            return Log.ERROR;
         } else if (logString.equals("none")) {
-            return 7;
+            return Log.ASSERT;
         } else {
-            return 7; // default to none
+            return defaultLogLevel;
         }
     }
 

@@ -84,12 +84,12 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     config.developmentAppSecret = settings[DevelopmentAppSecretConfigKey];
     config.inProduction = [settings[ProductionConfigKey] boolValue];
     if (settings[DevelopmentLogLevelKey] != nil) {
-        config.developmentLogLevel = [self iOSLogLevel:settings[DevelopmentLogLevelKey]];
+        config.developmentLogLevel = [self parseLogLevel:settings[DevelopmentLogLevelKey] defaultLogLevel:UALogLevelDebug];
     } else {
         config.developmentLogLevel = UALogLevelDebug;
     }
     if (settings[ProductionLogLevelKey] != nil) {
-        config.productionLogLevel = [self iOSLogLevel:settings[ProductionLogLevelKey]];
+        config.productionLogLevel = [self parseLogLevel:settings[ProductionLogLevelKey] defaultLogLevel:UALogLevelError];
     } else {
         config.productionLogLevel = UALogLevelError;
     }
@@ -918,22 +918,26 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     return result;
 }
 
--(int)iOSLogLevel:(NSString *)logLevel {
-    NSString *logString = [logLevel lowercaseString];
-    if ([logString isEqualToString:@"verbose"]) {
-        return 5;
-    } else if ([logString isEqualToString:@"debug"]) {
-        return 4;
-    } else if ([logString isEqualToString:@"info"]) {
-        return 3;
-    } else if ([logString isEqualToString:@"warning"]) {
-        return 2;
-    } else if ([logString isEqualToString:@"error"]) {
-        return 1;
-    } else if ([logString isEqualToString:@"none"]) {
-        return 0;
+-(int)parseLogLevel:(NSString *)logLevel defaultLogLevel:(NSInteger)defaultValue {
+    if (logLevel == nil || logLevel.length == 0) {
+        return defaultValue;
     }
-    return 0; // default to none
+    logLevel = [logLevel stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    logLevel = [logLevel lowercaseString];
+    if ([logLevel isEqualToString:@"verbose"]) {
+        return UALogLevelTrace;
+    } else if ([logLevel isEqualToString:@"debug"]) {
+        return UALogLevelDebug;
+    } else if ([logLevel isEqualToString:@"info"]) {
+        return UALogLevelInfo;
+    } else if ([logLevel isEqualToString:@"warning"]) {
+        return UALogLevelWarn;
+    } else if ([logLevel isEqualToString:@"error"]) {
+        return UALogLevelError;
+    } else if ([logLevel isEqualToString:@"none"]) {
+        return UALogLevelNone;
+    }
+    return defaultValue;
 }
 
 @end
