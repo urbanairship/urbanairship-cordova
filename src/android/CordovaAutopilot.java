@@ -63,6 +63,8 @@ public class CordovaAutopilot extends Autopilot {
     static final String PRODUCTION_SECRET = "com.urbanairship.production_app_secret";
     static final String DEVELOPMENT_KEY = "com.urbanairship.development_app_key";
     static final String DEVELOPMENT_SECRET = "com.urbanairship.development_app_secret";
+    static final String PRODUCTION_LOG_LEVEL = "com.urbanairship.production_log_level";
+    static final String DEVELOPMENT_LOG_LEVEL = "com.urbanairship.development_log_level";
     static final String IN_PRODUCTION = "com.urbanairship.in_production";
     static final String GCM_SENDER = "com.urbanairship.gcm_sender";
     static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
@@ -90,6 +92,8 @@ public class CordovaAutopilot extends Autopilot {
                 .setInProduction(pluginConfig.getBoolean(IN_PRODUCTION, false))
                 .setGcmSender(pluginConfig.getString(GCM_SENDER, ""))
                 .setAnalyticsEnabled(pluginConfig.getBoolean(ENABLE_ANALYTICS, true))
+                .setDevelopmentLogLevel(androidLogLevel(pluginConfig.getString(DEVELOPMENT_LOG_LEVEL, "debug")))
+                .setProductionLogLevel(androidLogLevel(pluginConfig.getString(PRODUCTION_LOG_LEVEL, "error")))
                 .build();
 
         return options;
@@ -221,6 +225,31 @@ public class CordovaAutopilot extends Autopilot {
         }
 
         return pluginConfig;
+    }
+
+    /**
+     * Convert the log level string to an int.
+     *
+     * @param logLevel The log level string.
+     * @return The log level.
+     */
+    public int androidLogLevel(String logLevel) {
+        String logString = logLevel.toLowerCase();
+        if (logString.equals("verbose")) {
+            return 2;
+        } else if (logString.equals("debug")) {
+            return 3;
+        } else if (logString.equals("info")) {
+            return 4;
+        } else if (logString.equals("warn")) {
+            return 5;
+        } else if (logString.equals("error")) {
+            return 6;
+        } else if (logString.equals("none")) {
+            return 7;
+        } else {
+            return 7; // default to none
+        }
     }
 
     /**

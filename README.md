@@ -56,6 +56,12 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         <!-- Warning: Features that depend on analytics being enabled may not work properly if analytics is disabled (reports, location segmentation, region triggers, push to local time). -->
         <preference name="com.urbanairship.enable_analytics" value="true | false" />
 
+        <!-- Urban Airship development log level defaults to debug -->
+        <preference name="com.urbanairship.development_log_level" value="none | error | warn | info | debug | verbose" />
+
+        <!-- Urban Airship production log level defaults to error -->
+        <preference name="com.urbanairship.production_log_level" value="none | error | warn | info | debug | verbose" />
+
         <!-- Override the Android notification icon -->
         <preference name="com.urbanairship.notification_icon" value="ic_notification" />
 

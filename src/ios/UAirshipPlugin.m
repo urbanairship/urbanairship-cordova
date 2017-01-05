@@ -44,6 +44,8 @@ NSString *const ProductionAppKeyConfigKey = @"com.urbanairship.production_app_ke
 NSString *const ProductionAppSecretConfigKey = @"com.urbanairship.production_app_secret";
 NSString *const DevelopmentAppKeyConfigKey = @"com.urbanairship.development_app_key";
 NSString *const DevelopmentAppSecretConfigKey = @"com.urbanairship.development_app_secret";
+NSString *const ProductionLogLevelKey = @"com.urbanairship.production_log_level";
+NSString *const DevelopmentLogLevelKey = @"com.urbanairship.development_log_level";
 NSString *const ProductionConfigKey = @"com.urbanairship.in_production";
 NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onlaunch";
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
@@ -81,8 +83,16 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     config.developmentAppKey = settings[DevelopmentAppKeyConfigKey];
     config.developmentAppSecret = settings[DevelopmentAppSecretConfigKey];
     config.inProduction = [settings[ProductionConfigKey] boolValue];
-    config.developmentLogLevel = UALogLevelTrace;
-    config.productionLogLevel = UALogLevelTrace;
+    if (settings[DevelopmentLogLevelKey] != nil) {
+        config.developmentLogLevel = [self iOSLogLevel:settings[DevelopmentLogLevelKey]];
+    } else {
+        config.developmentLogLevel = UALogLevelDebug;
+    }
+    if (settings[ProductionLogLevelKey] != nil) {
+        config.productionLogLevel = [self iOSLogLevel:settings[ProductionLogLevelKey]];
+    } else {
+        config.productionLogLevel = UALogLevelError;
+    }
 
     // Analytics. Enabled by Default
     if (settings[EnableAnalyticsConfigKey] != nil) {
@@ -908,5 +918,22 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     return result;
 }
 
+-(int)iOSLogLevel:(NSString *)logLevel {
+    NSString *logString = [logLevel lowercaseString];
+    if ([logString isEqualToString:@"verbose"]) {
+        return 5;
+    } else if ([logString isEqualToString:@"debug"]) {
+        return 4;
+    } else if ([logString isEqualToString:@"info"]) {
+        return 3;
+    } else if ([logString isEqualToString:@"warning"]) {
+        return 2;
+    } else if ([logString isEqualToString:@"error"]) {
+        return 1;
+    } else if ([logString isEqualToString:@"none"]) {
+        return 0;
+    }
+    return 0; // default to none
+}
 
 @end
