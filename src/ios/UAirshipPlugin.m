@@ -44,6 +44,8 @@ NSString *const ProductionAppKeyConfigKey = @"com.urbanairship.production_app_ke
 NSString *const ProductionAppSecretConfigKey = @"com.urbanairship.production_app_secret";
 NSString *const DevelopmentAppKeyConfigKey = @"com.urbanairship.development_app_key";
 NSString *const DevelopmentAppSecretConfigKey = @"com.urbanairship.development_app_secret";
+NSString *const ProductionLogLevelKey = @"com.urbanairship.production_log_level";
+NSString *const DevelopmentLogLevelKey = @"com.urbanairship.development_log_level";
 NSString *const ProductionConfigKey = @"com.urbanairship.in_production";
 NSString *const EnablePushOnLaunchConfigKey = @"com.urbanairship.enable_push_onlaunch";
 NSString *const ClearBadgeOnLaunchConfigKey = @"com.urbanairship.clear_badge_onlaunch";
@@ -81,8 +83,16 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     config.developmentAppKey = settings[DevelopmentAppKeyConfigKey];
     config.developmentAppSecret = settings[DevelopmentAppSecretConfigKey];
     config.inProduction = [settings[ProductionConfigKey] boolValue];
-    config.developmentLogLevel = UALogLevelTrace;
-    config.productionLogLevel = UALogLevelTrace;
+    if (settings[DevelopmentLogLevelKey] != nil) {
+        config.developmentLogLevel = [self parseLogLevel:settings[DevelopmentLogLevelKey] defaultLogLevel:UALogLevelDebug];
+    } else {
+        config.developmentLogLevel = UALogLevelDebug;
+    }
+    if (settings[ProductionLogLevelKey] != nil) {
+        config.productionLogLevel = [self parseLogLevel:settings[ProductionLogLevelKey] defaultLogLevel:UALogLevelError];
+    } else {
+        config.productionLogLevel = UALogLevelError;
+    }
 
     // Analytics. Enabled by Default
     if (settings[EnableAnalyticsConfigKey] != nil) {
@@ -908,5 +918,26 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     return result;
 }
 
+-(int)parseLogLevel:(NSString *)logLevel defaultLogLevel:(NSInteger)defaultValue {
+    if (logLevel == nil || logLevel.length == 0) {
+        return defaultValue;
+    }
+    logLevel = [logLevel stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    logLevel = [logLevel lowercaseString];
+    if ([logLevel isEqualToString:@"verbose"]) {
+        return UALogLevelTrace;
+    } else if ([logLevel isEqualToString:@"debug"]) {
+        return UALogLevelDebug;
+    } else if ([logLevel isEqualToString:@"info"]) {
+        return UALogLevelInfo;
+    } else if ([logLevel isEqualToString:@"warning"]) {
+        return UALogLevelWarn;
+    } else if ([logLevel isEqualToString:@"error"]) {
+        return UALogLevelError;
+    } else if ([logLevel isEqualToString:@"none"]) {
+        return UALogLevelNone;
+    }
+    return defaultValue;
+}
 
 @end

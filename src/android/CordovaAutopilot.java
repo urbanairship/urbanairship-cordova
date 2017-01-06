@@ -31,6 +31,7 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
@@ -63,6 +64,8 @@ public class CordovaAutopilot extends Autopilot {
     static final String PRODUCTION_SECRET = "com.urbanairship.production_app_secret";
     static final String DEVELOPMENT_KEY = "com.urbanairship.development_app_key";
     static final String DEVELOPMENT_SECRET = "com.urbanairship.development_app_secret";
+    static final String PRODUCTION_LOG_LEVEL = "com.urbanairship.production_log_level";
+    static final String DEVELOPMENT_LOG_LEVEL = "com.urbanairship.development_log_level";
     static final String IN_PRODUCTION = "com.urbanairship.in_production";
     static final String GCM_SENDER = "com.urbanairship.gcm_sender";
     static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
@@ -90,6 +93,8 @@ public class CordovaAutopilot extends Autopilot {
                 .setInProduction(pluginConfig.getBoolean(IN_PRODUCTION, false))
                 .setGcmSender(pluginConfig.getString(GCM_SENDER, ""))
                 .setAnalyticsEnabled(pluginConfig.getBoolean(ENABLE_ANALYTICS, true))
+                .setDevelopmentLogLevel(parseLogLevel(pluginConfig.getString(DEVELOPMENT_LOG_LEVEL, ""), Log.DEBUG))
+                .setProductionLogLevel(parseLogLevel(pluginConfig.getString(PRODUCTION_LOG_LEVEL, ""), Log.ERROR))
                 .build();
 
         return options;
@@ -221,6 +226,35 @@ public class CordovaAutopilot extends Autopilot {
         }
 
         return pluginConfig;
+    }
+
+    /**
+     * Convert the log level string to an int.
+     *
+     * @param logLevel The log level as a string.
+     * @param defaultLogLevel Default log level.
+     * @return The log level.
+     */
+    int parseLogLevel(String logLevel, int defaultLogLevel) {
+        if (logLevel == null || logLevel.length() == 0) {
+            return defaultLogLevel;
+        }
+        String logString = logLevel.trim().toLowerCase();
+        if (logString.equals("verbose")) {
+            return Log.VERBOSE;
+        } else if (logString.equals("debug")) {
+            return Log.DEBUG;
+        } else if (logString.equals("info")) {
+            return Log.INFO;
+        } else if (logString.equals("warn")) {
+            return Log.WARN;
+        } else if (logString.equals("error")) {
+            return Log.ERROR;
+        } else if (logString.equals("none")) {
+            return Log.ASSERT;
+        } else {
+            return defaultLogLevel;
+        }
     }
 
     /**
