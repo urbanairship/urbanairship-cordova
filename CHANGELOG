@@ -1,4 +1,9 @@
 ============================
+Version 6.4.0 - Jan 6, 2017
+============================
+ - Added support for configuring logging levels.
+
+============================
 Version 6.3.0 - Oct 31, 2016
 ============================
  - Updated min iOS engine to 4.3.0
