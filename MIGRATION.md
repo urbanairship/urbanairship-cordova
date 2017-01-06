@@ -1,5 +1,13 @@
 # Migration Guide
 
+## 6.x to 6.3.0
+
+### Cocoapods
+
+This plugin uses cocoapods which is supported in cordova-ios 4.3.0. Ensure
+cocoapods is installed and the pod repo is updated via `pod repo update`. If
+using Xcode directly, open the xcworkspace instead of the xcodeproj.
+
 ## 5.x to 6.0.0
 
 ### Android Minimum SDK Version
