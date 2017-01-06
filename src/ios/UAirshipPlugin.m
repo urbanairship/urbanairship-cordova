@@ -440,9 +440,9 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
             // these will be nil if the dateformatter can't make sense of either string
             if (startDate && endDate) {
-                NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-                NSDateComponents *startComponents = [gregorian components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:startDate];
-                NSDateComponents *endComponents = [gregorian components:NSHourCalendarUnit|NSMinuteCalendarUnit fromDate:endDate];
+                NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
+                NSDateComponents *startComponents = [gregorian components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:startDate];
+                NSDateComponents *endComponents = [gregorian components:NSCalendarUnitHour|NSCalendarUnitMinute fromDate:endDate];
 
                 completionHandler(CDVCommandStatus_OK, @{ @"startHour": @(startComponents.hour),
                                                           @"startMinute": @(startComponents.minute),
