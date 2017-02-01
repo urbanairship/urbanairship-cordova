@@ -324,9 +324,16 @@
 /**
  * Display the given message without animation.
  *
- * @pararm message The message.
+ * @param command The cordova command.
  */
 - (void)displayMessageCenter:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Dismiss the message center.
+ *
+ * @param command The cordova command.
+ */
+- (void)dismissMessageCenter:(CDVInvokedUrlCommand *)command;
 
 /**
  * Gets the inbox listing.
@@ -363,6 +370,13 @@
 - (void)displayInboxMessage:(CDVInvokedUrlCommand *)command;
 
 /**
+ * Dismiss an inbox message.
+ *
+ * @param command The cordova command.
+ */
+- (void)dismissInboxMessage:(CDVInvokedUrlCommand *)command;
+
+/**
  * Displays an inbox message in the overlay.
  *
  * Expected arguments: String - message ID.
@@ -370,6 +384,13 @@
  * @param command The cordova command.
  */
 - (void)overlayInboxMessage:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Dismiss an inbox message in the overlay.
+ *
+ * @param command The cordova command.
+ */
+- (void)dismissOverlayInboxMessage:(CDVInvokedUrlCommand *)command;
 
 /**
  * Refreshes the inbox.

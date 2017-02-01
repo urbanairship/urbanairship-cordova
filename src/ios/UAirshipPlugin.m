@@ -35,6 +35,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 @property (nonatomic, copy) NSString *deepLink;
 @property (nonatomic, assign) BOOL autoLaunchMessageCenter;
 @property (nonatomic, strong) NSMutableDictionary *pendingEvents;
+@property (nonatomic, weak) UAMessageViewController *messageViewController;
 @end
 
 @implementation UAirshipPlugin
@@ -758,6 +759,15 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }];
 }
 
+- (void)dismissMessageCenter:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[UAirship defaultMessageCenter] dismiss];
+        });
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
 #pragma mark Inbox
 
 - (void)inboxUpdated {
@@ -835,16 +845,41 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
             return;
         }
 
+        [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
+
         UAMessageViewController *mvc = [[UAMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
                                                                                  bundle:[UAirship resources]];
         mvc.message = message;
 
         UINavigationController *navController =  [[UINavigationController alloc] initWithRootViewController:mvc];
 
+        // Store a weak reference to the MessageViewController so we can dismiss it later
+        self.messageViewController = mvc;
+
         dispatch_async(dispatch_get_main_queue(), ^{
-            [[UAUtils topController] presentViewController:navController animated:YES completion:nil];
+            [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:navController animated:YES completion:nil];
         });
 
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)dismissInboxMessage:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
+            self.messageViewController = nil;
+        });
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)dismissOverlayInboxMessage:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [UALandingPageOverlayController closeAll:YES];
+        });
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -918,7 +953,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     return result;
 }
 
--(int)parseLogLevel:(NSString *)logLevel defaultLogLevel:(NSInteger)defaultValue {
+-(long)parseLogLevel:(NSString *)logLevel defaultLogLevel:(NSInteger)defaultValue {
     if (logLevel == nil || logLevel.length == 0) {
         return defaultValue;
     }
