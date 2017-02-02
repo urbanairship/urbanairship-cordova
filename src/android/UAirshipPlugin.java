@@ -104,7 +104,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "registerListener", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
-            "isAppNotificationsEnabled", "setDisplayASAPEnabled");
+            "isAppNotificationsEnabled", "setDisplayASAPEnabled", "dismissMessageCenter", "dismissInboxMessage", "dismissOverlayInboxMessage");
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -898,10 +898,37 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         Logger.debug("Displaying Message Center");
         if (messageId != null) {
-            UAirship.shared().getInbox().startMessageActivity(messageId);
+            Intent intent = new Intent(cordova.getActivity(), CustomMessageCenterActivity.class)
+                        .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
+                        .setPackage(cordova.getActivity().getPackageName())
+                        .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                cordova.getActivity().startActivity(intent);
         } else {
-            UAirship.shared().getInbox().startInboxActivity();
+            Intent intent = new Intent(cordova.getActivity(), CustomMessageCenterActivity.class)
+                        .setPackage(cordova.getActivity().getPackageName())
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+                cordova.getActivity().startActivity(intent);
         }
+        callbackContext.success();
+    }
+
+    /**
+     * Dismiss the message center.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void dismissMessageCenter(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        Logger.debug("Dismissing Message Center");
+        Intent intent = new Intent(cordova.getActivity(), CustomMessageCenterActivity.class)
+                    .setAction("CLOSE");
+
+        cordova.getActivity().startActivity(intent);
+
         callbackContext.success();
     }
 
@@ -997,7 +1024,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(cordova.getActivity(), MessageActivity.class)
+                Intent intent = new Intent(cordova.getActivity(), CustomMessageActivity.class)
                         .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
                         .setPackage(cordova.getActivity().getPackageName())
                         .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
@@ -1011,7 +1038,25 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Displays an inbox message using the LandingPageActivity.
+     * Dismiss the inbox message.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void dismissInboxMessage(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        Logger.debug("Dismissing Inbox Message");
+        Intent intent = new Intent(cordova.getActivity(), CustomMessageActivity.class)
+                .setAction("CLOSE")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        cordova.getActivity().startActivity(intent);
+
+        callbackContext.success();
+    }
+
+    /**
+     * Displays an inbox message using the CustomLandingPageActivity.
      *
      * @param data The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
@@ -1029,7 +1074,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(cordova.getActivity(), LandingPageActivity.class)
+                Intent intent = new Intent(cordova.getActivity(), CustomLandingPageActivity.class)
                         .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
                         .setPackage(cordova.getActivity().getPackageName())
                         .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
@@ -1038,6 +1083,24 @@ public class UAirshipPlugin extends CordovaPlugin {
                 cordova.getActivity().startActivity(intent);
             }
         });
+
+        callbackContext.success();
+    }
+
+    /**
+     * Dismiss the overlay inbox message.
+     *
+     * @param data The call data. The message ID is expected to be the first entry.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void dismissOverlayInboxMessage(JSONArray data, CallbackContext callbackContext) throws JSONException {
+        Logger.debug("Dismissing Overlay Inbox Message");
+        Intent intent = new Intent(cordova.getActivity(), CustomLandingPageActivity.class)
+                .setAction("CANCEL")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        cordova.getActivity().startActivity(intent);
 
         callbackContext.success();
     }

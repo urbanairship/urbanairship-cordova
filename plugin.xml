@@ -72,12 +72,58 @@
                 </intent-filter>
             </activity>
 
+        <activity android:name="com.urbanairship.cordova.CustomMessageActivity"
+                  android:theme="@android:style/Theme.DeviceDefault.Light">
+            <intent-filter>
+                <action android:name="com.urbanairship.VIEW_RICH_PUSH_MESSAGE" />
+                <data android:scheme="message"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+            <activity
+                android:name="com.urbanairship.cordova.CustomMessageCenterActivity"
+                android:launchMode="singleTask"
+                android:theme="@android:style/Theme.DeviceDefault.Light">
+
+                <intent-filter>
+                    <action android:name="com.urbanairship.VIEW_RICH_PUSH_INBOX" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                </intent-filter>
+
+                <intent-filter>
+                    <action android:name="com.urbanairship.VIEW_RICH_PUSH_INBOX"/>
+                    <data android:scheme="message"/>
+                    <category android:name="android.intent.category.DEFAULT"/>
+                </intent-filter>
+            </activity>
+
+            <activity android:name="com.urbanairship.cordova.CustomLandingPageActivity"
+                  xmlns:tools="http://schemas.android.com/tools"
+                  android:exported="false" android:theme="@style/LandingPageStyle"
+                  tools:node="replace">
+                <meta-data android:name="com.urbanairship.action.LANDING_PAGE_VIEW"
+                           android:resource="@layout/ua_activity_landing_page"/>
+                <meta-data android:name="com.urbanairship.push.iam.EXCLUDE_FROM_AUTO_SHOW"
+                           android:value="true"/>
+                <intent-filter>
+                    <action android:name="com.urbanairship.actions.SHOW_LANDING_PAGE_INTENT_ACTION"/>
+                    <data android:scheme="http"/>
+                    <data android:scheme="https"/>
+                    <data android:scheme="message"/>
+                    <category android:name="android.intent.category.DEFAULT"/>
+                </intent-filter>
+            </activity>
+
         </config-file>
 
         <source-file src="src/android/UAirshipPlugin.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaAirshipReceiver.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaAutopilot.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/CordovaLandingPageView.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/CustomMessageActivity.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/CustomMessageCenterActivity.java" target-dir="src/com/urbanairship/cordova" />
+        <source-file src="src/android/CustomLandingPageActivity.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/UAirshipPluginManager.java" target-dir="src/com/urbanairship/cordova" />
         <source-file src="src/android/events/ChannelEvent.java" target-dir="src/com/urbanairship/cordova/events" />
         <source-file src="src/android/events/DeepLinkEvent.java" target-dir="src/com/urbanairship/cordova/events" />
