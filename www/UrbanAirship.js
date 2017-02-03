@@ -576,6 +576,42 @@ module.exports = {
   },
 
   /**
+   * Dismiss the message center.
+   *
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  dismissMessageCenter: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.dismissMessageCenter', arguments)
+    callNative(success, failure, "dismissMessageCenter")
+  },
+
+  /**
+   * Dismiss the inbox message.
+   *
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  dismissInboxMessage: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.dismissInboxMessage', arguments)
+    callNative(success, failure, "dismissInboxMessage")
+  },
+
+  /**
+   * Dismiss the inbox message in the overlay.
+   *
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  dismissOverlayInboxMessage: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.dismissOverlayInboxMessage', arguments)
+    callNative(success, failure, "dismissOverlayInboxMessage")
+  },
+
+  /**
    * Gets the array of inbox messages. Each message will have the following properties:
    * "id": string - The messages ID. Needed to display, mark as read, or delete the message.
    * "title": string - The message title.
