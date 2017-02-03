@@ -904,13 +904,13 @@ public class UAirshipPlugin extends CordovaPlugin {
                         .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                cordova.getActivity().startActivity(intent);
+            cordova.getActivity().startActivity(intent);
         } else {
             Intent intent = new Intent(cordova.getActivity(), CustomMessageCenterActivity.class)
                         .setPackage(cordova.getActivity().getPackageName())
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                cordova.getActivity().startActivity(intent);
+            cordova.getActivity().startActivity(intent);
         }
         callbackContext.success();
     }

@@ -953,7 +953,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     return result;
 }
 
--(long)parseLogLevel:(NSString *)logLevel defaultLogLevel:(NSInteger)defaultValue {
+-(NSInteger)parseLogLevel:(NSString *)logLevel defaultLogLevel:(NSInteger)defaultValue {
     if (logLevel == nil || logLevel.length == 0) {
         return defaultValue;
     }
