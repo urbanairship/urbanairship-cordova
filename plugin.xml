@@ -90,12 +90,6 @@
                     <action android:name="com.urbanairship.VIEW_RICH_PUSH_INBOX" />
                     <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter>
-
-                <intent-filter>
-                    <action android:name="com.urbanairship.VIEW_RICH_PUSH_INBOX"/>
-                    <data android:scheme="message"/>
-                    <category android:name="android.intent.category.DEFAULT"/>
-                </intent-filter>
             </activity>
 
             <activity android:name="com.urbanairship.cordova.CustomLandingPageActivity"
