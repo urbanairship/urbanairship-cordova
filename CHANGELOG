@@ -1,4 +1,10 @@
 ============================
+Version 6.6.0 - Feb 3, 2017
+============================
+ - Updated iOS Urban Airship SDK to 8.0.5
+ - Added support for Message Center, Inbox Message and Overlay Inbox Message dismissal in iOS and Android
+
+============================
 Version 6.5.0 - Jan 30, 2017
 ============================
  - Update Android Urban Airship SDK to use the latest version of play services.
