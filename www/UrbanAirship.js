@@ -126,12 +126,14 @@ function TagGroupEditor(nativeMethod) {
     return editor
 }
 
-document.addEventListener("deviceready", function() {
+function bindDocumentEvent() {
     callNative(function(e) {
       console.log("Firing document event: " + e.eventType)
       cordova.fireDocumentEvent(e.eventType, e.eventData)
     }, null, "registerListener")
-}, false)
+}
+
+document.addEventListener("deviceready", bindDocumentEvent, false)
 
 /**
  * @module UrbanAirship
