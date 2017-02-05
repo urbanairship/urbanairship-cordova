@@ -260,6 +260,11 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
     self.listenerCallbackID = command.callbackId;
 
+    // Re-attach delegates
+    [UAirship push].pushNotificationDelegate = self;
+    [UAirship push].registrationDelegate = self;
+    [UAirship inbox].delegate = self;
+
     for (NSString *event in self.pendingEvents) {
         [self notifyListener:event data:self.pendingEvents[event]];
     }
