@@ -139,7 +139,7 @@ document.addEventListener("deviceready", bindDocumentEvent, false)
  * @module UrbanAirship
  */
 module.exports = {
-
+  refresh: bindDocumentEvent,
 
   /**
    * Event fired when a new deep link is received.
