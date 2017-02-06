@@ -139,7 +139,6 @@ document.addEventListener("deviceready", bindDocumentEvent, false)
  * @module UrbanAirship
  */
 module.exports = {
-  refresh: bindDocumentEvent,
 
   /**
    * Event fired when a new deep link is received.
@@ -183,6 +182,11 @@ module.exports = {
    * @param {object} extras Any push extras.
    * @param {number} [notification_id] The Android notification ID.
    */
+
+  /**
+   * Re-attaches document event listeners in this webview
+   */
+  reattach: bindDocumentEvent,
 
   /**
    * Enables or disables user notifications.
