@@ -126,18 +126,19 @@ function TagGroupEditor(nativeMethod) {
     return editor
 }
 
-document.addEventListener("deviceready", function() {
+function bindDocumentEvent() {
     callNative(function(e) {
       console.log("Firing document event: " + e.eventType)
       cordova.fireDocumentEvent(e.eventType, e.eventData)
     }, null, "registerListener")
-}, false)
+}
+
+document.addEventListener("deviceready", bindDocumentEvent, false)
 
 /**
  * @module UrbanAirship
  */
 module.exports = {
-
 
   /**
    * Event fired when a new deep link is received.
@@ -181,6 +182,11 @@ module.exports = {
    * @param {object} extras Any push extras.
    * @param {number} [notification_id] The Android notification ID.
    */
+
+  /**
+   * Re-attaches document event listeners in this webview
+   */
+  reattach: bindDocumentEvent,
 
   /**
    * Enables or disables user notifications.
