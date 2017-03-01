@@ -8,3 +8,5 @@ src/android/android.iml
 src/android/local.properties
 out/*
 node_modules/*
+test/config_sample.xml
+test/test/*
