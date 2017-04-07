@@ -31,7 +31,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
 1. Install this plugin using PhoneGap/Cordova CLI:
 
-        cordova plugin add urbanairship-cordova
+        cordova plugin add urbanairship-cordova --save
 
 2. Modify the config.xml file to set the Android minimum sdk version to 16:
 
