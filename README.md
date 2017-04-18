@@ -3,7 +3,7 @@
 This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
 
 ### Resources:
- - [Getting started guide](http://docs.urbanairship.com/platform/phonegap.html)
+ - [Getting started guide](http://docs.urbanairship.com/platform/cordova/)
  - [JSDocs](http://docs.urbanairship.com/reference/libraries/urbanairship-cordova/latest/)
  - [Migration docs](MIGRATION.md)
 
