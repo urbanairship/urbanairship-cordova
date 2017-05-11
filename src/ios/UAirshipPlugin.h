@@ -101,18 +101,22 @@
 /**
  * Returns the alias.
  *
+ * @deprecated Deprecated - to be removed in a future version of the plugin - please use getNamedUser
+ *
  * @param command The cordova command.
  */
-- (void)getAlias:(CDVInvokedUrlCommand *)command;
+- (void)getAlias:(CDVInvokedUrlCommand *)command DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in a future version of the plugin - please use getNamedUser");
 
 /**
  * Sets the alias.
  *
  * Expected arguments: String
  *
+ * @deprecated Deprecated - to be removed in a future version of the plugin - please use setNamedUser
+ *
  * @param command The cordova command.
  */
-- (void)setAlias:(CDVInvokedUrlCommand *)command;
+- (void)setAlias:(CDVInvokedUrlCommand *)command DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in a future version of the plugin - please use setNamedUser");
 
 /**
  * Returns the current badge number.

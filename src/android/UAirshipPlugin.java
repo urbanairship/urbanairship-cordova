@@ -500,12 +500,16 @@ public class UAirshipPlugin extends CordovaPlugin {
 
     /**
      * Returns the alias.
+     *
+     * @deprecated Deprecated since 6.7.0 - to be removed in a future version of the plugin - please use getNamedUser
+     *
      * <p/>
      * Expected arguments: String
      *
      * @param data The call data.
      * @param callbackContext The callback context.
      */
+    @Deprecated
     void getAlias(JSONArray data, CallbackContext callbackContext) {
         String alias = UAirship.shared().getPushManager().getAlias();
         alias = alias != null ? alias : "";
@@ -515,9 +519,12 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Sets the alias.
      *
+     * @deprecated Deprecated since 6.7.0 - to be removed in a future version of the plugin - please use setNamedUser
+     *
      * @param data The call data.
      * @param callbackContext The callback context.
      */
+    @Deprecated
     void setAlias(JSONArray data, CallbackContext callbackContext) throws JSONException {
         String alias = data.getString(0);
         if (alias.equals("")) {

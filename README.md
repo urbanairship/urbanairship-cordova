@@ -95,19 +95,42 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         <!-- iOS 10 sound foreground notification presentation option -->
         <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true | false"/>
 
-4. Enable user notifications
-```
-    // Enable user notifications (will prompt the user to accept push notifications)
-    UAirship.setUserNotificationsEnabled(true, function (enabled) {
-        console.log("User notifications are enabled! Fire away!")
-    })
-```
+4. *(iOS Only)* Create platform/ios/build.json or modify your own build.json to add your Apple Developer Account Team ID.
+
+        {
+            "ios": {
+                "debug": {
+                    "developmentTeam": "XXXXXXXXXX"
+                },
+                "release": {
+                    "developmentTeam": "XXXXXXXXXX"
+                }
+            }
+        }
+    Your iOS builds will need to reference the build.json using Cordova's "--buildConfig" flag.
+
+5. Enable user notifications
+
+        // Enable user notifications (will prompt the user to accept push notifications)
+        UAirship.setUserNotificationsEnabled(true, function (enabled) {
+            console.log("User notifications are enabled! Fire away!")
+        })
 
 ### Sample
 
-A sample can be found in Example. To run it, copy the files:
-- Example/index.html to www/index.html
-- Example/css/* to www/css
-- Example/js/* to www/js
+A sample can be found in the Example directory. 
 
-Add the device plugin: `cordova plugin add cordova-plugin-device`
+1. Add your UA credentials to the `config_sample.xml` file in the root directory and save.
+2. Add your development team id to the `build_sample.json` file in the root directory and save.
+3. Run the script with the command `./create_sample.sh PROJECT_PATH PROJECT_NAME`
+4. cd to the newly-created project directory, e.g. sample/test
+5. Build the platform you want to test.
+   * iOS
+      1. Build with command `cordova build ios --buildConfig=platforms/ios/build.json`
+      2. After successful build, connect an iOS device to test
+      3. Run on device with command `cordova run ios --device --buildConfig=platforms/ios/build.json` 
+   * Android
+      1. Build with command `cordova build android` in test directory
+      2. After successful build, connect an android device to test
+      3. Test with command `cordova run android`
+ 

@@ -315,6 +315,8 @@ module.exports = {
   /**
    * Returns the alias.
    *
+   * @deprecated Deprecated since 6.7.0 - to be removed in a future version of the plugin - please use getNamedUser
+   *
    * @param {function(currentAlias)} success The function to call on success.
    * @param {string} success.currentAlias The alias as a string.
    * @param {function(message)} [failure] Failure callback.
@@ -327,6 +329,8 @@ module.exports = {
 
   /**
    * Sets the alias.
+   *
+   * @deprecated Deprecated since 6.7.0  - to be removed in a future version of the plugin - please use setNamedUser
    *
    * @param {String} alias string
    * @param {function} [success] Success callback.

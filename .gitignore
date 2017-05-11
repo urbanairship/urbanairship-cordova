@@ -9,3 +9,4 @@ src/android/local.properties
 out/*
 node_modules/*
 config_sample.xml
+build.json
