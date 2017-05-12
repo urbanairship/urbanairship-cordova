@@ -179,6 +179,6 @@
         <header-file src="src/ios/UAMessageViewController.h" />
         <source-file src="src/ios/UAMessageViewController.m" />
 
-        <framework src="UrbanAirship-iOS-SDK" type="podspec" spec="~> 8.3.0" />
+        <framework src="UrbanAirship-iOS-SDK" type="podspec" spec="~> 8.3.1" />
     </platform>
 </plugin>
