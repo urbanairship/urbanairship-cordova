@@ -1,4 +1,13 @@
 ============================
+Version 6.7.0 - May 15, 2017
+============================
+ - Updated iOS Urban Airship SDK to 8.3.2
+ - Updated Android Urban Airship SDK to 8.4.1
+ - ‘Alias’ functionality is now deprecated in the plugin. It will be removed in a future version of the plugin. Please use 'Named User'.
+ - iOS: Use static library until dynamic framework build issues with Cordova and Cocoapods have been resolved.
+ - Android: fix landing page issues
+
+============================
 Version 6.6.0 - Feb 3, 2017
 ============================
  - Updated iOS Urban Airship SDK to 8.0.5
