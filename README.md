@@ -126,9 +126,10 @@ A sample can be found in the Example directory.
 4. cd to the newly-created project directory, e.g. sample/test
 5. Build the platform you want to test.
    * iOS
-      1. Build with command `cordova build ios --buildConfig=platforms/ios/build.json`
+      1. Build with command `cordova build ios --emulator`
       2. After successful build, connect an iOS device to test
-      3. Run on device with command `cordova run ios --device --buildConfig=platforms/ios/build.json` 
+      3. Run on device with command `cordova run ios --device --developmentTeam=XXXXXXXXXX` 
+         * Please refer to "[Signing an App](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#signing-an-app)" for more information about code signing.
    * Android
       1. Build with command `cordova build android` in test directory
       2. After successful build, connect an android device to test
