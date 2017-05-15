@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 ROOT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-TEST_PATH=$1
+CORDOVA_PATH=$1
 
 if [ -z "$1" ]
   then
@@ -16,17 +16,16 @@ fi
 # 3. Build the platform you want to test (see comments below).
 
 # keep cordova up to date
-npm install cordova -g
+#npm install cordova -g
 
-# create test directory
-mkdir $TEST_PATH
-cd $TEST_PATH
+# create cordova directory
+mkdir -p $CORDOVA_PATH
+cd $CORDOVA_PATH
 
 # create the test project
+rm -rf test
 cordova create test com.urbanairship.sample Test
 cd test
-
-TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # add the plugin
 cordova plugin add $ROOT_DIR
@@ -42,15 +41,17 @@ cordova plugin add cordova-plugin-device
 
 # set up iOS
 cordova platform add ios
-cd $TEST_DIR/platforms/ios/
-pod update
-# Build with command `cordova build ios` in test directory
+
+# Build with command `cordova build ios --emulator` in project directory
 # After successful build, connect iOS device to test
-# Open workspace to test with command `open platforms/ios/Test.xcworkspace`
+# Test with command `cordova run ios --device --developmentTeam=XXXXXXXXXX` 
+#   Please refer to https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#signing-an-app for more information about code signing.
+
+# Open workspace in Xcode with 'open' command, e.g. `open platforms/ios/Test.xcworkspace`
 
 # set up android
-cd $TEST_DIR
 cordova platform add android
-# Build with command `cordova build android` in test directory
+
+# Build with command `cordova build android` in project directory
 # After successful build, connect android device to test
 # Test with command `cordova run android`
