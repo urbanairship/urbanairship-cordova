@@ -19,7 +19,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:[10.2.1,)'
     compile 'com.android.support:appcompat-v7:25.3.1'
 
-    compile 'com.urbanairship.android:urbanairship-sdk:8.4.1'
+    compile 'com.urbanairship.android:urbanairship-sdk:8.4.2'
 }
 
 def getPackageName() {
