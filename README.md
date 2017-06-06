@@ -14,7 +14,7 @@ We accept pull requests! If you would like to submit a pull request, please fill
 
 ### Issues
 
-Please visit http://support.urbanairship.com/ for any issues integrating or using this plugin.
+Please visit https://support.urbanairship.com/ for any issues integrating or using this plugin.
 
 ### Requirements:
  - Cordova-CLI >= 6.4.0
