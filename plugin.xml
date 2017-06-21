@@ -2,14 +2,14 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="6.7.1">
+    version="6.8.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,urbanairship</keywords>
     <repo>https://github.com/urbanairship/phonegap-ua-push.git</repo>
-    
+
     <engines>
         <engine name="cordova-android" version=">=4.1.0" />
         <engine name="cordova-ios" version=">=4.3.0" />
@@ -29,7 +29,7 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
-        
+
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.cordova.CordovaAutopilot" />
 
@@ -118,10 +118,10 @@
         <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
 
     </platform>
-    
+
     <!-- ios -->
     <platform name="ios">
-        
+
          <!-- Background push -->
         <config-file target="*-Info.plist" parent="UIBackgroundModes">
             <array>

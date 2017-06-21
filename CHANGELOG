@@ -1,4 +1,8 @@
-============================
+=============================
+Version 6.8.0 - June 21, 2017
+=============================
+- Updated Android Urban Airship SDK to 8.6.0
+
 Version 6.7.1 - May 23, 2017
 ============================
  - Updated iOS Urban Airship SDK to 8.3.3
@@ -385,7 +389,7 @@ Version 2.1.0 - September 20, 2013
 ==============================
 Version 2.0.1 - August 8, 2013
 ==============================
-- Update Urban Airship iOS Library to 2.0.1 that fixed a bug in UAHTTPConnectionOperation 
+- Update Urban Airship iOS Library to 2.0.1 that fixed a bug in UAHTTPConnectionOperation
 causing intermittent crashes during push registration.
 
 ==============================
@@ -435,11 +439,11 @@ Version 1.0.3 - December 7, 2012
 Version 1.0.2 - November 16, 2012
 =================================
 - Updated to PhoneGap 2.2.0
-- FIXED: App delegate surrogate handling was causing edge case issues 
+- FIXED: App delegate surrogate handling was causing edge case issues
   with iOS 6 and certain plugin combinations
 - FIXED: setting an alias to an empty string results in subsequent
   registration failures
-- Changed default value of UAPushEnabled to NO in NSUserDefaults on app launch. 
+- Changed default value of UAPushEnabled to NO in NSUserDefaults on app launch.
   This only affects the iOS plugin using v1.3.5 of libUAirship.a or greater.
   If you have used previous versions of the plugin, you should update your
   app in order to reflect this change, in order to see the same behavior.
