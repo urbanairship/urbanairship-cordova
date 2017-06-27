@@ -27,13 +27,8 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
         cordova plugin add urbanairship-cordova
 
-2. Modify the config.xml file to set the Android minimum sdk version to 16:
 
-        <platform name="android">
-            <preference name="android-minSdkVersion" value="16" />
-        </platform> 
-
-3. Modify the config.xml file to contain (replacing with your configuration settings):
+2. Modify the config.xml file to contain (replacing with your configuration settings):
 
         <!-- Urban Airship app credentials -->
         <preference name="com.urbanairship.production_app_key" value="Your Production App Key" />
@@ -51,7 +46,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
         <!-- Enable push when the application launches -->
         <preference name="com.urbanairship.enable_push_onlaunch" value="true | false" />
-        
+
         <!-- Enable Analytics when the application launches -->
         <!-- Warning: Features that depend on analytics being enabled may not work properly if analytics is disabled (reports, location segmentation, region triggers, push to local time). -->
         <preference name="com.urbanairship.enable_analytics" value="true | false" />
@@ -67,7 +62,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
         <!-- Override the Android notification large icon -->
         <preference name="com.urbanairship.notification_large_icon" value="ic_notification_large" />
-    
+
         <!-- Override the Android notification sound (sound file should be in res/raw)-->
         <preference name="com.urbanairship.notification_sound" value="push" />
 
@@ -89,7 +84,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         <!-- iOS 10 sound foreground notification presentation option -->
         <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true | false"/>
 
-4. *(iOS Only)* Create platform/ios/build.json or modify your own build.json to add your Apple Developer Account Team ID.
+3. *(iOS Only)* Add your Apple Developer Account Team ID to the [build.json](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#using-buildjson):
 
         {
             "ios": {
@@ -103,7 +98,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         }
     Your iOS builds will need to reference the build.json using Cordova's "--buildConfig" flag.
 
-5. Enable user notifications
+4. Enable user notifications:
 
         // Enable user notifications (will prompt the user to accept push notifications)
         UAirship.setUserNotificationsEnabled(true, function (enabled) {
@@ -112,7 +107,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
 ### Sample
 
-A sample can be found in the Example directory. 
+A sample can be found in the Example directory.
 
 1. Add your UA credentials to the `config_sample.xml` file in the root directory and save.
 2. Add your development team id to the `build_sample.json` file in the root directory and save.
@@ -122,10 +117,9 @@ A sample can be found in the Example directory.
    * iOS
       1. Build with command `cordova build ios --emulator`
       2. After successful build, connect an iOS device to test
-      3. Run on device with command `cordova run ios --device --developmentTeam=XXXXXXXXXX` 
+      3. Run on device with command `cordova run ios --device --developmentTeam=XXXXXXXXXX`
          * Please refer to "[Signing an App](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#signing-an-app)" for more information about code signing.
    * Android
       1. Build with command `cordova build android` in test directory
       2. After successful build, connect an android device to test
       3. Test with command `cordova run android`
- 
