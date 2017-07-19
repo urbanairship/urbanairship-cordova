@@ -46,9 +46,11 @@ extern NSString *const UAChannelCreatedEventExistingKey;
  */
 typedef NS_OPTIONS(NSUInteger, UANotificationOptions) {
     UANotificationOptionBadge   = (1 << 0),
+#if !TARGET_OS_TV   // Only badges available on tvOS
     UANotificationOptionSound   = (1 << 1),
     UANotificationOptionAlert   = (1 << 2),
     UANotificationOptionCarPlay = (1 << 3)
+#endif
 };
 
 /**
@@ -143,7 +145,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param completionHandler the completion handler to execute when notification processing is complete.
  */
--(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)())completionHandler;
+-(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler;
 
 /**
  * Called when a notification is received in the background.
@@ -164,7 +166,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * @param completionHandler the completion handler to execute when processing the user's response has completed.
  */
--(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)())completionHandler;
+-(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler;
 
 /**
  * Called when a notification has arrived in the foreground and is available for display.
@@ -369,10 +371,12 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 
 ///---------------------------------------------------------------------------------------
 /// @name Alias
+///
+/// @deprecated Deprecated - to be removed in SDK version 10.0
 ///---------------------------------------------------------------------------------------
  
 /** Alias for this device */
-@property (nonatomic, copy, nullable) NSString *alias;
+@property (nonatomic, copy, nullable) NSString *alias DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 10.0");
 
 
 ///---------------------------------------------------------------------------------------

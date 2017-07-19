@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
             withResponse:(nullable NSHTTPURLResponse *)response;
 
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**
  * Returns a basic auth header string.
  *
@@ -55,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return An HTTP Basic Auth header string value for the user's credentials.
  */
 + (NSString *)userAuthHeaderString;
+#endif
 
 
 /**
@@ -154,6 +156,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @return `YES` if it is a silent push, `NO` otherwise
  */
 + (BOOL)isSilentPush:(NSDictionary *)notification;
+
+/**
+ * Determine if the notification payload is an alerting push.
+ * @param notification The notification payload
+ * @return `YES` if it is an alerting push, `NO` otherwise
+ */
++ (BOOL)isAlertingPush:(NSDictionary *)notification;
 
 ///---------------------------------------------------------------------------------------
 /// @name Fetch Results
