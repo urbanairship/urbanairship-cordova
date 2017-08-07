@@ -687,7 +687,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     void setAssociatedIdentifier(JSONArray data, CallbackContext callbackContext) throws JSONException {
         String key = data.getString(0);
         String identifier = data.getString(1);
-        
+
         UAirship.shared().getAnalytics()
            .editAssociatedIdentifiers()
            .addIdentifier(key, identifier)
@@ -904,7 +904,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         String messageId = data.optString(0);
 
         Logger.debug("Displaying Message Center");
-        if (messageId != null) {
+        if (!UAStringUtil.isEmpty(messageId)) {
             Intent intent = new Intent(cordova.getActivity(), CustomMessageCenterActivity.class)
                         .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
                         .setPackage(cordova.getActivity().getPackageName())
