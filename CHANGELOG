@@ -1,4 +1,11 @@
 =============================
+Version 6.9.0 - August 10, 2017
+=============================
+- Updated iOS Urban Airship SDK to 8.5.2
+- Updated Android Urban Airship SDK to 8.8.2
+- Added event `notification_opt_in_status` that will fire when authorization status changes.
+
+=============================
 Version 6.8.0 - June 21, 2017
 =============================
 - Updated Android Urban Airship SDK to 8.6.0

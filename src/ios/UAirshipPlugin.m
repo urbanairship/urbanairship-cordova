@@ -59,6 +59,8 @@ NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foregr
 // Events
 NSString *const EventPushReceived = @"urbanairship.push";
 NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
+NSString *const EventNotificationOptInStatus = @"urbanairship.notification_opt_in_status";
+
 NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
 NSString *const EventRegistration = @"urbanairship.registration";
 NSString *const EventDeepLink = @"urbanairship.deep_link";
@@ -710,6 +712,38 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 - (void)registrationFailed {
     UA_LINFO(@"Channel registration failed.");
     [self notifyListener:EventRegistration data:@{ @"error": @"Registration failed." }];
+}
+
+- (void)notificationAuthorizedOptionsDidChange:(UANotificationOptions)options {
+    BOOL optedIn = NO;
+
+    BOOL alertBool = NO;
+    BOOL badgeBool = NO;
+    BOOL soundBool = NO;
+
+    if (options & UANotificationOptionAlert) {
+        alertBool = YES;
+    }
+
+    if (options & UANotificationOptionBadge) {
+        badgeBool = YES;
+    }
+
+    if (options & UANotificationOptionSound) {
+        soundBool = YES;
+    }
+
+    optedIn = alertBool || badgeBool || soundBool;
+
+    NSDictionary *eventBody = @{  @"optIn": @(optedIn),
+                             @"notificationOptions" : @{
+                                     NotificationPresentationAlertKey : @(alertBool),
+                                     NotificationPresentationBadgeKey : @(badgeBool),
+                                     NotificationPresentationSoundKey : @(soundBool) }
+                             };
+
+    UA_LINFO(@"Opt in status changed.");
+    [self notifyListener:EventNotificationOptInStatus data:eventBody];
 }
 
 #pragma mark UAPushNotificationDelegate

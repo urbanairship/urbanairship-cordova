@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="6.8.0">
+    version="6.9.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -105,6 +105,8 @@
         <source-file src="src/android/events/InboxEvent.java" target-dir="src/com/urbanairship/cordova/events" />
         <source-file src="src/android/events/PushEvent.java" target-dir="src/com/urbanairship/cordova/events" />
         <source-file src="src/android/events/NotificationOpenedEvent.java" target-dir="src/com/urbanairship/cordova/events" />
+        <source-file src="src/android/events/NotificationOptInEvent.java" target-dir="src/com/urbanairship/cordova/events" />
+
         <source-file src="src/android/events/Event.java" target-dir="src/com/urbanairship/cordova/events" />
 
         <source-file src="src/android/res/layout/ua_activity_landing_page.xml" target-dir="res/layout"/>
