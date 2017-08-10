@@ -14,5 +14,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:[11.0.1,)'
     compile 'com.android.support:appcompat-v7:25.3.1'
 
-    compile 'com.urbanairship.android:urbanairship-sdk:8.6.0'
+    compile 'com.urbanairship.android:urbanairship-sdk:8.8.1'
 }
