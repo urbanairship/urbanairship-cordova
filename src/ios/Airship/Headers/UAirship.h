@@ -7,14 +7,18 @@
 
 // Frameworks
 #import <SystemConfiguration/SystemConfiguration.h>
-#import <CoreTelephony/CTTelephonyNetworkInfo.h>
-#import <CoreTelephony/CTCarrier.h>
 #import <CoreData/CoreData.h>
 #import <CoreLocation/CoreLocation.h>
 #import <Security/Security.h>
 #import <QuartzCore/QuartzCore.h>
 #import <Availability.h>
 #import <UserNotifications/UserNotifications.h>
+#import "UAConfig.h"
+
+#if !TARGET_OS_TV    // CoreTelephony not supported in tvOS
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+#import <CoreTelephony/CTCarrier.h>
+#endif
 
 @class UAConfig;
 @class UAAnalytics;
@@ -22,13 +26,16 @@
 @class UAPush;
 @class UAUser;
 @class UANamedUser;
-@class UAInbox;
 @class UAActionRegistry;
 @class UAInAppMessaging;
 @class UADefaultMessageCenter;
 @class UALocation;
 @class UAAutomation;
 @class UAChannelCapture;
+
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
+@class UAInbox;
+#endif
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -168,6 +175,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (null_unspecified UAPush *)push;
 
+#if !TARGET_OS_TV   // Inbox not supported on tvOS
 /**
  * Returns the `UAInbox` instance. Provides access to the inbox messages.
  *
@@ -182,6 +190,7 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (null_unspecified UAUser *)inboxUser;
 
+
 /**
  * Returns the `UAInAppMessaging` instance. Used for customizing
  * in-app notifications.
@@ -193,6 +202,8 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * and displaying the default message center.
  */
 + (null_unspecified UADefaultMessageCenter *)defaultMessageCenter;
+
+#endif
 
 /**
  * Returns the `UANamedUser` instance.

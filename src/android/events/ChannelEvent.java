@@ -36,11 +36,11 @@ import org.json.JSONObject;
 public class ChannelEvent implements Event {
     private static final String EVENT_CHANNEL_UPDATED = "urbanairship.registration";
     private final String channel;
-    private final boolean succes;
+    private final boolean success;
 
     public ChannelEvent(String channel, boolean success) {
         this.channel = channel;
-        this.succes = success;
+        this.success = success;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ChannelEvent implements Event {
     public JSONObject getEventData() {
         JSONObject data = new JSONObject();
         try {
-            if (succes) {
+            if (success) {
                 data.put("channelID", channel);
             } else {
                 data.put("error", "Invalid registration.");

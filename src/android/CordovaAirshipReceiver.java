@@ -44,12 +44,14 @@ public class CordovaAirshipReceiver extends AirshipReceiver {
     protected void onChannelCreated(Context context, String channelId) {
         Log.i(TAG, "Channel created. Channel ID: " + channelId + ".");
         UAirshipPluginManager.shared().channelUpdated(channelId, true);
+        UAirshipPluginManager.shared().checkOptInStatus(context);
     }
 
     @Override
     protected void onChannelUpdated(Context context, String channelId) {
         Log.i(TAG, "Channel updated. Channel ID: " + channelId + ".");
         UAirshipPluginManager.shared().channelUpdated(channelId, true);
+        UAirshipPluginManager.shared().checkOptInStatus(context);
     }
 
     @Override

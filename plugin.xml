@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="6.8.0">
+    version="6.9.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -105,6 +105,8 @@
         <source-file src="src/android/events/InboxEvent.java" target-dir="src/com/urbanairship/cordova/events" />
         <source-file src="src/android/events/PushEvent.java" target-dir="src/com/urbanairship/cordova/events" />
         <source-file src="src/android/events/NotificationOpenedEvent.java" target-dir="src/com/urbanairship/cordova/events" />
+        <source-file src="src/android/events/NotificationOptInEvent.java" target-dir="src/com/urbanairship/cordova/events" />
+
         <source-file src="src/android/events/Event.java" target-dir="src/com/urbanairship/cordova/events" />
 
         <source-file src="src/android/res/layout/ua_activity_landing_page.xml" target-dir="res/layout"/>
@@ -244,7 +246,6 @@
         <header-file src="src/ios/Airship/Headers/UAOverlayInboxMessageAction.h" />
         <header-file src="src/ios/Airship/Headers/UAOverlayViewController.h" />
         <header-file src="src/ios/Airship/Headers/UAPasteboardAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAPreferenceDataStore+InternalTagGroupsMutation.h" />
         <header-file src="src/ios/Airship/Headers/UAProximityRegion.h" />
         <header-file src="src/ios/Airship/Headers/UAPush.h" />
         <header-file src="src/ios/Airship/Headers/UARegionEvent.h" />
@@ -266,12 +267,18 @@
         <header-file src="src/ios/Airship/Headers/UAWKWebViewDelegate.h" />
         <header-file src="src/ios/Airship/Headers/UAWKWebViewNativeBridge.h" />
         <header-file src="src/ios/Airship/Headers/UIWebView+UAAdditions.h" />
+        <header-file src="src/ios/Airship/Headers/UADeepLinkAction.h" />
+        <header-file src="src/ios/Airship/Headers/UARateAppAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAWalletAction.h" />
+
+
+
 
         <!-- Resource bundle -->
         <resource-file src="src/ios/Airship/AirshipResources.bundle" />
 
         <!-- Airship library -->
-        <source-file src="src/ios/Airship/libUAirship-8.3.3.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-8.5.2.a" framework="true"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
@@ -287,5 +294,7 @@
         <framework src="MobileCoreServices.framework" weak="true" />
         <framework src="CoreLocation.framework" weak="true" />
         <framework src="CoreData.framework" weak="true" />
+        <framework src="StoreKit.framework" weak="true" />
+
     </platform>
 </plugin>

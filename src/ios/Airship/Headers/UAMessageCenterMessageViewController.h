@@ -1,11 +1,9 @@
 /* Copyright 2017 Urban Airship and Contributors */
 
+#import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 #import "UAWKWebViewDelegate.h"
 #import "UAMessageCenterMessageViewProtocol.h"
-
-@class UAInboxMessage;
-@class UADefaultMessageCenterStyle;
 
 /**
  * Default implementation of a view controller for reading Message Center messages.

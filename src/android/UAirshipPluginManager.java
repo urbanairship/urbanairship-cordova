@@ -25,12 +25,17 @@
 
 package com.urbanairship.cordova;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
+import com.urbanairship.UAirship;
 import com.urbanairship.cordova.events.ChannelEvent;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.InboxEvent;
 import com.urbanairship.cordova.events.PushEvent;
 import com.urbanairship.cordova.events.NotificationOpenedEvent;
+import com.urbanairship.cordova.events.NotificationOptInEvent;
 import com.urbanairship.push.PushMessage;
 
 import java.util.ArrayList;
@@ -50,9 +55,14 @@ public class UAirshipPluginManager {
 
     private static final UAirshipPluginManager shared = new UAirshipPluginManager();
 
+    private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
+    private static final String UA_PLUGIN_SHARED_PREFERENCES_FILE = "com.urbanairship.ua_plugin_shared_preferences";
+
     private NotificationOpenedEvent notificationOpenedEvent;
     private DeepLinkEvent deepLinkEvent = null;
     private Listener listener = null;
+
+    private SharedPreferences preferences;
 
     private List<Event> pendingEvents = new ArrayList<Event>();
 
@@ -98,6 +108,30 @@ public class UAirshipPluginManager {
             if (!notifyListener(event)) {
                 pendingEvents.add(event);
             }
+        }
+    }
+
+    /**
+     * Called on app resume and when registration changes.
+     *
+     * @param context The application context.
+     */
+    void checkOptInStatus(Context context) {
+        boolean optIn = UAirship.shared().getPushManager().isOptIn();
+
+        if (preferences == null) {
+            preferences = context.getSharedPreferences(UA_PLUGIN_SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE);
+        }
+
+        // Check preferences for opt-in
+        if (preferences.getBoolean(NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY, false) != optIn) {
+            preferences.edit().putBoolean(NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY , optIn).apply();
+
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean(NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY, optIn);
+            editor.commit();
+
+            notifyListener(new NotificationOptInEvent(optIn));
         }
     }
 

@@ -113,6 +113,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         Logger.info("Initializing Urban Airship cordova plugin.");
         Autopilot.automaticTakeOff(cordova.getActivity().getApplication());
+
     }
 
     @Override
@@ -123,6 +124,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         if (PlayServicesUtils.isGooglePlayStoreAvailable(cordova.getActivity())) {
             PlayServicesUtils.handleAnyPlayServicesError(cordova.getActivity());
         }
+        UAirshipPluginManager.shared().checkOptInStatus(cordova.getActivity().getBaseContext());
     }
 
     @Override
