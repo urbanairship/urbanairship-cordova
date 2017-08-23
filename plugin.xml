@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="6.9.0">
+    version="6.9.1">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -272,13 +272,11 @@
         <header-file src="src/ios/Airship/Headers/UAWalletAction.h" />
 
 
-
-
         <!-- Resource bundle -->
         <resource-file src="src/ios/Airship/AirshipResources.bundle" />
 
         <!-- Airship library -->
-        <source-file src="src/ios/Airship/libUAirship-8.5.2.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-8.5.3.a" framework="true"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
