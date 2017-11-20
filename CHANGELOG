@@ -1,7 +1,7 @@
 =================================
 Version 6.9.2 - November 20, 2017
 =================================
-- Updated Android SDK to 8.9.4.
+- Updated Android SDK to 8.9.5.
 - Fixed build Android plugin build issue with AndroidManifest.
 
 ===============================

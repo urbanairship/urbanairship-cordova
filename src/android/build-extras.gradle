@@ -12,5 +12,5 @@ dependencies {
     compile 'com.android.support:cardview-v7:[26.0.2,)'
     compile 'com.google.android.gms:play-services-location:[11.0.1,)'
     compile 'com.android.support:appcompat-v7:[26.0.2,)'
-    compile 'com.urbanairship.android:urbanairship-sdk:8.9.4'
+    compile 'com.urbanairship.android:urbanairship-sdk:8.9.5'
 }
