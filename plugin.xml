@@ -276,7 +276,7 @@
         <resource-file src="src/ios/Airship/AirshipResources.bundle" />
 
         <!-- Airship library -->
-        <source-file src="src/ios/Airship/libUAirship-8.5.3.a" framework="true"/>
+        <source-file src="src/ios/Airship/libUAirship-8.6.3.a" framework="true"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
