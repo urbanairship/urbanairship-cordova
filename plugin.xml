@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="6.9.1">
+    version="6.9.2">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -75,8 +75,8 @@
 
             <activity android:name="com.urbanairship.cordova.CustomLandingPageActivity"
                   xmlns:tools="http://schemas.android.com/tools"
-                  android:exported="false" android:theme="@style/LandingPageStyle"
-                  tools:node="replace">
+                  android:exported="false" android:theme="@style/LandingPageStyle">
+
                 <meta-data android:name="com.urbanairship.action.LANDING_PAGE_VIEW"
                            android:resource="@layout/ua_activity_landing_page"/>
                 <meta-data android:name="com.urbanairship.push.iam.EXCLUDE_FROM_AUTO_SHOW"
