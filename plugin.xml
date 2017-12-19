@@ -2,7 +2,7 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="urbanairship-cordova"
-    version="6.9.2">
+    version="7.0.0">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
@@ -11,7 +11,7 @@
     <repo>https://github.com/urbanairship/phonegap-ua-push.git</repo>
 
     <engines>
-        <engine name="cordova-android" version=">=4.1.0" />
+        <engine name="cordova-android" version=">=7.0.0" />
         <engine name="cordova-ios" version=">=4.3.0" />
         <engine name="cordova-plugman" version=">=4.2.0" />
     </engines>
@@ -30,7 +30,7 @@
             </feature>
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+        <config-file target="app/src/main/AndroidManifest.xml" parent="/manifest/application">
             <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.cordova.CordovaAutopilot" />
 
             <receiver android:name="com.urbanairship.cordova.CordovaAirshipReceiver"
