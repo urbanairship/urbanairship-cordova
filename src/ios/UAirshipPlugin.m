@@ -749,15 +749,25 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 #pragma mark UAPushNotificationDelegate
 
 - (void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void(^)())completionHandler {
+    UA_LDEBUG(@"The application was launched or resumed from a notification %@", notificationResponse);
+    self.launchNotificationResponse = notificationResponse;
+
+    NSDictionary *pushEvent = [self pushEventFromNotification:notificationResponse.notificationContent];
+    NSMutableDictionary *event = [NSMutableDictionary dictionaryWithDictionary:pushEvent];
+
     if ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        UA_LDEBUG(@"The application was launched or resumed from a notification %@", notificationResponse);
+        [event setValue:@(YES) forKey:@"isForeground"];
+    } else {
+        UANotificationAction *notificationAction = [self notificationActionForCategory:notificationResponse.notificationContent.categoryIdentifier
+                                                                    actionIdentifier:notificationResponse.actionIdentifier];
 
-        self.launchNotificationResponse = notificationResponse;
+        BOOL isForeground = notificationAction.options & UNNotificationActionOptionForeground;
+        [event setValue:@(isForeground) forKey:@"isForeground"];
+        [event setValue:notificationResponse.actionIdentifier forKey:@"actionID"];
+    }
 
-        id event = [self pushEventFromNotification:notificationResponse.notificationContent];
-        if (![self notifyListener:EventNotificationOpened data:event]) {
-            [self.pendingEvents setValue:event forKey:EventNotificationOpened];
-        }
+    if (![self notifyListener:EventNotificationOpened data:event]) {
+        [self.pendingEvents setValue:event forKey:EventNotificationOpened];
     }
 
     completionHandler();
@@ -970,7 +980,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 }
 
 
-- (id)pushEventFromNotification:(UANotificationContent *)notificationContent {
+- (NSDictionary *)pushEventFromNotification:(UANotificationContent *)notificationContent {
     if (!notificationContent) {
         return @{ @"message": @"", @"extras": @{}};
     }
@@ -1012,6 +1022,42 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
         return UALogLevelNone;
     }
     return defaultValue;
+}
+
+
+- (UANotificationAction *)notificationActionForCategory:(NSString *)category actionIdentifier:(NSString *)identifier {
+    NSSet *categories = [UAirship push].combinedCategories;
+
+    UANotificationCategory *notificationCategory;
+    UANotificationAction *notificationAction;
+
+    for (UANotificationCategory *possibleCategory in categories) {
+        if ([possibleCategory.identifier isEqualToString:category]) {
+            notificationCategory = possibleCategory;
+            break;
+        }
+    }
+
+    if (!notificationCategory) {
+        UA_LERR(@"Unknown notification category identifier %@", category);
+        return nil;
+    }
+
+    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:notificationCategory.actions];
+
+    for (UANotificationAction *possibleAction in possibleActions) {
+        if ([possibleAction.identifier isEqualToString:identifier]) {
+            notificationAction = possibleAction;
+            break;
+        }
+    }
+
+    if (!notificationAction) {
+        UA_LERR(@"Unknown notification action identifier %@", identifier);
+        return nil;
+    }
+
+    return notificationAction;
 }
 
 @end
