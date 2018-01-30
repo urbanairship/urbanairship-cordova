@@ -58,7 +58,7 @@ function _runAction(actionName, actionValue, success, failure) {
 /**
  * Helper object to edit tag groups.
  *
- * Normally not created directly. Instead use [UrbanAirship.editNamedUserTagGroups]{@link module:UrbanAirship.editNamedUserTagGroups} 
+ * Normally not created directly. Instead use [UrbanAirship.editNamedUserTagGroups]{@link module:UrbanAirship.editNamedUserTagGroups}
  * or [UrbanAirship.editChannelTagGroups]{@link module:UrbanAirship.editChannelTagGroups}.
  *
  * @class TagGroupEditor
@@ -143,7 +143,7 @@ module.exports = {
   /**
    * Event fired when a new deep link is received.
    *
-   * @event "urbanairship.deep_link"
+   * @event urbanairship.deep_link
    * @type {object}
    * @param {string} [deepLink] The deep link.
    */
@@ -151,22 +151,23 @@ module.exports = {
   /**
    * Event fired when a channel registration occurs.
    *
-   * @event "urbanairship.registration"
+   * @event urbanairship.registration
    * @type {object}
    * @param {string} [channelID] The channel ID.
+   * @param {string} [registrationToken] The deviceToken on iOS, and the FCM/ADM token on Android.
    * @param {string} [error] Error message if an error occurred.
    */
 
   /**
    * Event fired when the inbox is updated.
    *
-   * @event "urbanairship.inbox_updated"
+   * @event urbanairship.inbox_updated
    */
 
   /**
    * Event fired when a push is received.
    *
-   * @event "urbanairship.push"
+   * @event urbanairship.push
    * @type {object}
    * @param {string} message The push alert message.
    * @param {object} extras Any push extras.
@@ -176,7 +177,7 @@ module.exports = {
   /**
    * Event fired when notification opened.
    *
-   * @event "urbanairship.notification_opened"
+   * @event urbanairship.notification_opened
    * @type {object}
    * @param {string} message The push alert message.
    * @param {object} extras Any push extras.
@@ -186,7 +187,7 @@ module.exports = {
    /**
     * Event fired when the user notification opt-in status changes.
     *
-    * @event "urbanairship.notification_opt_in_status"
+    * @event urbanairship.notification_opt_in_status
     * @type {object}
     * @param {boolean} optIn If the user is opted in or not to user notifications.
     * @param {object} [notificationOptions] iOS only. A map of opted in options.
