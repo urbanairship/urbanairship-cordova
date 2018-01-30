@@ -26,7 +26,6 @@
 package com.urbanairship.cordova;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.Uri;
@@ -57,7 +56,7 @@ import java.util.Map;
  */
 public class CordovaAutopilot extends Autopilot {
 
-    private static final String ACTION_AIRSHIP_READY = "com.urbanairship.AIRSHIP_READY";
+    private static final String SENDER_PREFIX = "sender:";
 
     static final String UA_PREFIX = "com.urbanairship";
     static final String PRODUCTION_KEY = "com.urbanairship.production_app_key";
@@ -91,7 +90,7 @@ public class CordovaAutopilot extends Autopilot {
                 .setProductionAppKey(pluginConfig.getString(PRODUCTION_KEY, ""))
                 .setProductionAppSecret(pluginConfig.getString(PRODUCTION_SECRET, ""))
                 .setInProduction(pluginConfig.getBoolean(IN_PRODUCTION, false))
-                .setGcmSender(pluginConfig.getString(GCM_SENDER, ""))
+                .setFcmSenderId(parseSender(pluginConfig.getString(GCM_SENDER, null)))
                 .setAnalyticsEnabled(pluginConfig.getBoolean(ENABLE_ANALYTICS, true))
                 .setDevelopmentLogLevel(parseLogLevel(pluginConfig.getString(DEVELOPMENT_LOG_LEVEL, ""), Log.DEBUG))
                 .setProductionLogLevel(parseLogLevel(pluginConfig.getString(PRODUCTION_LOG_LEVEL, ""), Log.ERROR))
@@ -99,6 +98,7 @@ public class CordovaAutopilot extends Autopilot {
 
         return options;
     }
+
 
     @Override
     public void onAirshipReady(UAirship airship) {
@@ -126,7 +126,7 @@ public class CordovaAutopilot extends Autopilot {
         // Notification icon
         String notificationIconName = pluginConfig.getString(NOTIFICATION_ICON, null);
         if (!UAStringUtil.isEmpty(notificationIconName)) {
-            int id  = context.getResources().getIdentifier(notificationIconName, "drawable", context.getPackageName());
+            int id = context.getResources().getIdentifier(notificationIconName, "drawable", context.getPackageName());
             if (id != 0) {
                 factory.setSmallIconId(id);
             } else {
@@ -137,7 +137,7 @@ public class CordovaAutopilot extends Autopilot {
         // Notification large icon
         String notificationLargeIconName = pluginConfig.getString(NOTIFICATION_LARGE_ICON, null);
         if (!UAStringUtil.isEmpty(notificationLargeIconName)) {
-            int id  = context.getResources().getIdentifier(notificationLargeIconName, "drawable", context.getPackageName());
+            int id = context.getResources().getIdentifier(notificationLargeIconName, "drawable", context.getPackageName());
             if (id != 0) {
                 factory.setLargeIcon(id);
             } else {
@@ -148,7 +148,7 @@ public class CordovaAutopilot extends Autopilot {
         // Notification sound
         String notificationSoundName = pluginConfig.getString(NOTIFICATION_SOUND, null);
         if (!UAStringUtil.isEmpty(notificationSoundName)) {
-            int id  = context.getResources().getIdentifier(notificationSoundName, "raw", context.getPackageName());
+            int id = context.getResources().getIdentifier(notificationSoundName, "raw", context.getPackageName());
             if (id > 0) {
                 Uri uri = Uri.parse("android.resource://" + context.getPackageName() + "/" + id);
                 factory.setSound(uri);
@@ -205,13 +205,6 @@ public class CordovaAutopilot extends Autopilot {
                 UAirshipPluginManager.shared().inboxUpdated();
             }
         });
-
-        // Send AirshipReady intent for other plugins that depend on UA
-        Intent readyIntent = new Intent(ACTION_AIRSHIP_READY)
-                .setPackage(UAirship.getPackageName())
-                .addCategory(UAirship.getPackageName());
-
-        context.sendBroadcast(readyIntent, UAirship.getUrbanAirshipPermission());
     }
 
     /**
@@ -258,6 +251,24 @@ public class CordovaAutopilot extends Autopilot {
     }
 
     /**
+     * Parses the sender ID.
+     *
+     * @param value The value from config.
+     * @return The sender ID.
+     */
+    private String parseSender(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        if (value.startsWith("sender:")) {
+            return value.substring(SENDER_PREFIX.length());
+        }
+
+        return value;
+    }
+
+    /**
      * Helper class to parse the Urban Airship plugin config from the Cordova config.xml file.
      */
     class PluginConfig {
@@ -265,6 +276,7 @@ public class CordovaAutopilot extends Autopilot {
 
         /**
          * Constructor for the PluginConfig.
+         *
          * @param context The application context.
          */
         PluginConfig(Context context) {
@@ -291,11 +303,12 @@ public class CordovaAutopilot extends Autopilot {
          */
         boolean getBoolean(String key, boolean defaultValue) {
             return configValues.containsKey(key) ?
-                   Boolean.parseBoolean(configValues.get(key)) : defaultValue;
+                    Boolean.parseBoolean(configValues.get(key)) : defaultValue;
         }
 
         /**
          * Parses the config.xml file.
+         *
          * @param context The application context.
          */
         private void parseConfig(Context context) {
