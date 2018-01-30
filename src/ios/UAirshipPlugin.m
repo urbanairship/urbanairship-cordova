@@ -152,7 +152,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
         } else {
             weakSelf.deepLink = args.value;
         }
-        
+
         NSDictionary *data;
         data = @{ @"deepLink":weakSelf.deepLink};
 
@@ -302,7 +302,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
         [UAirship inAppMessaging].displayASAPEnabled = enabled;
-        
+
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -701,7 +701,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
     NSDictionary *data;
     if (deviceToken) {
-        data = @{ @"channelID":channelID, @"deviceToken":deviceToken };
+        data = @{ @"channelID":channelID, @"deviceToken":deviceToken, @"registrationToken":deviceToken };
     } else {
         data = @{ @"channelID":channelID };
     }

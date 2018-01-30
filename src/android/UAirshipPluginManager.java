@@ -29,7 +29,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.urbanairship.UAirship;
-import com.urbanairship.cordova.events.ChannelEvent;
+import com.urbanairship.cordova.events.RegistrationEvent;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.InboxEvent;
@@ -67,7 +67,9 @@ public class UAirshipPluginManager {
     private List<Event> pendingEvents = new ArrayList<Event>();
 
     private UAirshipPluginManager() {
+
     }
+
 
     /**
      * Singleton access.
@@ -159,7 +161,7 @@ public class UAirshipPluginManager {
      * @param success {@code true} if the channel updated successfully, otherwise {@code false}.
      */
     void channelUpdated(String channel, boolean success) {
-        notifyListener(new ChannelEvent(channel, success));
+        notifyListener(new RegistrationEvent(channel, UAirship.shared().getPushManager().getRegistrationToken(), success));
     }
 
     /**
