@@ -19,8 +19,8 @@
         <preference name="com.urbanairship.development_app_key" value="Your Development App Key" />
         <preference name="com.urbanairship.development_app_secret" value="Your Development App Secret" />
 
-        <!-- Required for Android. -->
-        <preference name="com.urbanairship.gcm_sender" value="Your GCM Sender ID" />
+        <!-- Required for Android. Make sure to prefix the sender ID with sender:-->
+        <preference name="com.urbanairship.gcm_sender" value="sender:Your GCM Sender ID" />
 
         <!-- If the app is in production or not -->
         <preference name="com.urbanairship.in_production" value="true | false" />

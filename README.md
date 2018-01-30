@@ -23,6 +23,10 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
 ### Quickstart
 
+Due to an [issue in the android resource processing (AAPT2)](https://issuetracker.google.com/issues/69347762),
+the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disable AAPT2 with
+[cordova-disable-aapt2](https://github.com/runtrizapps/cordova-android-disable-aapt2).
+
 1. Install this plugin using PhoneGap/Cordova CLI:
 
         cordova plugin add urbanairship-cordova
@@ -37,7 +41,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         <preference name="com.urbanairship.development_app_secret" value="Your Development App Secret" />
 
         <!-- Required for Android. -->
-        <preference name="com.urbanairship.gcm_sender" value="Your GCM Sender ID" />
+        <preference name="com.urbanairship.gcm_sender" value="sender:Your GCM Sender ID" />
 
         <!-- If the app is in production or not -->
         <preference name="com.urbanairship.in_production" value="true | false" />
