@@ -32,7 +32,7 @@
             </feature>
         </config-file>
 
-        <config-file parent="/*" target="AndroidManifest.xml">
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data
                 android:name="com.urbanairship.autopilot"
                 android:value="com.urbanairship.cordova.CordovaAutopilot"/>
@@ -123,7 +123,7 @@
             src="src/android/UAirshipPluginManager.java"
             target-dir="src/com/urbanairship/cordova"/>
         <source-file
-            src="src/android/events/ChannelEvent.java"
+            src="src/android/events/RegistrationEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
             src="src/android/events/DeepLinkEvent.java"
