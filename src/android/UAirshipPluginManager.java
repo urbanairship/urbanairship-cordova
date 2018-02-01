@@ -27,7 +27,10 @@ package com.urbanairship.cordova;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.urbanairship.AirshipReceiver;
 import com.urbanairship.UAirship;
 import com.urbanairship.cordova.events.RegistrationEvent;
 import com.urbanairship.cordova.events.DeepLinkEvent;
@@ -140,12 +143,23 @@ public class UAirshipPluginManager {
     /**
      * Called when the notification is opened.
      *
-     * @param notificationId The notification ID.
-     * @param pushMessage The push message.
+     * @param notificationInfo The notification info.
      */
-    void notificationOpened(int notificationId, PushMessage pushMessage) {
+    void notificationOpened(@NonNull AirshipReceiver.NotificationInfo notificationInfo) {
+        notificationOpened(new NotificationOpenedEvent(notificationInfo));
+    }
+
+    /**
+     * Called when the notification is opened.
+     *
+     * @param notificationInfo The notification info.
+     */
+    void notificationOpened(@NonNull AirshipReceiver.NotificationInfo notificationInfo, @Nullable AirshipReceiver.ActionButtonInfo actionButtonInfo) {
+        notificationOpened(new NotificationOpenedEvent(notificationInfo, actionButtonInfo));
+    }
+
+    private void notificationOpened(NotificationOpenedEvent event) {
         synchronized (shared) {
-            NotificationOpenedEvent event = new NotificationOpenedEvent(notificationId, pushMessage);
             this.notificationOpenedEvent = event;
 
             if (!notifyListener(event)) {

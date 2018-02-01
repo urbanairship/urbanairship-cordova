@@ -182,6 +182,8 @@ module.exports = {
    * @param {string} message The push alert message.
    * @param {object} extras Any push extras.
    * @param {number} [notification_id] The Android notification ID.
+   * @param {string} [actionID] The ID of the notification action button if available.
+   * @param {boolean} isForeground Will always be true if the user taps the main notification. Otherwise its defined by the notificaiton action button.
    */
 
    /**
