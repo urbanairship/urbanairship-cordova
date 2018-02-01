@@ -1,3 +1,15 @@
+================================
+Version 6.9.3 - February 1, 2018
+================================
+- Updated Android SDK to 8.9.7.
+- Updated to be compatible with Cordova Android 7.0.0. Due to an
+  [issue in the android resource processing (AAPT2)](https://issuetracker.google.com/issues/69347762),
+  the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disable AAPT2 with
+  [cordova-disable-aapt2](https://github.com/runtrizapps/cordova-android-disable-aapt2).
+- Added notification response info to the notification open event.
+- Added registration token to the channel registration event.
+- Fixed iOS 11 main thread warnings.
+
 =================================
 Version 6.9.2 - November 20, 2017
 =================================
