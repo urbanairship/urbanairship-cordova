@@ -25,7 +25,7 @@
 
 #import "AirshipLib.h"
 
-@interface UAMessageViewController : UADefaultMessageCenterMessageViewController
+@interface UAMessageViewController : UAMessageCenterMessageViewController
 
 @end
 

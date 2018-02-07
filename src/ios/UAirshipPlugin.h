@@ -42,15 +42,6 @@
 - (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
- * Enables or disables display ASAP mode for in-app messages.
- *
- * Expected arguments: Boolean
- *
- * @param command The cordova command.
- */
-- (void)setDisplayASAPEnabled:(CDVInvokedUrlCommand *)command;
-
-/**
  * Checks if user push notifications are enabled or not.
  *
  * @param command The cordova command.
