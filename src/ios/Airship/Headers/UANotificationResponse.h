@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import "UANotificationContent.h"
@@ -47,7 +47,7 @@ extern NSString *const UANotificationDismissActionIdentifier;
  * The UNNotificationResponse that generated the UANotificationResponse.
  * Note: Only available on iOS 10+. Will be nil otherwise.
  */
-@property (nonatomic, readonly, nullable, strong) UNNotificationResponse *response;
+@property (nonatomic, readonly, nullable, strong) UNNotificationResponse *response NS_AVAILABLE_IOS(10.0);
 
 #endif
 
@@ -74,7 +74,7 @@ extern NSString *const UANotificationDismissActionIdentifier;
  * @param response The UNNotificationResponse.
  * @return A UANotificationResponse instance.
  */
-+ (instancetype)notificationResponseWithUNNotificationResponse:(UNNotificationResponse *)response;
++ (instancetype)notificationResponseWithUNNotificationResponse:(UNNotificationResponse *)response NS_AVAILABLE_IOS(10.0);
 #endif
 
 

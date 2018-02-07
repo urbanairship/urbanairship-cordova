@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -63,8 +63,17 @@ typedef NS_ENUM(NSInteger, UAScheduleTriggerType) {
     /**
      * App init trigger.
      */
-    UAScheduleTriggerAppInit
+    UAScheduleTriggerAppInit,
 
+    /**
+     * Active session trigger.
+     */
+    UAScheduleTriggerActiveSession,
+
+    /**
+     * Version trigger.
+     */
+    UAScheduleTriggerVersion
 };
 
 
@@ -123,6 +132,16 @@ extern NSString *const UAScheduleTriggerCustomEventValueName;
  */
 extern NSString *const UAScheduleTriggerScreenName;
 
+/**
+ * Active session trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerActiveSessionName;
+
+/**
+ * Version trigger name when defining a trigger in JSON.
+ */
+extern NSString *const UAScheduleTriggerVersionName;
+
 @class UAJSONPredicate;
 
 /**
@@ -172,6 +191,14 @@ extern NSString *const UAScheduleTriggerScreenName;
  * @return A background trigger.
  */
 + (instancetype)backgroundTriggerWithCount:(NSUInteger)count;
+
+/**
+ * Factory method to create an active session trigger.
+ *
+ * @param count Number of active sessions before firing the trigger.
+ * @return An active session trigger.
+ */
++ (instancetype)activeSessionTriggerWithCount:(NSUInteger)count;
 
 /**
  * Factory method to create a region enter trigger.
@@ -224,6 +251,16 @@ extern NSString *const UAScheduleTriggerScreenName;
  */
 + (instancetype)customEventTriggerWithPredicate:(UAJSONPredicate *)predicate
                                           value:(NSNumber *)value;
+
+/**
+ * Factory method to create a version trigger.
+ *
+ * @param versionConstraint A version constraint to match against the app version.
+ * @param count The number of updates to match before firing the trigger.
+ * @return A version trigger.
+ */
++ (instancetype)versionTriggerWithConstraint:(NSString *)versionConstraint count:(NSUInteger)count;
+
 
 /**
  * Factory method to create a trigger from a JSON payload.

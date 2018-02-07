@@ -1,11 +1,18 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 #import <WebKit/WebKit.h>
 
+/**
+ * WKNavigationDelegate protocol extension to handle "uairship://close" URL and UAirship.close()
+ */
 @protocol UAWKWebViewDelegate <WKNavigationDelegate>
 
 @optional
+
+///---------------------------------------------------------------------------------------
+/// @name WKNavigationDelegate Optional Methods
+///---------------------------------------------------------------------------------------
 
 /**
  * Closes the window.

@@ -1,40 +1,55 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import <UIKit/UIKit.h>
+#import "UAInAppMessageDisplayContent.h"
 
-/**
- * Enumeration of in-app message screen positions.
- */
-typedef NS_ENUM(NSInteger, UAInAppMessagePosition) {
-    /**
-     * The top of the screen.
-     */
-    UAInAppMessagePositionTop,
-    /**
-     * The bottom of the screen.
-     */
-    UAInAppMessagePositionBottom
-};
-
-/**
- * Enumeration of in-app message display types.
- */
-typedef NS_ENUM(NSInteger, UAInAppMessageDisplayType) {
-    /**
-     * Unknown or unsupported display type.
-     */
-    UAInAppMessageDisplayTypeUnknown,
-    /**
-     * Banner display type.
-     */
-    UAInAppMessageDisplayTypeBanner
-};
-
-@class UAInAppMessageButtonActionBinding;
-@class UANotificationCategory;
+@class UAInAppMessageAudience;
 
 NS_ASSUME_NONNULL_BEGIN
+
+
+/**
+ * Builder class for UAInAppMessage.
+ */
+@interface UAInAppMessageBuilder : NSObject
+
+///---------------------------------------------------------------------------------------
+/// @name In App Message Builder Properties
+///---------------------------------------------------------------------------------------
+
+/**
+* The unique identifier for the message.
+*/
+@property(nonatomic, copy, nullable) NSString *identifier;
+
+
+/**
+ * The display content for the message.
+ */
+@property(nonatomic, strong, nullable) UAInAppMessageDisplayContent *displayContent;
+
+/**
+ * The extras for the messages.
+ */
+@property(nonatomic, copy, nullable) NSDictionary *extras;
+
+/**
+* The display actions for the message.
+*/
+@property(nonatomic, copy, nullable) NSDictionary *actions;
+
+/**
+ * The audience conditions for the messages.
+ */
+@property(nonatomic, strong, nullable) UAInAppMessageAudience *audience;
+
+/**
+ * Checks if the builder is valid and will produce a message instance.
+ * @return YES if the builder is valid (requires display content and an ID), otherwise NO.
+ */
+- (BOOL)isValid;
+
+@end
 
 /**
  * Model object representing in-app message data.
@@ -46,161 +61,44 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
- * The in-app message payload in NSDictionary format
- */
-@property(nonatomic, readonly) NSDictionary *payload;
+* The unique identifier for the message.
+*/
+@property(nonatomic, copy, readonly) NSString *identifier;
 
 /**
- * The unique identifier for the message (to be set from the associated send ID)
+ * The display type.
  */
-@property(nonatomic, copy, nullable) NSString *identifier;
-
-///---------------------------------------------------------------------------------------
-/// @name In App Message Top Level Properties
-///---------------------------------------------------------------------------------------
+@property(nonatomic, readonly) UAInAppMessageDisplayType displayType;
 
 /**
- * The expiration date for the message.
- * Unless otherwise specified, defaults to 30 days from construction.
+ * The display content for the message.
  */
-@property(nonatomic, strong) NSDate *expiry;
+@property(nonatomic, strong, readonly) UAInAppMessageDisplayContent *displayContent;
 
 /**
- * Optional key value extras.
+ * The extras for the messages.
  */
-@property(nonatomic, copy, nullable) NSDictionary *extra;
-
-///---------------------------------------------------------------------------------------
-/// @name In App Message Display Properties
-///---------------------------------------------------------------------------------------
+@property(nonatomic, copy, nullable, readonly) NSDictionary *extras;
 
 /**
- * The display type. Defaults to `UAInAppMessageDisplayTypeBanner`
- * when built with the default class constructor, or `UAInAppMessageDisplayTypeUnknown`
- * when built from a payload with a missing or unidentified display type.
+ * Display actons.
  */
-@property(nonatomic, assign) UAInAppMessageDisplayType displayType;
+@property(nonatomic, copy, nullable, readonly) NSDictionary *actions;
 
 /**
- * The alert message.
+ * The audience conditions for the messages.
  */
-@property(nonatomic, copy, nullable) NSString *alert;
-
-/**
- * The screen position. Defaults to `UAInAppMessagePositionBottom`.
- */
-@property(nonatomic, assign) UAInAppMessagePosition position;
-
-/**
- * The amount of time to wait before automatically dismissing
- * the message.
- */
-@property(nonatomic, assign) NSTimeInterval duration;
-
-/**
- * The primary color.
- */
-@property(nonatomic, strong, nullable) UIColor *primaryColor;
-
-/**
- * The secondary color.
- */
-@property(nonatomic, strong, nullable) UIColor *secondaryColor;
-
-
-///---------------------------------------------------------------------------------------
-/// @name In App Message Actions Properties
-///---------------------------------------------------------------------------------------
-
-/**
- * The button group (category) associated with the message.
- * This value will determine which buttons are present and their
- * localized titles.
- */
-@property(nonatomic, copy, nullable) NSString *buttonGroup;
-
-/**
- * A dictionary mapping button group keys to dictionaries
- * mapping action names to action arguments. The relevant
- * action(s) will be run when the user taps the associated
- * button.
- */
-@property(nonatomic, copy, nullable) NSDictionary *buttonActions;
-
-/**
- * A dictionary mapping an action name to an action argument.
- * The relevant action will be run when the user taps or "clicks"
- * on the message.
- */
-@property(nonatomic, copy, nullable) NSDictionary *onClick;
-
-#if !TARGET_OS_TV    // UIUserNotificationActinoContext is not available on tvOS
-/**
- * The chosen notification action context. If there are notification actions defined for
- * UIUserNotificationActionContextMinimal, this context will be preferred. Othwerise, the
- * context defaults to UIUserNotificationActionContextDefault.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0
- */
-@property(nonatomic, readonly) UIUserNotificationActionContext notificationActionContext DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
-#endif
-
-/**
- * An array of UNNotificationAction instances corresponding to the left-to-right order
- * of interactive message buttons.
- */
-@property(nonatomic, readonly, nullable) NSArray *notificationActions;
-
-/**
- * A UANotificationCategory instance,
- * corresponding to the button group of the message.
- * If no matching category is found, this property will be nil.
- */
-@property(nonatomic, readonly, nullable) UANotificationCategory *buttonCategory;
-
-/**
- * An array of UAInAppMessageButtonActionBinding instances,
- * corresponding to the left-to-right order of interactive message
- * buttons.
- */
-@property(nonatomic, readonly, nullable) NSArray *buttonActionBindings;
-
-
-///---------------------------------------------------------------------------------------
-/// @name In App Message Factories
-///---------------------------------------------------------------------------------------
-
-/**
- * Class factory method for constructing an unconfigured
- * in-app message model.
- *
- * @return An unconfigured instance of UAInAppMessage.
- */
-+ (instancetype)message;
+@property(nonatomic, strong, nullable, readonly) UAInAppMessageAudience *audience;
 
 /**
  * Class factory method for constructing an in-app message
- * model from the in-app message section of a push payload.
+ * model with an in-app message builder block.
  *
- * @param payload The in-app message section of a push payload,
- * in NSDictionary representation.
+ * @param builderBlock the builder block.
  * @return A fully configured instance of UAInAppMessage.
  */
-+ (instancetype)messageWithPayload:(NSDictionary *)payload;
-
-///---------------------------------------------------------------------------------------
-/// @name In App Message Utilities
-///---------------------------------------------------------------------------------------
-
-/**
- * Tests whether the message is equal by value to another message.
- *
- * @param message The message the receiver is being compared to.
- * @return `YES` if the two messages are equal by value, `NO` otherwise.
- */
-- (BOOL)isEqualToMessage:(nullable UAInAppMessage *)message;
++ (instancetype)messageWithBuilderBlock:(void(^)(UAInAppMessageBuilder *builder))builderBlock;
 
 @end
 
 NS_ASSUME_NONNULL_END
-

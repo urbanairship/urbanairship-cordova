@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAAction.h"
 
@@ -41,6 +41,12 @@ extern NSString * const UAOpenExternalURLActionErrorDomain;
  */
 @interface UAOpenExternalURLAction : UAAction
 
+/**
+ * Parses the NSURL from the action arguments.
+ * @param arguments The action arguments.
+ * @return The parsed NSURL or null.
+ */
++ (nullable NSURL *)parseURLFromArguments:(UAActionArguments *)arguments;
 @end
 
 NS_ASSUME_NONNULL_END

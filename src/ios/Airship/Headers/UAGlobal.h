@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <UIKit/UIKit.h>
 
@@ -93,6 +93,7 @@ extern BOOL uaLoudImpErrorLoggingEnabled; // Default is YES
 #define kUAAirshipProductionServer @"https://device-api.urbanairship.com"
 #define kUAAnalyticsProductionServer @"https://combine.urbanairship.com"
 #define kUAProductionLandingPageContentURL @"https://dl.urbanairship.com/aaa"
+#define kUARemoteDataProductionServer @"https://remote-data.urbanairship.com"
 
 
 #define UA_SUPPRESS_PERFORM_SELECTOR_LEAK_WARNING(THE_CODE) \

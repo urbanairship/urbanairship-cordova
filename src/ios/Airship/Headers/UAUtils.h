@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -181,6 +181,12 @@ NS_ASSUME_NONNULL_BEGIN
  * A utility method that takes an APNS-provided device token and returns the decoded UA device token
  */
 + (NSString *)deviceTokenStringFromDeviceToken:(NSData *)deviceToken;
+
+/**
+ * A utility method that compares two version strings and determines their order.
+ */
++ (NSComparisonResult)compareVersion:(NSString *)version1 toVersion:(NSString *)version2;
+
 
 @end
 

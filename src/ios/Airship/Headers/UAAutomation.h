@@ -1,7 +1,10 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
-#import "UAActionSchedule.h"
+#import "UASchedule.h"
+#import "UAActionScheduleInfo.h"
+#import "UAComponent.h"
+#import "UAActionScheduleEdits.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -13,7 +16,7 @@ extern NSUInteger const UAAutomationScheduleLimit;
 /**
  * Manager class for scheduling actions.
  */
-@interface UAAutomation : NSObject
+@interface UAAutomation : UAComponent
 
 ///---------------------------------------------------------------------------------------
 /// @name Automation Schedule Management Methods
@@ -27,14 +30,14 @@ extern NSUInteger const UAAutomationScheduleLimit;
  * If the schedule info is invalid, the action schedule will be nil.
  */
 - (void)scheduleActions:(UAActionScheduleInfo *)scheduleInfo
-      completionHandler:(nullable void (^)(UAActionSchedule * __nullable))completionHandler;
+      completionHandler:(nullable void (^)(UASchedule * __nullable))completionHandler;
 
 /**
  * Cancels a schedule with the given identifier.
  *
  * @param identifier A schedule identifier.
  */
-- (void)cancelScheduleWithIdentifier:(NSString *)identifier;
+- (void)cancelScheduleWithID:(NSString *)identifier;
 
 /**
  * Cancels all schedules of the given group.
@@ -54,15 +57,15 @@ extern NSUInteger const UAAutomationScheduleLimit;
  * @param identifier A schedule identifier.
  * @param completionHandler The completion handler with the result.
  */
-- (void)getScheduleWithIdentifier:(NSString *)identifier
-                completionHandler:(void (^)(UAActionSchedule * __nullable))completionHandler;
+- (void)getScheduleWithID:(NSString *)identifier
+        completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
 
 /**
  * Gets all schedules.
  *
  * @param completionHandler The completion handler with the result.
  */
-- (void)getSchedules:(void (^)(NSArray<UAActionSchedule *> *))completionHandler;
+- (void)getSchedules:(void (^)(NSArray<UASchedule *> *))completionHandler;
 
 /**
  * Gets all schedules of the given group.
@@ -71,7 +74,18 @@ extern NSUInteger const UAAutomationScheduleLimit;
  * @param completionHandler The completion handler with the result.
  */
 - (void)getSchedulesWithGroup:(NSString *)group
-            completionHandler:(void (^)(NSArray<UAActionSchedule *> *))completionHandler;
+            completionHandler:(void (^)(NSArray<UASchedule *> *))completionHandler;
+
+/**
+ * Edits a schedule.
+ *
+ * @param identifier A schedule identifier.
+ * @param edits The edits to apply.
+ * @param completionHandler The completion handler with the result.
+ */
+- (void)editScheduleWithID:(NSString *)identifier
+                     edits:(UAActionScheduleEdits *)edits
+         completionHandler:(void (^)(UASchedule * __nullable))completionHandler;
 
 @end
 

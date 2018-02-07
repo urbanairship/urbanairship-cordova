@@ -1,7 +1,8 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import "UAComponent.h"
 
 /**
  * Location delegate protocol to receive callbacks for location updates.
@@ -41,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Main class for interacting with Urban Airship location. Used to send location
  * updates for the user to Urban Airship.
  */
-@interface UALocation : NSObject
+@interface UALocation : UAComponent
 
 ///---------------------------------------------------------------------------------------
 /// @name Location Properties

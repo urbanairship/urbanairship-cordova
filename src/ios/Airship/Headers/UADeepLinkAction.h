@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAOpenExternalURLAction.h"
 
@@ -7,7 +7,7 @@
 
 /**
  * Opens a deep link URL. This action is registered under
- * the names ^d and deep_link.
+ * the names ^d and deep_link_action.
  *
  * Expected argument values: NSString
  *
