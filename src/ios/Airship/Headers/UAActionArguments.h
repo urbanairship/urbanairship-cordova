@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -58,14 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Contains the arguments passed into an action during execution.
  */
 @interface UAActionArguments : NSObject
-
-/**
- * Metadata key for the web view. Available when an action is triggered from
- * a web view.
- *
- * @deprecated Deprecated - to be removed in SDK version 9.0
- */
-extern NSString * const UAActionMetadataWebViewKey DEPRECATED_MSG_ATTRIBUTE("Deprecated - to be removed in SDK version 9.0");
 
 /**
  * Metadata key for the push notification. Available when an action is triggered

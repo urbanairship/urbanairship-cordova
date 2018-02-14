@@ -296,15 +296,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }];
 }
 
-- (void)setDisplayASAPEnabled:(CDVInvokedUrlCommand *)command {
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [[args objectAtIndex:0] boolValue];
-        [UAirship inAppMessaging].displayASAPEnabled = enabled;
-
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
 - (void)setLocationEnabled:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
@@ -783,15 +774,15 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 #pragma mark UAInboxDelegate
 
-- (void)showInboxMessage:(UAInboxMessage *)message {
+- (void)showMessageForID:(NSString *)messageID {
     if (self.autoLaunchMessageCenter) {
-        [[UAirship defaultMessageCenter] displayMessage:message];
+        [[UAirship messageCenter] displayMessageForID:messageID];
     }
 }
 
 - (void)showInbox {
     if (self.autoLaunchMessageCenter) {
-        [[UAirship defaultMessageCenter] display];
+        [[UAirship messageCenter] display];
     }
 }
 
@@ -799,14 +790,14 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 - (void)displayMessageCenter:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship defaultMessageCenter] display];
+        [[UAirship messageCenter] display];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
 
 - (void)dismissMessageCenter:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship defaultMessageCenter] dismiss];
+        [[UAirship messageCenter] dismiss];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -890,14 +881,18 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
         [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
 
-        UAMessageViewController *mvc = [[UAMessageViewController alloc] initWithNibName:@"UADefaultMessageCenterMessageViewController"
+        UAMessageViewController *mvc = [[UAMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
                                                                                  bundle:[UAirship resources]];
-        mvc.message = message;
 
         UINavigationController *navController =  [[UINavigationController alloc] initWithRootViewController:mvc];
 
         // Store a weak reference to the MessageViewController so we can dismiss it later
         self.messageViewController = mvc;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        [mvc loadMessage:message onlyIfChanged:YES];
+#pragma GCC diagnostic pop
 
         [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:navController animated:YES completion:nil];
 
@@ -915,7 +910,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 - (void)dismissOverlayInboxMessage:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [UALandingPageOverlayController closeAll:YES];
+        [UAOverlayViewController closeAll:YES];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -931,7 +926,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
             return;
         }
 
-        [UALandingPageOverlayController showMessage:message];
+        [UAOverlayViewController showMessage:message];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];

@@ -1,8 +1,8 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class UADefaultMessageCenterListViewController;
+@class UAMessageCenterListViewController;
 @class UAInboxMessage;
 
 /**

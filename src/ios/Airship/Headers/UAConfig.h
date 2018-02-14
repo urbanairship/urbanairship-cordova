@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 
@@ -80,7 +80,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isAutomaticSetupEnabled) BOOL automaticSetupEnabled;
 
 /**
- * An array of UAWhitelist entry strings.
+ * An array of UAWhitelist entry strings. The whitelist used for validating URLs for landing pages,
+ * wallet action, open external URL action, deep link action (if delegate is not set), and
+ * HTML in-app messages.
  *
  * @note See UAWhitelist for pattern entry syntax.
  */
@@ -161,6 +163,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isChannelCaptureEnabled) BOOL channelCaptureEnabled;
 
 /**
+ * Enables or disables whitelist checks at the scope `UAWhitelistScopeOpenURL`. If disabled,
+ * all whitelist checks for this scope will be allowed.
+ *
+ * Defaults to `NO`.
+ */
+@property (nonatomic, assign, getter=isOpenURLWhitelistingEnabled) BOOL openURLWhitelistingEnabled;
+
+/**
  * Flag indicating whether delayed channel creation is enabled. If set to `YES` channel 
  * creation will not occur until channel creation is manually enabled.
  *
@@ -172,15 +182,6 @@ NS_ASSUME_NONNULL_BEGIN
  * Dictionary of custom config values.
  */
 @property (nonatomic, copy) NSDictionary *customConfig;
-
-/**
- * If set to `YES`, SDK will use WKWebView for UA default inbox message and overlay views.
- * If set to `NO`,  SDK will use UIWebView for UA default inbox message and overlay views.
- *
- * Defaults to `NO`. 
- * @note Will default to `YES` in SDK 9.0.
- */
-@property (nonatomic, assign) BOOL useWKWebView;
 
 ///---------------------------------------------------------------------------------------
 /// @name Resolved Options

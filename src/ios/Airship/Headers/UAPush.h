@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAGlobal.h"
 #import "UAirship.h"
@@ -7,6 +7,7 @@
 #import "UANotificationContent.h"
 #import "UANotificationResponse.h"
 #import "UANotificationAction.h"
+#import "UAComponent.h"
 
 @class UANotificationCategory;
 
@@ -176,7 +177,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  * @param notification The notification.
  * @return a UNNotificationPresentationOptions enum value indicating the presentation options for the notification.
  */
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification;
+- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification NS_AVAILABLE_IOS(10.0);
 
 @end
 
@@ -188,7 +189,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
 /**
  * This singleton provides an interface to the functionality provided by the Urban Airship iOS Push API.
  */
-@interface UAPush : NSObject
+@interface UAPush : UAComponent
 
 
 ///---------------------------------------------------------------------------------------
@@ -342,7 +343,7 @@ static const UANotificationOptions UANotificationOptionNone =  0;
  *
  * Note: this property is relevant only for iOS 10 and above.
  */
-@property (nonatomic, assign) UNNotificationPresentationOptions defaultPresentationOptions;
+@property (nonatomic, assign) UNNotificationPresentationOptions defaultPresentationOptions NS_AVAILABLE_IOS(10.0);
 
 ///---------------------------------------------------------------------------------------
 /// @name Autobadge

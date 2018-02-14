@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAGlobal.h"
 #import "UAJavaScriptDelegate.h"
@@ -31,15 +31,38 @@
 @class UAUser;
 @class UANamedUser;
 @class UAActionRegistry;
-@class UAInAppMessaging;
-@class UADefaultMessageCenter;
+@class UAInAppMessageManager;
+@class UALegacyInAppMessaging;
+@class UAMessageCenter;
 @class UALocation;
 @class UAAutomation;
 @class UAChannelCapture;
+@class UARemoteDataManager;
 
 #if !TARGET_OS_TV   // Inbox not supported on tvOS
 @class UAInbox;
 #endif
+
+//---------------------------------------------------------------------------------------
+// UADeepLinkDelegate Protocol
+//---------------------------------------------------------------------------------------
+
+/**
+ * Protocol to be implemented by deep link handlers.
+ */
+@protocol UADeepLinkDelegate<NSObject>
+
+@optional
+
+/**
+ * Called when a deep link has been triggered from Urban Airship. If implemented, the delegate is responsible for processing the provided url.
+ *
+ * @param url The url for the deep link.
+ * @param completionHandler The completion handler to execute when the deep link processing is complete.
+ */
+-(void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler;
+
+@end
 
 
 NS_ASSUME_NONNULL_BEGIN
@@ -62,12 +85,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, strong, readonly) UAConfig *config;
 
-/**
- * The shared analytics manager. There are not currently any user-defined events,
- * so this is for internal library use only at this time.
- */
-@property (nonatomic, strong, readonly) UAAnalytics *analytics;
-
 
 /**
  * The default action registry.
@@ -86,7 +103,6 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 @property (nonatomic, assign, readonly) BOOL remoteNotificationBackgroundModeEnabled;
 
-
 /**
  * A user configurable JavaScript delegate.
  *
@@ -95,7 +111,15 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
 @property (nonatomic, weak, nullable) id<UAJavaScriptDelegate> jsDelegate;
 
 /**
- * The whitelist used for validating webview URLs.
+ * A user configurable deep link delegate.
+ *
+ * NOTE: this delegate is not retained.
+ */
+@property (nonatomic, weak, nullable) id<UADeepLinkDelegate> deepLinkDelegate;
+
+/**
+ * The whitelist used for validating URLs for landing pages, wallet action, open external URL action,
+ * deep link action (if delegate is not set), and HTML in-app messages.
  */
 @property (nonatomic, strong, readonly) UAWhitelist *whitelist;
 
@@ -103,6 +127,11 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  * The channel capture utility.
  */
 @property (nonatomic, strong, readonly) UAChannelCapture *channelCapture;
+
+/**
+ * Analytics instance.
+ */
+@property (nonatomic, strong, readonly) UAAnalytics *analytics;
 
 ///---------------------------------------------------------------------------------------
 /// @name Logging
@@ -194,18 +223,23 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (null_unspecified UAUser *)inboxUser;
 
-
 /**
- * Returns the `UAInAppMessaging` instance. Used for customizing
+ * Returns the `UAInAppMessageManager` instance. Used for customizing
  * in-app notifications.
  */
-+ (null_unspecified UAInAppMessaging *)inAppMessaging;
++ (null_unspecified UAInAppMessageManager *)inAppMessageManager;
 
 /**
- * Returns the `UADefaultMessageCenter` instance. Used for customizing
+ * Returns the `UALegacyInAppMessaging` instance. Used for customizing
+ * legacy in-app notifications.
+ */
++ (null_unspecified UALegacyInAppMessaging *)legacyInAppMessaging;
+
+/**
+ * Returns the default `UAMessageCenter` instance. Used for customizing
  * and displaying the default message center.
  */
-+ (null_unspecified UADefaultMessageCenter *)defaultMessageCenter;
++ (null_unspecified UAMessageCenter *)messageCenter;
 
 #endif
 
@@ -220,17 +254,20 @@ extern NSString * const UAirshipTakeOffBackgroundThreadException;
  */
 + (nullable NSBundle *) resources;
 
-
 /**
  * Returns the `UALocation` instance.
  */
 + (null_unspecified UALocation *)location;
 
-
 /**
  * Returns the `UAAutomation` instance.
  */
 + (null_unspecified UAAutomation *)automation;
+
+/**
+ * Returns the default `UAAnalytics` instance.
+ */
++ (null_unspecified UAAnalytics *)analytics;
 
 NS_ASSUME_NONNULL_END
 

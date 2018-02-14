@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import "UAModifyTagsAction.h"
 
@@ -19,7 +19,8 @@
  *     "named_user": {
  *         "named_user_tag_group": ["named_user_tag_1", "named_user_tag_2"],
  *         "other_named_user_tag_group": ["other_named_user_tag_1"]
- *     }
+ *     },
+ *     "device": [ "tag", "another_tag"]
  * }
  *
  *

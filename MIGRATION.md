@@ -1,5 +1,9 @@
 # Migration Guide
 
+## 6.x to 7.0.0
+
+The method `setDisplayASAPEnabled` has been removed.
+
 ## 6.x to 6.3.0
 
 ### Cocoapods

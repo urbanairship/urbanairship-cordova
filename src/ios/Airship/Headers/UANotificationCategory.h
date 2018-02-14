@@ -1,4 +1,4 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
@@ -139,7 +139,7 @@ static const UANotificationCategoryOptions UANotificationCategoryOptionNone NS_S
  * @param category The UNNotificationCategory to compare with.
  * @return `YES` if the two categories are equivalent, `NO` otherwise.
  */
-- (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category;
+- (BOOL)isEqualToUNNotificationCategory:(UNNotificationCategory *)category NS_AVAILABLE_IOS(10.0);
 
 #endif
 
