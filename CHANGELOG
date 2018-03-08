@@ -1,3 +1,9 @@
+=================================
+Version 7.0.1 - March 8, 2018
+=================================
+- Updated iOS SDK to 9.0.3.
+- Updated Android SDK to 9.0.2.
+- Fixed build failures by excluding Android libraries version 28 until it is released.
 
 =================================
 Version 7.0.0 - February 14, 2018
