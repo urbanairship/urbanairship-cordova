@@ -67,6 +67,10 @@ public class PushEvent implements Event {
                 extras.put(key, Long.toString(message.getPushBundle().getLong(key)));
                 continue;
             }
+            if ("google.ttl".equals(key)) {
+                extras.put(key, Integer.toString(message.getPushBundle().getInt(key)));
+                continue;
+            }
             extras.put(key, message.getPushBundle().getString(key));
         }
 
