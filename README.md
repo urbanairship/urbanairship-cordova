@@ -1,6 +1,6 @@
-# Urban Airship PhoneGap/Cordova Plugin
+# Urban Airship Cordova Plugin
 
-This plugin supports PhoneGap/Cordova apps running on both iOS and Android.
+This plugin supports Cordova apps running on both iOS and Android.
 
 ### Resources:
  - [Getting started guide](http://docs.urbanairship.com/platform/cordova/)
@@ -29,7 +29,7 @@ Due to an [issue in the android resource processing (AAPT2)](https://issuetracke
 the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disable AAPT2 with
 [cordova-disable-aapt2](https://github.com/runtrizapps/cordova-android-disable-aapt2).
 
-1. Install this plugin using PhoneGap/Cordova CLI:
+1. Install this plugin using Cordova CLI:
 
         cordova plugin add urbanairship-cordova
 

@@ -255,7 +255,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }
 }
 
-#pragma mark Phonegap bridge
+#pragma mark Cordova bridge
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
     self.listenerCallbackID = command.callbackId;
