@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
         version="7.0.1"
-        xmlns="http://www.phonegap.com/ns/plugins/1.0"
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,urbanairship</keywords>
-    <repo>https://github.com/urbanairship/phonegap-ua-push.git</repo>
+    <repo>https://github.com/urbanairship/urbanairship-cordova.git</repo>
 
     <engines>
         <engine name="cordova-android" version=">=4.1.0"/>

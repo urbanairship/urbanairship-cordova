@@ -1,12 +1,12 @@
 # Urban Airship Cordova Plugin
 
 ### Resources:
- - [Getting started guide](http://docs.urbanairship.com/platform/phonegap.html)
- - [Github repo](https://github.com/urbanairship/phonegap-ua-push)
+ - [Getting started guide](http://docs.urbanairship.com/platform/cordova.html)
+ - [Github repo](https://github.com/urbanairship/urbanairship-cordova)
 
 ### Installation
 
-1. Install this plugin using PhoneGap/Cordova CLI:
+1. Install this plugin using Cordova CLI:
 
         cordova plugin add urbanairship-cordova
 
