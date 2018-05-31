@@ -974,19 +974,19 @@ NSString *const ExtrasPushId = @"com.urbanairship.push.PUSH_ID";
     NSMutableDictionary *extras = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
 
     if([[extras allKeys] containsObject:@"aps"]) {
-				[extras removeObjectForKey:@"aps"];
+        [extras removeObjectForKey:@"aps"];
     }
 
-    if([[extras allKeys] containsObject:@"_"]) {
-			  [extras setValue:extras[@"_"] forKey:ExtrasPushId];
+    terif([[extras allKeys] containsObject:@"_"]) {
+        [extras setValue:extras[@"_"] forKey:ExtrasPushId];
         [extras removeObjectForKey:@"_"];
     }
 
-	 	if ([notificationContent respondsToSelector:NSSelectorFromString(@"alertTitle")]) {
-        [extras setValue:notificationContent.alertTitle forKey:ExtrasTitle];
+    if ([notificationContent respondsToSelector:NSSelectorFromString(@"alertTitle")]) {
+		[extras setValue:notificationContent.alertTitle forKey:ExtrasTitle];
     }
 
- 		[extras setValue:notificationContent.alertBody ?: @"" forKey:ExtrasAlert];
+    [extras setValue:notificationContent.alertBody ?: @"" forKey:ExtrasAlert];
 
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
     result[@"message"] = notificationContent.alertBody ?: @"";
