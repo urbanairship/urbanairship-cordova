@@ -977,7 +977,7 @@ NSString *const ExtrasPushId = @"com.urbanairship.push.PUSH_ID";
         [extras removeObjectForKey:@"aps"];
     }
 
-    terif([[extras allKeys] containsObject:@"_"]) {
+    if([[extras allKeys] containsObject:@"_"]) {
         [extras setValue:extras[@"_"] forKey:ExtrasPushId];
         [extras removeObjectForKey:@"_"];
     }
