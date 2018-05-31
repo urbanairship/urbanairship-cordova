@@ -65,6 +65,11 @@ NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
 NSString *const EventRegistration = @"urbanairship.registration";
 NSString *const EventDeepLink = @"urbanairship.deep_link";
 
+// Extras
+NSString *const ExtrasTitle = @"com.urbanairship.title";
+NSString *const ExtrasAlert = @"com.urbanairship.push.ALERT";
+NSString *const ExtrasPushId = @"com.urbanairship.push.PUSH_ID";
+
 
 
 - (void)pluginInitialize {
@@ -973,8 +978,15 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }
 
     if([[extras allKeys] containsObject:@"_"]) {
+        [extras setValue:extras[@"_"] forKey:ExtrasPushId];
         [extras removeObjectForKey:@"_"];
     }
+
+    if ([notificationContent respondsToSelector:NSSelectorFromString(@"alertTitle")]) {
+		[extras setValue:notificationContent.alertTitle forKey:ExtrasTitle];
+    }
+
+    [extras setValue:notificationContent.alertBody ?: @"" forKey:ExtrasAlert];
 
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
     result[@"message"] = notificationContent.alertBody ?: @"";
