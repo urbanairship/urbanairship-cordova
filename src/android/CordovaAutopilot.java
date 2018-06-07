@@ -30,6 +30,7 @@ import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.XmlRes;
 import android.util.Log;
 
 import com.urbanairship.AirshipConfigOptions;
@@ -43,6 +44,7 @@ import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.DeepLinkAction;
 import com.urbanairship.actions.OpenRichPushInboxAction;
 import com.urbanairship.actions.OverlayRichPushMessageAction;
+import com.urbanairship.push.NotificationButtonGroupUtils;
 import com.urbanairship.push.notifications.DefaultNotificationFactory;
 import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.util.UAStringUtil;
@@ -198,13 +200,20 @@ public class CordovaAutopilot extends Autopilot {
 
         airship.getPushManager().setNotificationFactory(factory);
 
-
         UAirship.shared().getInbox().addListener(new RichPushInbox.Listener() {
             @Override
             public void onInboxUpdated() {
                 UAirshipPluginManager.shared().inboxUpdated();
             }
         });
+
+        String packageName = UAirship.shared().getPackageName();
+        @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", packageName);
+
+        if (resId > 0) {
+            Logger.debug("Loading custom notification button groups");
+            NotificationButtonGroupUtils.addNotificationActionButtonGroups(context, resId);
+        }
     }
 
     /**

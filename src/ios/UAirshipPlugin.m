@@ -106,6 +106,16 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     // Please populate AirshipConfig.plist with your info from http://go.urbanairship.com
     [UAirship takeOff:config];
 
+    // Search for a custom plist of notification categories, and if found, register them
+    NSString *categoriesPath = [[NSBundle mainBundle] pathForResource:@"UACustomNotificationCategories" ofType:@"plist"];
+    NSSet *customNotificationCategories = [UANotificationCategories createCategoriesFromFile:categoriesPath];
+
+    if (customNotificationCategories.count) {
+        UA_LDEBUG(@"Registering custom notification categories: %@", customNotificationCategories);
+        [UAirship push].customCategories = customNotificationCategories;
+        [[UAirship push] updateRegistration];
+    }
+
     [UAirship push].userPushNotificationsEnabledByDefault = [settings[EnablePushOnLaunchConfigKey] boolValue];
 
     if (settings[ClearBadgeOnLaunchConfigKey] == nil || [settings[ClearBadgeOnLaunchConfigKey] boolValue]) {
@@ -1003,7 +1013,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }
     return defaultValue;
 }
-
 
 - (UANotificationAction *)notificationActionForCategory:(NSString *)category actionIdentifier:(NSString *)identifier {
     NSSet *categories = [UAirship push].combinedCategories;
