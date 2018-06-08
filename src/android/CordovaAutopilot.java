@@ -44,7 +44,6 @@ import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.DeepLinkAction;
 import com.urbanairship.actions.OpenRichPushInboxAction;
 import com.urbanairship.actions.OverlayRichPushMessageAction;
-import com.urbanairship.push.NotificationButtonGroupUtils;
 import com.urbanairship.push.notifications.DefaultNotificationFactory;
 import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.util.UAStringUtil;
@@ -210,9 +209,9 @@ public class CordovaAutopilot extends Autopilot {
         String packageName = UAirship.shared().getPackageName();
         @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", packageName);
 
-        if (resId > 0) {
+        if (resId != 0) {
             Logger.debug("Loading custom notification button groups");
-            NotificationButtonGroupUtils.addNotificationActionButtonGroups(context, resId);
+            airship.getPushManager().addNotificationActionButtonGroups(context, resId);
         }
     }
 

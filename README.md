@@ -87,14 +87,30 @@ the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disa
         <!-- iOS 10 sound foreground notification presentation option -->
         <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true | false"/>
 
-3. *(Android Only)* Add a reference to your google-servies.json file (parallel to config.xml):
+3. Add any desired platform-specific resource files to config.xml:
+
+       <!-- Optional: include custom notification button groups in XML format -->
+       <platform name="android">
+            ...
+            <resource-file src="ua_custom_notification_buttons.xml" target="app/src/main/res/xml/ua_custom_notification_buttons.xml" />
+       </platform>
+       
+       ...
+
+       <!-- Optional: include custom notification categories in plist format -->
+       <platform name="iOS">
+            ...
+            <resource-file src="UACustomNotificationCategories.plist" />
+       </platform>
+
+4. *(Android Only)* Add a reference to your google-servies.json file, for configuring FCM (parallel to config.xml):
 
        <platform name="android">
             ...
             <resource-file src="google-services.json" target="app/google-services.json" />
        </platform>
 
-4. *(iOS Only)* Add your Apple Developer Account Team ID to the [build.json](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#using-buildjson):
+5. *(iOS Only)* Add your Apple Developer Account Team ID to the [build.json](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#using-buildjson):
 
         {
             "ios": {
@@ -108,7 +124,7 @@ the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disa
         }
     Your iOS builds will need to reference the build.json using Cordova's "--buildConfig" flag.
 
-4. Enable user notifications:
+6. Enable user notifications:
 
         // Enable user notifications (will prompt the user to accept push notifications)
         UAirship.setUserNotificationsEnabled(true, function (enabled) {
