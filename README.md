@@ -19,7 +19,7 @@ One of our engineers will verify receipt of the agreement before approving your 
 Please visit http://support.urbanairship.com/ for any issues integrating or using this plugin.
 
 ### Requirements:
- - Cordova-CLI >= 6.4.0
+ - Cordova-CLI >= 7.0.0
  - Android [GCM Setup](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup)
  - iOS [APNS Setup](http://docs.urbanairship.com/reference/push-providers/apns.html)
 
@@ -41,9 +41,6 @@ the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disa
         <preference name="com.urbanairship.production_app_secret" value="Your Production App Secret" />
         <preference name="com.urbanairship.development_app_key" value="Your Development App Key" />
         <preference name="com.urbanairship.development_app_secret" value="Your Development App Secret" />
-
-        <!-- Required for Android. -->
-        <preference name="com.urbanairship.gcm_sender" value="sender:Your GCM Sender ID" />
 
         <!-- If the app is in production or not -->
         <preference name="com.urbanairship.in_production" value="true | false" />
@@ -90,7 +87,14 @@ the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disa
         <!-- iOS 10 sound foreground notification presentation option -->
         <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true | false"/>
 
-3. *(iOS Only)* Add your Apple Developer Account Team ID to the [build.json](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#using-buildjson):
+3. *(Android Only)* Add a reference to your google-servies.json file (parallel to config.xml):
+
+       <platform name="android">
+            ...
+            <resource-file src="google-services.json" target="app/google-services.json" />
+       </platform>
+
+4. *(iOS Only)* Add your Apple Developer Account Team ID to the [build.json](https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#using-buildjson):
 
         {
             "ios": {
