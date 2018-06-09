@@ -18,12 +18,12 @@ typedef NS_ENUM(NSInteger, UAInAppMessageModalContentLayoutType) {
      * Header, Media, Body
      */
     UAInAppMessageModalContentLayoutHeaderMediaBody,
-    
+
     /**
      * Media, Header, Body
      */
     UAInAppMessageModalContentLayoutMediaHeaderBody,
-    
+
     /**
      * Header, Body, Media
      */
@@ -92,6 +92,12 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 @property(nonatomic, assign) NSUInteger borderRadius;
 
 /**
+ * Flag indicating the modal should display as full screen on compact devices.
+ * Defaults to NO.
+ */
+@property(nonatomic, assign) BOOL allowFullScreenDisplay;
+
+/**
  * Checks if the builder is valid and will produce an display content instance.
  * @return YES if the builder is valid, otherwise NO.
  */
@@ -156,13 +162,26 @@ extern NSUInteger const UAInAppMessageModalMaxButtons;
 @property(nonatomic, assign, readonly) NSUInteger borderRadius;
 
 /**
- * Factory method for building modal message display content with builder block.
+ * Flag indicating the modal should display as full screen on compact devices.
+ * Defaults to NO.
+ */
+@property(nonatomic, assign, readonly) BOOL allowFullScreenDisplay;
+
+/**
+ * Factory method for building modal message display content with a builder block.
  *
  * @param builderBlock The builder block.
- *
- * @returns the display content if the builder block successfully built it, otherwise nil.
+ * @return The display content if the builder block successfully built it, otherwise nil.
  */
 + (nullable instancetype)displayContentWithBuilderBlock:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock;
+
+/**
+ * Extends a modal display content with a builder block.
+ *
+ * @param builderBlock The builder block.
+ * @return An extended instance of UAInAppMessageModalDisplayContent.
+ */
+- (UAInAppMessageModalDisplayContent *)extend:(void(^)(UAInAppMessageModalDisplayContentBuilder *builder))builderBlock;
 
 @end
 
