@@ -103,7 +103,7 @@ the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disa
             <resource-file src="UACustomNotificationCategories.plist" />
        </platform>
 
-4. *(Android Only)* Add a reference to your google-servies.json file, for configuring FCM (parallel to config.xml):
+4. *(Android Only)* Add a reference to your google-servies.json file, for configuring FCM (assuming it is parallel to config.xml in your project directory):
 
        <platform name="android">
             ...
