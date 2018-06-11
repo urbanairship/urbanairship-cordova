@@ -19,10 +19,9 @@ allprojects {
 }
 
 dependencies {
+    implementation 'com.google.firebase:firebase-core:16.0.0
     compile 'com.android.support:support-v4:27.1.1'
     compile 'com.android.support:support-annotations:27.1.1'
-    compile 'com.google.android.gms:play-services-gcm:15.0.1'
-    compile 'com.android.support:cardview-v7:27.1.1'
     compile 'com.google.android.gms:play-services-location:15.0.1'
     compile 'com.android.support:appcompat-v7:27.1.1'
     compile 'com.urbanairship.android:urbanairship-fcm:9.3.0'
