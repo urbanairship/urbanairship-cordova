@@ -965,20 +965,32 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
         return @{ @"message": @"", @"extras": @{}};
     }
 
-    // remove extraneous key/value pairs
-    NSMutableDictionary *extras = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
+    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
 
-    if([[extras allKeys] containsObject:@"aps"]) {
-        [extras removeObjectForKey:@"aps"];
-    }
-
-    if([[extras allKeys] containsObject:@"_"]) {
-        [extras removeObjectForKey:@"_"];
+    // remove the send ID
+    if([[info allKeys] containsObject:@"_"]) {
+        [info removeObjectForKey:@"_"];
     }
 
     NSMutableDictionary *result = [NSMutableDictionary dictionary];
+
+    // If there is an aps dictionary in the extras, remove it and set it as a top level object
+    if([[info allKeys] containsObject:@"aps"]) {
+        result[@"aps"] = info[@"aps"];
+        [info removeObjectForKey:@"aps"];
+    }
+
     result[@"message"] = notificationContent.alertBody ?: @"";
-    result[@"extras"] = extras;
+
+    // Set the title and subtitle as top level objects, if present
+    NSString *title = notificationContent.alertTitle;
+    NSString *subtitle = notificationContent.notification.request.content.subtitle;
+    [result setValue:title forKey:@"title"];
+    [result setValue:subtitle forKey:@"subtitle"];
+
+    // Set the remaining info as extras
+    result[@"extras"] = info;
+
     return result;
 }
 
