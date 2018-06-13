@@ -772,6 +772,16 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     completionHandler();
 }
 
+- (void)receivedBackgroundNotification:(UANotificationContent *)notificationContent
+                     completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
+    UA_LDEBUG(@"Received a background notification %@", notificationContent);
+
+    id event = [self pushEventFromNotification:notificationContent];
+    [self notifyListener:EventPushReceived data:event];
+    completionHandler(UIBackgroundFetchResultNoData);
+}
+
 #pragma mark UAInboxDelegate
 
 - (void)showMessageForID:(NSString *)messageID {
@@ -959,7 +969,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     return YES;
 }
 
-
 - (NSDictionary *)pushEventFromNotification:(UANotificationContent *)notificationContent {
     if (!notificationContent) {
         return @{ @"message": @"", @"extras": @{}};
@@ -1015,7 +1024,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }
     return defaultValue;
 }
-
 
 - (UANotificationAction *)notificationActionForCategory:(NSString *)category actionIdentifier:(NSString *)identifier {
     NSSet *categories = [UAirship push].combinedCategories;
