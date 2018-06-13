@@ -23,6 +23,14 @@ NS_ASSUME_NONNULL_BEGIN
 ///---------------------------------------------------------------------------------------
 
 /**
+ * Allows the delegate to extend a message before display.
+ *
+ * @param message The message.
+ * @return An extended instance of the message.
+ */
+- (UAInAppMessage *)extendMessage:(UAInAppMessage *)message;
+
+/**
  * Indicates that an in-app message will be displayed.
  * @param message The associated in-app message.
  * @param scheduleID The schedule ID.
@@ -48,6 +56,11 @@ NS_ASSUME_NONNULL_BEGIN
  * In-app message enable flag.
  */
 @property (nonatomic, assign, getter=isEnabled) BOOL enabled;
+
+/**
+ * In-app message display paused flag.
+ */
+@property (nonatomic, assign, getter=isPaused) BOOL paused;
 
 /**
  * In-app messaging delegate.

@@ -1,5 +1,7 @@
 /* Copyright 2018 Urban Airship and Contributors */
 
+#import <UIKit/UIKit.h>
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class UAMessageCenterListViewController;
@@ -9,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Protocol to be implemented by internal message center message view controllers.
  */
 @protocol UAMessageCenterMessageViewProtocol
+
 
 /**
  * The UAInboxMessage being displayed.
@@ -38,6 +41,18 @@ NS_ASSUME_NONNULL_BEGIN
  * @param errorCompletion Called on loading error
  */
 - (void)loadMessageForID:(NSString *)messageID onlyIfChanged:(BOOL)onlyIfChanged onError:(nullable void (^)(void))errorCompletion;
+
+
+@optional
+
+/**
+ * Sets a custom message loading indicator view and animation. Will
+ * show the default loading indicator and animation if left unset.
+ *
+ * @param loadingIndicatorView Loading indicator view.
+ * @param animations Block to execute upon displaying loading indicator view.
+ */
+- (void)setLoadingIndicatorView:(UIView *)loadingIndicatorView animations:(void (^)(void))animations;
 
 @end
 
