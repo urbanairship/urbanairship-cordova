@@ -42,6 +42,6 @@
     "minami": "1.2.3"
   },
   "scripts": {
-    "generate-docs": "node_modules/.bin/jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md"
+    "generate-docs": "jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md"
   }
 }
