@@ -1,3 +1,17 @@
+
+=================================
+Version 7.1.0 - June 13, 2018
+=================================
+- Updated iOS SDK to 9.2.1
+- Updated Android SDK to 9.3.0
+- Added support for FCM on Android
+- Added support for loading custom notification categories
+- Notification event payloads now contain title and subtitle
+- iOS notification event payloads now contain a top level APS object with raw notification data
+- iOS background notifications now generate events
+- Plugin now requires Cordova 7.0. Earlier versions may work, but integration steps and
+  documentation assume Cordova 7.0 or higher moving forward.
+
 =================================
 Version 7.0.1 - March 8, 2018
 =================================
