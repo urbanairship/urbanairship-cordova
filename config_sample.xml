@@ -28,8 +28,6 @@
 <preference name="com.urbanairship.production_app_secret" value="APP_SECRET_PLACEHOLDER" />
 <preference name="com.urbanairship.development_app_key" value="APP_KEY_PLACEHOLDER" />
 <preference name="com.urbanairship.development_app_secret" value="APP_SECRET_PLACEHOLDER" />
-<!-- Required for Android. -->
-<preference name="com.urbanairship.gcm_sender" value="GCM_SENDER_ID_PLACEHOLDER" />
 <!-- If the app is in production or not -->
 <preference name="com.urbanairship.in_production" value="false" />
 <!-- Optional config values -->
