@@ -841,6 +841,8 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         try {
             data.putOpt("message", message.getAlert());
+            data.putOpt("title", message.getTitle());
+            data.putOpt("subtitle", message.getSummary());
             data.putOpt("extras", new JSONObject(extras));
             data.putOpt("notification_id", notificationId);
         } catch (JSONException e) {

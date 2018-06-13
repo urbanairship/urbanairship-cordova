@@ -143,7 +143,7 @@ module.exports = {
   /**
    * Event fired when a new deep link is received.
    *
-   * @event urbanairship.deep_link
+   * @event UrbanAirship#deep_link
    * @type {object}
    * @param {string} [deepLink] The deep link.
    */
@@ -151,7 +151,7 @@ module.exports = {
   /**
    * Event fired when a channel registration occurs.
    *
-   * @event urbanairship.registration
+   * @event UrbanAirship#registration
    * @type {object}
    * @param {string} [channelID] The channel ID.
    * @param {string} [registrationToken] The deviceToken on iOS, and the FCM/ADM token on Android.
@@ -161,23 +161,26 @@ module.exports = {
   /**
    * Event fired when the inbox is updated.
    *
-   * @event urbanairship.inbox_updated
+   * @event UrbanAirship#inbox_updated
    */
 
   /**
    * Event fired when a push is received.
    *
-   * @event urbanairship.push
+   * @event UrbanAirship#push
    * @type {object}
    * @param {string} message The push alert message.
+   * @param {string} title The push title.
+   * @param {string} subtitle The push subtitle.
    * @param {object} extras Any push extras.
+   * @param {object} aps The raw aps dictionary (iOS only)
    * @param {number} [notification_id] The Android notification ID.
    */
 
   /**
    * Event fired when notification opened.
    *
-   * @event urbanairship.notification_opened
+   * @event UrbanAirship#notification_opened
    * @type {object}
    * @param {string} message The push alert message.
    * @param {object} extras Any push extras.
@@ -186,17 +189,17 @@ module.exports = {
    * @param {boolean} isForeground Will always be true if the user taps the main notification. Otherwise its defined by the notificaiton action button.
    */
 
-   /**
-    * Event fired when the user notification opt-in status changes.
-    *
-    * @event urbanairship.notification_opt_in_status
-    * @type {object}
-    * @param {boolean} optIn If the user is opted in or not to user notifications.
-    * @param {object} [notificationOptions] iOS only. A map of opted in options.
-    * @param {boolean} notificationOptions.alert If the user is opted into alerts.
-    * @param {boolean} notificationOptions.sound If the user is opted into sounds.
-    * @param {boolean} notificationOptions.badge If the user is opted into badge updates.
-    */
+  /**
+   * Event fired when the user notification opt-in status changes.
+   *
+   * @event UrbanAirship#notification_opt_in_status
+   * @type {object}
+   * @param {boolean} optIn If the user is opted in or not to user notifications.
+   * @param {object} [notificationOptions] iOS only. A map of opted in options.
+   * @param {boolean} notificationOptions.alert If the user is opted into alerts.
+   * @param {boolean} notificationOptions.sound If the user is opted into sounds.
+   * @param {boolean} notificationOptions.badge If the user is opted into badge updates.
+   */
 
   /**
    * Re-attaches document event listeners in this webview
