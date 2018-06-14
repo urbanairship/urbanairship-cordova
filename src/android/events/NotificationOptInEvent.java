@@ -1,17 +1,13 @@
-/* Copyright 2017 Urban Airship and Contributors */
+/* Copyright 2018 Urban Airship and Contributors */
 
 package com.urbanairship.cordova.events;
 
 import android.support.annotation.NonNull;
 
 import com.urbanairship.Logger;
-import com.urbanairship.push.PushMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**

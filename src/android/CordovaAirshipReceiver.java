@@ -43,21 +43,21 @@ public class CordovaAirshipReceiver extends AirshipReceiver {
     @Override
     protected void onChannelCreated(Context context, String channelId) {
         Log.i(TAG, "Channel created. Channel ID: " + channelId + ".");
-        UAirshipPluginManager.shared().channelUpdated(channelId, true);
-        UAirshipPluginManager.shared().checkOptInStatus(context);
+        PluginManager.shared().channelUpdated(channelId, true);
+        PluginManager.shared().checkOptInStatus(context);
     }
 
     @Override
     protected void onChannelUpdated(Context context, String channelId) {
         Log.i(TAG, "Channel updated. Channel ID: " + channelId + ".");
-        UAirshipPluginManager.shared().channelUpdated(channelId, true);
-        UAirshipPluginManager.shared().checkOptInStatus(context);
+        PluginManager.shared().channelUpdated(channelId, true);
+        PluginManager.shared().checkOptInStatus(context);
     }
 
     @Override
     protected void onChannelRegistrationFailed(Context context) {
         Log.i(TAG, "Channel registration failed.");
-        UAirshipPluginManager.shared().channelUpdated(UAirship.shared().getPushManager().getChannelId(), false);
+        PluginManager.shared().channelUpdated(UAirship.shared().getPushManager().getChannelId(), false);
     }
 
     @Override
@@ -66,7 +66,7 @@ public class CordovaAirshipReceiver extends AirshipReceiver {
 
 
         if (!notificationPosted) {
-            UAirshipPluginManager.shared().pushReceived(null, message);
+            PluginManager.shared().pushReceived(null, message);
         }
     }
 
@@ -74,14 +74,14 @@ public class CordovaAirshipReceiver extends AirshipReceiver {
     protected void onNotificationPosted(@NonNull Context context, @NonNull NotificationInfo notificationInfo) {
         Log.i(TAG, "Notification posted. Alert: " + notificationInfo.getMessage().getAlert() + ". NotificationId: " + notificationInfo.getNotificationId());
 
-        UAirshipPluginManager.shared().pushReceived(notificationInfo.getNotificationId(), notificationInfo.getMessage());
+        PluginManager.shared().pushReceived(notificationInfo.getNotificationId(), notificationInfo.getMessage());
     }
 
     @Override
     protected boolean onNotificationOpened(@NonNull Context context, @NonNull NotificationInfo notificationInfo) {
         Log.i(TAG, "Notification opened. Alert: " + notificationInfo.getMessage().getAlert() + ". NotificationId: " + notificationInfo.getNotificationId());
 
-        UAirshipPluginManager.shared().notificationOpened(notificationInfo);
+        PluginManager.shared().notificationOpened(notificationInfo);
 
         // Return false here to allow Urban Airship to auto launch the launcher activity
         return false;
@@ -91,7 +91,7 @@ public class CordovaAirshipReceiver extends AirshipReceiver {
     protected boolean onNotificationOpened(@NonNull Context context, @NonNull NotificationInfo notificationInfo, @NonNull ActionButtonInfo actionButtonInfo) {
         Log.i(TAG, "Notification action button opened. Button ID: " + actionButtonInfo.getButtonId() + ". NotificationId: " + notificationInfo.getNotificationId());
 
-        UAirshipPluginManager.shared().notificationOpened(notificationInfo, actionButtonInfo);
+        PluginManager.shared().notificationOpened(notificationInfo, actionButtonInfo);
 
         // Return false here to allow Urban Airship to auto launch the launcher
         // activity for foreground notification action buttons

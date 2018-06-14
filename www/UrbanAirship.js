@@ -1,27 +1,4 @@
-/*
- Copyright 2009-2017 Urban Airship Inc. All rights reserved.
-
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
-
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
-
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/* Copyright 2018 Urban Airship and Contributors */
 
 var cardova = require("cordova"),
     exec = require("cordova/exec"),
@@ -205,6 +182,34 @@ module.exports = {
    * Re-attaches document event listeners in this webview
    */
   reattach: bindDocumentEvent,
+
+  /**
+   * Initailizes Urban Airship.
+   *
+   * The plugin will automatically call takeOff during the next app init in
+   * order to properly handle incoming push. If takeOff is called multiple times
+   * in a session, or if the config is different than the previous sesssion, the
+   * new config will not be used until the next app start.
+   *
+   * @param {object}  config The Urban Airship Config.
+   * @param {object}  config.development The Urban Airship development config.
+   * @param {string}  config.development.appKey The development appKey.
+   * @param {string}  config.development.appSecret The development appSecret.
+   * @param {string}  [config.development.logLevel] The development log level.
+   * @param {object}  config.production The Urban Airship production config.
+   * @param {string}  config.production.appKey The production appKey.
+   * @param {string}  config.production.appSecret The production appSecret.
+   * @param {string}  [config.production.logLevel] The production log level.
+   * @param {object}  [config.android] The Urban Airship Android Config.
+   * @param {string}  [config.android.notificationIcon] The name of the drawable resource to use as the notification icon.
+   * @param {string}  [config.android.notificationLargeIcon] The name of the drawable resource to use as the notification large icon.
+   * @param {string}  [config.android.notificationAccentColor] The notification accent color. Format is #AARRGGBB.
+   * @param {boolean} [config.autoLaunchMessageCenter] True to enable auto launching the message center when the corresponding push is opened. False to disable.
+   */
+  takeOff: function(config, success, failure) {
+    argscheck.checkArgs("*FF", "UAirship.takeOff", arguments);
+    callNative(success, failure, "takeOff", [namedUser]);
+  },
 
   /**
    * Enables or disables user notifications.

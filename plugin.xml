@@ -37,6 +37,10 @@
                 android:name="com.urbanairship.autopilot"
                 android:value="com.urbanairship.cordova.CordovaAutopilot"/>
 
+            <meta-data
+                android:name="com.urbanairship.webview.ENABLE_LOCAL_STORAGE"
+                android:value="true" />
+
             <receiver
                 android:name="com.urbanairship.cordova.CordovaAirshipReceiver"
                 android:exported="false">
@@ -120,7 +124,10 @@
             src="src/android/CustomLandingPageActivity.java"
             target-dir="src/com/urbanairship/cordova"/>
         <source-file
-            src="src/android/UAirshipPluginManager.java"
+            src="src/android/PluginManager.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/PluginConfig.java"
             target-dir="src/com/urbanairship/cordova"/>
         <source-file
             src="src/android/events/RegistrationEvent.java"

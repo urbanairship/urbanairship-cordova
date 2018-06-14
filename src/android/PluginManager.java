@@ -1,27 +1,4 @@
-/*
- Copyright 2009-2017 Urban Airship Inc. All rights reserved.
-
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
-
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
-
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/* Copyright 2018 Urban Airship and Contributors */
 
 package com.urbanairship.cordova;
 
@@ -47,7 +24,7 @@ import java.util.List;
 /**
  * Handles state and events for the Cordova Plugin.
  */
-public class UAirshipPluginManager {
+public class PluginManager {
 
     /**
      * Interface when a new event is received.
@@ -56,7 +33,7 @@ public class UAirshipPluginManager {
         void onEvent(Event event);
     }
 
-    private static final UAirshipPluginManager shared = new UAirshipPluginManager();
+    private static final PluginManager shared = new PluginManager();
 
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
     private static final String UA_PLUGIN_SHARED_PREFERENCES_FILE = "com.urbanairship.ua_plugin_shared_preferences";
@@ -69,17 +46,13 @@ public class UAirshipPluginManager {
 
     private List<Event> pendingEvents = new ArrayList<Event>();
 
-    private UAirshipPluginManager() {
-
-    }
-
 
     /**
      * Singleton access.
      *
      * @return The manager instance.
      */
-    public static UAirshipPluginManager shared() {
+    public static PluginManager shared() {
         return shared;
     }
 
@@ -134,7 +107,7 @@ public class UAirshipPluginManager {
 
             SharedPreferences.Editor editor = preferences.edit();
             editor.putBoolean(NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY, optIn);
-            editor.commit();
+            editor.apply();
 
             notifyListener(new NotificationOptInEvent(optIn));
         }
