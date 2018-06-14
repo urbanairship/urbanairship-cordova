@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="7.0.1"
+        version="7.1.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -326,7 +326,7 @@
         <resource-file src="src/ios/Airship/AirshipResources.bundle"/>
 
         <!-- Airship library -->
-        <source-file framework="true" src="src/ios/Airship/libUAirship-9.2.0.a"/>
+        <source-file framework="true" src="src/ios/Airship/libUAirship-9.2.1.a"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
