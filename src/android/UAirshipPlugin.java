@@ -61,15 +61,9 @@ import java.util.concurrent.Executors;
 public class UAirshipPlugin extends CordovaPlugin {
 
     /**
-     * List of Cordova "actions". To extend the plugin, add the action below and then define the method
-     * with the signature `void <CORDOVA_ACTION>(JSONArray data, final CallbackContext callbackContext)`
-     * and it will automatically be called. All methods will be executed in the ExecutorService. Any
-     * exceptions thrown by the actions are automatically caught and the callbackContext will return
-     * an error result.
-     * <p>
      * These actions are only available after takeOff.
      */
-    private final static List<String> airshipActions = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
+    private final static List<String> AIRSHIP_ACTIONS = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
@@ -78,16 +72,10 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "dismissOverlayInboxMessage", "setAutoLaunchDefaultMessageCenter");
 
 
-    /**
-     * List of Cordova "actions". To extend the plugin, add the action below and then define the method
-     * with the signature `void <CORDOVA_ACTION>(JSONArray data, final CallbackContext callbackContext)`
-     * and it will automatically be called. All methods will be executed in the ExecutorService. Any
-     * exceptions thrown by the actions are automatically caught and the callbackContext will return
-     * an error result.
-     * <p>
+    /*
      * These actions are available even if airship is not ready.
      */
-    private final static List<String> globalActions = Arrays.asList("takeOff", "registerListener", "setAndroidNotificationConfig");
+    private final static List<String> GLOBAL_ACTIONS = Arrays.asList("takeOff", "registerListener", "setAndroidNotificationConfig");
 
     private ExecutorService executorService = Executors.newFixedThreadPool(1);
 
@@ -117,10 +105,18 @@ public class UAirshipPlugin extends CordovaPlugin {
         }
     }
 
+
+    /**
+     * To extend the plugin, add the actions to either {@link #AIRSHIP_ACTIONS} or {#link #GLOBAL_ACTIONS} and
+     * then define the method with the signature `void <CORDOVA_ACTION>(JSONArray data, final
+     * CallbackContext callbackContext)` and it will automatically be called. All methods will be
+     * ( executed in the ExecutorService. Any exceptions thrown by the actions are automatically caught
+     * and the callbackContext will return an error result.
+     */
     @Override
     public boolean execute(final String action, final JSONArray data, final CallbackContext callbackContext) {
-        final boolean isGlobalAction = globalActions.contains(action);
-        final boolean isAirshipAction = airshipActions.contains(action);
+        final boolean isGlobalAction = GLOBAL_ACTIONS.contains(action);
+        final boolean isAirshipAction = AIRSHIP_ACTIONS.contains(action);
 
         if (!isAirshipAction && !isGlobalAction) {
             Logger.debug("Invalid action: " + action);
@@ -553,13 +549,9 @@ public class UAirshipPlugin extends CordovaPlugin {
 
     /**
      * Returns the alias.
-     *
      * @param data            The call data.
      * @param callbackContext The callback context.
      * @deprecated Deprecated since 6.7.0 - to be removed in a future version of the plugin - please use getNamedUser
-     * <p>
-     * <p/>
-     * Expected arguments: String
      */
     @Deprecated
     void getAlias(JSONArray data, CallbackContext callbackContext) {
@@ -818,7 +810,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
     /**
      * Runs an Urban Airship action.
-     * <p>
+     *
      * Expected arguments: String - action name, * - the action value
      *
      * @param data            The call data.

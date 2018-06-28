@@ -299,7 +299,7 @@ public class PluginManager {
     /**
      * Gets the auto launch message center option.
      *
-     * @return {@code true} to auto launch message center from a push, otherwise {@code false}.
+     * @return {@code true} to enable auto launching the  message center, otherwise {@code false}.
      */
     public boolean getAutoLaunchMessageCenter() {
         return getConfigBoolean(AUTO_LAUNCH_MESSAGE_CENTER, true);
@@ -348,7 +348,7 @@ public class PluginManager {
     }
 
     /**
-     * Edits the config.
+     * Creates a config editor.
      *
      * @return A config editor.
      */
@@ -393,7 +393,8 @@ public class PluginManager {
      * Gets a color value from the config.
      *
      * @param key The config key.
-     * @return The parsed color, or defaultColor.
+     * @param defaultColor Default value if the key does not exist.
+     * @return The value of the config, or default value.
      */
     private int getConfigColor(String key, int defaultColor) {
         String color = getConfigValue(key);
@@ -483,7 +484,7 @@ public class PluginManager {
          */
         public ConfigEditor setProductionConfig(@NonNull String appKey, @NonNull String appSecret) {
             editor.putString(PRODUCTION_KEY, appKey)
-                    .putString(PRODUCTION_SECRET, appSecret);
+                  .putString(PRODUCTION_SECRET, appSecret);
             return this;
         }
 
@@ -496,7 +497,7 @@ public class PluginManager {
          */
         public ConfigEditor setDevelopmentConfig(@NonNull String appKey, @NonNull String appSecret) {
             editor.putString(DEVELOPMENT_KEY, appKey)
-                    .putString(DEVELOPMENT_SECRET, appSecret);
+                  .putString(DEVELOPMENT_SECRET, appSecret);
             return this;
         }
 
@@ -507,7 +508,6 @@ public class PluginManager {
          * @return The config editor.
          */
         public ConfigEditor setNotificationIcon(String icon) {
-
             editor.putString(NOTIFICATION_ICON, icon);
             return this;
         }
@@ -537,7 +537,7 @@ public class PluginManager {
         /**
          * Sets auto launch message center option.
          *
-         * @param autoLaunchMessageCenter {@code true} to enable auto launching the message enter, otherwise {@code false}.
+         * @param autoLaunchMessageCenter {@code true} to enable auto launching the message center, otherwise {@code false}.
          * @return The config editor.
          */
         public ConfigEditor setAutoLaunchMessageCenter(boolean autoLaunchMessageCenter) {
