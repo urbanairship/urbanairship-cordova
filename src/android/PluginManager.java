@@ -442,7 +442,7 @@ public class PluginManager {
      * Gets a config value.
      *
      * @param key The key.
-     * @return The config value.
+     * @return The config value if it exists, otherwise the default config value.
      */
     private String getConfigValue(String key) {
         return sharedPreferences.getString(key, defaultConfigValues.get(key));
