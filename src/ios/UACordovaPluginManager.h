@@ -14,7 +14,7 @@
 @end
 
 /**
- * Manages config and event forwaring from the Urban Airship SDK.
+ * Manages config and event forwarding from the Urban Airship SDK.
  */
 @interface UACordovaPluginManager : NSObject
 
@@ -34,7 +34,7 @@
 @property (nonatomic, assign) BOOL autoLaunchMessageCenter;
 
 /**
- * Last received notification respons.
+ * Last received notification response.
  */
 @property (nonatomic, copy) NSDictionary *lastReceivedNotificationResponse;
 
@@ -46,19 +46,19 @@
 /**
  * Factory method.
  * @param defaultConfig The default cordova config.
- * @returns Plugin Manager instance.
+ * @return Plugin Manager instance.
  */
 + (instancetype)pluginManagerWithDefaultConfig:(NSDictionary *)defaultConfig;
 
 /**
- * Attemps takeOff if Airship is not already flying.
+ * Attempts takeOff if Airship is not already flying.
  */
 - (void)attemptTakeOff;
 
 /**
  * Sets the development credentials.
- * @param appKey The appKey.
- * @param appSecret The appSecret.
+ * @param appKey UA app key.
+ * @param appSecret UA app secret.
  */
 - (void)setDevelopmentAppKey:(NSString *)appKey appSecret:(NSString *)appSecret;
 

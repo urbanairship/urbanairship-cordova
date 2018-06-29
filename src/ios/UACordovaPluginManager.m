@@ -122,10 +122,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     return self.defaultConfig[key];
 }
 
-- (void)setCofigValue:(id)value forKey:(NSString *)key {
-    [[NSUserDefaults standardUserDefaults] setObject:value forKey:key];
-}
-
 - (BOOL)autoLaunchMessageCenter {
     if ([self configValueForKey:AutoLaunchMessageCenterKey] == nil) {
         return YES;
@@ -136,7 +132,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 - (void)setAutoLaunchMessageCenter:(BOOL)autoLaunchMessageCenter {
     [[NSUserDefaults standardUserDefaults] setValue:@(autoLaunchMessageCenter) forKey:AutoLaunchMessageCenterKey];
-
 }
 
 - (void)setProductionAppKey:(NSString *)appKey appSecret:(NSString *)appSecret {
@@ -148,7 +143,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [[NSUserDefaults standardUserDefaults] setValue:appKey forKey:DevelopmentAppKeyConfigKey];
     [[NSUserDefaults standardUserDefaults] setValue:appSecret forKey:DevelopmentAppSecretConfigKey];
 }
-
 
 -(NSInteger)parseLogLevel:(id)logLevel defaultLogLevel:(UALogLevel)defaultValue  {
     if (![logLevel isKindOfClass:[NSString class]] || ![logLevel length]) {
