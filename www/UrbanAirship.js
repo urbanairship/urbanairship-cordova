@@ -1,27 +1,4 @@
-/*
- Copyright 2009-2017 Urban Airship Inc. All rights reserved.
-
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
-
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
-
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/* Copyright 2018 Urban Airship and Contributors */
 
 var cardova = require("cordova"),
     exec = require("cordova/exec"),
@@ -207,6 +184,54 @@ module.exports = {
   reattach: bindDocumentEvent,
 
   /**
+   * Initailizes Urban Airship.
+   *
+   * The plugin will automatically call takeOff during the next app init in
+   * order to properly handle incoming push. If takeOff is called multiple times
+   * in a session, or if the config is different than the previous sesssion, the
+   * new config will not be used until the next app start.
+   *
+   * @param {object}  config The Urban Airship config.
+   * @param {object}  config.development The Urban Airship development config.
+   * @param {string}  config.development.appKey The development appKey.
+   * @param {string}  config.development.appSecret The development appSecret.
+   * @param {object}  config.production The Urban Airship production config.
+   * @param {string}  config.production.appKey The production appKey.
+   * @param {string}  config.production.appSecret The production appSecret.
+   */
+  takeOff: function(config, success, failure) {
+    argscheck.checkArgs("*FF", "UAirship.takeOff", arguments);
+    callNative(success, failure, "takeOff", [config]);
+  },
+
+  /**
+   * Sets the Android notification config. Values not set will fallback to any values set in the config.xml.
+   *
+   * @param {object}  config The notification config.
+   * @param {string}  [config.icon] The name of the drawable resource to use as the notification icon.
+   * @param {string}  [config.largeIcon] The name of the drawable resource to use as the notification large icon.
+   * @param {string}  [config.accentColor] The notification accent color. Format is #AARRGGBB.
+   */
+  setAndroidNotificationConfig: function(config, success, failure) {
+    argscheck.checkArgs("*FF", "UAirship.setAndroidNotificationConfig", arguments);
+    callNative(success, failure, "setAndroidNotificationConfig", [config]);
+  },
+
+  /**
+   * Sets the default behavior when the message center is launched from a push
+   * notification. If set to false the message center must be manually launched.
+   *
+   * @param {boolean} enabled true to automatically launch the default message center, false to disable.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  setAutoLaunchDefaultMessageCenter: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setAutoLaunchDefaultMessageCenter', arguments)
+    callNative(success, failure, "setAutoLaunchDefaultMessageCenter", [!!enabled]);
+  },
+
+  /**
    * Enables or disables user notifications.
    *
    * @param {boolean} enabled true to enable notifications, false to disable.
@@ -231,7 +256,6 @@ module.exports = {
     argscheck.checkArgs('fF', 'UAirship.isUserNotificationsEnabled', arguments)
     callNative(success, failure, "isUserNotificationsEnabled")
   },
-
 
   /**
    * Checks if app notifications are enabled or not. Its possible to have `userNotificationsEnabled`
