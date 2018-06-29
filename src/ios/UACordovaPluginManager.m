@@ -101,7 +101,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     }
 
     airshipConfig.developmentLogLevel = [self parseLogLevel:[self configValueForKey:DevelopmentLogLevelKey]
-                                           defaultLogLevel:UALogLevelDebug];
+                                            defaultLogLevel:UALogLevelDebug];
 
     airshipConfig.productionLogLevel = [self parseLogLevel:[self configValueForKey:ProductionLogLevelKey]
                                            defaultLogLevel:UALogLevelError];
