@@ -333,7 +333,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
                                           AuthorizedNotificationSettingsCarPlayKey : @(carPlayBool),
                                           AuthorizedNotificationSettingsLockScreenKey : @(lockScreenBool),
                                           AuthorizedNotificationSettingsNotificationCenterKey : @(notificationCenterBool)
-                                  };
+                                  }};
 
     UA_LINFO(@"Opt in status changed.");
     [self fireEvent:EventNotificationOptInStatus data:eventBody];
