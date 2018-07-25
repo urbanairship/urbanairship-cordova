@@ -209,6 +209,15 @@
 - (void)setNotificationTypes:(CDVInvokedUrlCommand *)command;
 
 /**
+ * Sets notification presentation options.
+ *
+ * Expected arguments: Number - bitmask of the notification options
+ *
+ * @param command The cordova command.
+ */
+- (void)setPresentationOptions:(CDVInvokedUrlCommand *)command;
+
+/**
  * Enables or disables analytics.
  *
  * Disabling analytics will delete any locally stored events

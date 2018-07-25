@@ -68,4 +68,11 @@
  * @param appSecret The appSecret.
  */
 - (void)setProductionAppKey:(NSString *)appKey appSecret:(NSString *)appSecret;
+
+/**
+ * Sets the presentation options.
+ * @param options The presentation options.
+ */
+- (void)setPresentationOptions:(NSUInteger)options;
+
 @end
