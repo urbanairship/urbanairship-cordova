@@ -188,6 +188,16 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
+- (void)setPresentationOptions:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        UNNotificationPresentationOptions options = [[args objectAtIndex:0] intValue];
+
+        UA_LDEBUG(@"Setting presentation options types: %ld", (long)options);
+        [self.pluginManager setPresentationOptions:(NSUInteger)options];
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
 - (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];

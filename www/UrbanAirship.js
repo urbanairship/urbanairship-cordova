@@ -791,7 +791,7 @@ module.exports = {
 
   /**
    * Sets the iOS notification types. Specify the combination of
-   * badges, sound and alerts are desired.
+   * badges, sound and alerts that are desired.
    *
    * @param {notificationType} types specified notification types.
    * @param {function} [success] Success callback.
@@ -804,11 +804,37 @@ module.exports = {
   },
 
   /**
+   * Sets the iOS presentation options. Specify the combination of
+   * badges, sound and alerts that are desired.
+   *
+   * @param {presentationOptions} types specified presentation options.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+   setPresentationOptions: function(options, success, failure) {
+     argscheck.checkArgs('nFF', 'UAirship.setPresentationOptions', arguments)
+     callNative(success, failure, "setPresentationOptions", [options])
+   },
+
+  /**
    * Enum for notification types.
    * @readonly
    * @enum {number}
    */
   notificationType: {
+    none: 0,
+    badge: 1,
+    sound: 2,
+    alert: 4
+  },
+
+  /**
+   * Enum for presentation options.
+   * @readonly
+   * @enum {number}
+   */
+  presentationOptions: {
     none: 0,
     badge: 1,
     sound: 2,

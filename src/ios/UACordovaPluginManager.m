@@ -144,6 +144,12 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [[NSUserDefaults standardUserDefaults] setValue:appSecret forKey:DevelopmentAppSecretConfigKey];
 }
 
+- (void)setPresentationOptions:(NSUInteger)options {
+    [[NSUserDefaults standardUserDefaults] setValue:@(options & UNNotificationPresentationOptionAlert) forKey:NotificationPresentationAlertKey];
+    [[NSUserDefaults standardUserDefaults] setValue:@(options & UNNotificationPresentationOptionBadge) forKey:NotificationPresentationBadgeKey];
+    [[NSUserDefaults standardUserDefaults] setValue:@(options & UNNotificationPresentationOptionSound) forKey:NotificationPresentationSoundKey];
+}
+
 -(NSInteger)parseLogLevel:(id)logLevel defaultLogLevel:(UALogLevel)defaultValue  {
     if (![logLevel isKindOfClass:[NSString class]] || ![logLevel length]) {
         return defaultValue;
@@ -203,7 +209,6 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
                      completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     UA_LDEBUG(@"Received a background notification %@", notificationContent);
-
     id event = [self pushEventFromNotification:notificationContent];
 
     [self fireEvent:EventPushReceived data:event];
