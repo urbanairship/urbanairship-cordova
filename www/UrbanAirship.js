@@ -829,6 +829,18 @@ module.exports = {
     alert: 4
   },
 
+  /**
+   * Enum for presentation options.
+   * @readonly
+   * @enum {number}
+   */
+  presentationOptions: {
+    none: 0,
+    badge: 1,
+    sound: 2,
+    alert: 4
+  },
+
   // Android only
 
   /**
