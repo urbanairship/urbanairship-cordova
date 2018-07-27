@@ -120,7 +120,7 @@ module.exports = {
   /**
    * Event fired when a new deep link is received.
    *
-   * @event UrbanAirship#deep_link
+   * @event deep_link
    * @type {object}
    * @param {string} [deepLink] The deep link.
    */
@@ -128,7 +128,7 @@ module.exports = {
   /**
    * Event fired when a channel registration occurs.
    *
-   * @event UrbanAirship#registration
+   * @event registration
    * @type {object}
    * @param {string} [channelID] The channel ID.
    * @param {string} [registrationToken] The deviceToken on iOS, and the FCM/ADM token on Android.
@@ -138,13 +138,13 @@ module.exports = {
   /**
    * Event fired when the inbox is updated.
    *
-   * @event UrbanAirship#inbox_updated
+   * @event inbox_updated
    */
 
   /**
    * Event fired when a push is received.
    *
-   * @event UrbanAirship#push
+   * @event push
    * @type {object}
    * @param {string} message The push alert message.
    * @param {string} title The push title.
@@ -157,7 +157,7 @@ module.exports = {
   /**
    * Event fired when notification opened.
    *
-   * @event UrbanAirship#notification_opened
+   * @event notification_opened
    * @type {object}
    * @param {string} message The push alert message.
    * @param {object} extras Any push extras.
@@ -169,7 +169,7 @@ module.exports = {
   /**
    * Event fired when the user notification opt-in status changes.
    *
-   * @event UrbanAirship#notification_opt_in_status
+   * @event notification_opt_in_status
    * @type {object}
    * @param {boolean} optIn If the user is opted in or not to user notifications.
    * @param {object} [authorizedNotificationSettings] iOS only. A map of authorized settings.
