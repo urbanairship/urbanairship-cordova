@@ -555,7 +555,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
 - (void)isAppNotificationsEnabled:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL optedIn = [UAirship push].authorizedNotificationOptions != 0;
+        BOOL optedIn = [UAirship push].authorizedNotificationSettings != 0;
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:optedIn]);
     }];
 }

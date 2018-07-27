@@ -19,6 +19,13 @@ NSString *const NotificationPresentationAlertKey = @"com.urbanairship.ios_foregr
 NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foreground_notification_presentation_badge";
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 
+NSString *const AuthorizedNotificationSettingsAlertKey = @"alert";
+NSString *const AuthorizedNotificationSettingsBadgeKey = @"badge";
+NSString *const AuthorizedNotificationSettingsSoundKey = @"sound";
+NSString *const AuthorizedNotificationSettingsCarPlayKey = @"carPlay";
+NSString *const AuthorizedNotificationSettingsLockScreenKey = @"lockScreen";
+NSString *const AuthorizedNotificationSettingsNotificationCenterKey = @"notificationCenter";
+
 // Events
 NSString *const EventPushReceived = @"urbanairship.push";
 NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
@@ -276,33 +283,57 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     [self fireEvent:EventRegistration data:@{ @"error": @"Registration failed." }];
 }
 
-- (void)notificationAuthorizedOptionsDidChange:(UANotificationOptions)options {
+- (void)notificationAuthorizedSettingsDidChange:(UAAuthorizedNotificationSettings)authorizedSettings {
     BOOL optedIn = NO;
 
     BOOL alertBool = NO;
     BOOL badgeBool = NO;
     BOOL soundBool = NO;
+    BOOL carPlayBool = NO;
+    BOOL lockScreenBool = NO;
+    BOOL notificationCenterBool = NO;
 
-    if (options & UANotificationOptionAlert) {
+    if (authorizedSettings & UAAuthorizedNotificationSettingsAlert) {
         alertBool = YES;
     }
 
-    if (options & UANotificationOptionBadge) {
+    if (authorizedSettings & UAAuthorizedNotificationSettingsBadge) {
         badgeBool = YES;
     }
 
-    if (options & UANotificationOptionSound) {
+    if (authorizedSettings & UAAuthorizedNotificationSettingsSound) {
         soundBool = YES;
     }
 
-    optedIn = alertBool || badgeBool || soundBool;
+    if (authorizedSettings & UAAuthorizedNotificationSettingsCarPlay) {
+        carPlayBool = YES;
+    }
+
+    if (authorizedSettings & UAAuthorizedNotificationSettingsLockScreen) {
+        lockScreenBool = YES;
+    }
+
+    if (authorizedSettings & UAAuthorizedNotificationSettingsNotificationCenter) {
+        notificationCenterBool = YES;
+    }
+
+    optedIn = authorizedSettings != UAAuthorizedNotificationSettingsNone;
 
     NSDictionary *eventBody = @{  @"optIn": @(optedIn),
+                                  // Deprecated payload for backwards compatibility
                                   @"notificationOptions" : @{
                                           NotificationPresentationAlertKey : @(alertBool),
                                           NotificationPresentationBadgeKey : @(badgeBool),
-                                          NotificationPresentationSoundKey : @(soundBool) }
-                                  };
+                                          NotificationPresentationSoundKey : @(soundBool)
+                                  },
+                                  @"authorizedNotificationSettings" : @{
+                                          AuthorizedNotificationSettingsAlertKey : @(alertBool),
+                                          AuthorizedNotificationSettingsBadgeKey : @(badgeBool),
+                                          AuthorizedNotificationSettingsSoundKey : @(soundBool),
+                                          AuthorizedNotificationSettingsCarPlayKey : @(carPlayBool),
+                                          AuthorizedNotificationSettingsLockScreenKey : @(lockScreenBool),
+                                          AuthorizedNotificationSettingsNotificationCenterKey : @(notificationCenterBool)
+                                  }};
 
     UA_LINFO(@"Opt in status changed.");
     [self fireEvent:EventNotificationOptInStatus data:eventBody];
