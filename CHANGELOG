@@ -1,3 +1,10 @@
+=================================
+Version 7.2.0 - July 26, 2018
+=================================
+- Updated iOS SDK to 9.3.3
+- Updated Android SDK to 9.4.1
+- Added setter for foreground presentation options
+- Enabled takeOff from the JS interface for iOS and Android 
 
 =================================
 Version 7.1.1 - June 15, 2018
