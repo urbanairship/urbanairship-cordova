@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#
+# run_ci_tasks.sh [OPTIONS] [PATH TO SAMPLE APP]
+# where OPTIONS are:
+#  -a to run Android CI tasks.
+#  -i to run iOS CI tasks.
+#  Defaults to -a -i.
+#
+
 set -euxo pipefail
 
 SCRIPT_DIRECTORY=`dirname "$0"`
@@ -22,7 +30,7 @@ fi
 
 while true; do
   case "${1:-}" in
-    -h  ) echo -ne "\n${SCRIPT_NAME} [OPTIONS] [PATH FOR SAMPLE APP]\nwhere OPTIONS are:\n  -a to run Android CI tasks.\n  -i to run iOS CI tasks.\n  Defaults to -a -i. \n"; exit 0;;
+    -h  ) echo -ne "\n${SCRIPT_NAME} [OPTIONS] [PATH TO SAMPLE APP]\nwhere OPTIONS are:\n  -a to run Android CI tasks.\n  -i to run iOS CI tasks.\n  Defaults to -a -i. \n"; exit 0;;
     -a  ) ANDROID=true;;
     -i  ) IOS=true;;
     --  ) ;;
