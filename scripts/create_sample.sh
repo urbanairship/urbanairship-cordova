@@ -1,7 +1,9 @@
-#!/bin/bash -ex
+#!/bin/bash
 
-cd "$(dirname "${BASH_SOURCE[0]}")"
-ROOT_DIR="$(pwd)"
+set -euxo pipefail
+
+cd `dirname "${0}"`/../
+ROOT_PATH="$(pwd)"
 cd -
 
 CORDOVA_PATH=$1
@@ -14,8 +16,8 @@ fi
 
 # Set up script to create a sample for iOS and android testing.
 # Follow the steps below.
-# 1. Add the UA credentials to the `config_sample.xml` file in the test directory and save.
-# 2. Run the script with the command `./create_sample.sh `
+# 1. Add the UA credentials to the `config_sample.xml` file and save.
+# 2. Run the script with the command `./scripts/create_sample.sh `
 # 3. Build the platform you want to test (see comments below).
 
 # keep cordova up to date
@@ -31,13 +33,13 @@ cordova create test com.urbanairship.sample Test
 cd test
 
 # add the plugin
-cordova plugin add $ROOT_DIR
+cordova plugin add $ROOT_PATH
 
 # copy config and example files
-cp $ROOT_DIR/config_sample.xml config.xml
-cp $ROOT_DIR/Example/index.html www/index.html
-cp $ROOT_DIR/Example/css/* www/css
-cp $ROOT_DIR/Example/js/* www/js
+cp $ROOT_PATH/config_sample.xml config.xml
+cp $ROOT_PATH/Example/index.html www/index.html
+cp $ROOT_PATH/Example/css/* www/css
+cp $ROOT_PATH/Example/js/* www/js
 
 # add the device plugin
 cordova plugin add cordova-plugin-device
