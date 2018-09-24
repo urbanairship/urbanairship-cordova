@@ -27,6 +27,6 @@ dependencies {
     implementation 'com.urbanairship.android:urbanairship-fcm:9.4.1'
 }
 
-ext.postBuildExtras = {
+cdvPluginPostBuildExtras.push({
     apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
-}
+})
