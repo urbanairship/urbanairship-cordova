@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="7.2.0"
+        version="7.2.1"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -321,6 +321,7 @@
         <header-file src="src/ios/Airship/Headers/UAChannelCapture.h" />
         <header-file src="src/ios/Airship/Headers/UAWKWebViewDelegate.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageBannerDisplayContent.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageHTMLStyle.h" />
         <header-file src="src/ios/Airship/Headers/UAOpenExternalURLAction.h" />
         <header-file src="src/ios/Airship/Headers/UAMessageCenter.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageButtonStyle.h" />
@@ -337,7 +338,7 @@
         <resource-file src="src/ios/Airship/AirshipResources.bundle"/>
 
         <!-- Airship library -->
-        <source-file framework="true" src="src/ios/Airship/libUAirship-9.3.3.a"/>
+        <source-file framework="true" src="src/ios/Airship/libUAirship-9.4.0.a"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
