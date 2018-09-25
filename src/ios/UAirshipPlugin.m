@@ -387,12 +387,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
-- (void)getAlias:(CDVInvokedUrlCommand *)command {
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, [UAirship push].alias ?: @"");
-    }];
-}
-
 - (void)getBadgeNumber:(CDVInvokedUrlCommand *)command {
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         completionHandler(CDVCommandStatus_OK, @([UIApplication sharedApplication].applicationIconBadgeNumber));
@@ -410,24 +404,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         NSMutableArray *tags = [NSMutableArray arrayWithArray:[args objectAtIndex:0]];
         [UAirship push].tags = tags;
         [[UAirship push] updateRegistration];
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
-- (void)setAlias:(CDVInvokedUrlCommand *)command {
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *alias = [args objectAtIndex:0];
-        // If the value passed in is nil or an empty string, set the alias to nil. Empty string will cause registration failures
-        // from the Urban Airship API
-        alias = [alias stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        if ([alias length] == 0) {
-            [UAirship push].alias = nil;
-        }
-        else{
-            [UAirship push].alias = alias;
-        }
-        [[UAirship push] updateRegistration];
-
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -689,10 +665,10 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         // Store a weak reference to the MessageViewController so we can dismiss it later
         self.messageViewController = mvc;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        [mvc loadMessage:message onlyIfChanged:YES];
-#pragma GCC diagnostic pop
+        [mvc loadMessageForID:message.messageID onlyIfChanged:YES onError:^{
+            NSString *error = [NSString stringWithFormat:@"Message load resulted in errorMessage not found for message ID: %@", message.messageID];
+            completionHandler(CDVCommandStatus_ERROR, error);
+        }];
 
         [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:navController animated:YES completion:nil];
 
