@@ -87,7 +87,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         super.initialize(cordova, webView);
         Logger.info("Initializing Urban Airship cordova plugin.");
 
-        context = cordova.getContext().getApplicationContext();
+        context = cordova.getActivity().getApplicationContext();
         pluginManager = PluginManager.shared(context);
     }
 
