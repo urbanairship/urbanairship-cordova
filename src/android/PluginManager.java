@@ -68,7 +68,7 @@ public class PluginManager {
     private NotificationOpenedEvent notificationOpenedEvent;
     private DeepLinkEvent deepLinkEvent = null;
     private Listener listener = null;
-    private List<Event> pendingEvents = new ArrayList<>();
+    private List<Event> pendingEvents = new ArrayList<Event>();
 
     private final SharedPreferences sharedPreferences;
     private final Map<String, String> defaultConfigValues;

@@ -72,7 +72,7 @@ class ConfigUtils {
      * @param context The application context.
      */
     public static Map<String, String> parseConfigXml(Context context) {
-        Map<String, String> config = new HashMap<>();
+        Map<String, String> config = new HashMap<String, String>();
         int id = context.getResources().getIdentifier("config", "xml", context.getPackageName());
         if (id == 0) {
             return config;
