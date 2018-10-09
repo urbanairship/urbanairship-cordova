@@ -1,3 +1,9 @@
+===============================
+Version 7.3.1 - October 9, 2018
+===============================
+- Update Android plugin to be compatible with older versions of Cordova Android.
+
+
 =================================
 Version 7.3.0 - September 25, 2018
 =================================
