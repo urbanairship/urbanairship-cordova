@@ -43,6 +43,6 @@
   },
   "scripts": {
     "generate-docs": "jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md",
-    "postinstall" : "source scripts/update_ios_static_lib.sh"
+    "prepublishOnly" : "source scripts/update_ios_static_lib.sh"
   }
 }
