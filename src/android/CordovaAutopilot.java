@@ -33,6 +33,11 @@ public class CordovaAutopilot extends Autopilot {
     }
 
     @Override
+    public boolean allowEarlyTakeOff(@NonNull Context context) {
+        return false;
+    }
+
+    @Override
     public void onAirshipReady(UAirship airship) {
         Context context = UAirship.getApplicationContext();
         final PluginManager pluginManager = PluginManager.shared(context);
