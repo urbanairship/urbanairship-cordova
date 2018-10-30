@@ -18,8 +18,8 @@
     <allow-intent href="geo:*" />
     <platform name="android">
         <allow-intent href="market:*" />
-        <!-- UA Android SDK requires minimum sdk version to be 16 -->
-        <preference name="android-minSdkVersion" value="16" />
+        <!-- UA Android SDK requires minimum sdk version to be 26 -->
+        <preference name="android-minSdkVersion" value="26" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
