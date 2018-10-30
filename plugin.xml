@@ -1,66 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    id="urbanairship-cordova"
-    version="6.8.0">
+<plugin id="urbanairship-cordova"
+        version="7.3.0"
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
     <name>Urban Airship</name>
     <description>Urban Airship Cordova plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,urbanairship</keywords>
-    <repo>https://github.com/urbanairship/phonegap-ua-push.git</repo>
+    <repo>https://github.com/urbanairship/urbanairship-cordova.git</repo>
 
     <engines>
-        <engine name="cordova-android" version=">=4.1.0" />
-        <engine name="cordova-ios" version=">=4.3.0" />
-        <engine name="cordova-plugman" version=">=4.2.0" />
+        <engine name="cordova-android" version=">=4.1.0"/>
+        <engine name="cordova-ios" version=">=4.3.0"/>
     </engines>
 
-    <js-module src="www/UrbanAirship.js" name="UrbanAirship">
-         <clobbers target="UAirship" />
-     </js-module>
+    <js-module name="UrbanAirship" src="www/UrbanAirship.js">
+        <clobbers target="UAirship"/>
+    </js-module>
 
     <!-- android -->
     <platform name="android">
-
-        <config-file target="res/xml/config.xml" parent="/widget">
+        <config-file parent="/widget" target="res/xml/config.xml">
             <feature name="UAirship">
-                <param name="android-package" value="com.urbanairship.cordova.UAirshipPlugin"/>
-                <param name="onload" value="true" />
+                <param
+                    name="android-package"
+                    value="com.urbanairship.cordova.UAirshipPlugin"/>
+                <param
+                    name="onload"
+                    value="true"/>
             </feature>
         </config-file>
 
-        <config-file target="AndroidManifest.xml" parent="/manifest/application">
-            <meta-data android:name="com.urbanairship.autopilot" android:value="com.urbanairship.cordova.CordovaAutopilot" />
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <meta-data
+                android:name="com.urbanairship.autopilot"
+                android:value="com.urbanairship.cordova.CordovaAutopilot"/>
 
-            <receiver android:name="com.urbanairship.cordova.CordovaAirshipReceiver"
-                        android:exported="false">
+            <meta-data
+                android:name="com.urbanairship.webview.ENABLE_LOCAL_STORAGE"
+                android:value="true" />
+
+            <receiver
+                android:name="com.urbanairship.cordova.CordovaAirshipReceiver"
+                android:exported="false">
 
                 <intent-filter>
-                    <action android:name="com.urbanairship.push.CHANNEL_UPDATED" />
-                    <action android:name="com.urbanairship.push.OPENED" />
-                    <action android:name="com.urbanairship.push.DISMISSED" />
-                    <action android:name="com.urbanairship.push.RECEIVED" />
-                    <category android:name="$PACKAGE_NAME" />
+                    <action android:name="com.urbanairship.push.CHANNEL_UPDATED"/>
+                    <action android:name="com.urbanairship.push.OPENED"/>
+                    <action android:name="com.urbanairship.push.DISMISSED"/>
+                    <action android:name="com.urbanairship.push.RECEIVED"/>
+                    <category android:name="$PACKAGE_NAME"/>
                 </intent-filter>
             </receiver>
 
-            <activity android:name="com.urbanairship.messagecenter.MessageActivity" android:theme="@android:style/Theme.DeviceDefault.Light"/>
-            <activity android:name="com.urbanairship.messagecenter.MessageCenterActivity" android:theme="@android:style/Theme.DeviceDefault.Light"/>
-
             <activity
-                xmlns:tools="http://schemas.android.com/tools"
-                tools:node="remove"
-                android:name="com.urbanairship.actions.LandingPageActivity" />
-
-        <activity android:name="com.urbanairship.cordova.CustomMessageActivity"
-                  android:theme="@android:style/Theme.DeviceDefault.Light">
-            <intent-filter>
-                <action android:name="com.urbanairship.VIEW_RICH_PUSH_MESSAGE" />
-                <data android:scheme="message"/>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+                android:name="com.urbanairship.cordova.CustomMessageActivity"
+                android:theme="@android:style/Theme.DeviceDefault.Light">
+                <intent-filter>
+                    <action android:name="com.urbanairship.VIEW_RICH_PUSH_MESSAGE"/>
+                    <data android:scheme="message"/>
+                    <category android:name="android.intent.category.DEFAULT"/>
+                </intent-filter>
+            </activity>
 
             <activity
                 android:name="com.urbanairship.cordova.CustomMessageCenterActivity"
@@ -68,210 +70,275 @@
                 android:theme="@android:style/Theme.DeviceDefault.Light">
 
                 <intent-filter>
-                    <action android:name="com.urbanairship.VIEW_RICH_PUSH_INBOX" />
-                    <category android:name="android.intent.category.DEFAULT" />
-                </intent-filter>
-            </activity>
-
-            <activity android:name="com.urbanairship.cordova.CustomLandingPageActivity"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:exported="false" android:theme="@style/LandingPageStyle"
-                  tools:node="replace">
-                <meta-data android:name="com.urbanairship.action.LANDING_PAGE_VIEW"
-                           android:resource="@layout/ua_activity_landing_page"/>
-                <meta-data android:name="com.urbanairship.push.iam.EXCLUDE_FROM_AUTO_SHOW"
-                           android:value="true"/>
-                <intent-filter>
-                    <action android:name="com.urbanairship.actions.SHOW_LANDING_PAGE_INTENT_ACTION"/>
-                    <data android:scheme="http"/>
-                    <data android:scheme="https"/>
-                    <data android:scheme="message"/>
+                    <action android:name="com.urbanairship.VIEW_RICH_PUSH_INBOX"/>
                     <category android:name="android.intent.category.DEFAULT"/>
                 </intent-filter>
             </activity>
 
+            <activity
+                android:name="com.urbanairship.actions.LandingPageActivity"
+                xmlns:tools="http://schemas.android.com/tools"
+                tools:node="remove"/>
+
+            <activity
+                android:name="com.urbanairship.cordova.CustomLandingPageActivity"
+                android:exported="false"
+                android:theme="@style/UrbanAirship.LandingPageActivity">
+
+                <meta-data
+                    android:name="com.urbanairship.action.LANDING_PAGE_VIEW"
+                    android:resource="@layout/ua_activity_landing_page"/>
+
+                <meta-data
+                    android:name="com.urbanairship.push.iam.EXCLUDE_FROM_AUTO_SHOW"
+                    android:value="true"/>
+
+                <intent-filter>
+                    <action android:name="com.urbanairship.actions.SHOW_LANDING_PAGE_INTENT_ACTION"/>
+
+                    <data android:scheme="http"/>
+                    <data android:scheme="https"/>
+                    <data android:scheme="message"/>
+
+                    <category android:name="android.intent.category.DEFAULT"/>
+                </intent-filter>
+            </activity>
         </config-file>
 
-        <source-file src="src/android/UAirshipPlugin.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/CordovaAirshipReceiver.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/CordovaAutopilot.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/CordovaLandingPageView.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/CustomMessageActivity.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/CustomMessageCenterActivity.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/CustomLandingPageActivity.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/UAirshipPluginManager.java" target-dir="src/com/urbanairship/cordova" />
-        <source-file src="src/android/events/ChannelEvent.java" target-dir="src/com/urbanairship/cordova/events" />
-        <source-file src="src/android/events/DeepLinkEvent.java" target-dir="src/com/urbanairship/cordova/events" />
-        <source-file src="src/android/events/InboxEvent.java" target-dir="src/com/urbanairship/cordova/events" />
-        <source-file src="src/android/events/PushEvent.java" target-dir="src/com/urbanairship/cordova/events" />
-        <source-file src="src/android/events/NotificationOpenedEvent.java" target-dir="src/com/urbanairship/cordova/events" />
-        <source-file src="src/android/events/Event.java" target-dir="src/com/urbanairship/cordova/events" />
+        <source-file
+            src="src/android/UAirshipPlugin.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/CordovaAirshipReceiver.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/CordovaAutopilot.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/CustomMessageActivity.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/CustomMessageCenterActivity.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/CustomLandingPageActivity.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/PluginManager.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/ConfigUtils.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/CordovaNotificationFactory.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/events/RegistrationEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
+            src="src/android/events/DeepLinkEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
+            src="src/android/events/InboxEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
+            src="src/android/events/PushEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
+            src="src/android/events/NotificationOpenedEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
+            src="src/android/events/NotificationOptInEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
+            src="src/android/events/Event.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
 
-        <source-file src="src/android/res/layout/ua_activity_landing_page.xml" target-dir="res/layout"/>
-        <source-file src="src/android/res/values/ua_styles.xml" target-dir="res/values"/>
-        <source-file src="src/android/res/drawable-mdpi/ua_ic_close.png" target-dir="res/drawable-mdpi"/>
-        <source-file src="src/android/res/drawable-hdpi/ua_ic_close.png" target-dir="res/drawable-hdpi"/>
-        <source-file src="src/android/res/drawable-xhdpi/ua_ic_close.png" target-dir="res/drawable-xhdpi"/>
-        <source-file src="src/android/res/drawable-xxhdpi/ua_ic_close.png" target-dir="res/drawable-xxhdpi"/>
-        <source-file src="src/android/res/drawable-xxxhdpi/ua_ic_close.png" target-dir="res/drawable-xxxhdpi"/>
-
-        <framework src="src/android/build-extras.gradle" custom="true" type="gradleReference" />
+        <framework
+            custom="true"
+            src="src/android/build-extras.gradle"
+            type="gradleReference"/>
 
     </platform>
 
     <!-- ios -->
     <platform name="ios">
 
-         <!-- Background push -->
-        <config-file target="*-Info.plist" parent="UIBackgroundModes">
+        <!-- Background push -->
+        <config-file parent="UIBackgroundModes" target="*-Info.plist">
             <array>
                 <string>remote-notification</string>
             </array>
         </config-file>
 
-        <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
-            <string>Sample location</string>
-        </config-file>
-
-        <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
-            <string>Sample location, when in use</string>
-        </config-file>
-
-        <config-file target="config.xml" parent="/widget">
-             <feature name="UAirship">
-                <param name="ios-package" value="UAirshipPlugin" />
-                <param name="onload" value="true" />
+        <config-file parent="/widget" target="config.xml">
+            <feature name="UAirship">
+                <param
+                    name="ios-package"
+                    value="UAirshipPlugin"/>
+                <param
+                    name="onload"
+                    value="true"/>
             </feature>
         </config-file>
 
         <config-file parent="aps-environment" target="*/Entitlements-Debug.plist">
-          <string>development</string>
+            <string>development</string>
         </config-file>
 
         <config-file parent="aps-environment" target="*/Entitlements-Release.plist">
-          <string>production</string>
+            <string>production</string>
         </config-file>
 
-        <header-file src="src/ios/UAirshipPlugin.h" />
-        <source-file src="src/ios/UAirshipPlugin.m" />
-        <header-file src="src/ios/UAMessageViewController.h" />
-        <source-file src="src/ios/UAMessageViewController.m" />
+        <!-- Plugin -->
+        <header-file src="src/ios/UAirshipPlugin.h"/>
+        <source-file src="src/ios/UAirshipPlugin.m"/>
+        <header-file src="src/ios/UAMessageViewController.h"/>
+        <source-file src="src/ios/UAMessageViewController.m"/>
+        <header-file src="src/ios/UACordovaPluginManager.h"/>
+        <source-file src="src/ios/UACordovaPluginManager.m"/>
 
         <!-- Airship headers -->
-        <header-file src="src/ios/Airship/Headers/AirshipLib.h" />
-        <header-file src="src/ios/Airship/Headers/NSJSONSerialization+UAAdditions.h" />
-        <header-file src="src/ios/Airship/Headers/NSManagedObjectContext+UAAdditions.h" />
-        <header-file src="src/ios/Airship/Headers/NSOperationQueue+UAAdditions.h" />
-        <header-file src="src/ios/Airship/Headers/NSString+UALocalizationAdditions.h" />
-        <header-file src="src/ios/Airship/Headers/NSString+UAURLEncoding.h" />
-        <header-file src="src/ios/Airship/Headers/UA_Base64.h" />
-        <header-file src="src/ios/Airship/Headers/UAAccountEventTemplate.h" />
-        <header-file src="src/ios/Airship/Headers/UAAction+Operators.h" />
-        <header-file src="src/ios/Airship/Headers/UAAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAActionArguments.h" />
-        <header-file src="src/ios/Airship/Headers/UAActionJSDelegate.h" />
-        <header-file src="src/ios/Airship/Headers/UAActionRegistry.h" />
-        <header-file src="src/ios/Airship/Headers/UAActionRegistryEntry.h" />
-        <header-file src="src/ios/Airship/Headers/UAActionResult.h" />
-        <header-file src="src/ios/Airship/Headers/UAActionRunner.h" />
-        <header-file src="src/ios/Airship/Headers/UAActionSchedule.h" />
-        <header-file src="src/ios/Airship/Headers/UAActionScheduleInfo.h" />
-        <header-file src="src/ios/Airship/Headers/UAActivityViewController.h" />
-        <header-file src="src/ios/Airship/Headers/UAAddCustomEventAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAAddTagsAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAAggregateActionResult.h" />
-        <header-file src="src/ios/Airship/Headers/UAAnalytics.h" />
-        <header-file src="src/ios/Airship/Headers/UAAppIntegration.h" />
-        <header-file src="src/ios/Airship/Headers/UAApplicationMetrics.h" />
-        <header-file src="src/ios/Airship/Headers/UAAssociatedIdentifiers.h" />
-        <header-file src="src/ios/Airship/Headers/UAAutomation.h" />
-        <header-file src="src/ios/Airship/Headers/UABaseNativeBridge.h" />
-        <header-file src="src/ios/Airship/Headers/UABespokeCloseView.h" />
-        <header-file src="src/ios/Airship/Headers/UABeveledLoadingIndicator.h" />
-        <header-file src="src/ios/Airship/Headers/UACancelSchedulesAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAChannelCapture.h" />
-        <header-file src="src/ios/Airship/Headers/UAChannelCaptureAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAChannelRegistrar.h" />
-        <header-file src="src/ios/Airship/Headers/UACircularRegion.h" />
-        <header-file src="src/ios/Airship/Headers/UAConfig.h" />
-        <header-file src="src/ios/Airship/Headers/UACustomEvent.h" />
-        <header-file src="src/ios/Airship/Headers/UADefaultMessageCenter.h" />
-        <header-file src="src/ios/Airship/Headers/UADefaultMessageCenterListCell.h" />
-        <header-file src="src/ios/Airship/Headers/UADefaultMessageCenterListViewController.h" />
-        <header-file src="src/ios/Airship/Headers/UADefaultMessageCenterMessageViewController.h" />
-        <header-file src="src/ios/Airship/Headers/UADefaultMessageCenterSplitViewController.h" />
-        <header-file src="src/ios/Airship/Headers/UADefaultMessageCenterStyle.h" />
-        <header-file src="src/ios/Airship/Headers/UADisplayInboxAction.h" />
-        <header-file src="src/ios/Airship/Headers/UADisposable.h" />
-        <header-file src="src/ios/Airship/Headers/UAEnableFeatureAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAEvent.h" />
-        <header-file src="src/ios/Airship/Headers/UAFetchDeviceInfoAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageFullScreenAdapter.h" />
         <header-file src="src/ios/Airship/Headers/UAGlobal.h" />
-        <header-file src="src/ios/Airship/Headers/UAInAppMessage.h" />
-        <header-file src="src/ios/Airship/Headers/UAInAppMessageButtonActionBinding.h" />
-        <header-file src="src/ios/Airship/Headers/UAInAppMessageControllerDefaultDelegate.h" />
-        <header-file src="src/ios/Airship/Headers/UAInAppMessageControllerDelegate.h" />
-        <header-file src="src/ios/Airship/Headers/UAInAppMessageView.h" />
-        <header-file src="src/ios/Airship/Headers/UAInAppMessaging.h" />
-        <header-file src="src/ios/Airship/Headers/UAInbox.h" />
-        <header-file src="src/ios/Airship/Headers/UAInboxMessage.h" />
-        <header-file src="src/ios/Airship/Headers/UAInboxMessageList.h" />
-        <header-file src="src/ios/Airship/Headers/UAInboxUtils.h" />
-        <header-file src="src/ios/Airship/Headers/UAInstallAttributionEvent.h" />
-        <header-file src="src/ios/Airship/Headers/UAirship.h" />
+        <header-file src="src/ios/Airship/Headers/UAActionArguments.h" />
+        <header-file src="src/ios/Airship/Headers/UAApplicationMetrics.h" />
+        <header-file src="src/ios/Airship/Headers/UAUtils.h" />
         <header-file src="src/ios/Airship/Headers/UAirshipVersion.h" />
-        <header-file src="src/ios/Airship/Headers/UAJavaScriptDelegate.h" />
-        <header-file src="src/ios/Airship/Headers/UAJSONMatcher.h" />
-        <header-file src="src/ios/Airship/Headers/UAJSONPredicate.h" />
         <header-file src="src/ios/Airship/Headers/UAJSONValueMatcher.h" />
-        <header-file src="src/ios/Airship/Headers/UALandingPageAction.h" />
-        <header-file src="src/ios/Airship/Headers/UALandingPageOverlayController.h" />
-        <header-file src="src/ios/Airship/Headers/UALocation.h" />
-        <header-file src="src/ios/Airship/Headers/UALocationEvent.h" />
-        <header-file src="src/ios/Airship/Headers/UAMediaEventTemplate.h" />
-        <header-file src="src/ios/Airship/Headers/UAMessageCenterDateUtils.h" />
-        <header-file src="src/ios/Airship/Headers/UAMessageCenterLocalization.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageMediaStyle.h" />
+        <header-file src="src/ios/Airship/Headers/UAAssociatedIdentifiers.h" />
+        <header-file src="src/ios/Airship/Headers/UAScheduleDelay.h" />
+        <header-file src="src/ios/Airship/Headers/UANotificationResponse.h" />
         <header-file src="src/ios/Airship/Headers/UAMessageCenterMessageViewController.h" />
+        <header-file src="src/ios/Airship/Headers/UALegacyInAppMessage.h" />
+        <header-file src="src/ios/Airship/Headers/UAEvent.h" />
+        <header-file src="src/ios/Airship/Headers/UARetailEventTemplate.h" />
+        <header-file src="src/ios/Airship/Headers/UARegionEvent.h" />
+        <header-file src="src/ios/Airship/Headers/UAWKWebViewNativeBridge.h" />
+        <header-file src="src/ios/Airship/Headers/UAJSONPredicate.h" />
+        <header-file src="src/ios/Airship/Headers/UAComponent.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageScheduleEdits.h" />
         <header-file src="src/ios/Airship/Headers/UAMessageCenterMessageViewProtocol.h" />
-        <header-file src="src/ios/Airship/Headers/UAModifyTagsAction.h" />
-        <header-file src="src/ios/Airship/Headers/UANamedUser.h" />
-        <header-file src="src/ios/Airship/Headers/UANotificationAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageResolution.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageManager.h" />
+        <header-file src="src/ios/Airship/Headers/UALocation.h" />
+        <header-file src="src/ios/Airship/Headers/UADisplayInboxAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAMessageCenterLocalization.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageTagSelector.h" />
+        <header-file src="src/ios/Airship/Headers/UAAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAShareAction.h" />
+        <header-file src="src/ios/Airship/Headers/UARemoveTagsAction.h" />
+        <header-file src="src/ios/Airship/Headers/UACustomEvent.h" />
+        <header-file src="src/ios/Airship/Headers/UAAccountEventTemplate.h" />
+        <header-file src="src/ios/Airship/Headers/NSURLResponse+UAAdditions.h" />
+        <header-file src="src/ios/Airship/Headers/UAMessageCenterSplitViewController.h" />
+        <header-file src="src/ios/Airship/Headers/UASchedule.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageHTMLAdapter.h" />
+        <header-file src="src/ios/Airship/Headers/UAActionRegistryEntry.h" />
+        <header-file src="src/ios/Airship/Headers/UAMessageCenterDateUtils.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageAudience.h" />
+        <header-file src="src/ios/Airship/Headers/UAActionResult.h" />
+        <header-file src="src/ios/Airship/Headers/UARateAppAction.h" />
+        <header-file src="src/ios/Airship/Headers/UATextInputNotificationAction.h" />
+        <header-file src="src/ios/Airship/Headers/UALocationEvent.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageModalDisplayContent.h" />
+        <header-file src="src/ios/Airship/Headers/UAScheduleAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageMediaInfo.h" />
+        <header-file src="src/ios/Airship/Headers/UAAnalytics.h" />
+        <header-file src="src/ios/Airship/Headers/UA_Base64.h" />
+        <header-file src="src/ios/Airship/Headers/UAURLProtocol.h" />
+        <header-file src="src/ios/Airship/Headers/UAScheduleTrigger.h" />
+        <header-file src="src/ios/Airship/Headers/UAPasteboardAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAFetchDeviceInfoAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAInbox.h" />
+        <header-file src="src/ios/Airship/Headers/UAJSONMatcher.h" />
+        <header-file src="src/ios/Airship/Headers/UAProximityRegion.h" />
+        <header-file src="src/ios/Airship/Headers/UADisposable.h" />
+        <header-file src="src/ios/Airship/Headers/UAWhitelist.h" />
+        <header-file src="src/ios/Airship/Headers/AirshipLib.h" />
+        <header-file src="src/ios/Airship/Headers/UAConfig.h" />
+        <header-file src="src/ios/Airship/Headers/UAAppIntegration.h" />
+        <header-file src="src/ios/Airship/Headers/UAActionScheduleInfo.h" />
+        <header-file src="src/ios/Airship/Headers/UABaseNativeBridge.h" />
+        <header-file src="src/ios/Airship/Headers/UAInboxMessageList.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageCustomDisplayContent.h" />
+        <header-file src="src/ios/Airship/Headers/UAActionRegistry.h" />
+        <header-file src="src/ios/Airship/Headers/UABespokeCloseView.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageTextStyle.h" />
+        <header-file src="src/ios/Airship/Headers/UAEnableFeatureAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageScheduleInfo.h" />
         <header-file src="src/ios/Airship/Headers/UANotificationCategories.h" />
         <header-file src="src/ios/Airship/Headers/UANotificationCategory.h" />
-        <header-file src="src/ios/Airship/Headers/UANotificationContent.h" />
-        <header-file src="src/ios/Airship/Headers/UANotificationResponse.h" />
-        <header-file src="src/ios/Airship/Headers/UAOpenExternalURLAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAOverlayInboxMessageAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAOverlayViewController.h" />
-        <header-file src="src/ios/Airship/Headers/UAPasteboardAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAPreferenceDataStore+InternalTagGroupsMutation.h" />
-        <header-file src="src/ios/Airship/Headers/UAProximityRegion.h" />
-        <header-file src="src/ios/Airship/Headers/UAPush.h" />
-        <header-file src="src/ios/Airship/Headers/UARegionEvent.h" />
-        <header-file src="src/ios/Airship/Headers/UARemoveTagsAction.h" />
-        <header-file src="src/ios/Airship/Headers/UARetailEventTemplate.h" />
-        <header-file src="src/ios/Airship/Headers/UARichContentWindow.h" />
-        <header-file src="src/ios/Airship/Headers/UAScheduleAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAScheduleDelay.h" />
-        <header-file src="src/ios/Airship/Headers/UAScheduleTrigger.h" />
-        <header-file src="src/ios/Airship/Headers/UAShareAction.h" />
-        <header-file src="src/ios/Airship/Headers/UATextInputNotificationAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAUIWebViewDelegate.h" />
-        <header-file src="src/ios/Airship/Headers/UAURLProtocol.h" />
-        <header-file src="src/ios/Airship/Headers/UAUser.h" />
-        <header-file src="src/ios/Airship/Headers/UAUtils.h" />
-        <header-file src="src/ios/Airship/Headers/UAWebViewCallData.h" />
-        <header-file src="src/ios/Airship/Headers/UAWebViewDelegate.h" />
-        <header-file src="src/ios/Airship/Headers/UAWhitelist.h" />
-        <header-file src="src/ios/Airship/Headers/UAWKWebViewDelegate.h" />
-        <header-file src="src/ios/Airship/Headers/UAWKWebViewNativeBridge.h" />
+        <header-file src="src/ios/Airship/Headers/UAAutomation.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageStyleProtocol.h" />
         <header-file src="src/ios/Airship/Headers/UIWebView+UAAdditions.h" />
+        <header-file src="src/ios/Airship/Headers/UAirship.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageBannerAdapter.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageFullScreenStyle.h" />
+        <header-file src="src/ios/Airship/Headers/UAActionRunner.h" />
+        <header-file src="src/ios/Airship/Headers/UAInstallAttributionEvent.h" />
+        <header-file src="src/ios/Airship/Headers/NSJSONSerialization+UAAdditions.h" />
+        <header-file src="src/ios/Airship/Headers/UAInboxMessage.h" />
+        <header-file src="src/ios/Airship/Headers/UAWebViewCallData.h" />
+        <header-file src="src/ios/Airship/Headers/UAActivityViewController.h" />
+        <header-file src="src/ios/Airship/Headers/NSString+UALocalizationAdditions.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageButtonInfo.h" />
+        <header-file src="src/ios/Airship/Headers/UAModifyTagsAction.h" />
+        <header-file src="src/ios/Airship/Headers/UACircularRegion.h" />
+        <header-file src="src/ios/Airship/Headers/UAPush.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessage.h" />
+        <header-file src="src/ios/Airship/Headers/UAMessageCenterListViewController.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageFullScreenDisplayContent.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageDisplayContent.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageHTMLDisplayContent.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageAdapterProtocol.h" />
+        <header-file src="src/ios/Airship/Headers/UAAggregateActionResult.h" />
+        <header-file src="src/ios/Airship/Headers/UADeepLinkAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageModalAdapter.h" />
+        <header-file src="src/ios/Airship/Headers/UAActionScheduleEdits.h" />
+        <header-file src="src/ios/Airship/Headers/UAWalletAction.h" />
+        <header-file src="src/ios/Airship/Headers/UALegacyInAppMessaging.h" />
+        <header-file src="src/ios/Airship/Headers/UAAddTagsAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAMediaEventTemplate.h" />
+        <header-file src="src/ios/Airship/Headers/UACancelSchedulesAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAMessageCenterStyle.h" />
+        <header-file src="src/ios/Airship/Headers/NSString+UAURLEncoding.h" />
+        <header-file src="src/ios/Airship/Headers/UANamedUser.h" />
+        <header-file src="src/ios/Airship/Headers/UAPadding.h" />
+        <header-file src="src/ios/Airship/Headers/NSOperationQueue+UAAdditions.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageBannerStyle.h" />
+        <header-file src="src/ios/Airship/Headers/UAAction+Operators.h" />
+        <header-file src="src/ios/Airship/Headers/UAScheduleInfo.h" />
+        <header-file src="src/ios/Airship/Headers/UABeveledLoadingIndicator.h" />
+        <header-file src="src/ios/Airship/Headers/UAInboxUtils.h" />
+        <header-file src="src/ios/Airship/Headers/UANotificationContent.h" />
+        <header-file src="src/ios/Airship/Headers/UAUser.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageModalStyle.h" />
+        <header-file src="src/ios/Airship/Headers/UAAddCustomEventAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAActionJSDelegate.h" />
+        <header-file src="src/ios/Airship/Headers/UAChannelCaptureAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAChannelCapture.h" />
+        <header-file src="src/ios/Airship/Headers/UAWKWebViewDelegate.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageBannerDisplayContent.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageHTMLStyle.h" />
+        <header-file src="src/ios/Airship/Headers/UAOpenExternalURLAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAMessageCenter.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageButtonStyle.h" />
+        <header-file src="src/ios/Airship/Headers/UANotificationAction.h" />
+        <header-file src="src/ios/Airship/Headers/UALandingPageAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAOverlayViewController.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageTextInfo.h" />
+        <header-file src="src/ios/Airship/Headers/UAScheduleEdits.h" />
+        <header-file src="src/ios/Airship/Headers/UAJavaScriptDelegate.h" />
+        <header-file src="src/ios/Airship/Headers/UAOverlayInboxMessageAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAMessageCenterListCell.h" />
 
         <!-- Resource bundle -->
-        <resource-file src="src/ios/Airship/AirshipResources.bundle" />
+        <resource-file src="src/ios/Airship/AirshipResources.bundle"/>
 
         <!-- Airship library -->
-        <source-file src="src/ios/Airship/libUAirship-8.3.3.a" framework="true"/>
+        <source-file framework="true" src="src/ios/Airship/libUAirship-10.0.0.a"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
@@ -287,5 +354,7 @@
         <framework src="MobileCoreServices.framework" weak="true" />
         <framework src="CoreLocation.framework" weak="true" />
         <framework src="CoreData.framework" weak="true" />
+        <framework src="StoreKit.framework" weak="true" />
+
     </platform>
 </plugin>

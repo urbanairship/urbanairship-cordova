@@ -1,3 +1,91 @@
+===============================
+Version 7.3.1 - October 9, 2018
+===============================
+- Update Android plugin to be compatible with older versions of Cordova Android.
+
+
+=================================
+Version 7.3.0 - September 25, 2018
+=================================
+- Updated iOS SDK to 10.0.0
+
+=================================
+Version 7.2.1 - September 20, 2018
+=================================
+- Updated iOS SDK to 9.4.0
+- Updated Android SDK to 9.5.2
+
+=================================
+Version 7.2.0 - July 26, 2018
+=================================
+- Updated iOS SDK to 9.3.3
+- Updated Android SDK to 9.4.1
+- Added setter for foreground presentation options
+- Enabled takeOff from the JS interface for iOS and Android
+
+=================================
+Version 7.1.1 - June 15, 2018
+=================================
+- Updated Android SDK to 9.3.1
+
+=================================
+Version 7.1.0 - June 13, 2018
+=================================
+- Updated iOS SDK to 9.2.1
+- Updated Android SDK to 9.3.0
+- Added support for FCM on Android
+- Added support for loading custom notification categories
+- Notification event payloads now contain title and subtitle
+- iOS notification event payloads now contain a top level APS object with raw notification data
+- iOS background notifications now generate events
+- Plugin now requires Cordova 7.0. Earlier versions may work, but integration steps and
+  documentation assume Cordova 7.0 or higher moving forward.
+
+=================================
+Version 7.0.1 - March 8, 2018
+=================================
+- Updated iOS SDK to 9.0.3.
+- Updated Android SDK to 9.0.2.
+- Fixed build failures by excluding Android libraries version 28 until it is released.
+
+=================================
+Version 7.0.0 - February 14, 2018
+=================================
+- Updated iOS SDK to 9.0.2.
+- Updated Android SDK to 9.0.1.
+
+================================
+Version 6.9.3 - February 1, 2018
+================================
+- Updated Android SDK to 8.9.7.
+- Updated to be compatible with Cordova Android 7.0.0. Due to an
+  [issue in the android resource processing (AAPT2)](https://issuetracker.google.com/issues/69347762),
+  the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disable AAPT2 with
+  [cordova-disable-aapt2](https://github.com/runtrizapps/cordova-android-disable-aapt2).
+- Added notification response info to the notification open event.
+- Added registration token to the channel registration event.
+- Fixed iOS 11 main thread warnings.
+
+=================================
+Version 6.9.2 - November 20, 2017
+=================================
+- Updated Android SDK to 8.9.5.
+- Updated iOS SDK to 8.6.3.
+- Fixed build Android plugin build issue with AndroidManifest.
+
+===============================
+Version 6.9.1 - August 22, 2017
+===============================
+- Updated iOS Urban Airship SDK to 8.5.3.
+- Fixed missing symbols for StoreKit and WebKit when building for iOS.
+
+=============================
+Version 6.9.0 - August 10, 2017
+=============================
+- Updated iOS Urban Airship SDK to 8.5.2
+- Updated Android Urban Airship SDK to 8.8.2
+- Added event `notification_opt_in_status` that will fire when authorization status changes.
+
 =============================
 Version 6.8.0 - June 21, 2017
 =============================

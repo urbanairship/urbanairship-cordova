@@ -1,27 +1,4 @@
-/*
- Copyright 2009-2017 Urban Airship Inc. All rights reserved.
-
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are met:
-
- 1. Redistributions of source code must retain the above copyright notice, this
- list of conditions and the following disclaimer.
-
- 2. Redistributions in binary form must reproduce the above copyright notice,
- this list of conditions and the following disclaimer in the documentation
- and/or other materials provided with the distribution.
-
- THIS SOFTWARE IS PROVIDED BY THE URBAN AIRSHIP INC ``AS IS'' AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
- EVENT SHALL URBAN AIRSHIP INC OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
- OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
- ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+/* Copyright 2018 Urban Airship and Contributors */
 
 var cardova = require("cordova"),
     exec = require("cordova/exec"),
@@ -58,7 +35,7 @@ function _runAction(actionName, actionValue, success, failure) {
 /**
  * Helper object to edit tag groups.
  *
- * Normally not created directly. Instead use [UrbanAirship.editNamedUserTagGroups]{@link module:UrbanAirship.editNamedUserTagGroups} 
+ * Normally not created directly. Instead use [UrbanAirship.editNamedUserTagGroups]{@link module:UrbanAirship.editNamedUserTagGroups}
  * or [UrbanAirship.editChannelTagGroups]{@link module:UrbanAirship.editChannelTagGroups}.
  *
  * @class TagGroupEditor
@@ -143,7 +120,7 @@ module.exports = {
   /**
    * Event fired when a new deep link is received.
    *
-   * @event "urbanairship.deep_link"
+   * @event deep_link
    * @type {object}
    * @param {string} [deepLink] The deep link.
    */
@@ -151,42 +128,111 @@ module.exports = {
   /**
    * Event fired when a channel registration occurs.
    *
-   * @event "urbanairship.registration"
+   * @event registration
    * @type {object}
    * @param {string} [channelID] The channel ID.
+   * @param {string} [registrationToken] The deviceToken on iOS, and the FCM/ADM token on Android.
    * @param {string} [error] Error message if an error occurred.
    */
 
   /**
    * Event fired when the inbox is updated.
    *
-   * @event "urbanairship.inbox_updated"
+   * @event inbox_updated
    */
 
   /**
    * Event fired when a push is received.
    *
-   * @event "urbanairship.push"
+   * @event push
    * @type {object}
    * @param {string} message The push alert message.
+   * @param {string} title The push title.
+   * @param {string} subtitle The push subtitle.
    * @param {object} extras Any push extras.
+   * @param {object} aps The raw aps dictionary (iOS only)
    * @param {number} [notification_id] The Android notification ID.
    */
 
   /**
    * Event fired when notification opened.
    *
-   * @event "urbanairship.notification_opened"
+   * @event notification_opened
    * @type {object}
    * @param {string} message The push alert message.
    * @param {object} extras Any push extras.
    * @param {number} [notification_id] The Android notification ID.
+   * @param {string} [actionID] The ID of the notification action button if available.
+   * @param {boolean} isForeground Will always be true if the user taps the main notification. Otherwise its defined by the notification action button.
+   */
+
+  /**
+   * Event fired when the user notification opt-in status changes.
+   *
+   * @event notification_opt_in_status
+   * @type {object}
+   * @param {boolean} optIn If the user is opted in or not to user notifications.
+   * @param {object} [authorizedNotificationSettings] iOS only. A map of authorized settings.
+   * @param {boolean} authorizedNotificationSettings.alert If alerts are authorized.
+   * @param {boolean} authorizedNotificationSettings.sound If sounds are authorized.
+   * @param {boolean} authorizedNotificationSettings.badge If badges are authorized.
+   * @param {boolean} authorizedNotificationSettings.carPlay If car play is authorized.
+   * @param {boolean} authorizedNotificationSettings.lockScreen If the lock screen is authorized.
+   * @param {boolean} authorizedNotificationSettings.notificationCenter If the notification center is authorized.
    */
 
   /**
    * Re-attaches document event listeners in this webview
    */
   reattach: bindDocumentEvent,
+
+  /**
+   * Initailizes Urban Airship.
+   *
+   * The plugin will automatically call takeOff during the next app init in
+   * order to properly handle incoming push. If takeOff is called multiple times
+   * in a session, or if the config is different than the previous sesssion, the
+   * new config will not be used until the next app start.
+   *
+   * @param {object}  config The Urban Airship config.
+   * @param {object}  config.development The Urban Airship development config.
+   * @param {string}  config.development.appKey The development appKey.
+   * @param {string}  config.development.appSecret The development appSecret.
+   * @param {object}  config.production The Urban Airship production config.
+   * @param {string}  config.production.appKey The production appKey.
+   * @param {string}  config.production.appSecret The production appSecret.
+   */
+  takeOff: function(config, success, failure) {
+    argscheck.checkArgs("*FF", "UAirship.takeOff", arguments);
+    callNative(success, failure, "takeOff", [config]);
+  },
+
+  /**
+   * Sets the Android notification config. Values not set will fallback to any values set in the config.xml.
+   *
+   * @param {object}  config The notification config.
+   * @param {string}  [config.icon] The name of the drawable resource to use as the notification icon.
+   * @param {string}  [config.largeIcon] The name of the drawable resource to use as the notification large icon.
+   * @param {string}  [config.accentColor] The notification accent color. Format is #AARRGGBB.
+   */
+  setAndroidNotificationConfig: function(config, success, failure) {
+    argscheck.checkArgs("*FF", "UAirship.setAndroidNotificationConfig", arguments);
+    callNative(success, failure, "setAndroidNotificationConfig", [config]);
+  },
+
+  /**
+   * Sets the default behavior when the message center is launched from a push
+   * notification. If set to false the message center must be manually launched.
+   *
+   * @param {boolean} enabled true to automatically launch the default message center, false to disable.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  setAutoLaunchDefaultMessageCenter: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setAutoLaunchDefaultMessageCenter', arguments)
+    callNative(success, failure, "setAutoLaunchDefaultMessageCenter", [!!enabled]);
+  },
 
   /**
    * Enables or disables user notifications.
@@ -202,19 +248,6 @@ module.exports = {
   },
 
   /**
-   * Enables or disables display ASAP mode for in-app messages.
-   *
-   * @param {boolean} enabled true to enable display ASAP mode, false to disable.
-   * @param {function} [success] Success callback.
-   * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The error message.
-   */
-  setDisplayASAPEnabled: function(enabled, success, failure) {
-    argscheck.checkArgs('*FF', 'UAirship.setDisplayASAPEnabled', arguments)
-    callNative(success, failure, "setDisplayASAPEnabled", [!!enabled])
-  },
-
-  /**
    * Checks if user notifications are enabled or not.
    *
    * @param {function(enabled)} success Success callback.
@@ -226,7 +259,6 @@ module.exports = {
     argscheck.checkArgs('fF', 'UAirship.isUserNotificationsEnabled', arguments)
     callNative(success, failure, "isUserNotificationsEnabled")
   },
-
 
   /**
    * Checks if app notifications are enabled or not. Its possible to have `userNotificationsEnabled`
@@ -762,7 +794,7 @@ module.exports = {
 
   /**
    * Sets the iOS notification types. Specify the combination of
-   * badges, sound and alerts are desired.
+   * badges, sound and alerts that are desired.
    *
    * @param {notificationType} types specified notification types.
    * @param {function} [success] Success callback.
@@ -775,11 +807,37 @@ module.exports = {
   },
 
   /**
+   * Sets the iOS presentation options. Specify the combination of
+   * badges, sound and alerts that are desired.
+   *
+   * @param {presentationOptions} types specified presentation options.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+   setPresentationOptions: function(options, success, failure) {
+     argscheck.checkArgs('nFF', 'UAirship.setPresentationOptions', arguments)
+     callNative(success, failure, "setPresentationOptions", [options])
+   },
+
+  /**
    * Enum for notification types.
    * @readonly
    * @enum {number}
    */
   notificationType: {
+    none: 0,
+    badge: 1,
+    sound: 2,
+    alert: 4
+  },
+
+  /**
+   * Enum for presentation options.
+   * @readonly
+   * @enum {number}
+   */
+  presentationOptions: {
     none: 0,
     badge: 1,
     sound: 2,

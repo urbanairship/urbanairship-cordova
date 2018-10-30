@@ -1,0 +1,2 @@
+src/ios/Airship/libUAirship-9.4.0.a filter=lfs diff=lfs merge=lfs -text
+src/ios/Airship/libUAirship-10.0.0.a filter=lfs diff=lfs merge=lfs -text
