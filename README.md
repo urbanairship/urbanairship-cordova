@@ -20,14 +20,10 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
 ### Requirements:
  - Cordova-CLI >= 7.0.0
- - Android [GCM Setup](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup)
+ - Android [FCM Setup](https://docs.urbanairship.com/tutorials/getting-started/push-providers/fcm/)
  - iOS [APNS Setup](http://docs.urbanairship.com/reference/push-providers/apns.html)
 
 ### Quickstart
-
-Due to an [issue in the android resource processing (AAPT2)](https://issuetracker.google.com/issues/69347762),
-the GCM/FCM sender ID either needs to be prefixed with `sender:` or you can disable AAPT2 with
-[cordova-disable-aapt2](https://github.com/runtrizapps/cordova-android-disable-aapt2).
 
 1. Install this plugin using Cordova CLI:
 
