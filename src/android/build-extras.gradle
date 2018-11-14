@@ -24,7 +24,7 @@ dependencies {
     implementation 'com.android.support:support-annotations:27.1.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
     implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.urbanairship.android:urbanairship-fcm:9.5.4'
+    implementation 'com.urbanairship.android:urbanairship-fcm:9.5.5'
 }
 
 cdvPluginPostBuildExtras.push({

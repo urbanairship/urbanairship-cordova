@@ -1,14 +1,20 @@
-===============================
-Version 7.3.2 - October 13, 2018
-===============================
-- Fix package issue with 7.3.1
-- Update Android SDK to 9.5.4
-- Update iOS SDK to 10.0.3
+=================================
+Version 7.3.3 - November 14, 2018
+=================================
+- Fixed build issue with 7.3.2
+- Updated Android SDK to 9.5.5
+
+=================================
+Version 7.3.2 - November 13, 2018
+=================================
+- Fixed package issue with 7.3.1
+- Updated Android SDK to 9.5.4
+- Updated iOS SDK to 10.0.3
 
 ===============================
 Version 7.3.1 - October 9, 2018
 ===============================
-- Update Android plugin to be compatible with older versions of Cordova Android.
+- Updated Android plugin to be compatible with older versions of Cordova Android.
 
 =================================
 Version 7.3.0 - September 25, 2018
