@@ -31,6 +31,7 @@ import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.richpush.RichPushMessage;
 import com.urbanairship.util.HelperActivity;
 import com.urbanairship.util.UAStringUtil;
+import com.urbanairship.Autopilot;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
