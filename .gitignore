@@ -8,4 +8,5 @@ src/android/android.iml
 src/android/local.properties
 out/*
 node_modules/*
+scripts/update_cordova/node_modules/*
 config_sample.xml
