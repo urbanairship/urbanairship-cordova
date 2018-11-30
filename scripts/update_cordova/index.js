@@ -23,7 +23,7 @@ const buildExtrasFilePath = `${__dirname}/../../src/android/build-extras.gradle`
     .option('-a, --android <Android version>', 'The UA Android SDK version to update to.')
     .option('-i, --ios <iOS version>', 'The UA iOS SDK version to update to.')
     .action(function(pluginVersion) {
-            // This section will only be entered if options are included
+            // This section will only be entered if arguments are included
             console.log('\nUpdating plugin version to: %s\n', pluginVersion)
             replacePluginVersion(pluginVersion, pluginXMLFilePath)
             replacePluginVersionJSON(pluginVersion, packageJSONFilePath)
