@@ -129,6 +129,11 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         document.addEventListener("urbanairship.notification_opened", notificationOpened)
         document.addEventListener("urbanairship.deep_link", handleDeepLink)
 
+### iOS Notification Service Extension
+
+In order to take advantage of iOS 10 notification attachments, such as images,
+animated gifs, and video, you will need to create a [notification service extension](https://developer.apple.com/reference/usernotifications/unnotificationserviceextension/)
+by following the [iOS Notification Service Extension Guide](https://docs.urbanairship.com/tutorials/api/ios/notification-service-extension/).
 
 ### Sample
 
