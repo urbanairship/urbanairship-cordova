@@ -1,9 +1,0 @@
-{
-  "name": "update_cordova",
-  "version": "1.0.0",
-  "description": "A script for updating the cordova plugin",
-  "main": "index.js",
-  "bin": {
-    "update_cordova": "./index.js"
-  }
-}

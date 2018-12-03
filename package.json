@@ -51,5 +51,8 @@
   "scripts": {
     "generate-docs": "jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md",
     "prepublishOnly" : "source scripts/update_ios_static_lib.sh"
+  },
+  "bin": {
+    "update_cordova": "scripts/update_cordova/index.js"
   }
 }
