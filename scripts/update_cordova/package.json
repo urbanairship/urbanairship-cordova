@@ -5,14 +5,5 @@
   "main": "index.js",
   "bin": {
     "update_cordova": "./index.js"
-  },
-  "dependencies": {
-    "adm-zip": "^0.4.13",
-    "co": "^4.6.0",
-    "co-prompt": "^1.0.0",
-    "commander": "^2.19.0",
-    "fs": "0.0.1-security",
-    "semver": "^5.6.0",
-    "superagent": "^4.0.0"
   }
 }
