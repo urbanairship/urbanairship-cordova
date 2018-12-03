@@ -29,8 +29,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
         cordova plugin add urbanairship-cordova
 
-2. *(Android Only)* Add a reference to your google-servies.json file (parallel to config.xml):
-
+2. *(Android Only)* Add a reference to your google-servies.json file in the app's `config.xml`:
        <platform name="android">
             ...
             <resource-file src="google-services.json" target="app/google-services.json" />
@@ -50,7 +49,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         }
     Your iOS builds will need to reference the build.json using Cordova's "--buildConfig" flag.
 
-4. Initailize Urban Airship
+4. Initialize Urban Airship
 
     Either call takeOff when the device is ready:
 
@@ -113,7 +112,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         <!-- iOS Auto Clear Badge -->
         <preference name="com.urbanairship.clear_badge_onlaunch" value="true | false" />
 
-    `UrbanAirship.takeOff` can be called multiple times but any changes the app credentials will not apply until the next app start.
+    `UrbanAirship.takeOff` can be called multiple times but any changes to the app credentials will not apply until the next app start.
 
 5. Enable user notifications:
 
@@ -122,7 +121,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
             console.log("User notifications are enabled! Fire away!")
         })
 
-6. Listen for events:
+6. *(Optional)* Listen for events:
 
         document.addEventListener("urbanairship.registration", onRegistration)
         document.addEventListener("urbanairship.push", onPushReceived)
