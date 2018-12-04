@@ -23,6 +23,9 @@ fi
 # keep cordova up to date
 #npm install cordova -g
 
+# Update ios static lib
+source $ROOT_PATH/scripts/update_ios_static_lib.sh
+
 # create cordova directory
 mkdir -p $CORDOVA_PATH
 cd $CORDOVA_PATH
