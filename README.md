@@ -29,7 +29,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
         cordova plugin add urbanairship-cordova
 
-2. *(Android Only)* Add a reference to your google-servies.json file in the app's `config.xml`:
+2. *(Android Only)* Add a reference to your google-services.json file in the app's `config.xml`:
        <platform name="android">
             ...
             <resource-file src="google-services.json" target="app/google-services.json" />
