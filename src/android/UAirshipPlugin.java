@@ -12,6 +12,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
+import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
@@ -31,6 +33,7 @@ import com.urbanairship.google.PlayServicesUtils;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.TagGroupsEditor;
+import com.urbanairship.push.notifications.DefaultNotificationFactory;
 import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.richpush.RichPushMessage;
 import com.urbanairship.util.HelperActivity;
@@ -221,6 +224,16 @@ public class UAirshipPlugin extends CordovaPlugin {
         if (!pluginManager.isAirshipAvailable()) {
             callbackContext.error("Airship config is invalid. Unable to takeOff.");
         }
+
+        DefaultNotificationFactory notificationFactory = new DefaultNotificationFactory(UAirship.getApplicationContext()) {
+            @Override
+            public NotificationCompat.Builder extendBuilder(@NonNull NotificationCompat.Builder builder, @NonNull PushMessage message, int notificationId) {
+                builder.getExtras().putBundle("push_message", message.getPushBundle());
+                return builder;
+            }
+        };
+
+        UAirship.shared().getPushManager().setNotificationFactory(notificationFactory);
 
         callbackContext.success();
     }
@@ -1220,6 +1233,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
                 PushMessage pushMessage;
                 Bundle extras = statusBarNotification.getNotification().extras;
+
                 if (extras != null && extras.containsKey("push_message")) {
                     pushMessage = new PushMessage(extras.getBundle("push_message"));
                 } else {

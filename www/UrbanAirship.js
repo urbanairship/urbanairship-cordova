@@ -768,6 +768,8 @@ module.exports = {
   /**
    * Gets currently active notifications.
    *
+   * Note: On Android this functionality is only supported on Android M or higher.
+   *
    * @param {function(messages)} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    */
