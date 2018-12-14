@@ -718,6 +718,49 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
+- (void)getActiveNotifications:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        if (@available(iOS 10.0, *)) {
+            [[UNUserNotificationCenter currentNotificationCenter] getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
+
+                NSMutableArray *result = [NSMutableArray array];
+                for(UNNotification *unnotification in notifications) {
+                    UANotificationContent *content = [UANotificationContent notificationWithUNNotification:unnotification];
+                    [result addObject:[self.pluginManager pushEventFromNotification:content]];
+                }
+
+                completionHandler(CDVCommandStatus_OK, result);
+            }];
+        } else {
+            completionHandler(CDVCommandStatus_ERROR, @"Only available on iOS 10+");
+        }
+    }];
+}
+
+- (void)clearNotification:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        if (@available(iOS 10.0, *)) {
+            NSString *identifier = command.arguments.firstObject;
+
+            if (identifier) {
+                [[UNUserNotificationCenter currentNotificationCenter] removeDeliveredNotificationsWithIdentifiers:@[identifier]];
+            }
+
+            completionHandler(CDVCommandStatus_OK, nil);
+        }
+    }];
+}
+
+- (void)clearNotifications:(CDVInvokedUrlCommand *)command {
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        if (@available(iOS 10.0, *)) {
+            [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
+        }
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
 - (void)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
     if (!self.listenerCallbackID) {
         UA_LTRACE(@"Listener callback unavailable.  event %@", eventType);

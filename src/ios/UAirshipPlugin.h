@@ -386,4 +386,27 @@
  */
 - (void)isAppNotificationsEnabled:(CDVInvokedUrlCommand *)command;
 
+/**
+ * Gets the currently active notifications.
+ *
+ * @param command The cordova command.
+ */
+- (void)getActiveNotifications:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Clears notifications by identifier.
+ *
+ * Expected arguemts: String - notification identifier.
+ *
+ * @param command The cordova command.
+ */
+- (void)clearNotification:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Clears all notifications.
+ *
+ * @param command The cordova command.
+ */
+- (void)clearNotifications:(CDVInvokedUrlCommand *)command;
+
 @end

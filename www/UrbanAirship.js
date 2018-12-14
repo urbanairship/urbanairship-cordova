@@ -151,7 +151,8 @@ module.exports = {
    * @param {string} subtitle The push subtitle.
    * @param {object} extras Any push extras.
    * @param {object} aps The raw aps dictionary (iOS only)
-   * @param {number} [notification_id] The Android notification ID.
+   * @param {number} [notification_id] The Android notification ID. Deprecated in favor of notificationId.
+   * @param {string} [notificationId] The notification ID.
    */
 
   /**
@@ -161,7 +162,8 @@ module.exports = {
    * @type {object}
    * @param {string} message The push alert message.
    * @param {object} extras Any push extras.
-   * @param {number} [notification_id] The Android notification ID.
+   * @param {number} [notification_id] The Android notification ID. Deprecated in favor of notificationId.
+   * @param {string} [notificationId] The notification ID.
    * @param {string} [actionID] The ID of the notification action button if available.
    * @param {boolean} isForeground Will always be true if the user taps the main notification. Otherwise its defined by the notification action button.
    */
@@ -739,6 +741,41 @@ module.exports = {
     callNative(success, failure, 'overlayInboxMessage', [messageId])
   },
 
+  /**
+   * Clears a notification by identifier.
+   *
+   * @param {string} identifier The notification identifier.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   */
+  clearNotification: function(identifier, success, failure) {
+    argscheck.checkArgs('sFF', 'UAirship.clearNotification', arguments)
+    callNative(success, failure, "clearNotification", [identifier])
+  },
+
+  /**
+   * Clears all notifications posted by the application.
+   *
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  clearNotifications: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.clearNotifications', arguments)
+    callNative(success, failure, "clearNotifications")
+  },
+
+  /**
+   * Gets currently active notifications.
+   *
+   * @param {function(messages)} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   */
+  getActiveNotifications: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getActiveNotifications', arguments)
+    callNative(success, failure, "getActiveNotifications")
+  },
+
   // iOS only
 
   /**
@@ -845,18 +882,6 @@ module.exports = {
   },
 
   // Android only
-
-  /**
-   * Clears all notifications posted by the application.
-   *
-   * @param {function} [success] Success callback.
-   * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The error message.
-   */
-  clearNotifications: function(success, failure) {
-    argscheck.checkArgs('FF', 'UAirship.clearNotifications', arguments)
-    callNative(success, failure, "clearNotifications")
-  },
 
   /**
    * Checks if notification sound is enabled or not.
