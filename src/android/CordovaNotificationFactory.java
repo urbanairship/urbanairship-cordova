@@ -5,7 +5,9 @@ package com.urbanairship.cordova;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NotificationCompat;
 
+import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.notifications.DefaultNotificationFactory;
 
 
@@ -21,6 +23,12 @@ public class CordovaNotificationFactory extends DefaultNotificationFactory {
         super(context);
         appIcon = context.getApplicationInfo().icon;
         pluginManager = PluginManager.shared(context);
+    }
+
+    @Override
+    public NotificationCompat.Builder extendBuilder(@NonNull NotificationCompat.Builder builder, @NonNull PushMessage message, int notificationId) {
+        builder.getExtras().putBundle("push_message", message.getPushBundle());
+        return builder;
     }
 
     @Override
