@@ -11,8 +11,11 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.service.notification.StatusBarNotification;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 
+import com.urbanairship.Autopilot;
 import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.actions.ActionArguments;
@@ -23,6 +26,7 @@ import com.urbanairship.actions.ActionValueException;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.NotificationOpenedEvent;
+import com.urbanairship.cordova.events.PushEvent;
 import com.urbanairship.google.PlayServicesUtils;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.push.PushMessage;
@@ -31,7 +35,6 @@ import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.richpush.RichPushMessage;
 import com.urbanairship.util.HelperActivity;
 import com.urbanairship.util.UAStringUtil;
-import com.urbanairship.Autopilot;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -70,7 +73,8 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
-            "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "dismissOverlayInboxMessage", "setAutoLaunchDefaultMessageCenter");
+            "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "dismissOverlayInboxMessage", "setAutoLaunchDefaultMessageCenter",
+            "getActiveNotifications", "clearNotification");
 
 
     /*
@@ -1195,4 +1199,83 @@ public class UAirshipPlugin extends CordovaPlugin {
         int value = UAirship.shared().getPushManager().isOptIn() ? 1 : 0;
         callbackContext.success(value);
     }
+
+    /**
+     * Gets currently active notifications.
+     *
+     * @param data            The call data.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    void getActiveNotifications(JSONArray data, final CallbackContext callbackContext) throws JSONException {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            JSONArray notificationsJSON = new JSONArray();
+
+            NotificationManager notificationManager = (NotificationManager) UAirship.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            StatusBarNotification[] statusBarNotifications = notificationManager.getActiveNotifications();
+
+            for (StatusBarNotification statusBarNotification : statusBarNotifications) {
+                int id = statusBarNotification.getId();
+                String tag = statusBarNotification.getTag();
+
+                PushMessage pushMessage;
+                Bundle extras = statusBarNotification.getNotification().extras;
+                if (extras != null && extras.containsKey("push_message")) {
+                    pushMessage = new PushMessage(extras.getBundle("push_message"));
+                } else {
+                    pushMessage = new PushMessage(new Bundle());
+                }
+
+                PushEvent pushEvent = new PushEvent(id, pushMessage, tag);
+
+                notificationsJSON.put(pushEvent.getEventData());
+            }
+
+            callbackContext.success(notificationsJSON);
+        } else {
+            callbackContext.error("Getting active notifications is only supported on Marshmallow and newer devices.");
+        }
+    }
+
+    /**
+     * Clears all notifications.
+     *
+     * @param data            The call data.
+     * @param callbackContext The callback context
+     * @throws JSONException
+     */
+    void clearNotification(JSONArray data, final CallbackContext callbackContext) throws JSONException {
+        final String identifier = data.getString(0);
+
+        if (UAStringUtil.isEmpty(identifier)) {
+            return;
+        }
+
+        String[] parts = identifier.split(":", 2);
+
+        if (parts.length == 0) {
+            callbackContext.error("Invalid identifier: " + identifier);
+            return;
+        }
+
+        int id;
+        String tag = null;
+
+        try {
+            id = Integer.valueOf(parts[0]);
+        } catch (NumberFormatException e) {
+            callbackContext.error("Invalid identifier: " + identifier);
+            return;
+        }
+
+        if (parts.length == 2) {
+            tag = parts[1];
+        }
+
+
+        NotificationManagerCompat.from(UAirship.getApplicationContext()).cancel(tag, id);
+
+        callbackContext.success();
+    }
+
 }

@@ -4,6 +4,7 @@ package com.urbanairship.cordova.events;
 
 import com.urbanairship.Logger;
 import com.urbanairship.push.PushMessage;
+import com.urbanairship.util.UAStringUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,9 +21,16 @@ public class PushEvent implements Event {
 
     private final PushMessage message;
     private final Integer notificationId;
+    private String notificationTag;
 
     public PushEvent(Integer notificationId, PushMessage message) {
         this.notificationId = notificationId;
+        this.message = message;
+    }
+
+    public PushEvent(Integer notificationId, PushMessage message, String tag) {
+        this.notificationId = notificationId;
+        this.notificationTag = tag;
         this.message = message;
     }
 
@@ -55,10 +63,21 @@ public class PushEvent implements Event {
             data.putOpt("message", message.getAlert());
             data.putOpt("extras", new JSONObject(extras));
             data.putOpt("notification_id", notificationId);
+            data.putOpt("notificationId", getNotificationdId(notificationId, notificationTag));
         } catch (JSONException e) {
             Logger.error("Error constructing notification object", e);
         }
 
         return data;
     }
+
+    static String getNotificationdId(int notificationId, String notificationTag) {
+        String id = String.valueOf(notificationId);
+        if (!UAStringUtil.isEmpty(notificationTag)) {
+            id += ":" + notificationTag;
+        }
+
+        return id;
+    }
+
 }
