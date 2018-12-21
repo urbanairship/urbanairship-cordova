@@ -34,7 +34,6 @@ import java.util.Map;
  */
 public class PluginManager {
 
-
     /**
      * Interface when a new event is received.
      */
@@ -189,9 +188,24 @@ public class PluginManager {
      * @return {@code true} if airship is available, otherwise {@code false}.
      */
     public boolean isAirshipAvailable() {
-        if (!isAirshipAvailable && getAirshipConfig() != null) {
-            Autopilot.automaticTakeOff(context);
+        if (isAirshipAvailable) {
+            return true;
+        }
+
+        if (getAirshipConfig() == null) {
+            return false;
+        }
+
+        if (UAirship.isFlying() || UAirship.isTakingOff()) {
             isAirshipAvailable = true;
+            return true;
+        }
+
+        try {
+            UAirship.shared();
+            isAirshipAvailable = true;
+        } catch (IllegalArgumentException e) {
+            // ignore
         }
 
         return isAirshipAvailable;
