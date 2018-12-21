@@ -20,8 +20,13 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
 ### Requirements:
  - Cordova-CLI >= 7.0.0
- - Android [FCM Setup](https://docs.urbanairship.com/tutorials/getting-started/push-providers/fcm/)
- - iOS [APNS Setup](http://docs.urbanairship.com/reference/push-providers/apns.html)
+
+#### iOS:
+- Xcode 10+
+- [APNS Setup](http://docs.urbanairship.com/reference/push-providers/apns.html)
+
+#### Android
+ - Android [FCM Setup](https://docs.urbanairship.com/tutorials/getting-started/push-providers/fcm/
 
 ### Quickstart
 

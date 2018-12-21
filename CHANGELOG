@@ -1,4 +1,10 @@
 =================================
+Version 7.4.0 - December 21, 2018
+=================================
+- Added APIs to manage active notifications
+- Fixed issue with calling takeOff from JS
+
+=================================
 Version 7.3.4 - November 20, 2018
 =================================
 - Updated Android SDK to 9.5.6
