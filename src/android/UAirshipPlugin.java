@@ -13,6 +13,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationManagerCompat;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.content.ContextCompat;
 
 import com.urbanairship.Autopilot;
@@ -55,6 +57,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -132,11 +135,11 @@ public class UAirshipPlugin extends CordovaPlugin {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-
-                if (!pluginManager.isAirshipAvailable() && isAirshipAction) {
+                if (isAirshipAction && !pluginManager.isAirshipAvailable()) {
                     callbackContext.error("TakeOff not called. Unable to process action: " + action);
                     return;
                 }
+
 
                 try {
                     Logger.debug("Plugin Execute: " + action);
@@ -208,21 +211,35 @@ public class UAirshipPlugin extends CordovaPlugin {
         JSONObject prod = config.getJSONObject("production");
         JSONObject dev = config.getJSONObject("development");
 
-        PluginManager.ConfigEditor configEditor = pluginManager.editConfig()
+        pluginManager.editConfig()
                 .setProductionConfig(prod.getString("appKey"), prod.getString("appSecret"))
-                .setDevelopmentConfig(dev.getString("appKey"), dev.getString("appSecret"));
+                .setDevelopmentConfig(dev.getString("appKey"), dev.getString("appSecret"))
+                .apply();
 
-        if (pluginManager.isAirshipAvailable()) {
-            Logger.info("Airship already initialized. New config will be applied next app launch.");
+        final CountDownLatch latch = new CountDownLatch(1);
+
+        // TakeOff must be called on the main thread
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Autopilot.automaticTakeOff(context);
+
+                if (!pluginManager.isAirshipAvailable()) {
+                    callbackContext.error("Airship config is invalid. Unable to takeOff.");
+                } else {
+                    callbackContext.success();
+                }
+
+                latch.countDown();
+            }
+        });
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            Logger.error("Failed to takeOff", e);
+            Thread.currentThread().interrupt();
         }
-
-        configEditor.apply();
-
-        if (!pluginManager.isAirshipAvailable()) {
-            callbackContext.error("Airship config is invalid. Unable to takeOff.");
-        }
-
-        callbackContext.success();
     }
 
     /**
