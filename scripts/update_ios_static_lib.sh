@@ -1,18 +1,31 @@
 #!/bin/bash
 
+cd `dirname "${0}"`/../
+ROOT_PATH="$(pwd)"
+cd -
+
+CORDOVA_PATH=$1
+
+if [ -z "$1" ]
+then
+echo "No test path supplied"
+exit
+fi
+
 # Parse framework version line from plugin and pull out the version number
-VERSION=$(xpath plugin.xml '/plugin/platform[@name="ios"]/source-file[@framework="true"]' 2>/dev/null |
+VERSION=$(xpath $ROOT_PATH/plugin.xml '/plugin/platform[@name="ios"]/source-file[@framework="true"]' 2>/dev/null |
 grep -oh '[0-9]\+\.[0-9]\+\.[0-9]\+')
+
 
 echo "Downloading libUAirship-$VERSION.zip from bintray..."
 curl -s -LO "https://urbanairship.bintray.com/iOS/urbanairship-sdk/$VERSION/libUAirship-$VERSION.zip"
 echo "Unzipping libUAirship into temp directory..."
-unzip -q -d temp libUAirship-$VERSION.zip
+unzip -q -d $ROOT_PATH/temp $ROOT_PATH/libUAirship-$VERSION.zip
 echo "Making room for Airship directory in src/ios/..."
-rm -rf src/ios/Airship
+rm -rf $ROOT_PATH/src/ios/Airship
 echo "Moving Airship directory to src/ios/..."
-mv -f temp/Airship src/ios/
+mv -f $ROOT_PATH/temp/Airship $ROOT_PATH/src/ios/
 echo "Cleaning up..."
-rm -rf temp
-rm -rf libUAirship-$VERSION.zip
+rm -rf $ROOT_PATH/temp
+rm -rf $ROOT_PATH/libUAirship-$VERSION.zip
 echo "Done"
