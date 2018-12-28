@@ -142,6 +142,15 @@ module.exports = {
    */
 
   /**
+   * Event fired when the inbox needs to be displayed. This event is only emitted if auto 
+   * launch message center is disabled.
+   *
+   * @event show_inbox
+   * @type {object}
+   * @param {string} [messageId] The optional message ID.
+   */
+
+  /**
    * Event fired when a push is received.
    *
    * @event push

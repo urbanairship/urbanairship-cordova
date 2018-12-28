@@ -31,6 +31,7 @@ NSString *const EventPushReceived = @"urbanairship.push";
 NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
 NSString *const EventNotificationOptInStatus = @"urbanairship.notification_opt_in_status";
 
+NSString *const EventShowInbox = @"urbanairship.show_inbox";
 NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
 NSString *const EventRegistration = @"urbanairship.registration";
 NSString *const EventDeepLink = @"urbanairship.deep_link";
@@ -193,6 +194,8 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 - (void)showInbox {
     if (self.autoLaunchMessageCenter) {
         [[UAirship messageCenter] display];
+    } else {
+        [self fireEvent:EventShowInbox data:@{}];
     }
 }
 

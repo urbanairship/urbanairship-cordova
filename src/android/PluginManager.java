@@ -22,6 +22,7 @@ import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.cordova.events.NotificationOptInEvent;
 import com.urbanairship.cordova.events.PushEvent;
 import com.urbanairship.cordova.events.RegistrationEvent;
+import com.urbanairship.cordova.events.ShowInboxEvent;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.util.UAStringUtil;
 
@@ -66,6 +67,7 @@ public class PluginManager {
 
     private NotificationOpenedEvent notificationOpenedEvent;
     private DeepLinkEvent deepLinkEvent = null;
+    private ShowInboxEvent showInboxEvent = null;
     private Listener listener = null;
     private List<Event> pendingEvents = new ArrayList<Event>();
 
@@ -124,6 +126,20 @@ public class PluginManager {
 
             if (!notifyListener(event)) {
                 pendingEvents.add(event);
+            }
+        }
+    }
+
+    /**
+     * Called to open the inbox when auto launch is disabled.
+     *
+     * @param showInboxEvent The show inbox event.
+     */
+    public void sendShowInboxEvent(ShowInboxEvent showInboxEvent) {
+        synchronized (lock) {
+            this.showInboxEvent = showInboxEvent;
+            if (!notifyListener(showInboxEvent)) {
+                pendingEvents.add(showInboxEvent);
             }
         }
     }
