@@ -67,7 +67,6 @@ public class PluginManager {
 
     private NotificationOpenedEvent notificationOpenedEvent;
     private DeepLinkEvent deepLinkEvent = null;
-    private ShowInboxEvent showInboxEvent = null;
     private Listener listener = null;
     private List<Event> pendingEvents = new ArrayList<Event>();
 
@@ -137,7 +136,6 @@ public class PluginManager {
      */
     public void sendShowInboxEvent(ShowInboxEvent showInboxEvent) {
         synchronized (lock) {
-            this.showInboxEvent = showInboxEvent;
             if (!notifyListener(showInboxEvent)) {
                 pendingEvents.add(showInboxEvent);
             }
