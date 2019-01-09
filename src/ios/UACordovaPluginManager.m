@@ -188,6 +188,8 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 - (void)showMessageForID:(NSString *)messageID {
     if (self.autoLaunchMessageCenter) {
         [[UAirship messageCenter] displayMessageForID:messageID];
+    } else {
+        [self fireEvent:EventShowInbox data:@{@"messageId":messageID}];
     }
 }
 
