@@ -16,6 +16,9 @@ import com.urbanairship.actions.DeepLinkAction;
 import com.urbanairship.actions.OpenRichPushInboxAction;
 import com.urbanairship.actions.OverlayRichPushMessageAction;
 import com.urbanairship.richpush.RichPushInbox;
+import com.urbanairship.push.PushMessage;
+import com.urbanairship.cordova.events.ShowInboxEvent;
+
 
 /**
  * The Urban Airship autopilot to automatically handle takeOff.
@@ -96,5 +99,64 @@ public class CordovaAutopilot extends Autopilot {
                 pluginManager.inboxUpdated();
             }
         });
+
+        // Replace the message center actions to control auto launch behavior
+        airship.getActionRegistry()
+                .getEntry(OverlayRichPushMessageAction.DEFAULT_REGISTRY_NAME)
+                .setDefaultAction(new CustomOverlayRichPushMessageAction());
+
+        airship.getActionRegistry()
+                .getEntry(OpenRichPushInboxAction.DEFAULT_REGISTRY_NAME)
+                .setDefaultAction(new CustomOpenRichPushMessageAction());
+    }
+
+    private static void sendShowInboxEvent(ActionArguments arguments) {
+        Context context = UAirship.getApplicationContext();
+        String messageId = arguments.getValue().getString();
+
+        if (messageId.equalsIgnoreCase(OverlayRichPushMessageAction.MESSAGE_ID_PLACEHOLDER)) {
+            PushMessage pushMessage = arguments.getMetadata().getParcelable(ActionArguments.PUSH_MESSAGE_METADATA);
+            if (pushMessage != null && pushMessage.getRichPushMessageId() != null) {
+                messageId = pushMessage.getRichPushMessageId();
+            } else if (arguments.getMetadata().containsKey(ActionArguments.RICH_PUSH_ID_METADATA)) {
+                messageId = arguments.getMetadata().getString(ActionArguments.RICH_PUSH_ID_METADATA);
+            } else {
+                messageId = null;
+            }
+        }
+
+        PluginManager.shared(context).sendShowInboxEvent(new ShowInboxEvent(messageId));
+    }
+
+    public static class CustomOverlayRichPushMessageAction extends OverlayRichPushMessageAction {
+        Context context = UAirship.getApplicationContext();
+        final PluginManager pluginManager = PluginManager.shared(context);
+
+        @NonNull
+        @Override
+        public ActionResult perform(@NonNull ActionArguments arguments) {
+            if (pluginManager.getAutoLaunchMessageCenter()) {
+                return super.perform(arguments);
+            } else {
+                sendShowInboxEvent(arguments);
+                return ActionResult.newEmptyResult();
+            }
+        }
+    }
+
+    public static class CustomOpenRichPushMessageAction extends OpenRichPushInboxAction {
+        Context context = UAirship.getApplicationContext();
+        final PluginManager pluginManager = PluginManager.shared(context);
+
+        @NonNull
+        @Override
+        public ActionResult perform(@NonNull ActionArguments arguments) {
+            if (pluginManager.getAutoLaunchMessageCenter()) {
+                return super.perform(arguments);
+            } else {
+                sendShowInboxEvent(arguments);
+                return ActionResult.newEmptyResult();
+            }
+        }
     }
 }
