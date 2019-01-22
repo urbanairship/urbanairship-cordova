@@ -38,15 +38,15 @@
   "license": "Apache 2.0",
   "homepage": "https://github.com/urbanairship/urbanairship-cordova.git",
   "devDependencies": {
-    "jsdoc": "3.5.5",
-    "minami": "1.2.3",
     "adm-zip": "^0.4.13",
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
     "commander": "^2.19.0",
     "fs": "0.0.1-security",
+    "jsdoc": "3.5.5",
+    "minami": "1.2.3",
     "semver": "^5.6.0",
-    "superagent": "^4.0.0"
+    "superagent": "^4.1.0"
   },
   "scripts": {
     "generate-docs": "jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md",
