@@ -4,6 +4,12 @@
 VERSION=$(xpath plugin.xml '/plugin/platform[@name="ios"]/source-file[@framework="true"]' 2>/dev/null |
 grep -oh '[0-9]\+\.[0-9]\+\.[0-9]\+')
 
+# Don't copy static library if it already exists
+if [[ -f src/ios/Airship/libUAirship-$VERSION.a ]]; then 
+  echo "libUAirship-$VERSION has already been downloaded"
+  exit
+fi
+
 echo "Downloading libUAirship-$VERSION.zip from bintray..."
 curl -s -LO "https://urbanairship.bintray.com/iOS/urbanairship-sdk/$VERSION/libUAirship-$VERSION.zip"
 echo "Unzipping libUAirship into temp directory..."
