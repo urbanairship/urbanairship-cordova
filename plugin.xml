@@ -142,6 +142,9 @@
             src="src/android/events/InboxEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
+            src="src/android/events/ShowInboxEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
             src="src/android/events/PushEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
