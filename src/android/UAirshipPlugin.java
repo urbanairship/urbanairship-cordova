@@ -206,7 +206,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext THe callback context.
      * @throws JSONException
      */
-    void takeOff(JSONArray data, CallbackContext callbackContext) throws JSONException {
+    void takeOff(JSONArray data, final CallbackContext callbackContext) throws JSONException {
         JSONObject config = data.getJSONObject(0);
         JSONObject prod = config.getJSONObject("production");
         JSONObject dev = config.getJSONObject("development");
