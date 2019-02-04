@@ -4,23 +4,31 @@ package com.urbanairship.cordova;
 
 import android.content.Intent;
 import android.os.Bundle;
-import com.urbanairship.widget.UAWebView;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.urbanairship.actions.LandingPageActivity;
 
 public class CustomLandingPageActivity extends LandingPageActivity {
 
+    @NonNull
+    public static final String CANCEL_INTENT_ACTION = "CANCEL";
+
     @Override
-    public void onPostCreate(Bundle savedInstanceState) {
+    public void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        if (getIntent() != null && "CANCEL".equals(getIntent().getAction())) {
+        if (getIntent() != null && CANCEL_INTENT_ACTION.equals(getIntent().getAction())) {
             finish();
         }
     }
 
     @Override
-    public void onNewIntent(Intent intent) {
-        if (intent != null && "CANCEL".equals(intent.getAction())) {
+    public void onNewIntent(@Nullable Intent intent) {
+        if (intent == null) {
+            return;
+        }
+
+        if (CANCEL_INTENT_ACTION.equals(intent.getAction())) {
             finish();
             return;
         }
