@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.urbanairship.AirshipReceiver;
-import com.urbanairship.Logger;
+import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,7 +62,7 @@ public class NotificationOpenedEvent extends PushEvent {
                 jsonObject.put(IS_FOREGROUND, true);
             }
         } catch (JSONException e) {
-            Logger.error("Error constructing notification object", e);
+            PluginLogger.error(e,"Error constructing notification object");
         }
 
         return jsonObject;

@@ -4,7 +4,7 @@ package com.urbanairship.cordova.events;
 
 import android.support.annotation.NonNull;
 
-import com.urbanairship.Logger;
+import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +42,7 @@ public class NotificationOptInEvent implements Event {
         try {
             data.put(OPT_IN, optIn);
         } catch (JSONException e) {
-            Logger.error("Error adding opt-in event data", e);
+            PluginLogger.error(e, "Error adding opt-in event data");
         }
 
         return data;

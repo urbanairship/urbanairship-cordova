@@ -19,7 +19,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
 import com.urbanairship.Autopilot;
-import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionCompletionCallback;
@@ -94,7 +93,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        Logger.info("Initializing Urban Airship cordova plugin.");
+        PluginLogger.info("Initializing Urban Airship cordova plugin.");
         context = cordova.getActivity().getApplicationContext();
 
         Autopilot.automaticTakeOff(context);
@@ -129,7 +128,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         final boolean isAirshipAction = AIRSHIP_ACTIONS.contains(action);
 
         if (!isAirshipAction && !isGlobalAction) {
-            Logger.debug("Invalid action: " + action);
+            PluginLogger.debug("Invalid action: %s", action);
             return false;
         }
 
@@ -143,11 +142,11 @@ public class UAirshipPlugin extends CordovaPlugin {
 
 
                 try {
-                    Logger.debug("Plugin Execute: " + action);
+                    PluginLogger.debug("Plugin Execute: %s", action);
                     Method method = UAirshipPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
                     method.invoke(UAirshipPlugin.this, data, callbackContext);
                 } catch (Exception e) {
-                    Logger.error("Action failed to execute: " + action, e);
+                    PluginLogger.error(e, "Action failed to execute: %s", action);
                     callbackContext.error("Action " + action + " failed with exception: " + e.getMessage());
                 }
             }
@@ -189,7 +188,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                     eventData.putOpt("eventType", event.getEventName());
                     eventData.putOpt("eventData", event.getEventData());
                 } catch (JSONException e) {
-                    Logger.error("Failed to create event: " + event);
+                    PluginLogger.error("Failed to create event: %s", event);
                     return;
                 }
 
@@ -238,7 +237,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         try {
             latch.await();
         } catch (InterruptedException e) {
-            Logger.error("Failed to takeOff", e);
+            PluginLogger.error(e, "Failed to takeOff");
             Thread.currentThread().interrupt();
         }
     }
@@ -555,7 +554,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         returnObject.put("endHour", endHour);
         returnObject.put("endMinute", endMinute);
 
-        Logger.debug("Returning quiet time");
+        PluginLogger.debug("Returning quiet time");
         callbackContext.success(returnObject);
     }
 
@@ -598,7 +597,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             alias = null;
         }
 
-        Logger.debug("Settings alias: " + alias);
+        PluginLogger.debug("Settings alias: %s", alias);
 
         UAirship.shared().getPushManager().setAlias(alias);
 
@@ -620,7 +619,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             tagSet.add(tagsArray.getString(i));
         }
 
-        Logger.debug("Settings tags: " + tagSet);
+        PluginLogger.debug("Settings tags: %s", tagSet);
         UAirship.shared().getPushManager().setTags(tagSet);
 
         callbackContext.success();
@@ -637,7 +636,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     void setSoundEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean soundPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setSoundEnabled(soundPreference);
-        Logger.debug("Settings Sound: " + soundPreference);
+        PluginLogger.debug("Settings Sound: %s", soundPreference);
         callbackContext.success();
     }
 
@@ -652,7 +651,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     void setVibrateEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean vibrationPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setVibrateEnabled(vibrationPreference);
-        Logger.debug("Settings Vibrate: " + vibrationPreference);
+        PluginLogger.debug("Settings Vibrate: %s.", vibrationPreference);
         callbackContext.success();
     }
 
@@ -667,7 +666,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     void setQuietTimeEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean quietPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setQuietTimeEnabled(quietPreference);
-        Logger.debug("Settings QuietTime: " + quietPreference);
+        PluginLogger.debug("Settings QuietTime: %s", quietPreference);
         callbackContext.success();
     }
 
@@ -693,7 +692,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         end.set(Calendar.HOUR_OF_DAY, endHour);
         end.set(Calendar.MINUTE, endMinute);
 
-        Logger.debug("Settings QuietTime. Start: " + start.getTime() + ", End: " + end.getTime());
+        PluginLogger.debug("Settings QuietTime. Start: %s. End: %s.", start.getTime(), end.getTime());
         UAirship.shared().getPushManager().setQuietTimeInterval(start.getTime(), end.getTime());
 
         callbackContext.success();
@@ -725,7 +724,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     void setAnalyticsEnabled(JSONArray data, CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
-        Logger.debug("Settings analyticsEnabled: " + enabled);
+        PluginLogger.debug("Settings analyticsEnabled: %s", enabled);
         UAirship.shared().getAnalytics().setEnabled(enabled);
         callbackContext.success();
     }
@@ -789,7 +788,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             namedUserId = null;
         }
 
-        Logger.debug("Setting named user: " + namedUserId);
+        PluginLogger.debug("Setting named user: %s", namedUserId);
 
         UAirship.shared().getNamedUser().setId(namedUserId);
 
@@ -805,7 +804,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     void editNamedUserTagGroups(JSONArray data, CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
 
-        Logger.debug("Editing named user tag groups: " + operations);
+        PluginLogger.debug("Editing named user tag groups: %s", operations);
 
         TagGroupsEditor editor = UAirship.shared().getNamedUser().editTagGroups();
         applyTagGroupOperations(editor, operations);
@@ -823,7 +822,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     void editChannelTagGroups(JSONArray data, CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
 
-        Logger.debug("Editing channel tag groups: " + operations);
+        PluginLogger.debug("Editing channel tag groups: %s", operations);
 
         TagGroupsEditor editor = UAirship.shared().getPushManager().editTagGroups();
         applyTagGroupOperations(editor, operations);
@@ -972,7 +971,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     void displayMessageCenter(JSONArray data, CallbackContext callbackContext) throws JSONException {
         String messageId = data.optString(0);
 
-        Logger.debug("Displaying Message Center");
+        PluginLogger.debug("Displaying Message Center");
         if (!UAStringUtil.isEmpty(messageId)) {
             Intent intent = new Intent(cordova.getActivity(), CustomMessageCenterActivity.class)
                     .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
@@ -1171,7 +1170,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @throws JSONException
      */
     void dismissOverlayInboxMessage(JSONArray data, CallbackContext callbackContext) throws JSONException {
-        Logger.debug("Dismissing Overlay Inbox Message");
+        PluginLogger.debug("Dismissing Overlay Inbox Message");
         Intent intent = new Intent(cordova.getActivity(), CustomLandingPageActivity.class)
                 .setAction("CANCEL")
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -1239,6 +1238,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                 try {
                     notificationsJSON.put(Utils.notificationObject(pushMessage, tag, id));
                 } catch (Exception e) {
+                    PluginLogger.error(e, "Unable to serialize push message: %s", pushMessage);
                 }
             }
 

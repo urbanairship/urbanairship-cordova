@@ -5,8 +5,8 @@ package com.urbanairship.cordova.events;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.urbanairship.cordova.PluginLogger;
 import com.urbanairship.cordova.Utils;
-import com.urbanairship.Logger;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.util.UAStringUtil;
 
@@ -43,7 +43,7 @@ public class PushEvent implements Event {
         try {
             return Utils.notificationObject(message, message.getNotificationTag(), notificationId);
         } catch (JSONException e) {
-            Logger.error("Error constructing notification object", e);
+            PluginLogger.error(e, "Error constructing notification object");
             return null;
         }
     }

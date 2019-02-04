@@ -2,7 +2,7 @@
 
 package com.urbanairship.cordova.events;
 
-import com.urbanairship.Logger;
+import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,8 +47,8 @@ public class RegistrationEvent implements Event {
                 data.put("error", "Invalid registration.");
             }
         } catch (JSONException e) {
-            Logger.error("Error in channel registration", e);
-        };
+            PluginLogger.error(e, "Error in channel registration");
+        }
 
         return data;
     }

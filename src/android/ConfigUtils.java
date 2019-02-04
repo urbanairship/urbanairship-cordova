@@ -90,7 +90,7 @@ class ConfigUtils {
 
                     if (name.startsWith(UA_PREFIX) && value != null) {
                         config.put(name, value);
-                        Logger.verbose("Found " + name + " in config.xml with value: " + value);
+                        PluginLogger.verbose("Found %s in config.xml with value: %s", name, value);
                     }
                 }
             }
@@ -98,7 +98,7 @@ class ConfigUtils {
             try {
                 eventType = xml.next();
             } catch (Exception e) {
-                Logger.error("Error parsing config file", e);
+                PluginLogger.error(e, "Error parsing config file");
             }
         }
 
