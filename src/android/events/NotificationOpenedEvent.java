@@ -45,14 +45,20 @@ public class NotificationOpenedEvent extends PushEvent {
     }
 
     @Override
+    @NonNull
     public String getEventName() {
         return EVENT_NOTIFICATION_OPENED;
     }
 
 
     @Override
+    @Nullable
     public JSONObject getEventData() {
         JSONObject jsonObject = super.getEventData();
+
+        if (jsonObject == null) {
+            return null;
+        }
 
         try {
             if (actionButtonInfo != null) {

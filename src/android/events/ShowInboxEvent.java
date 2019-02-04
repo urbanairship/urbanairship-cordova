@@ -2,13 +2,13 @@
 
 package com.urbanairship.cordova.events;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 
 
 /**
@@ -31,14 +31,16 @@ public class ShowInboxEvent implements Event {
     }
 
     @Override
+    @NonNull
     public String getEventName() {
         return SHOW_INBOX_EVENT;
     }
 
     @Override
+    @Nullable
     public JSONObject getEventData() {
         JSONObject data = new JSONObject();
-        
+
         try {
             if (messageId != null) {
                 data.put(MESSAGE_ID, messageId);

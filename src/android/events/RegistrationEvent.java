@@ -2,6 +2,9 @@
 
 package com.urbanairship.cordova.events;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
@@ -22,17 +25,19 @@ public class RegistrationEvent implements Event {
     private final boolean success;
 
 
-    public RegistrationEvent(String channel, String registrationToken, boolean success) {
+    public RegistrationEvent(@Nullable String channel, @Nullable String registrationToken, boolean success) {
         this.channel = channel;
         this.registrationToken = registrationToken;
         this.success = success;
     }
 
+    @NonNull
     @Override
     public String getEventName() {
         return EVENT_CHANNEL_UPDATED;
     }
 
+    @Nullable
     @Override
     public JSONObject getEventData() {
         JSONObject data = new JSONObject();

@@ -8,13 +8,9 @@ import android.support.annotation.Nullable;
 import com.urbanairship.cordova.PluginLogger;
 import com.urbanairship.cordova.Utils;
 import com.urbanairship.push.PushMessage;
-import com.urbanairship.util.UAStringUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Push event.
