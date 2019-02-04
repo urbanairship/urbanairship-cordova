@@ -4,9 +4,9 @@ package com.urbanairship.cordova;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
-
-import com.urbanairship.Logger;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -26,25 +26,26 @@ class ConfigUtils {
      * @param defaultLogLevel Default log level.
      * @return The log level.
      */
-    public static int parseLogLevel(String logLevel, int defaultLogLevel) {
+    public static int parseLogLevel(@Nullable String logLevel, int defaultLogLevel) {
         if (logLevel == null || logLevel.length() == 0) {
             return defaultLogLevel;
         }
         String logString = logLevel.trim().toLowerCase();
-        if (logString.equals("verbose")) {
-            return Log.VERBOSE;
-        } else if (logString.equals("debug")) {
-            return Log.DEBUG;
-        } else if (logString.equals("info")) {
-            return Log.INFO;
-        } else if (logString.equals("warn")) {
-            return Log.WARN;
-        } else if (logString.equals("error")) {
-            return Log.ERROR;
-        } else if (logString.equals("none")) {
-            return Log.ASSERT;
-        } else {
-            return defaultLogLevel;
+        switch (logString) {
+            case "verbose":
+                return Log.VERBOSE;
+            case "debug":
+                return Log.DEBUG;
+            case "info":
+                return Log.INFO;
+            case "warn":
+                return Log.WARN;
+            case "error":
+                return Log.ERROR;
+            case "none":
+                return Log.ASSERT;
+            default:
+                return defaultLogLevel;
         }
     }
 
@@ -54,7 +55,8 @@ class ConfigUtils {
      * @param value The value from config.
      * @return The sender ID.
      */
-    public static String parseSender(String value) {
+    @Nullable
+    public static String parseSender(@Nullable String value) {
         if (value == null) {
             return null;
         }
@@ -71,8 +73,9 @@ class ConfigUtils {
      *
      * @param context The application context.
      */
-    public static Map<String, String> parseConfigXml(Context context) {
-        Map<String, String> config = new HashMap<String, String>();
+    @NonNull
+    public static Map<String, String> parseConfigXml(@NonNull Context context) {
+        Map<String, String> config = new HashMap<>();
         int id = context.getResources().getIdentifier("config", "xml", context.getPackageName());
         if (id == 0) {
             return config;
