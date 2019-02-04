@@ -133,6 +133,9 @@
             src="src/android/CordovaNotificationFactory.java"
             target-dir="src/com/urbanairship/cordova"/>
         <source-file
+            src="src/android/Utils.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
             src="src/android/events/RegistrationEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
@@ -156,6 +159,7 @@
         <source-file
             src="src/android/events/Event.java"
             target-dir="src/com/urbanairship/cordova/events"/>
+
 
         <framework
             custom="true"
