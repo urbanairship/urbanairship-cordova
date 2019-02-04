@@ -12,8 +12,6 @@ import android.util.Log;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.AirshipReceiver;
-import com.urbanairship.Autopilot;
-import com.urbanairship.Logger;
 import com.urbanairship.UAirship;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
@@ -430,7 +428,7 @@ public class PluginManager {
             try {
                 return Color.parseColor(color);
             } catch (IllegalArgumentException e) {
-                Logger.error("Unable to parse color: " + color, e);
+                PluginLogger.error( e, "Unable to parse color: %s", color);
             }
         }
         return defaultColor;
@@ -450,7 +448,7 @@ public class PluginManager {
             if (id != 0) {
                 return id;
             } else {
-                Logger.error("Unable to find resource with name: " + resourceName);
+                PluginLogger.error("Unable to find resource with name: %s", resourceName);
             }
         }
         return 0;

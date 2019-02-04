@@ -3,7 +3,8 @@
 package com.urbanairship.cordova.events;
 
 import android.support.annotation.Nullable;
-import com.urbanairship.Logger;
+
+import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,8 +44,8 @@ public class ShowInboxEvent implements Event {
                 data.put(MESSAGE_ID, messageId);
             }
         } catch (JSONException e) {
-            Logger.error("Error in show inbox event", e);
-        };
+            PluginLogger.error(e, "Error in show inbox event");
+        }
 
         return data;
     }

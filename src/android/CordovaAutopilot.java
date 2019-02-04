@@ -26,8 +26,12 @@ import com.urbanairship.cordova.events.ShowInboxEvent;
 public class CordovaAutopilot extends Autopilot {
 
     @Override
-    public AirshipConfigOptions createAirshipConfigOptions(Context context) {
-        return PluginManager.shared(context).getAirshipConfig();
+    public AirshipConfigOptions createAirshipConfigOptions(@NonNull Context context) {
+        AirshipConfigOptions configOptions = PluginManager.shared(context).getAirshipConfig();
+        if (configOptions != null) {
+            PluginLogger.setLogLevel(configOptions.getLoggerLevel());
+        }
+        return configOptions;
     }
 
     @Override
@@ -41,7 +45,7 @@ public class CordovaAutopilot extends Autopilot {
     }
 
     @Override
-    public void onAirshipReady(UAirship airship) {
+    public void onAirshipReady(@NonNull UAirship airship) {
         Context context = UAirship.getApplicationContext();
         final PluginManager pluginManager = PluginManager.shared(context);
 
@@ -54,6 +58,7 @@ public class CordovaAutopilot extends Autopilot {
 
         // Deep link
         airship.getActionRegistry().getEntry(DeepLinkAction.DEFAULT_REGISTRY_NAME).setDefaultAction(new DeepLinkAction() {
+            @NonNull
             @Override
             public ActionResult perform(@NonNull ActionArguments arguments) {
                 String deepLink = arguments.getValue().getString();
@@ -110,7 +115,7 @@ public class CordovaAutopilot extends Autopilot {
                 .setDefaultAction(new CustomOpenRichPushMessageAction());
     }
 
-    private static void sendShowInboxEvent(ActionArguments arguments) {
+    private static void sendShowInboxEvent(@NonNull ActionArguments arguments) {
         Context context = UAirship.getApplicationContext();
         String messageId = arguments.getValue().getString();
 
@@ -128,14 +133,11 @@ public class CordovaAutopilot extends Autopilot {
         PluginManager.shared(context).sendShowInboxEvent(new ShowInboxEvent(messageId));
     }
 
-    public static class CustomOverlayRichPushMessageAction extends OverlayRichPushMessageAction {
-        Context context = UAirship.getApplicationContext();
-        final PluginManager pluginManager = PluginManager.shared(context);
-
+    private static class CustomOverlayRichPushMessageAction extends OverlayRichPushMessageAction {
         @NonNull
         @Override
         public ActionResult perform(@NonNull ActionArguments arguments) {
-            if (pluginManager.getAutoLaunchMessageCenter()) {
+            if (PluginManager.shared(UAirship.getApplicationContext()).getAutoLaunchMessageCenter()) {
                 return super.perform(arguments);
             } else {
                 sendShowInboxEvent(arguments);
@@ -144,14 +146,11 @@ public class CordovaAutopilot extends Autopilot {
         }
     }
 
-    public static class CustomOpenRichPushMessageAction extends OpenRichPushInboxAction {
-        Context context = UAirship.getApplicationContext();
-        final PluginManager pluginManager = PluginManager.shared(context);
-
+    private static class CustomOpenRichPushMessageAction extends OpenRichPushInboxAction {
         @NonNull
         @Override
         public ActionResult perform(@NonNull ActionArguments arguments) {
-            if (pluginManager.getAutoLaunchMessageCenter()) {
+            if (PluginManager.shared(UAirship.getApplicationContext()).getAutoLaunchMessageCenter()) {
                 return super.perform(arguments);
             } else {
                 sendShowInboxEvent(arguments);
