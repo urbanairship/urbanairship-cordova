@@ -15,6 +15,7 @@ import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationManagerCompat;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 
 import com.urbanairship.Autopilot;
@@ -1222,9 +1223,8 @@ public class UAirshipPlugin extends CordovaPlugin {
      *
      * @param data            The call data.
      * @param callbackContext The callback context.
-     * @throws JSONException
      */
-    void getActiveNotifications(JSONArray data, final CallbackContext callbackContext) throws JSONException {
+    void getActiveNotifications(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             JSONArray notificationsJSON = new JSONArray();
 
@@ -1234,18 +1234,12 @@ public class UAirshipPlugin extends CordovaPlugin {
             for (StatusBarNotification statusBarNotification : statusBarNotifications) {
                 int id = statusBarNotification.getId();
                 String tag = statusBarNotification.getTag();
+                PushMessage pushMessage = Utils.messageFromNotification(statusBarNotification);
 
-                PushMessage pushMessage;
-                Bundle extras = statusBarNotification.getNotification().extras;
-                if (extras != null && extras.containsKey("push_message")) {
-                    pushMessage = new PushMessage(extras.getBundle("push_message"));
-                } else {
-                    pushMessage = new PushMessage(new Bundle());
+                try {
+                    notificationsJSON.put(Utils.notificationObject(pushMessage, tag, id));
+                } catch (Exception e) {
                 }
-
-                PushEvent pushEvent = new PushEvent(id, pushMessage, tag);
-
-                notificationsJSON.put(pushEvent.getEventData());
             }
 
             callbackContext.success(notificationsJSON);

@@ -5,6 +5,7 @@ package com.urbanairship.cordova;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.urbanairship.push.PushMessage;
@@ -16,8 +17,11 @@ import com.urbanairship.push.notifications.DefaultNotificationFactory;
  */
 public class CordovaNotificationFactory extends DefaultNotificationFactory {
 
-    private PluginManager pluginManager;
-    private int appIcon;
+    @NonNull
+    public static final String PUSH_MESSAGE_BUNDLE_EXTRA = "com.urbanairship.push_bundle";
+
+    private final PluginManager pluginManager;
+    private final int appIcon;
 
     public CordovaNotificationFactory(@NonNull Context context) {
         super(context);
@@ -26,8 +30,9 @@ public class CordovaNotificationFactory extends DefaultNotificationFactory {
     }
 
     @Override
+    @NonNull
     public NotificationCompat.Builder extendBuilder(@NonNull NotificationCompat.Builder builder, @NonNull PushMessage message, int notificationId) {
-        builder.getExtras().putBundle("push_message", message.getPushBundle());
+        builder.getExtras().putBundle(PUSH_MESSAGE_BUNDLE_EXTRA, message.getPushBundle());
         return builder;
     }
 
@@ -39,13 +44,14 @@ public class CordovaNotificationFactory extends DefaultNotificationFactory {
     @Override
     public int getSmallIconId() {
         int icon = pluginManager.getNotificationIcon();
-        if (icon != 0){
+        if (icon != 0) {
             return icon;
         }
         return appIcon;
     }
 
     @Override
+    @Nullable
     public Uri getSound() {
         return pluginManager.getNotificationSound();
     }
