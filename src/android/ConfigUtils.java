@@ -30,23 +30,21 @@ class ConfigUtils {
         if (logLevel == null || logLevel.length() == 0) {
             return defaultLogLevel;
         }
-        String logString = logLevel.trim().toLowerCase();
-        switch (logString) {
-            case "verbose":
-                return Log.VERBOSE;
-            case "debug":
-                return Log.DEBUG;
-            case "info":
-                return Log.INFO;
-            case "warn":
-                return Log.WARN;
-            case "error":
-                return Log.ERROR;
-            case "none":
-                return Log.ASSERT;
-            default:
-                return defaultLogLevel;
-        }
+				String logString = logLevel.trim().toLowerCase();
+				if (logString.equals("verbose")) {
+					return Log.VERBOSE;
+				} else if (logString.equals("debug")) {
+					return Log.DEBUG;
+				} else if (logString.equals("info")) {
+					return Log.INFO;
+				} else if (logString.equals("warn")) {
+					return Log.WARN;
+				} else if (logString.equals("error")) {
+					return Log.ERROR;
+				} else if (logString.equals("none")) {
+					return Log.ASSERT;
+				}
+				return defaultLogLevel;
     }
 
     /**
@@ -75,7 +73,7 @@ class ConfigUtils {
      */
     @NonNull
     public static Map<String, String> parseConfigXml(@NonNull Context context) {
-        Map<String, String> config = new HashMap<>();
+        Map<String, String> config = new HashMap<String, String>();
         int id = context.getResources().getIdentifier("config", "xml", context.getPackageName());
         if (id == 0) {
             return config;

@@ -608,7 +608,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      */
     void setTags(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        HashSet<String> tagSet = new HashSet<>();
+        HashSet<String> tagSet = new HashSet<String>();
         JSONArray tagsArray = data.getJSONArray(0);
         for (int i = 0; i < tagsArray.length(); ++i) {
             tagSet.add(tagsArray.getString(i));
@@ -853,7 +853,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                              * it back to the user.
                              */
 
-                            Map<String, JsonValue> resultMap = new HashMap<>();
+                            Map<String, JsonValue> resultMap = new HashMap<String, JsonValue>();
                             resultMap.put("value", result.getValue().toJsonValue());
 
                             try {
@@ -906,7 +906,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             String group = operation.getString("group");
             String operationType = operation.getString("operation");
 
-            HashSet<String> tagSet = new HashSet<>();
+            HashSet<String> tagSet = new HashSet<String>();
             for (int j = 0; j < tags.length(); j++) {
                 tagSet.add(tags.getString(j));
             }
