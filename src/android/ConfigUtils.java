@@ -30,7 +30,7 @@ class ConfigUtils {
         if (logLevel == null || logLevel.length() == 0) {
             return defaultLogLevel;
         }
-				String logString = logLevel.trim().toLowerCase();
+        String logString = logLevel.trim().toLowerCase();
 				if (logString.equals("verbose")) {
 					return Log.VERBOSE;
 				} else if (logString.equals("debug")) {
