@@ -53,7 +53,7 @@ public class Utils {
     @NonNull
     public static JSONObject notificationObject(@NonNull PushMessage message, @Nullable String notificationTag, @Nullable Integer notificationId) throws JSONException {
         JSONObject data = new JSONObject();
-        Map<String, String> extras = new HashMap<>();
+        Map<String, String> extras = new HashMap<String, String>();
         for (String key : message.getPushBundle().keySet()) {
             if ("android.support.content.wakelockid".equals(key)) {
                 continue;
