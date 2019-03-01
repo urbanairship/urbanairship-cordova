@@ -1,4 +1,4 @@
-/* Copyright 2019 Urban Airship and Contributors */
+/* Copyright Urban Airship and Contributors */
 
 package com.urbanairship.cordova;
 
@@ -228,4 +228,5 @@ public final class PluginLogger {
                 break;
         }
     }
+
 }
