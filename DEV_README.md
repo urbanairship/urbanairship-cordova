@@ -5,3 +5,5 @@ Update Cordova Instructions:
 * For help run `node scripts/update_cordova.js --help`
 
 
+Android limitations:
+- We need to stay compatible with Java 1.6. Try to not use `<>` and Strings in a switch statement.
