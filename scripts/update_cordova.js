@@ -14,9 +14,9 @@ const pluginHeadersRegex = /.*<header-file src="src\/ios\/Airship\/Headers\/.*\.
 const pluginiOSLibRegex = /<source-file framework="true" src="src\/ios\/Airship\/libUAirship-[0-9]+\.[0-9]+\.[0-9]+.a"\/>/g;
 const buildExtrasRegex = /urbanairship-fcm:[0-9]+\.[0-9]+\.[0-9]+'/g;
 
-const pluginXMLFilePath = `${__dirname}/../../plugin.xml`
-const packageJSONFilePath = `${__dirname}/../../package.json`
-const buildExtrasFilePath = `${__dirname}/../../src/android/build-extras.gradle`
+const pluginXMLFilePath = `${__dirname}/../plugin.xml`
+const packageJSONFilePath = `${__dirname}/../package.json`
+const buildExtrasFilePath = `${__dirname}/../src/android/build-extras.gradle`
 
  program
     .arguments('<Plugin version>')

@@ -1,3 +1,11 @@
+==============================
+Version 7.5.3 - March 14, 2019
+==============================
+Fixed a security issue within Android Urban Airship SDK, that could allow trusted
+URL redirects in certain edge cases. All applications that are using
+urbanairship-cordova version 7.0.0 - 7.5.2 on Android should update as soon as possible.
+For more details, please email security@urbanairship.com.
+
 =============================
 Version 7.5.2 - March 1, 2019
 =============================
