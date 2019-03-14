@@ -1,4 +1,15 @@
 =============================
+Version 7.5.3 - March 14, 2019
+=============================
+=============================
+- Fixed a security issue within Urban Airship SDK, that could allow trusted
+URL redirects in certain edge cases.
+
+All applications that are using Urban Airship SDK 9.0.0 - 9.7.0 should
+update as soon as possible. For more details, please email
+security@urbanairship.com.
+
+=============================
 Version 7.5.2 - March 1, 2019
 =============================
 - Make Android compatible with Java 1.6
