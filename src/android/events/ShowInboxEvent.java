@@ -12,28 +12,28 @@ import org.json.JSONObject;
 
 
 /**
- * Notification opt-in status event.
+ * Show inbox event.
  */
-public class NotificationOptInEvent implements Event {
+public class ShowInboxEvent implements Event {
 
-    private static final String NOTIFICATION_OPT_IN_STATUS_EVENT = "urbanairship.notification_opt_in_status";
-    private static final String OPT_IN = "optIn";
+    private static final String SHOW_INBOX_EVENT = "urbanairship.show_inbox";
+    private static final String MESSAGE_ID = "messageId";
 
-    private final boolean optIn;
+    private final String messageId;
 
     /**
      * Default constructor.
      *
-     * @param optIn The app opt-in status.
+     * @param messageId The optional message ID.
      */
-    public NotificationOptInEvent(boolean optIn) {
-        this.optIn = optIn;
+    public ShowInboxEvent(@Nullable String messageId) {
+        this.messageId = messageId;
     }
 
-    @NonNull
     @Override
+    @NonNull
     public String getEventName() {
-        return NOTIFICATION_OPT_IN_STATUS_EVENT;
+        return SHOW_INBOX_EVENT;
     }
 
     @Override
@@ -42,9 +42,11 @@ public class NotificationOptInEvent implements Event {
         JSONObject data = new JSONObject();
 
         try {
-            data.put(OPT_IN, optIn);
+            if (messageId != null) {
+                data.put(MESSAGE_ID, messageId);
+            }
         } catch (JSONException e) {
-            PluginLogger.error(e, "Error adding opt-in event data");
+            PluginLogger.error(e, "Error in show inbox event");
         }
 
         return data;

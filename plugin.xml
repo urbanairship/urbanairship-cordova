@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="7.4.0"
+        version="7.5.2"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -133,6 +133,12 @@
             src="src/android/CordovaNotificationFactory.java"
             target-dir="src/com/urbanairship/cordova"/>
         <source-file
+            src="src/android/Utils.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
+            src="src/android/PluginLogger.java"
+            target-dir="src/com/urbanairship/cordova"/>
+        <source-file
             src="src/android/events/RegistrationEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
@@ -140,6 +146,9 @@
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
             src="src/android/events/InboxEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
+            src="src/android/events/ShowInboxEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
             src="src/android/events/PushEvent.java"
@@ -153,6 +162,7 @@
         <source-file
             src="src/android/events/Event.java"
             target-dir="src/com/urbanairship/cordova/events"/>
+
 
         <framework
             custom="true"
@@ -338,7 +348,7 @@
         <resource-file src="src/ios/Airship/AirshipResources.bundle"/>
 
         <!-- Airship library -->
-        <source-file framework="true" src="src/ios/Airship/libUAirship-10.0.3.a"/>
+        <source-file framework="true" src="src/ios/Airship/libUAirship-10.0.4.a"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />

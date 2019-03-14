@@ -1,6 +1,9 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright Urban Airship and Contributors */
 
 package com.urbanairship.cordova.events;
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.json.JSONObject;
 
@@ -10,13 +13,14 @@ import org.json.JSONObject;
 public class InboxEvent implements Event {
     private static final String EVENT_INBOX_UPDATED = "urbanairship.inbox_updated";
 
-
     @Override
+    @NonNull
     public String getEventName() {
         return EVENT_INBOX_UPDATED;
     }
 
     @Override
+    @Nullable
     public JSONObject getEventData() {
         return null;
     }

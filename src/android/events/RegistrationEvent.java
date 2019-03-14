@@ -1,8 +1,11 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright Urban Airship and Contributors */
 
 package com.urbanairship.cordova.events;
 
-import com.urbanairship.Logger;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,17 +25,19 @@ public class RegistrationEvent implements Event {
     private final boolean success;
 
 
-    public RegistrationEvent(String channel, String registrationToken, boolean success) {
+    public RegistrationEvent(@Nullable String channel, @Nullable String registrationToken, boolean success) {
         this.channel = channel;
         this.registrationToken = registrationToken;
         this.success = success;
     }
 
+    @NonNull
     @Override
     public String getEventName() {
         return EVENT_CHANNEL_UPDATED;
     }
 
+    @Nullable
     @Override
     public JSONObject getEventData() {
         JSONObject data = new JSONObject();
@@ -47,8 +52,8 @@ public class RegistrationEvent implements Event {
                 data.put("error", "Invalid registration.");
             }
         } catch (JSONException e) {
-            Logger.error("Error in channel registration", e);
-        };
+            PluginLogger.error(e, "Error in channel registration");
+        }
 
         return data;
     }

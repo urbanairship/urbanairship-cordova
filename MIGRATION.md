@@ -1,5 +1,9 @@
 # Migration Guide
 
+## 7.x to 7.5.0
+
+If you specified the minimum Android sdk version to be 16 (see 5.x to 6.0.0 migration below), please remove that from your config.xml or change it to be a minimum of 19. A minimum of 19 is required for new versions of Cordova.
+
 ## 6.x to 7.0.0
 
 The method `setDisplayASAPEnabled` has been removed.

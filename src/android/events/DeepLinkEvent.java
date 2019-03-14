@@ -1,8 +1,8 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright Urban Airship and Contributors */
 
 package com.urbanairship.cordova.events;
 
-import com.urbanairship.Logger;
+import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +34,7 @@ public class DeepLinkEvent implements Event {
         try {
             jsonObject.putOpt("deepLink", deepLink);
         } catch (JSONException e) {
-            Logger.error("Error constructing deep link event", e);
+            PluginLogger.error(e, "Error constructing deep link event");
         }
         return jsonObject;
     }

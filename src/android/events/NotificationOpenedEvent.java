@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright Urban Airship and Contributors */
 
 package com.urbanairship.cordova.events;
 
@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.urbanairship.AirshipReceiver;
-import com.urbanairship.Logger;
+import com.urbanairship.cordova.PluginLogger;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,14 +45,20 @@ public class NotificationOpenedEvent extends PushEvent {
     }
 
     @Override
+    @NonNull
     public String getEventName() {
         return EVENT_NOTIFICATION_OPENED;
     }
 
 
     @Override
+    @Nullable
     public JSONObject getEventData() {
         JSONObject jsonObject = super.getEventData();
+
+        if (jsonObject == null) {
+            return null;
+        }
 
         try {
             if (actionButtonInfo != null) {
@@ -62,7 +68,7 @@ public class NotificationOpenedEvent extends PushEvent {
                 jsonObject.put(IS_FOREGROUND, true);
             }
         } catch (JSONException e) {
-            Logger.error("Error constructing notification object", e);
+            PluginLogger.error(e,"Error constructing notification object");
         }
 
         return jsonObject;

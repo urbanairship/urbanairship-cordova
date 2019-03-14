@@ -1,4 +1,4 @@
-/* Copyright 2018 Urban Airship and Contributors */
+/* Copyright Urban Airship and Contributors */
 
 var cardova = require("cordova"),
     exec = require("cordova/exec"),
@@ -139,6 +139,15 @@ module.exports = {
    * Event fired when the inbox is updated.
    *
    * @event inbox_updated
+   */
+
+  /**
+   * Event fired when the inbox needs to be displayed. This event is only emitted if auto
+   * launch message center is disabled.
+   *
+   * @event show_inbox
+   * @type {object}
+   * @param {string} [messageId] The optional message ID.
    */
 
   /**
