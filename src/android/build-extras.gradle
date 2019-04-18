@@ -38,3 +38,10 @@ if (project.hasProperty('uaInternalJava6CompileOptions') && uaInternalJava6Compi
     })
 }
 
+// Used to avoid conflicts with other plugins that also apply the GoogleServicesPlugin
+// See https://cordova.apache.org/docs/en/latest/guide/platforms/android/#setting-gradle-properties
+if (!project.hasProperty('uaSkipApplyGoogleServicesPlugin') || !uaSkipApplyGoogleServicesPlugin) {
+    cdvPluginPostBuildExtras.push({
+        apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
+    })
+}

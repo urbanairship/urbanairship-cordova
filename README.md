@@ -141,6 +141,14 @@ In order to take advantage of iOS 10 notification attachments, such as images,
 animated gifs, and video, you will need to create a [notification service extension](https://developer.apple.com/reference/usernotifications/unnotificationserviceextension/)
 by following the [iOS Notification Service Extension Guide](https://docs.urbanairship.com/tutorials/api/ios/notification-service-extension/).
 
+### Android GoogleServicesPlugin
+
+The plugin will automatically apply the `GoogleServicesPlugin` for FCM. This can cause conflicts with other plugins that also apply
+the `GoogleServicesPlugin`. Applications can disable applying the plugin by setting the gradle property `uaSkipApplyGoogleServicesPlugin`
+to `true`. See (Setting Gradle Properties)[https://cordova.apache.org/docs/en/latest/guide/platforms/android/#setting-gradle-properties]
+for details on how to set a gradle property in a Cordova project.
+
+
 ### Sample
 
 A sample can be found in the Example directory.
