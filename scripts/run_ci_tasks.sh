@@ -67,7 +67,7 @@ if [ "$ANDROID" = "true" ]; then
   fi
 
   # Build android
-  cordova build android -- 2>&1 | tee -a /tmp/CORDOVA-$$.out
+  cordova build android -- ---gradleArg=-PuaInternalJava6CompileOptions=true 2>&1 | tee -a /tmp/CORDOVA-$$.out
 
   # check for failures
   if grep "BUILD FAILED" /tmp/CORDOVA-$$.out; then

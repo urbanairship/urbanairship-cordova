@@ -28,6 +28,20 @@ dependencies {
 
 ext.cdvCompileSdkVersion = 28
 
-cdvPluginPostBuildExtras.push({
-    apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
-})
+// For CI only. Verify our plugin is Java 6 compatible
+if (project.hasProperty('uaInternalJava6CompileOptions') && uaInternalJava6CompileOptions.toBoolean()) {
+    cdvPluginPostBuildExtras.push({
+        android.compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_6
+            targetCompatibility JavaVersion.VERSION_1_6
+        }
+    })
+}
+
+// Used to avoid conflicts with other plugins that also apply the GoogleServicesPlugin
+// See https://cordova.apache.org/docs/en/latest/guide/platforms/android/#setting-gradle-properties
+if (!project.hasProperty('uaSkipApplyGoogleServicesPlugin') || !uaSkipApplyGoogleServicesPlugin) {
+    cdvPluginPostBuildExtras.push({
+        apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
+    })
+}
