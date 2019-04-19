@@ -1,9 +1,10 @@
 ==============================
-Version 7.5.4 - April 18, 2019
+Version 7.5.4 - April 19, 2019
 ==============================
-Added a gradle property `uaSkipApplyGoogleServicesPlugin` that will disable applying
+- Added a gradle property `uaSkipApplyGoogleServicesPlugin` that will disable applying
 the `GoogleServicesPlugin` if set to `true`. This option should only be used if another
 plugin also applies the `GoogleServicesPlugin` to avoid build errors.
+- Updated Airship iOS SDK to 10.2.2
 
 ==============================
 Version 7.5.3 - March 14, 2019
