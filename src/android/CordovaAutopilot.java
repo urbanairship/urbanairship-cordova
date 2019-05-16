@@ -4,6 +4,7 @@ package com.urbanairship.cordova;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.XmlRes;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
@@ -105,6 +106,8 @@ public class CordovaAutopilot extends Autopilot {
             }
         });
 
+        loadCustomNotificationButtonGroups(context, airship);
+
         // Replace the message center actions to control auto launch behavior
         airship.getActionRegistry()
                 .getEntry(OverlayRichPushMessageAction.DEFAULT_REGISTRY_NAME)
@@ -113,6 +116,15 @@ public class CordovaAutopilot extends Autopilot {
         airship.getActionRegistry()
                 .getEntry(OpenRichPushInboxAction.DEFAULT_REGISTRY_NAME)
                 .setDefaultAction(new CustomOpenRichPushMessageAction());
+    }
+
+    private void loadCustomNotificationButtonGroups(Context context, UAirship airship) {
+        String packageName = UAirship.shared().getPackageName();
+        @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", packageName);
+
+         if (resId != 0) {
+            airship.getPushManager().addNotificationActionButtonGroups(context, resId);
+        }
     }
 
     private static void sendShowInboxEvent(@NonNull ActionArguments arguments) {
