@@ -10,8 +10,13 @@
 
 /**
  * Called to notify listeners of a new or pending event.
+ *
+ * @param eventType The event type string.
+ * @param data The json payload dictionary.
+ *
+ * @return `YES` if a properly implemented listener was notified, `NO` otherwise.
  */
--(void)notifyListener:(NSString *)eventType data:(NSDictionary *)data;
+-(BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data;
 @end
 
 /**

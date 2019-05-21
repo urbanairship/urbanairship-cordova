@@ -26,7 +26,7 @@ extern NSString *const EventNotificationOpened;
 @property (nonatomic, strong, nullable) NSDictionary *data;
 
 /**
- * Push event with event data.
+ * Open event with event data.
  *
  * @param data The event data.
  */
