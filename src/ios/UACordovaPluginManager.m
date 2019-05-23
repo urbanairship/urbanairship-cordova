@@ -448,8 +448,12 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     id strongDelegate = self.delegate;
 
     if (strongDelegate && [strongDelegate notifyListener:event.type data:event.data]) {
+        UA_LTRACE(@"Cordova plugin manager delegate notified with event of type:%@ with data:%@", event.type, event.data);
+
         return;
     }
+
+    UA_LTRACE(@"No cordova plugin manager delegate available, storing pending event of type:%@ with data:%@", event.type, event.data);
 
     // Add pending event
     [self.pendingEvents addObject:event];
@@ -459,6 +463,8 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
     _delegate = delegate;
 
     if (delegate) {
+        UA_LTRACE(@"Cordova plugin manager delegate set:%@", delegate);
+
         NSDictionary *events = [self.pendingEvents copy];
         [self.pendingEvents removeAllObjects];
 
