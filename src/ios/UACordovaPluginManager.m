@@ -295,6 +295,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
 -(void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler {
     self.lastReceivedDeepLink = [url absoluteString];
     [self fireEvent:[UACordovaDeepLinkEvent eventWithDeepLink:url]];
+    completionHandler();
 }
 
 #pragma mark UARegistrationDelegate
