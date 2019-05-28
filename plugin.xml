@@ -209,6 +209,21 @@
         <source-file src="src/ios/UAMessageViewController.m"/>
         <header-file src="src/ios/UACordovaPluginManager.h"/>
         <source-file src="src/ios/UACordovaPluginManager.m"/>
+        <header-file src="src/ios/events/UACordovaEvent.h"/>
+        <header-file src="src/ios/events/UACordovaDeepLinkEvent.h"/>
+        <source-file src="src/ios/events/UACordovaDeepLinkEvent.m"/>
+        <header-file src="src/ios/events/UACordovaInboxUpdatedEvent.h"/>
+        <source-file src="src/ios/events/UACordovaInboxUpdatedEvent.m"/>
+        <header-file src="src/ios/events/UACordovaNotificationOpenedEvent.h"/>
+        <source-file src="src/ios/events/UACordovaNotificationOpenedEvent.m"/>
+        <header-file src="src/ios/events/UACordovaNotificationOptInEvent.h"/>
+        <source-file src="src/ios/events/UACordovaNotificationOptInEvent.m"/>
+        <header-file src="src/ios/events/UACordovaPushEvent.h"/>
+        <source-file src="src/ios/events/UACordovaPushEvent.m"/>
+        <header-file src="src/ios/events/UACordovaRegistrationEvent.h"/>
+        <source-file src="src/ios/events/UACordovaRegistrationEvent.m"/>
+        <header-file src="src/ios/events/UACordovaShowInboxEvent.h"/>
+        <source-file src="src/ios/events/UACordovaShowInboxEvent.m"/>
 
         <!-- Airship headers -->
         <header-file src="src/ios/Airship/Headers/AirshipLib.h" />

@@ -761,10 +761,10 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
-- (void)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
+- (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
     if (!self.listenerCallbackID) {
         UA_LTRACE(@"Listener callback unavailable.  event %@", eventType);
-        return;
+        return false;
     }
 
     NSMutableDictionary *message = [NSMutableDictionary dictionary];
@@ -775,6 +775,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [result setKeepCallbackAsBool:YES];
 
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
+
+    return true;
 }
 
 @end
