@@ -31,6 +31,8 @@ NSString *const EventPushReceived = @"urbanairship.push";
 NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
 NSString *const EventNotificationOptInStatus = @"urbanairship.notification_opt_in_status";
 
+NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
+
 NSString *const EventShowInbox = @"urbanairship.show_inbox";
 NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
 NSString *const EventRegistration = @"urbanairship.registration";
@@ -84,6 +86,8 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
         [[UAirship push] resetBadge];
     }
 
+    [self loadCustomNotificationCategories];
+
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
     [UAirship inbox].delegate = self;
@@ -95,6 +99,17 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
                                                object:nil];
 
     self.isAirshipReady = YES;
+}
+
+- (void)loadCustomNotificationCategories {
+    NSString *categoriesPath = [[NSBundle mainBundle] pathForResource:CategoriesPlistPath ofType:@"plist"];
+    NSSet *customNotificationCategories = [UANotificationCategories createCategoriesFromFile:categoriesPath];
+
+    if (customNotificationCategories.count) {
+        UA_LDEBUG(@"Registering custom notification categories: %@", customNotificationCategories);
+        [UAirship push].customCategories = customNotificationCategories;
+        [[UAirship push] updateRegistration];
+    }
 }
 
 - (UAConfig *)createAirshipConfig {
@@ -335,7 +350,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
                                           NotificationPresentationAlertKey : @(alertBool),
                                           NotificationPresentationBadgeKey : @(badgeBool),
                                           NotificationPresentationSoundKey : @(soundBool)
-                                  },
+                                          },
                                   @"authorizedNotificationSettings" : @{
                                           AuthorizedNotificationSettingsAlertKey : @(alertBool),
                                           AuthorizedNotificationSettingsBadgeKey : @(badgeBool),
@@ -343,7 +358,7 @@ NSString *const EventDeepLink = @"urbanairship.deep_link";
                                           AuthorizedNotificationSettingsCarPlayKey : @(carPlayBool),
                                           AuthorizedNotificationSettingsLockScreenKey : @(lockScreenBool),
                                           AuthorizedNotificationSettingsNotificationCenterKey : @(notificationCenterBool)
-                                  }};
+                                          }};
 
     UA_LINFO(@"Opt in status changed.");
     [self fireEvent:EventNotificationOptInStatus data:eventBody];

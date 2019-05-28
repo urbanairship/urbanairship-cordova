@@ -135,6 +135,23 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
         document.addEventListener("urbanairship.notification_opened", notificationOpened)
         document.addEventListener("urbanairship.deep_link", handleDeepLink)
 
+3. *(Optional)*  Add platform-specific custom notification button groups resource files to config.xml:
+```
+  <!-- Optional: include custom notification button groups in XML format -->
+  <platform name="android">
+      ...
+      <resource-file src="ua_custom_notification_buttons.xml" target="app/src/main/res/xml/ua_custom_notification_buttons.xml" />
+  </platform>
+
+  ...
+
+  <!-- Optional: include custom notification categories in plist format -->
+  <platform name="ios">
+      ...
+      <resource-file src="UACustomNotificationCategories.plist" />
+  </platform>
+```
+
 ### iOS Notification Service Extension
 
 In order to take advantage of iOS 10 notification attachments, such as images,
