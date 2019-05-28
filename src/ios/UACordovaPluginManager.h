@@ -14,7 +14,7 @@
  * @param eventType The event type string.
  * @param data The json payload dictionary.
  *
- * @return `YES` if a properly implemented listener was notified, `NO` otherwise.
+ * @return `YES` if a listener was notified, `NO` otherwise.
  */
 -(BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data;
 @end

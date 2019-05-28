@@ -456,13 +456,15 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     _delegate = delegate;
 
     if (delegate) {
-        UA_LTRACE(@"Cordova plugin manager delegate set:%@", delegate);
+        @synchronized(self.pendingEvents) {
+            UA_LTRACE(@"Cordova plugin manager delegate set:%@", delegate);
 
-        NSDictionary *events = [self.pendingEvents copy];
-        [self.pendingEvents removeAllObjects];
+            NSDictionary *events = [self.pendingEvents copy];
+            [self.pendingEvents removeAllObjects];
 
-        for (NSObject<UACordovaEvent> *event in events) {
-            [self fireEvent:event];
+            for (NSObject<UACordovaEvent> *event in events) {
+                [self fireEvent:event];
+            }
         }
     }
 }
