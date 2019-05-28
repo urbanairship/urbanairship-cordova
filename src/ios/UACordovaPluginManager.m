@@ -35,16 +35,8 @@ NSString *const AuthorizedNotificationSettingsLockScreenKey = @"lockScreen";
 NSString *const AuthorizedNotificationSettingsNotificationCenterKey = @"notificationCenter";
 
 // Events
-NSString *const EventPushReceived = @"urbanairship.push";
-NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
-NSString *const EventNotificationOptInStatus = @"urbanairship.notification_opt_in_status";
-
 NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
-NSString *const EventShowInbox = @"urbanairship.show_inbox";
-NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
-NSString *const EventRegistration = @"urbanairship.registration";
-NSString *const EventDeepLink = @"urbanairship.deep_link";
 
 @interface UACordovaPluginManager() <UARegistrationDelegate, UAPushNotificationDelegate, UAInboxDelegate, UADeepLinkDelegate>
 @property (nonatomic, strong) NSDictionary *defaultConfig;
