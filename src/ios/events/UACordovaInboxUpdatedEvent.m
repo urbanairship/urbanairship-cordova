@@ -1,6 +1,5 @@
 /* Copyright Urban Airship and Contributors */
 
-
 #import "UACordovaInboxUpdatedEvent.h"
 
 NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
@@ -8,7 +7,7 @@ NSString *const EventInboxUpdated = @"urbanairship.inbox_updated";
 @implementation UACordovaInboxUpdatedEvent
 
 + (instancetype)event {
-    return [[UACordovaInboxUpdatedEvent alloc ] init];
+    return [[UACordovaInboxUpdatedEvent alloc] init];
 }
 
 - (instancetype)init {

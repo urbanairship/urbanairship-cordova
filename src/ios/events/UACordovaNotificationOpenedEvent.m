@@ -6,15 +6,6 @@ NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
 
 @implementation UACordovaNotificationOpenedEvent
 
-- (instancetype)init {
-    self = [super init];
-    if (self) {
-        self.data = nil;
-        self.type = EventNotificationOpened;
-    }
-    return self;
-}
-
 + (instancetype)eventWithData:(NSDictionary *)data  {
     return [[UACordovaNotificationOpenedEvent alloc] initWithData:data];
 }

@@ -7,7 +7,7 @@ NSString *const EventShowInbox = @"urbanairship.show_inbox";
 @implementation UACordovaShowInboxEvent
 
 + (instancetype)event {
-    return [[UACordovaShowInboxEvent alloc] init];
+    return [[UACordovaShowInboxEvent alloc] initWithMessageID:nil];
 }
 
 + (instancetype)eventWithMessageID:(NSString *)identifier {
@@ -23,7 +23,7 @@ NSString *const EventShowInbox = @"urbanairship.show_inbox";
     return self;
 }
 
-- (instancetype)initWithMessageID:(NSString *)identifier {
+- (instancetype)initWithMessageID:(nullable NSString *)identifier {
     self = [super init];
     if (self) {
         self.type = EventShowInbox;
