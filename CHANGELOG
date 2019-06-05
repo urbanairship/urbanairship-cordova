@@ -1,3 +1,9 @@
+============================
+Version 7.6.0 - June 5, 2019
+============================
+- Added support for app defined notification buttons/categories.
+- Fixed push events not being sent on iOS if a notification was delivered with a deep link.
+
 ==============================
 Version 7.5.4 - April 19, 2019
 ==============================
