@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.urbanairship.AirshipConfigOptions;
-import com.urbanairship.AirshipReceiver;
 import com.urbanairship.UAirship;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
@@ -22,6 +21,8 @@ import com.urbanairship.cordova.events.NotificationOptInEvent;
 import com.urbanairship.cordova.events.PushEvent;
 import com.urbanairship.cordova.events.RegistrationEvent;
 import com.urbanairship.cordova.events.ShowInboxEvent;
+import com.urbanairship.push.NotificationActionButtonInfo;
+import com.urbanairship.push.NotificationInfo;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.util.UAStringUtil;
 
@@ -56,7 +57,7 @@ public class PluginManager {
     private static final String NOTIFICATION_LARGE_ICON = "com.urbanairship.notification_large_icon";
     private static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
     private static final String NOTIFICATION_SOUND = "com.urbanairship.notification_sound";
-    private static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
+    static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
     private static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
 
@@ -160,7 +161,7 @@ public class PluginManager {
      *
      * @param notificationInfo The notification info.
      */
-    public void notificationOpened(@NonNull AirshipReceiver.NotificationInfo notificationInfo) {
+    public void notificationOpened(@NonNull NotificationInfo notificationInfo) {
         notificationOpened(new NotificationOpenedEvent(notificationInfo));
     }
 
@@ -169,7 +170,7 @@ public class PluginManager {
      *
      * @param notificationInfo The notification info.
      */
-    public void notificationOpened(@NonNull AirshipReceiver.NotificationInfo notificationInfo, @Nullable AirshipReceiver.ActionButtonInfo actionButtonInfo) {
+    public void notificationOpened(@NonNull NotificationInfo notificationInfo, @Nullable NotificationActionButtonInfo actionButtonInfo) {
         notificationOpened(new NotificationOpenedEvent(notificationInfo, actionButtonInfo));
     }
 

@@ -4,6 +4,7 @@ package com.urbanairship.cordova;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -25,10 +26,13 @@ import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionCompletionCallback;
 import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.ActionRunRequest;
+import com.urbanairship.actions.OverlayRichPushMessageAction;
+import com.urbanairship.app.GlobalActivityMonitor;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.google.PlayServicesUtils;
+import com.urbanairship.iam.html.HtmlActivity;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.TagGroupsEditor;
@@ -71,7 +75,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     private final static List<String> AIRSHIP_ACTIONS = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
-            "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
+            "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
@@ -562,41 +566,6 @@ public class UAirshipPlugin extends CordovaPlugin {
         Set<String> tags = UAirship.shared().getPushManager().getTags();
         PluginLogger.debug("Returning tags");
         callbackContext.success(new JSONArray(tags));
-    }
-
-    /**
-     * Returns the alias.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     * @deprecated Deprecated since 6.7.0 - to be removed in a future version of the plugin - please use getNamedUser
-     */
-    @Deprecated
-    void getAlias(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        String alias = UAirship.shared().getPushManager().getAlias();
-        alias = alias != null ? alias : "";
-        callbackContext.success(alias);
-    }
-
-    /**
-     * Sets the alias.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     * @deprecated Deprecated since 6.7.0 - to be removed in a future version of the plugin - please use setNamedUser
-     */
-    @Deprecated
-    void setAlias(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        String alias = data.getString(0);
-        if (alias.equals("")) {
-            alias = null;
-        }
-
-        PluginLogger.debug("Settings alias: %s", alias);
-
-        UAirship.shared().getPushManager().setAlias(alias);
-
-        callbackContext.success();
     }
 
     /**
@@ -1109,13 +1078,9 @@ public class UAirshipPlugin extends CordovaPlugin {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(cordova.getActivity(), CustomLandingPageActivity.class)
-                        .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
-                        .setPackage(cordova.getActivity().getPackageName())
-                        .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                cordova.getActivity().startActivity(intent);
+                ActionRunRequest.createRequest(OverlayRichPushMessageAction.DEFAULT_REGISTRY_NAME)
+                        .setValue(messageId)
+                        .run();
             }
         });
 
@@ -1130,11 +1095,14 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     void dismissOverlayInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         PluginLogger.debug("Dismissing Overlay Inbox Message");
-        Intent intent = new Intent(cordova.getActivity(), CustomLandingPageActivity.class)
-                .setAction("CANCEL")
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        cordova.getActivity().startActivity(intent);
+        List<Activity> resumedActivities = GlobalActivityMonitor.shared(context).getResumedActivities();
+
+        for (Activity activity : resumedActivities) {
+            if (activity instanceof HtmlActivity) {
+                activity.finish();
+            }
+        }
 
         callbackContext.success();
     }

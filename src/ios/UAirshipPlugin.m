@@ -11,6 +11,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 @property (nonatomic, copy) NSString *listenerCallbackID;
 @property (nonatomic, weak) UAMessageViewController *messageViewController;
 @property (nonatomic, strong) UACordovaPluginManager *pluginManager;
+@property (nonatomic, weak) UAInAppMessageHTMLAdapter *htmlAdapter;
+@property (nonatomic, assign) BOOL factoryBlockAssigned;
 @end
 
 @implementation UAirshipPlugin
@@ -232,7 +234,20 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
-        [UAirship location].locationUpdatesEnabled = enabled;
+
+        if (![UAirship shared].locationProviderDelegate) {
+            UA_LDEBUG(@"Location provider delegate is currently nil, unable to set location enabled status.");
+        }
+
+        [UAirship shared].locationProviderDelegate.locationUpdatesEnabled = enabled;
+
+        UA_LTRACE("setLocationEnabled set to:%@", enabled ? @"true" : @"false");
+
+        if (![UAirship shared].locationProviderDelegate) {
+            UA_LDEBUG(@"Location provider delegate is currently nil, unable to set location enabled status.");
+        }
+
+        [UAirship shared].locationProviderDelegate.locationUpdatesEnabled = enabled;
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -243,7 +258,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
-        [UAirship location].backgroundLocationUpdatesAllowed = enabled;
+
+        if (![UAirship shared].locationProviderDelegate) {
+            UA_LDEBUG(@"Location provider delegate is currently nil, unable to set background location enabled status.");
+        }
+
+        [UAirship shared].locationProviderDelegate.backgroundLocationUpdatesAllowed = enabled;
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -336,7 +356,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("isLocationEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [UAirship location].locationUpdatesEnabled;
+
+        if (![UAirship shared].locationProviderDelegate) {
+            UA_LDEBUG(@"Location provider delegate is currently nil, unable to get location enabled status.");
+        }
+
+        BOOL enabled = [UAirship shared].locationProviderDelegate.locationUpdatesEnabled;
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
     }];
 }
@@ -345,7 +370,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("isBackgroundLocationEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [UAirship location].backgroundLocationUpdatesAllowed;
+
+        if (![UAirship shared].locationProviderDelegate) {
+            UA_LDEBUG(@"Location provider delegate is currently nil, unable to get background location enabled status.");
+        }
+
+        BOOL enabled = [UAirship shared].locationProviderDelegate.backgroundLocationUpdatesAllowed;
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
     }];
 }
@@ -774,7 +804,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("dismissOverlayInboxMessage called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [UAOverlayViewController closeAll:YES];
+        [self closeOverlayMessage];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -792,7 +822,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
             return;
         }
 
-        [UAOverlayViewController showMessage:message];
+        [self overlayInboxMessage:message];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -877,6 +907,40 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
 
     return true;
+}
+
+- (void)displayOverlayMessage:(UAInboxMessage *)message {
+    UA_LTRACE(@"Displaying overlay message:%@", message);
+
+    if (!self.factoryBlockAssigned) {
+        [[UAirship inAppMessageManager] setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+            UAInAppMessageHTMLAdapter *adapter = [UAInAppMessageHTMLAdapter adapterForMessage:message];
+            UAInAppMessageHTMLDisplayContent *displayContent = (UAInAppMessageHTMLDisplayContent *) message.displayContent;
+            NSURL *url = [NSURL URLWithString:displayContent.url];
+
+            if ([url.scheme isEqualToString:@"message"]) {
+                self.htmlAdapter = adapter;
+            }
+
+            return adapter;
+        } forDisplayType:UAInAppMessageDisplayTypeHTML];
+
+        self.factoryBlockAssigned = YES;
+    }
+
+    [UAActionRunner runActionWithName:kUAOverlayInboxMessageActionDefaultRegistryName
+                                value:message.messageID
+                            situation:UASituationManualInvocation];
+}
+
+- (void)closeOverlayMessage {
+    UA_LTRACE(@"closeOverlayMessage called");
+
+    UIViewController *vc = [self.htmlAdapter valueForKey:@"htmlViewController"];
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    [vc performSelector:NSSelectorFromString(@"dismissWithoutResolution")];
+# pragma clang diagnostic pop
 }
 
 @end
