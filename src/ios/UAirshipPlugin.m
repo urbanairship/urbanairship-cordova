@@ -232,6 +232,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
+        [UAirship location].locationUpdatesEnabled = enabled;
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
