@@ -23,7 +23,7 @@ dependencies {
     implementation 'com.android.support:support-annotations:28.0.0'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.urbanairship.android:urbanairship-fcm:9.7.1'
+    implementation 'com.urbanairship.android:urbanairship-fcm:10.0.1'
 }
 
 ext.cdvCompileSdkVersion = 28

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="7.6.0"
+        version="8.0.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -227,6 +227,7 @@
 
         <!-- Airship headers -->
         <header-file src="src/ios/Airship/Headers/AirshipLib.h" />
+        <header-file src="src/ios/Airship/Headers/AirshipLocationLib.h" />
         <header-file src="src/ios/Airship/Headers/NSJSONSerialization+UAAdditions.h" />
         <header-file src="src/ios/Airship/Headers/NSOperationQueue+UAAdditions.h" />
         <header-file src="src/ios/Airship/Headers/NSString+UALocalizationAdditions.h" />
@@ -272,6 +273,8 @@
         <header-file src="src/ios/Airship/Headers/UAGlobal.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessage.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageAdapterProtocol.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageAssetManager.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageAssets.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageAudience.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageBannerAdapter.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageBannerDisplayContent.h" />
@@ -280,6 +283,7 @@
         <header-file src="src/ios/Airship/Headers/UAInAppMessageButtonStyle.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageCustomDisplayContent.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageDefaultDisplayCoordinator.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageDefaultPrepareAssetsDelegate.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageDisplayContent.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageDisplayCoordinator.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageFullScreenAdapter.h" />
@@ -288,6 +292,7 @@
         <header-file src="src/ios/Airship/Headers/UAInAppMessageHTMLAdapter.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageHTMLDisplayContent.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageHTMLStyle.h" />
+        <header-file src="src/ios/Airship/Headers/UAInAppMessageImmediateDisplayCoordinator.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageManager.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageMediaInfo.h" />
         <header-file src="src/ios/Airship/Headers/UAInAppMessageMediaStyle.h" />
@@ -315,6 +320,7 @@
         <header-file src="src/ios/Airship/Headers/UALegacyInAppMessaging.h" />
         <header-file src="src/ios/Airship/Headers/UALocation.h" />
         <header-file src="src/ios/Airship/Headers/UALocationEvent.h" />
+        <header-file src="src/ios/Airship/Headers/UALocationProviderDelegate.h" />
         <header-file src="src/ios/Airship/Headers/UAMediaEventTemplate.h" />
         <header-file src="src/ios/Airship/Headers/UAMessageCenter.h" />
         <header-file src="src/ios/Airship/Headers/UAMessageCenterDateUtils.h" />
@@ -326,6 +332,7 @@
         <header-file src="src/ios/Airship/Headers/UAMessageCenterSplitViewController.h" />
         <header-file src="src/ios/Airship/Headers/UAMessageCenterStyle.h" />
         <header-file src="src/ios/Airship/Headers/UAModifyTagsAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAModules.h" />
         <header-file src="src/ios/Airship/Headers/UANamedUser.h" />
         <header-file src="src/ios/Airship/Headers/UANotificationAction.h" />
         <header-file src="src/ios/Airship/Headers/UANotificationCategories.h" />
@@ -334,15 +341,16 @@
         <header-file src="src/ios/Airship/Headers/UANotificationResponse.h" />
         <header-file src="src/ios/Airship/Headers/UAOpenExternalURLAction.h" />
         <header-file src="src/ios/Airship/Headers/UAOverlayInboxMessageAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAOverlayViewController.h" />
         <header-file src="src/ios/Airship/Headers/UAPadding.h" />
         <header-file src="src/ios/Airship/Headers/UAPasteboardAction.h" />
+        <header-file src="src/ios/Airship/Headers/UAPreferenceDataStore.h" />
         <header-file src="src/ios/Airship/Headers/UAProximityRegion.h" />
         <header-file src="src/ios/Airship/Headers/UAPush.h" />
         <header-file src="src/ios/Airship/Headers/UARateAppAction.h" />
         <header-file src="src/ios/Airship/Headers/UARegionEvent.h" />
         <header-file src="src/ios/Airship/Headers/UARemoveTagsAction.h" />
         <header-file src="src/ios/Airship/Headers/UARetailEventTemplate.h" />
+        <header-file src="src/ios/Airship/Headers/UARuntimeConfig.h" />
         <header-file src="src/ios/Airship/Headers/UASchedule.h" />
         <header-file src="src/ios/Airship/Headers/UAScheduleAction.h" />
         <header-file src="src/ios/Airship/Headers/UAScheduleDelay.h" />
@@ -350,8 +358,8 @@
         <header-file src="src/ios/Airship/Headers/UAScheduleInfo.h" />
         <header-file src="src/ios/Airship/Headers/UAScheduleTrigger.h" />
         <header-file src="src/ios/Airship/Headers/UAShareAction.h" />
+        <header-file src="src/ios/Airship/Headers/UASystemVersion.h" />
         <header-file src="src/ios/Airship/Headers/UATextInputNotificationAction.h" />
-        <header-file src="src/ios/Airship/Headers/UAURLProtocol.h" />
         <header-file src="src/ios/Airship/Headers/UAUser.h" />
         <header-file src="src/ios/Airship/Headers/UAUserData.h" />
         <header-file src="src/ios/Airship/Headers/UAUtils.h" />
@@ -369,7 +377,7 @@
         <resource-file src="src/ios/Airship/AirshipResources.bundle"/>
 
         <!-- Airship library -->
-        <source-file framework="true" src="src/ios/Airship/libUAirship-10.2.2.a"/>
+        <source-file framework="true" src="src/ios/Airship/libUAirship-11.0.0.a"/>
 
         <!-- System frameworks -->
         <framework src="libsqlite3.dylib" />
