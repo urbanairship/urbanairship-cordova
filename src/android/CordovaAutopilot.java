@@ -190,7 +190,8 @@ public class CordovaAutopilot extends Autopilot {
         @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", packageName);
 
          if (resId != 0) {
-            airship.getPushManager().addNotificationActionButtonGroups(context, resId);
+             PluginLogger.debug("Loading custom notification button groups");
+             airship.getPushManager().addNotificationActionButtonGroups(context, resId);
         }
     }
 
