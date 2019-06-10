@@ -59,7 +59,9 @@ public class PluginManager {
     private static final String NOTIFICATION_SOUND = "com.urbanairship.notification_sound";
     static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
     private static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
+
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
+    private static final String DEFAULT_NOTIFICATION_CHANNEL_ID  = "com.urbanairship.default_notification_channel_id";
 
     private static PluginManager instance;
     private final Object lock = new Object();
@@ -154,6 +156,23 @@ public class PluginManager {
                     .apply();
             notifyListener(new NotificationOptInEvent(optIn));
         }
+    }
+
+    /**
+     * Gets the default notification channel ID.
+     * @return The default notification channel ID.
+     */
+    @Nullable
+    public String getDefaultNotificationChannelId() {
+        return sharedPreferences.getString(DEFAULT_NOTIFICATION_CHANNEL_ID, null);
+    }
+
+    /**
+     * Sets the default notification channel ID.
+     * @param value The value.
+     */
+    public void setDefaultNotificationChannelId(@Nullable String value) {
+        sharedPreferences.edit().putString(DEFAULT_NOTIFICATION_CHANNEL_ID, value).apply();
     }
 
     /**
@@ -580,6 +599,22 @@ public class PluginManager {
                 editor.remove(NOTIFICATION_ACCENT_COLOR);
             } else {
                 editor.putString(NOTIFICATION_ACCENT_COLOR, accentColor);
+            }
+            return this;
+        }
+
+        /**
+         * Sets the default notification channel ID.
+         *
+         * @param value The string value.
+         * @return The config editor.
+         */
+        @NonNull
+        public ConfigEditor setDefaultNotificationChannelId(@Nullable String value) {
+            if (value == null) {
+                editor.remove(DEFAULT_NOTIFICATION_CHANNEL_ID);
+            } else {
+                editor.putString(DEFAULT_NOTIFICATION_CHANNEL_ID, value);
             }
             return this;
         }
