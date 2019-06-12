@@ -234,13 +234,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
-
-        if (![UAirship shared].locationProviderDelegate) {
-            UA_LDEBUG(@"Location provider delegate is currently nil, unable to set location enabled status.");
-        }
-
-        [UAirship shared].locationProviderDelegate.locationUpdatesEnabled = enabled;
-
         UA_LTRACE("setLocationEnabled set to:%@", enabled ? @"true" : @"false");
 
         if (![UAirship shared].locationProviderDelegate) {
