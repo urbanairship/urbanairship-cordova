@@ -185,7 +185,6 @@
 
         <!-- Airship headers -->
         <header-file src="src/ios/Airship/Headers/AirshipLib.h" />
-        <header-file src="src/ios/Airship/Headers/AirshipLocationLib.h" />
         <header-file src="src/ios/Airship/Headers/NSJSONSerialization+UAAdditions.h" />
         <header-file src="src/ios/Airship/Headers/NSOperationQueue+UAAdditions.h" />
         <header-file src="src/ios/Airship/Headers/NSString+UALocalizationAdditions.h" />
