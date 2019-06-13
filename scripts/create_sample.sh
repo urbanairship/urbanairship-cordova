@@ -46,7 +46,7 @@ cp $ROOT_PATH/Example/js/* www/js
 
 # add the device plugin
 cordova plugin add cordova-plugin-device
-cordova plugin add https://github.com/urbanairship/airship-location-cordova
+cordova plugin add $ROOT_PATH/airship-location-cordova --noregistry
 
 # set up iOS
 cordova platform add ios
