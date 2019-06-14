@@ -108,7 +108,9 @@ public class CordovaAutopilot extends Autopilot {
             }
 
             @Override
-            public void onPushTokenUpdated(@NonNull String s) {}
+            public void onPushTokenUpdated(@NonNull String pushToken) {
+                PluginLogger.info("Push token updated. Channel ID: %s.", pushToken);
+            }
         });
 
         airship.getPushManager().setNotificationListener(new NotificationListener() {
@@ -144,7 +146,9 @@ public class CordovaAutopilot extends Autopilot {
             }
 
             @Override
-            public void onNotificationDismissed(@NonNull NotificationInfo notificationInfo) {}
+            public void onNotificationDismissed(@NonNull NotificationInfo notificationInfo) {
+                PluginLogger.info("Notification dismissed. Notification ID: %s.", notificationInfo.getNotificationId());
+            }
         });
 
         // Auto launch message center
