@@ -186,6 +186,7 @@ public class CordovaAutopilot extends Autopilot {
         });
 
         loadCustomNotificationButtonGroups(context, airship);
+        loadCustomNotificationChannels(context, airship);
     }
 
     private void loadCustomNotificationButtonGroups(Context context, UAirship airship) {
@@ -193,9 +194,21 @@ public class CordovaAutopilot extends Autopilot {
         @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", packageName);
 
          if (resId != 0) {
-            airship.getPushManager().addNotificationActionButtonGroups(context, resId);
+             PluginLogger.debug("Loading custom notification button groups");
+             airship.getPushManager().addNotificationActionButtonGroups(context, resId);
         }
     }
+
+    private void loadCustomNotificationChannels(Context context, UAirship airship) {
+        String packageName = UAirship.shared().getPackageName();
+        @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_channels", "xml", packageName);
+
+        if (resId != 0) {
+            PluginLogger.debug("Loading custom notification channels");
+            airship.getPushManager().getNotificationChannelRegistry().createNotificationChannels(resId);
+        }
+    }
+
     private static void sendShowInboxEvent(@NonNull String messageId) {
         Context context = UAirship.getApplicationContext();
         PluginManager.shared(context).sendShowInboxEvent(new ShowInboxEvent(messageId));
