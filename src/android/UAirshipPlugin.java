@@ -89,6 +89,11 @@ public class UAirshipPlugin extends CordovaPlugin {
     private final static List<String> GLOBAL_ACTIONS = Arrays.asList("takeOff", "registerListener", "setAndroidNotificationConfig");
     private final ExecutorService executorService = Executors.newFixedThreadPool(1);
 
+    private static final String NOTIFICATION_ICON_KEY = "icon";
+    private static final String NOTIFICATION_LARGE_ICON_KEY = "largeIcon";
+    private static final String ACCENT_COLOR_KEY = "accentColor";
+    private static final String DEFAULT_CHANNEL_ID_KEY = "defaultChannelId";
+
     private Context context;
     private PluginManager pluginManager;
 
@@ -251,9 +256,10 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         // Factory will pull the latest values from the config.
         pluginManager.editConfig()
-                .setNotificationIcon(config.optString("icon"))
-                .setNotificationLargeIcon(config.optString("largeIcon"))
-                .setNotificationAccentColor(config.optString("accentColor"))
+                .setNotificationIcon(config.optString(NOTIFICATION_ICON_KEY))
+                .setNotificationLargeIcon(config.optString(NOTIFICATION_LARGE_ICON_KEY))
+                .setNotificationAccentColor(config.optString(ACCENT_COLOR_KEY))
+                .setDefaultNotificationChannelId(config.optString(DEFAULT_CHANNEL_ID_KEY))
                 .apply();
 
         callbackContext.success();
