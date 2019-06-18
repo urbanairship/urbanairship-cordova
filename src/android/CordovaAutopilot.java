@@ -63,7 +63,7 @@ public class CordovaAutopilot extends Autopilot {
         }
 
         // Cordova notification factory
-        airship.getPushManager().setNotificationFactory(new CordovaNotificationFactory(context));
+        airship.getPushManager().setNotificationProvider(new CordovaNotificationProvider(context, PluginManager.shared(context)));
 
         // Deep link
         airship.getActionRegistry().getEntry(DeepLinkAction.DEFAULT_REGISTRY_NAME).setDefaultAction(new DeepLinkAction() {
