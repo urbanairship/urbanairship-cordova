@@ -567,6 +567,10 @@ module.exports = {
   /**
    * Enables or disables Urban Airship location services.
    *
+   * Note: On iOS, location services require an additional dependency
+   * on AirshipLocationKit. For more information see
+   * https://docs.airship.com/platform/cordova/location/
+   *
    * @param {Boolean} enabled true to enable location, false to disable.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
@@ -579,6 +583,10 @@ module.exports = {
 
   /**
    * Checks if location is enabled or not.
+   *
+   * Note: On iOS, location services require an additional dependency
+   * on AirshipLocationKit. For more information see
+   * https://docs.airship.com/platform/cordova/location/
    *
    * @param {function(enabled)} success Success callback.
    * @param {boolean} success.enabled Flag indicating if location is enabled or not.
@@ -593,6 +601,10 @@ module.exports = {
   /**
    * Enables or disables background location.
    *
+   * Note: On iOS, location services require an additional dependency
+   * on AirshipLocationKit. For more information see
+   * https://docs.airship.com/platform/cordova/location/
+   *
    * @param {Boolean} enabled true to enable background location, false to disable.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
@@ -605,6 +617,10 @@ module.exports = {
 
   /**
    * Checks if background location is enabled or not.
+   *
+   * Note: On iOS, location services require an additional dependency
+   * on AirshipLocationKit. For more information see
+   * https://docs.airship.com/platform/cordova/location/
    *
    * @param {function(enabled)} success Success callback.
    * @param {boolean} success.enabled Flag indicating if background location updates are enabled or not.
