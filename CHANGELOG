@@ -1,6 +1,6 @@
-============================
-Version 8.0.0 - June 14, 2019
-============================
+=============================
+Version 8.0.0 - June 20, 2019
+=============================
 - Updated Android SDK to 10.0.1
 - Updated iOS SDK to 11.0.0
 - Added support for creating new Android notification channels and setting the default notification channel ID in Android
