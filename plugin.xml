@@ -90,7 +90,7 @@
             src="src/android/ConfigUtils.java"
             target-dir="src/com/urbanairship/cordova"/>
         <source-file
-            src="src/android/CordovaNotificationFactory.java"
+            src="src/android/CordovaNotificationProvider.java"
             target-dir="src/com/urbanairship/cordova"/>
         <source-file
             src="src/android/Utils.java"
