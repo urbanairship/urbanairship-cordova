@@ -7,13 +7,6 @@ This plugin supports Cordova apps running on both iOS and Android.
  - [JSDocs](http://docs.urbanairship.com/reference/libraries/urbanairship-cordova/latest/)
  - [Migration docs](MIGRATION.md)
 
-### Contributing Code
-
-We accept pull requests! If you would like to submit a pull request, please fill out and submit our
-[Contributor License Agreement](https://docs.google.com/forms/d/e/1FAIpQLScErfiz-fXSPpVZ9r8Di2Tr2xDFxt5MgzUel0__9vqUgvko7Q/viewform).
-
-One of our engineers will verify receipt of the agreement before approving your pull request.
-
 ### Issues
 
 Please visit http://support.urbanairship.com/ for any issues integrating or using this plugin.
