@@ -46,10 +46,9 @@ cp $ROOT_PATH/Example/js/* www/js
 
 # add the device plugin
 cordova plugin add cordova-plugin-device
-cordova plugin add $ROOT_PATH/airship-location-cordova --noregistry
 
 # set up iOS
-cordova platform add ios
+cordova platform add ios@5.0.0
 
 # Build with command `cordova build ios --emulator` in project directory
 # After successful build, connect iOS device to test
