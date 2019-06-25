@@ -2,8 +2,7 @@
 
 ## 7.x to 8.0.0
 Due to changes to the iOS SDK, location services now require an additional dependency on
-AirshipLocationKit. AirshipLocationKit can be integrated into your Cordova project by adding the
-[airship-location-cordova plugin](https://github.com/urbanairship/airship-location-cordova).
+AirshipLocationKit. AirshipLocationKit is linked by default via cocoapods.
 See the [location](https://docs.airship.com/platform/cordova/location) documentation for more
 details.
 
