@@ -184,8 +184,8 @@
         <source-file src="src/ios/events/UACordovaShowInboxEvent.m"/>
 
         <!-- Airship library -->
-        <framework src="UrbanAirship-iOS-SDK" type="podspec" spec="11.0.0" />
-        <framework src="UrbanAirship-iOS-Location" type="podspec" spec="11.0.0" />
+        <framework src="UrbanAirship-iOS-SDK" type="podspec" spec="11.1.0" />
+        <framework src="UrbanAirship-iOS-Location" type="podspec" spec="11.1.0" />
 
     </platform>
 </plugin>
