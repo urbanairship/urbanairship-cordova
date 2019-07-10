@@ -4,6 +4,7 @@ package com.urbanairship.cordova;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -25,10 +26,13 @@ import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionCompletionCallback;
 import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.ActionRunRequest;
+import com.urbanairship.actions.OverlayRichPushMessageAction;
+import com.urbanairship.app.GlobalActivityMonitor;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.google.PlayServicesUtils;
+import com.urbanairship.iam.html.HtmlActivity;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.TagGroupsEditor;
@@ -69,10 +73,10 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * These actions are only available after takeOff.
      */
-    private final static List<String> AIRSHIP_ACTIONS = Arrays.asList("setUserNotificationsEnabled", "setLocationEnabled", "setBackgroundLocationEnabled",
-            "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime", "isLocationEnabled", "isBackgroundLocationEnabled",
-            "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "getAlias", "setAlias", "setTags", "setSoundEnabled", "setVibrateEnabled",
-            "setQuietTimeEnabled", "setQuietTime", "recordCurrentLocation", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
+    private final static List<String> AIRSHIP_ACTIONS = Arrays.asList("setUserNotificationsEnabled",
+            "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime",
+            "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "setTags", "setSoundEnabled", "setVibrateEnabled",
+            "setQuietTimeEnabled", "setQuietTime", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "dismissOverlayInboxMessage", "setAutoLaunchDefaultMessageCenter",
@@ -84,6 +88,11 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     private final static List<String> GLOBAL_ACTIONS = Arrays.asList("takeOff", "registerListener", "setAndroidNotificationConfig");
     private final ExecutorService executorService = Executors.newFixedThreadPool(1);
+
+    private static final String NOTIFICATION_ICON_KEY = "icon";
+    private static final String NOTIFICATION_LARGE_ICON_KEY = "largeIcon";
+    private static final String ACCENT_COLOR_KEY = "accentColor";
+    private static final String DEFAULT_CHANNEL_ID_KEY = "defaultChannelId";
 
     private Context context;
     private PluginManager pluginManager;
@@ -247,9 +256,10 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         // Factory will pull the latest values from the config.
         pluginManager.editConfig()
-                .setNotificationIcon(config.optString("icon"))
-                .setNotificationLargeIcon(config.optString("largeIcon"))
-                .setNotificationAccentColor(config.optString("accentColor"))
+                .setNotificationIcon(config.optString(NOTIFICATION_ICON_KEY))
+                .setNotificationLargeIcon(config.optString(NOTIFICATION_LARGE_ICON_KEY))
+                .setNotificationAccentColor(config.optString(ACCENT_COLOR_KEY))
+                .setDefaultNotificationChannelId(config.optString(DEFAULT_CHANNEL_ID_KEY))
                 .apply();
 
         callbackContext.success();
@@ -307,118 +317,6 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     void isUserNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().getUserNotificationsEnabled() ? 1 : 0;
-        callbackContext.success(value);
-    }
-
-    /**
-     * Enables or disables Urban Airship location services.
-     * <p/>
-     * Expected arguments: Boolean
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     */
-    void setLocationEnabled(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
-        boolean enabled = data.getBoolean(0);
-
-        if (enabled && shouldRequestPermissions()) {
-            RequestPermissionsTask task = new RequestPermissionsTask(context, new RequestPermissionsTask.Callback() {
-                @Override
-                public void onResult(boolean enabled) {
-                    UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
-                }
-            });
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            UAirship.shared().getLocationManager().setLocationUpdatesEnabled(enabled);
-            callbackContext.success();
-        }
-    }
-
-
-    /**
-     * Determines if we should request permissions
-     *
-     * @return {@code true} if permissions should be requested, otherwise {@code false}.
-     */
-    private boolean shouldRequestPermissions() {
-        if (Build.VERSION.SDK_INT < 23) {
-            return false;
-        }
-
-        Context context = UAirship.getApplicationContext();
-        return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED &&
-                ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED;
-    }
-
-    private static class RequestPermissionsTask extends AsyncTask<String[], Void, Boolean> {
-
-        @SuppressLint("StaticFieldLeak")
-        private final Context context;
-        private final Callback callback;
-
-        public interface Callback {
-            void onResult(boolean enabled);
-        }
-
-        RequestPermissionsTask(@NonNull Context context, @NonNull Callback callback) {
-            this.context = context.getApplicationContext();
-            this.callback = callback;
-        }
-
-        @Override
-        protected Boolean doInBackground(String[]... strings) {
-            int[] result = HelperActivity.requestPermissions(context, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION);
-            for (int element : result) {
-                if (element == PackageManager.PERMISSION_GRANTED) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if (callback != null) {
-                callback.onResult(result);
-            }
-        }
-    }
-
-    /**
-     * Checks if location is enabled or not.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     */
-    void isLocationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        int value = UAirship.shared().getLocationManager().isLocationUpdatesEnabled() ? 1 : 0;
-        callbackContext.success(value);
-    }
-
-    /**
-     * Enables are disables background location. Background location requires location to be enabled.
-     * <p/>
-     * Expected arguments: Boolean
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     */
-    void setBackgroundLocationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        boolean enabled = data.getBoolean(0);
-        UAirship.shared().getLocationManager().setBackgroundLocationAllowed(enabled);
-        callbackContext.success();
-    }
-
-    /**
-     * Checks if background location is enabled or not.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     */
-    void isBackgroundLocationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        int value = UAirship.shared().getLocationManager().isBackgroundLocationAllowed() ? 1 : 0;
         callbackContext.success(value);
     }
 
@@ -565,41 +463,6 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Returns the alias.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     * @deprecated Deprecated since 6.7.0 - to be removed in a future version of the plugin - please use getNamedUser
-     */
-    @Deprecated
-    void getAlias(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        String alias = UAirship.shared().getPushManager().getAlias();
-        alias = alias != null ? alias : "";
-        callbackContext.success(alias);
-    }
-
-    /**
-     * Sets the alias.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     * @deprecated Deprecated since 6.7.0 - to be removed in a future version of the plugin - please use setNamedUser
-     */
-    @Deprecated
-    void setAlias(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        String alias = data.getString(0);
-        if (alias.equals("")) {
-            alias = null;
-        }
-
-        PluginLogger.debug("Settings alias: %s", alias);
-
-        UAirship.shared().getPushManager().setAlias(alias);
-
-        callbackContext.success();
-    }
-
-    /**
      * Sets the tags.
      * <p/>
      * Expected arguments: An array of Strings
@@ -690,17 +553,6 @@ public class UAirshipPlugin extends CordovaPlugin {
         PluginLogger.debug("Settings QuietTime. Start: %s. End: %s.", start.getTime(), end.getTime());
         UAirship.shared().getPushManager().setQuietTimeInterval(start.getTime(), end.getTime());
 
-        callbackContext.success();
-    }
-
-    /**
-     * Records the current location.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
-     */
-    void recordCurrentLocation(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        UAirship.shared().getLocationManager().requestSingleLocation();
         callbackContext.success();
     }
 
@@ -1109,13 +961,9 @@ public class UAirshipPlugin extends CordovaPlugin {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(cordova.getActivity(), CustomLandingPageActivity.class)
-                        .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
-                        .setPackage(cordova.getActivity().getPackageName())
-                        .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
-                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-                cordova.getActivity().startActivity(intent);
+                ActionRunRequest.createRequest(OverlayRichPushMessageAction.DEFAULT_REGISTRY_NAME)
+                        .setValue(messageId)
+                        .run();
             }
         });
 
@@ -1130,11 +978,14 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     void dismissOverlayInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         PluginLogger.debug("Dismissing Overlay Inbox Message");
-        Intent intent = new Intent(cordova.getActivity(), CustomLandingPageActivity.class)
-                .setAction("CANCEL")
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-        cordova.getActivity().startActivity(intent);
+        List<Activity> resumedActivities = GlobalActivityMonitor.shared(context).getResumedActivities();
+
+        for (Activity activity : resumedActivities) {
+            if (activity instanceof HtmlActivity) {
+                activity.finish();
+            }
+        }
 
         callbackContext.success();
     }

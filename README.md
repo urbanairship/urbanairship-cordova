@@ -18,8 +18,25 @@ One of our engineers will verify receipt of the agreement before approving your 
 
 Please visit http://support.urbanairship.com/ for any issues integrating or using this plugin.
 
+### Common CocoaPod Installation issues
+
+You may run into this error while attempting to add the plugin to your ios project:
+
+Installing "urbanairship-cordova" for ios
+Failed to install 'urbanairship-cordova':Error: pod: Command failed with exit code 1
+    at ChildProcess.whenDone (/Users/xxxxx/xxxxx/test/platforms/ios/cordova/node_modules/cordova-common/src/superspawn.js:169:23)
+    at emitTwo (events.js:87:13)
+    at ChildProcess.emit (events.js:172:7)
+    at maybeClose (internal/child_process.js:818:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+Error: pod: Command failed with exit code 1
+
+Please run the command `pod repo update` and re-add the plugin to resolve this issue.
+
+You would only run `pod repo update` if you have the specs-repo already cloned on your machine through `pod setup`.
+
 ### Requirements:
- - Cordova-CLI >= 7.0.0
+ - Cordova-CLI >= 9.0.0
 
 #### iOS:
 - Xcode 10+

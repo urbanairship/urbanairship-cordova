@@ -1,7 +1,15 @@
 /* Copyright Urban Airship and Contributors */
 
 #import "UACordovaPluginManager.h"
+
+#if __has_include(<AirshipKit/AirshipLib.h>)
+#import <AirshipKit/AirshipLib.h>
+#elif __has_include("AirshipLib.h")
 #import "AirshipLib.h"
+#else
+@import AirshipKit;
+#endif
+
 #import "UACordovaEvent.h"
 #import "UACordovaDeepLinkEvent.h"
 #import "UACordovaInboxUpdatedEvent.h"

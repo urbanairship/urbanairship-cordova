@@ -121,21 +121,10 @@
           $('#pushEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        UAirship.isSoundEnabled(function(isEnabled) {
-          $('#soundEnabled').val(isEnabled ? 'on' : 'off').change()
-        })
-
-        UAirship.isVibrateEnabled(function(isEnabled) {
-          $('#vibrateEnabled').val(isEnabled ? 'on' : 'off').change()
-        })
-
         UAirship.isQuietTimeEnabled(function(isEnabled) {
           $('#quietTimeEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        UAirship.isLocationEnabled(function(isEnabled) {
-          $('#locationEnabled').val(isEnabled ? 'on' : 'off').change()
-        })
 
         UAirship.getChannelID(function(id) {
           if(id) {
@@ -168,26 +157,6 @@
         $('#pushEnabled').change(function() {
           var isEnabled = ($('#pushEnabled').val() == "on")
           UAirship.setUserNotificationsEnabled(isEnabled)
-        })
-
-        $('#locationEnabled').change(function() {
-          var isEnabled = ($('#locationEnabled').val() == "on")
-          UAirship.setLocationEnabled(isEnabled)
-        })
-
-        $('#soundEnabled').change(function() {
-          var isEnabled = ($('#soundEnabled').val() == "on")
-          UAirship.setSoundEnabled(isEnabled)
-        })
-
-        $('#vibrateEnabled').change(function() {
-          var isEnabled = ($('#vibrateEnabled').val() == "on")
-          UAirship.setVibrateEnabled(isEnabled)
-        })
-
-        $('#quietTimeEnabled').change(function() {
-          var isEnabled = ($('#quietTimeEnabled').val() == "on")
-          UAirship.setQuietTimeEnabled(isEnabled)
         })
 
         $("#displayMessageCenterButton").click(function(ev) {
@@ -266,33 +235,6 @@
             </select>
           </div>
 
-          <div data-role="controlgroup">
-            <span id="soundEnabledSection">
-              <label for="soundEnabled">Sound Enabled</label>
-              <select name="soundEnabled" id="soundEnabled" data-role="slider" data-theme="c" data-track-theme="c">
-                <option value="off">Off</option>
-                <option value="on">On</option>
-              </select>
-            </span>
-          </div>
-
-          <div data-role="controlgroup">
-            <span id="vibrateEnabledSection">
-              <label for="vibrateEnabled">Vibrate Enabled</label>
-              <select name="vibrateEnabled" id="vibrateEnabled" data-role="slider" data-theme="c" data-track-theme="c">
-                <option value="off">Off</option>
-                <option value="on">On</option>
-              </select>
-            </span>
-          </div>
-
-          <div data-role="controlgroup">
-            <label for="locationEnabled">Location Enabled</label>
-            <select name="locationEnabled" id="locationEnabled" data-role="slider" data-theme="c" data-track-theme="c">
-              <option value="off">Off</option>
-              <option value="on">On</option>
-            </select>
-          </div>
 
           <div data-role="controlgroup">
             <label for="quietTimeEnabled">Quiet Time Enabled</label>

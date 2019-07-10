@@ -1,6 +1,6 @@
 {
   "name": "urbanairship-cordova",
-  "version": "7.6.0",
+  "version": "8.0.0",
   "description": "Urban Airship Cordova plugin",
   "cordova": {
     "id": "urbanairship-cordova",
@@ -27,7 +27,7 @@
     },
     {
       "name": "cordova-ios",
-      "version": ">=4.3.0"
+      "version": ">=5.0.1"
     },
     {
       "name": "cordova-plugman",
@@ -49,7 +49,6 @@
     "superagent": "^4.1.0"
   },
   "scripts": {
-    "generate-docs": "jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md",
-    "prepare": "source scripts/update_ios_static_lib.sh"
+    "generate-docs": "jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md"
   }
 }

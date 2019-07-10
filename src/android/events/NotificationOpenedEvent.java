@@ -5,8 +5,9 @@ package com.urbanairship.cordova.events;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.urbanairship.AirshipReceiver;
 import com.urbanairship.cordova.PluginLogger;
+import com.urbanairship.push.NotificationActionButtonInfo;
+import com.urbanairship.push.NotificationInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +22,7 @@ public class NotificationOpenedEvent extends PushEvent {
     private static final String ACTION_ID = "actionID";
     private static final String IS_FOREGROUND = "isForeground";
 
-    private final AirshipReceiver.ActionButtonInfo actionButtonInfo;
+    private final NotificationActionButtonInfo actionButtonInfo;
 
 
     /**
@@ -29,7 +30,7 @@ public class NotificationOpenedEvent extends PushEvent {
      *
      * @param notificationInfo The notification info.
      */
-    public NotificationOpenedEvent(@NonNull AirshipReceiver.NotificationInfo notificationInfo) {
+    public NotificationOpenedEvent(@NonNull NotificationInfo notificationInfo) {
         this(notificationInfo, null);
     }
 
@@ -37,9 +38,9 @@ public class NotificationOpenedEvent extends PushEvent {
      * Creates an event for a notification action button response.
      *
      * @param notificationInfo The notification info.
-     * @param actionButtonInfo The action button info.
+     * @param actionButtonInfo The notification action button info.
      */
-    public NotificationOpenedEvent(@NonNull AirshipReceiver.NotificationInfo notificationInfo, @Nullable AirshipReceiver.ActionButtonInfo actionButtonInfo) {
+    public NotificationOpenedEvent(@NonNull NotificationInfo notificationInfo, @Nullable NotificationActionButtonInfo actionButtonInfo) {
         super(notificationInfo.getNotificationId(), notificationInfo.getMessage());
         this.actionButtonInfo = actionButtonInfo;
     }

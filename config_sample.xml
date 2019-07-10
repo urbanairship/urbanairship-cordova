@@ -30,6 +30,10 @@
 <preference name="com.urbanairship.development_app_secret" value="APP_SECRET_PLACEHOLDER" />
 <!-- If the app is in production or not -->
 <preference name="com.urbanairship.in_production" value="false" />
+
+<!-- Deployment target must be >= iOS 10  -->
+<preference name="deployment-target" value="10.0" />
+
 <!-- Optional config values -->
 <!-- Enable push when the application launches -->
 <preference name="com.urbanairship.enable_push_onlaunch" value="true" />

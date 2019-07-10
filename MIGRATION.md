@@ -1,5 +1,13 @@
 # Migration Guide
 
+## 7.x to 8.0.0
+Due to changes to the iOS SDK, iOS location services now require an additional dependency on
+AirshipLocationKit. AirshipLocationKit can be linked to your project by adding the airship-location-cordova
+plugin. See the [location](https://docs.airship.com/platform/cordova/location) documentation for more
+details.
+
+Note: Version 8.0.0 requires the use of Cordova CLI version >= 9.0.1 and cordova-ios >= 5.0.1.
+
 ## 7.x to 7.5.0
 
 If you specified the minimum Android sdk version to be 16 (see 5.x to 6.0.0 migration below), please remove that from your config.xml or change it to be a minimum of 19. A minimum of 19 is required for new versions of Cordova.
