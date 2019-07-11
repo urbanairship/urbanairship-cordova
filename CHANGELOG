@@ -5,7 +5,7 @@ Version 8.0.0 - July 10, 2019
 - Updated iOS SDK to 11.1.0
 - Added support for creating new Android notification channels and setting the default notification channel ID in Android
 - Using Airship location now requires adding airship-location-cordova plugin
-- Plugin now requires Cordova-CLI >= 9.0.0, cordova-ios >= 5.0.1 and Cocoapods >= 1.7.3
+- Plugin now requires cordova >= 9.0.0, cordova-ios >= 5.0.1 and cocoapods >= 1.7.3
 
 ============================
 Version 7.6.0 - June 5, 2019
