@@ -36,7 +36,7 @@ Please run the command `pod repo update` and re-add the plugin to resolve this i
 You would only run `pod repo update` if you have the specs-repo already cloned on your machine through `pod setup`.
 
 ### Requirements:
- - cordova-cli >= 9.0.0
+ - cordova >= 9.0.0
  - cordova-ios >= 5.0.1
  - cococapods >= 1.7.3
 
