@@ -37,6 +37,8 @@ You would only run `pod repo update` if you have the specs-repo already cloned o
 
 ### Requirements:
  - Cordova-CLI >= 9.0.0
+ - cordova-ios >= 5.0.1
+ - Cococapods >= 1.7.3
 
 #### iOS:
 - Xcode 10+
