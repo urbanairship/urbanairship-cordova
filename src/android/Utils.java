@@ -34,7 +34,7 @@ public class Utils {
             return new PushMessage(new Bundle());
         }
 
-        Bundle pushBundle = extras.getBundle(CordovaNotificationFactory.PUSH_MESSAGE_BUNDLE_EXTRA);
+        Bundle pushBundle = extras.getBundle(CordovaNotificationProvider.PUSH_MESSAGE_BUNDLE_EXTRA);
         if (pushBundle == null) {
             return new PushMessage(new Bundle());
         } else {

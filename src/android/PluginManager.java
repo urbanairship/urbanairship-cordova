@@ -12,7 +12,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.urbanairship.AirshipConfigOptions;
-import com.urbanairship.AirshipReceiver;
 import com.urbanairship.UAirship;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
@@ -22,6 +21,8 @@ import com.urbanairship.cordova.events.NotificationOptInEvent;
 import com.urbanairship.cordova.events.PushEvent;
 import com.urbanairship.cordova.events.RegistrationEvent;
 import com.urbanairship.cordova.events.ShowInboxEvent;
+import com.urbanairship.push.NotificationActionButtonInfo;
+import com.urbanairship.push.NotificationInfo;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.util.UAStringUtil;
 
@@ -56,9 +57,11 @@ public class PluginManager {
     private static final String NOTIFICATION_LARGE_ICON = "com.urbanairship.notification_large_icon";
     private static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
     private static final String NOTIFICATION_SOUND = "com.urbanairship.notification_sound";
-    private static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
+    static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
     private static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
+
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
+    private static final String DEFAULT_NOTIFICATION_CHANNEL_ID  = "com.urbanairship.default_notification_channel_id";
 
     private static PluginManager instance;
     private final Object lock = new Object();
@@ -156,11 +159,28 @@ public class PluginManager {
     }
 
     /**
+     * Gets the default notification channel ID.
+     * @return The default notification channel ID.
+     */
+    @Nullable
+    public String getDefaultNotificationChannelId() {
+        return sharedPreferences.getString(DEFAULT_NOTIFICATION_CHANNEL_ID, null);
+    }
+
+    /**
+     * Sets the default notification channel ID.
+     * @param value The value.
+     */
+    public void setDefaultNotificationChannelId(@Nullable String value) {
+        sharedPreferences.edit().putString(DEFAULT_NOTIFICATION_CHANNEL_ID, value).apply();
+    }
+
+    /**
      * Called when the notification is opened.
      *
      * @param notificationInfo The notification info.
      */
-    public void notificationOpened(@NonNull AirshipReceiver.NotificationInfo notificationInfo) {
+    public void notificationOpened(@NonNull NotificationInfo notificationInfo) {
         notificationOpened(new NotificationOpenedEvent(notificationInfo));
     }
 
@@ -169,7 +189,7 @@ public class PluginManager {
      *
      * @param notificationInfo The notification info.
      */
-    public void notificationOpened(@NonNull AirshipReceiver.NotificationInfo notificationInfo, @Nullable AirshipReceiver.ActionButtonInfo actionButtonInfo) {
+    public void notificationOpened(@NonNull NotificationInfo notificationInfo, @Nullable NotificationActionButtonInfo actionButtonInfo) {
         notificationOpened(new NotificationOpenedEvent(notificationInfo, actionButtonInfo));
     }
 
@@ -579,6 +599,22 @@ public class PluginManager {
                 editor.remove(NOTIFICATION_ACCENT_COLOR);
             } else {
                 editor.putString(NOTIFICATION_ACCENT_COLOR, accentColor);
+            }
+            return this;
+        }
+
+        /**
+         * Sets the default notification channel ID.
+         *
+         * @param value The string value.
+         * @return The config editor.
+         */
+        @NonNull
+        public ConfigEditor setDefaultNotificationChannelId(@Nullable String value) {
+            if (value == null) {
+                editor.remove(DEFAULT_NOTIFICATION_CHANNEL_ID);
+            } else {
+                editor.putString(DEFAULT_NOTIFICATION_CHANNEL_ID, value);
             }
             return this;
         }
