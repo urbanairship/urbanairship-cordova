@@ -35,10 +35,10 @@ You would only run `pod repo update` if you have the specs-repo already cloned o
 
 #### iOS:
 - Xcode 10+
-- [APNS Setup](http://docs.urbanairship.com/reference/push-providers/apns.html)
+- [APNS Setup](https://docs.airship.com/platform/ios/getting-started/#apple-setup)
 
 #### Android
- - Android [FCM Setup](https://docs.urbanairship.com/tutorials/getting-started/push-providers/fcm/
+ - Android [FCM Setup](https://docs.airship.com/platform/android/getting-started/#fcm-setup)
 
 ### Quickstart
 
@@ -168,7 +168,7 @@ You would only run `pod repo update` if you have the specs-repo already cloned o
 
 In order to take advantage of iOS 10 notification attachments, such as images,
 animated gifs, and video, you will need to create a [notification service extension](https://developer.apple.com/reference/usernotifications/unnotificationserviceextension/)
-by following the [iOS Notification Service Extension Guide](https://docs.urbanairship.com/tutorials/api/ios/notification-service-extension/).
+by following the [iOS Notification Service Extension Guide](https://docs.airship.com/platform/ios/getting-started/#notification-service-extension).
 
 ### Android GoogleServicesPlugin
 
