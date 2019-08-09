@@ -185,7 +185,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="UrbanAirship-iOS-SDK" spec="11.1.0" />
+                <pod name="UrbanAirship-iOS-SDK" spec="11.1.1" />
             </pods>
         </podspec>
 
