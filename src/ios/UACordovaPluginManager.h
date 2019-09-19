@@ -83,6 +83,12 @@
 - (void)setProductionAppKey:(NSString *)appKey appSecret:(NSString *)appSecret;
 
 /**
+ * Sets the cloud site.
+ * @param site The site, either "EU" or "US".
+ */
+- (void)setCloudSite:(NSString *)site;
+
+/**
  * Sets the presentation options.
  * @param options The presentation options.
  */

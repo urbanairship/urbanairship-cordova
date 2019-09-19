@@ -66,6 +66,21 @@ class ConfigUtils {
     return value;
   }
 
+    /**
+   * Parses a cloud site from a String.
+   *
+   * @param value The value to parse.
+   * @return The parsed site value. Defaults to US if site is null or does not match EU.
+   */
+  @NonNull
+  @AirshipConfigOptions.Site
+  public static String parseCloudSite(@Nullable String value) {
+    if (AirshipConfigOptions.SITE_EU.equalsIgnoreCase(value)) {
+      return AirshipConfigOptions.SITE_EU;
+    }
+    return AirshipConfigOptions.SITE_US;
+  }
+
   /**
    * Parses the config.xml file for any Urban Airship config.
    *
