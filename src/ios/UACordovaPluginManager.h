@@ -84,7 +84,7 @@
 
 /**
  * Sets the cloud site.
- * @param site The site, either "EU" or "US".
+ * @param site The site, either "US" or "EU".
  */
 - (void)setCloudSite:(NSString *)site;
 

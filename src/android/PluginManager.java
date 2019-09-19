@@ -636,7 +636,7 @@ public class PluginManager {
         /**
          * Sets the cloud site.
          *
-         * @param site the string value for the site, either "US" or "EU".
+         * @param site The string value for the site, either "US" or "EU".
          * @return The config editor.
          */
         @NonNull
