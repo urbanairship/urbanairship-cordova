@@ -2,6 +2,7 @@
 
 package com.urbanairship.cordova;
 
+import com.urbanairship.AirshipConfigOptions;
 import android.content.Context;
 import android.content.res.XmlResourceParser;
 import android.support.annotation.NonNull;
