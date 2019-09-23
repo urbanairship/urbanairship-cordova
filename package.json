@@ -50,8 +50,5 @@
   },
   "scripts": {
     "generate-docs": "jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md"
-  },
-  "dependencies": {
-    "cordova": "^9.0.0"
   }
 }
