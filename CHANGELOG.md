@@ -1,3 +1,12 @@
+==================================
+Version 8.1.0 - September 23, 2019
+==================================
+
+- Updated Android Airship SDK to 10.1.3
+- Updated iOS Airship SDK to 11.1.2
+- Added support for EU cloud site
+- Updated jsdoc to 3.6.3
+
 =============================
 Version 8.0.0 - July 10, 2019
 =============================
