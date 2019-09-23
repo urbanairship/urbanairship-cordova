@@ -216,6 +216,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         pluginManager.editConfig()
                 .setProductionConfig(prod.getString("appKey"), prod.getString("appSecret"))
                 .setDevelopmentConfig(dev.getString("appKey"), dev.getString("appSecret"))
+                .setCloudSite(config.getString("site"))
                 .apply();
 
         final CountDownLatch latch = new CountDownLatch(1);

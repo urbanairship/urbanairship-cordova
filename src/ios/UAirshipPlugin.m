@@ -166,6 +166,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
                                NSDictionary *production = config[@"production"];
                                [self.pluginManager setProductionAppKey:production[@"appKey"] appSecret:production[@"appSecret"]];
 
+                               [self.pluginManager setCloudSite:config[@"site"]];
+
                                if (!self.pluginManager.isAirshipReady) {
                                    [self.pluginManager attemptTakeOff];
                                    if (!self.pluginManager.isAirshipReady) {

@@ -34,6 +34,7 @@ NSString *const AutoLaunchMessageCenterKey = @"com.urbanairship.auto_launch_mess
 NSString *const NotificationPresentationAlertKey = @"com.urbanairship.ios_foreground_notification_presentation_alert";
 NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foreground_notification_presentation_badge";
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
+NSString *const CloudSiteConfigKey = @"com.urbanairship.site";
 
 NSString *const AuthorizedNotificationSettingsAlertKey = @"alert";
 NSString *const AuthorizedNotificationSettingsBadgeKey = @"badge";
@@ -41,6 +42,8 @@ NSString *const AuthorizedNotificationSettingsSoundKey = @"sound";
 NSString *const AuthorizedNotificationSettingsCarPlayKey = @"carPlay";
 NSString *const AuthorizedNotificationSettingsLockScreenKey = @"lockScreen";
 NSString *const AuthorizedNotificationSettingsNotificationCenterKey = @"notificationCenter";
+
+NSString *const CloudSiteEUString = @"EU";
 
 // Events
 NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
@@ -127,6 +130,9 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     airshipConfig.developmentAppKey = [self configValueForKey:DevelopmentAppKeyConfigKey];
     airshipConfig.developmentAppSecret = [self configValueForKey:DevelopmentAppSecretConfigKey];
 
+    NSString *cloudSite = [self configValueForKey:CloudSiteConfigKey];
+    airshipConfig.site = [UACordovaPluginManager parseCloudSiteString:cloudSite];
+
     if ([self configValueForKey:ProductionConfigKey] != nil) {
         airshipConfig.inProduction = [[self configValueForKey:ProductionConfigKey] boolValue];
     }
@@ -175,6 +181,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     [[NSUserDefaults standardUserDefaults] setValue:appSecret forKey:DevelopmentAppSecretConfigKey];
 }
 
+- (void)setCloudSite:(NSString *)site {
+    [[NSUserDefaults standardUserDefaults] setValue:site forKey:CloudSiteConfigKey];
+}
+
 - (void)setPresentationOptions:(NSUInteger)options {
     [[NSUserDefaults standardUserDefaults] setValue:@(options & UNNotificationPresentationOptionAlert) forKey:NotificationPresentationAlertKey];
     [[NSUserDefaults standardUserDefaults] setValue:@(options & UNNotificationPresentationOptionBadge) forKey:NotificationPresentationBadgeKey];
@@ -205,6 +215,13 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     return defaultValue;
 }
 
++ (UACloudSite)parseCloudSiteString:(NSString *)site {
+    if ([CloudSiteEUString caseInsensitiveCompare:site] == NSOrderedSame) {
+        return UACloudSiteEU;
+    } else {
+        return UACloudSiteUS;
+    }
+}
 
 #pragma mark UAInboxDelegate
 

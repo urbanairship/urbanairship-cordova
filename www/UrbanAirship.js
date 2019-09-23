@@ -206,6 +206,7 @@ module.exports = {
    * new config will not be used until the next app start.
    *
    * @param {object}  config The Urban Airship config.
+   * @param {string}  config.site Sets the cloud site, must be either EU or US.
    * @param {object}  config.development The Urban Airship development config.
    * @param {string}  config.development.appKey The development appKey.
    * @param {string}  config.development.appSecret The development appSecret.

@@ -82,7 +82,8 @@ You would only run `pod repo update` if you have the specs-repo already cloned o
           development: {
             appKey: "<APP_KEY>",
             appSecret: "<APP_SECRET>"
-          }
+          },
+          site: "US"
         })
 
         // Configure Android
@@ -118,6 +119,9 @@ You would only run `pod repo update` if you have the specs-repo already cloned o
 
         <!-- Enables/disables auto launching the message center when the corresponding push is opened. -->
         <preference name="com.urbanairship.auto_launch_message_center" value="true | false" />
+
+        <!-- Urban Airship SDK Site (US or EU) defaults to US) -->
+        <preference name="com.urbanairship.site" value="US" />
 
         <!-- Android Notification Settings -->
         <preference name="com.urbanairship.notification_icon" value="ic_notification" />

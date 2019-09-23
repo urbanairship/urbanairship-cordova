@@ -59,6 +59,7 @@ public class PluginManager {
     private static final String NOTIFICATION_SOUND = "com.urbanairship.notification_sound";
     static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
     private static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
+    private static final String CLOUD_SITE = "com.urbanairship.site";
 
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
     private static final String DEFAULT_NOTIFICATION_CHANNEL_ID  = "com.urbanairship.default_notification_channel_id";
@@ -320,7 +321,8 @@ public class PluginManager {
                 .setFcmSenderId(ConfigUtils.parseSender(getConfigString(GCM_SENDER, null)))
                 .setAnalyticsEnabled(getConfigBoolean(ENABLE_ANALYTICS, true))
                 .setDevelopmentLogLevel(ConfigUtils.parseLogLevel(getConfigString(DEVELOPMENT_LOG_LEVEL, ""), Log.DEBUG))
-                .setProductionLogLevel(ConfigUtils.parseLogLevel(getConfigString(PRODUCTION_LOG_LEVEL, ""), Log.ERROR));
+                .setProductionLogLevel(ConfigUtils.parseLogLevel(getConfigString(PRODUCTION_LOG_LEVEL, ""), Log.ERROR))
+                .setSite(ConfigUtils.parseCloudSite(getConfigValue(CLOUD_SITE)));
 
         if (hasConfig(IN_PRODUCTION)) {
             builder.setInProduction(getConfigBoolean(IN_PRODUCTION, false));
@@ -628,6 +630,18 @@ public class PluginManager {
         @NonNull
         public ConfigEditor setAutoLaunchMessageCenter(boolean autoLaunchMessageCenter) {
             editor.putString(AUTO_LAUNCH_MESSAGE_CENTER, Boolean.toString(autoLaunchMessageCenter));
+            return this;
+        }
+
+        /**
+         * Sets the cloud site.
+         *
+         * @param site The string value for the site, either "US" or "EU".
+         * @return The config editor.
+         */
+        @NonNull
+        public ConfigEditor setCloudSite(String site) {
+            editor.putString(CLOUD_SITE, site);
             return this;
         }
 
