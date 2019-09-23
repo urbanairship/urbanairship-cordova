@@ -67,7 +67,7 @@ class ConfigUtils {
     return value;
   }
 
-    /**
+  /**
    * Parses a cloud site from a String.
    *
    * @param value The value to parse.
