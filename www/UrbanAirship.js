@@ -1,13 +1,8 @@
 /* Copyright Urban Airship and Contributors */
 
-/**
- * @module UrbanAirship
- */
-
 var cardova = require("cordova"),
     exec = require("cordova/exec"),
     argscheck = require('cordova/argscheck')
-
 
 // Argcheck values:
 // * : allow anything,
@@ -116,6 +111,9 @@ function bindDocumentEvent() {
 
 document.addEventListener("deviceready", bindDocumentEvent, false)
 
+/**
+ * @module UrbanAirship
+ */
 module.exports = {
 
   /**
