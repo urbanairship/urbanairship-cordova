@@ -31,8 +31,8 @@
 <!-- If the app is in production or not -->
 <preference name="com.urbanairship.in_production" value="false" />
 
-<!-- Deployment target must be >= iOS 10  -->
-<preference name="deployment-target" value="10.0" />
+<!-- Deployment target must be >= iOS 11  -->
+<preference name="deployment-target" value="11.0" />
 
 <!-- Optional config values -->
 <!-- Enable push when the application launches -->
@@ -49,10 +49,10 @@
 <preference name="com.urbanairship.notification_accent_color" value="#0000ff" />
 <!-- Clear the iOS badge on launch -->
 <preference name="com.urbanairship.clear_badge_onlaunch" value="true" />
-<!-- iOS 10 alert foreground notification presentation option -->
+<!-- Alert foreground notification presentation option -->
 <preference name="com.urbanairship.ios_foreground_notification_presentation_alert" value="true"/>
-<!-- iOS 10 badge foreground notification presentation option -->
+<!-- Badge foreground notification presentation option -->
 <preference name="com.urbanairship.ios_foreground_notification_presentation_badge" value="true"/>
-<!-- iOS 10 sound foreground notification presentation option -->
+<!-- Sound foreground notification presentation option -->
 <preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true"/>
 </widget>
