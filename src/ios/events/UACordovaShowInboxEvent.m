@@ -27,7 +27,7 @@ NSString *const EventShowInbox = @"urbanairship.show_inbox";
     self = [super init];
     if (self) {
         self.type = EventShowInbox;
-        self.data = @{@"messageId":identifier};
+        self.data = identifier ? @{@"messageId":identifier} : @{};
     }
 
     return self;
