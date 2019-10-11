@@ -1,5 +1,13 @@
 /* Copyright Urban Airship and Contributors */
 
+#if __has_include(<AirshipKit/AirshipLib.h>)
+#import <AirshipKit/AirshipLib.h>
+#elif __has_include("AirshipLib.h")
+#import "AirshipLib.h"
+#else
+@import AirshipKit;
+#endif
+
 #import "UACordovaEvent.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -26,11 +34,19 @@ extern NSString *const EventPushReceived;
 @property (nonatomic, strong, nullable) NSDictionary *data;
 
 /**
- * Push event with event data.
+ * Push event with notification content.
  *
- * @param data The event data.
+ * @param content The notification content.
  */
-+ (instancetype)eventWithData:(NSDictionary *)data;
++ (instancetype)eventWithNotificationContent:(UANotificationContent *)content;
+
+/**
+ * Helper method for producing sanitized push payloads from notification content.
+ *
+ * @param notificationContent The notification content.
+ * @return A push payload dictionary.
+ */
++ (NSDictionary *)pushEventDataFromNotificationContent:(UANotificationContent *)notificationContent;
 
 @end
 

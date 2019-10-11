@@ -3,6 +3,7 @@
 #import "UAirshipPlugin.h"
 #import "UAMessageViewController.h"
 #import "UACordovaPluginManager.h"
+#import "UACordovaPushEvent.h"
 
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
@@ -784,7 +785,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
                 NSMutableArray *result = [NSMutableArray array];
                 for(UNNotification *unnotification in notifications) {
                     UANotificationContent *content = [UANotificationContent notificationWithUNNotification:unnotification];
-                    [result addObject:[self.pluginManager pushEventFromNotification:content]];
+                    [result addObject:[UACordovaPushEvent pushEventDataFromNotificationContent:content]];
                 }
 
                 completionHandler(CDVCommandStatus_OK, result);

@@ -94,12 +94,5 @@
  */
 - (void)setPresentationOptions:(NSUInteger)options;
 
-/**
- * Generates a push event dictionary from a notification content object.
- *
- * @param notificationContent The notification content.
- * @return A push event dictionary.
- */
-- (NSDictionary *)pushEventFromNotification:(UANotificationContent *)notificationContent;
-
 @end
+

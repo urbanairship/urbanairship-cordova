@@ -36,13 +36,6 @@ NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foregr
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 NSString *const CloudSiteConfigKey = @"com.urbanairship.site";
 
-NSString *const AuthorizedNotificationSettingsAlertKey = @"alert";
-NSString *const AuthorizedNotificationSettingsBadgeKey = @"badge";
-NSString *const AuthorizedNotificationSettingsSoundKey = @"sound";
-NSString *const AuthorizedNotificationSettingsCarPlayKey = @"carPlay";
-NSString *const AuthorizedNotificationSettingsLockScreenKey = @"lockScreen";
-NSString *const AuthorizedNotificationSettingsNotificationCenterKey = @"notificationCenter";
-
 NSString *const CloudSiteEUString = @"EU";
 
 // Events
@@ -251,9 +244,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 -(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler {
     UA_LDEBUG(@"Received a notification while the app was already in the foreground %@", notificationContent);
 
-    NSDictionary *data = [self pushEventFromNotification:notificationContent];
-
-    [self fireEvent:[UACordovaPushEvent eventWithData:data]];
+    [self fireEvent:[UACordovaPushEvent eventWithNotificationContent:notificationContent]];
 
     completionHandler();
 }
@@ -262,31 +253,19 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
                      completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
     UA_LDEBUG(@"Received a background notification %@", notificationContent);
-    NSDictionary *data = [self pushEventFromNotification:notificationContent];
 
-    [self fireEvent:[UACordovaPushEvent eventWithData:data]];
+    [self fireEvent:[UACordovaPushEvent eventWithNotificationContent:notificationContent]];
+
     completionHandler(UIBackgroundFetchResultNoData);
 }
 
 -(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler {
     UA_LDEBUG(@"The application was launched or resumed from a notification %@", notificationResponse);
-    NSDictionary *pushEvent = [self pushEventFromNotification:notificationResponse.notificationContent];
-    NSMutableDictionary *data = [NSMutableDictionary dictionaryWithDictionary:pushEvent];
 
-    if ([notificationResponse.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
-        [data setValue:@(YES) forKey:@"isForeground"];
-    } else {
-        UANotificationAction *notificationAction = [self notificationActionForCategory:notificationResponse.notificationContent.categoryIdentifier
-                                                                      actionIdentifier:notificationResponse.actionIdentifier];
+    UACordovaNotificationOpenedEvent *event = [UACordovaNotificationOpenedEvent eventWithNotificationResponse:notificationResponse];
+    self.lastReceivedNotificationResponse = event.data;
+    [self fireEvent:event];
 
-        BOOL isForeground = notificationAction.options & UNNotificationActionOptionForeground;
-        [data setValue:@(isForeground) forKey:@"isForeground"];
-        [data setValue:notificationResponse.actionIdentifier forKey:@"actionID"];
-    }
-
-    self.lastReceivedNotificationResponse = data;
-
-    [self fireEvent:[UACordovaNotificationOpenedEvent eventWithData:data]];
     completionHandler();
 }
 
@@ -319,147 +298,17 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 - (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
     UA_LINFO(@"Channel registration successful %@.", channelID);
-
-    NSDictionary *data;
-    if (deviceToken) {
-        data = @{ @"channelID":channelID, @"deviceToken":deviceToken, @"registrationToken":deviceToken };
-    } else {
-        data = @{ @"channelID":channelID };
-    }
-
-    [self fireEvent:[UACordovaRegistrationEvent eventWithData:data]];
+    [self fireEvent:[UACordovaRegistrationEvent registrationSucceededEventWithChannelID:channelID deviceToken:deviceToken]];
 }
 
 - (void)registrationFailed {
     UA_LINFO(@"Channel registration failed.");
-    UACordovaRegistrationEvent *event = [UACordovaRegistrationEvent eventWithData:@{ @"error": @"Registration failed." }];
-    [self fireEvent:event];
+    [self fireEvent:[UACordovaRegistrationEvent registrationFailedEvent]];
 }
 
 - (void)notificationAuthorizedSettingsDidChange:(UAAuthorizedNotificationSettings)authorizedSettings {
-    BOOL optedIn = NO;
-
-    BOOL alertBool = NO;
-    BOOL badgeBool = NO;
-    BOOL soundBool = NO;
-    BOOL carPlayBool = NO;
-    BOOL lockScreenBool = NO;
-    BOOL notificationCenterBool = NO;
-
-    if (authorizedSettings & UAAuthorizedNotificationSettingsAlert) {
-        alertBool = YES;
-    }
-
-    if (authorizedSettings & UAAuthorizedNotificationSettingsBadge) {
-        badgeBool = YES;
-    }
-
-    if (authorizedSettings & UAAuthorizedNotificationSettingsSound) {
-        soundBool = YES;
-    }
-
-    if (authorizedSettings & UAAuthorizedNotificationSettingsCarPlay) {
-        carPlayBool = YES;
-    }
-
-    if (authorizedSettings & UAAuthorizedNotificationSettingsLockScreen) {
-        lockScreenBool = YES;
-    }
-
-    if (authorizedSettings & UAAuthorizedNotificationSettingsNotificationCenter) {
-        notificationCenterBool = YES;
-    }
-
-    optedIn = authorizedSettings != UAAuthorizedNotificationSettingsNone;
-
-    NSDictionary *eventBody = @{  @"optIn": @(optedIn),
-                                  // Deprecated payload for backwards compatibility
-                                  @"notificationOptions" : @{
-                                          NotificationPresentationAlertKey : @(alertBool),
-                                          NotificationPresentationBadgeKey : @(badgeBool),
-                                          NotificationPresentationSoundKey : @(soundBool)
-                                          },
-                                  @"authorizedNotificationSettings" : @{
-                                          AuthorizedNotificationSettingsAlertKey : @(alertBool),
-                                          AuthorizedNotificationSettingsBadgeKey : @(badgeBool),
-                                          AuthorizedNotificationSettingsSoundKey : @(soundBool),
-                                          AuthorizedNotificationSettingsCarPlayKey : @(carPlayBool),
-                                          AuthorizedNotificationSettingsLockScreenKey : @(lockScreenBool),
-                                          AuthorizedNotificationSettingsNotificationCenterKey : @(notificationCenterBool)
-                                          }};
-
-    UA_LINFO(@"Opt in status changed.");
-    UACordovaNotificationOptInEvent *event = [UACordovaNotificationOptInEvent eventWithData:eventBody];
+    UACordovaNotificationOptInEvent *event = [UACordovaNotificationOptInEvent eventWithAuthorizedSettings:authorizedSettings];
     [self fireEvent:event];
-}
-
-- (NSDictionary *)pushEventFromNotification:(UANotificationContent *)notificationContent {
-    if (!notificationContent) {
-        return @{ @"message": @"", @"extras": @{}};
-    }
-
-    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
-
-    // remove the send ID
-    if([[info allKeys] containsObject:@"_"]) {
-        [info removeObjectForKey:@"_"];
-    }
-
-    NSMutableDictionary *result = [NSMutableDictionary dictionary];
-
-    // If there is an aps dictionary in the extras, remove it and set it as a top level object
-    if([[info allKeys] containsObject:@"aps"]) {
-        result[@"aps"] = info[@"aps"];
-        [info removeObjectForKey:@"aps"];
-    }
-
-    result[@"message"] = notificationContent.alertBody ?: @"";
-
-    // Set the title and subtitle as top level objects, if present
-    NSString *title = notificationContent.alertTitle;
-    NSString *subtitle = notificationContent.notification.request.content.subtitle;
-    [result setValue:title forKey:@"title"];
-    [result setValue:subtitle forKey:@"subtitle"];
-
-    // Set the remaining info as extras
-    result[@"extras"] = info;
-
-    return result;
-}
-
-- (UANotificationAction *)notificationActionForCategory:(NSString *)category actionIdentifier:(NSString *)identifier {
-    NSSet *categories = [UAirship push].combinedCategories;
-
-    UANotificationCategory *notificationCategory;
-    UANotificationAction *notificationAction;
-
-    for (UANotificationCategory *possibleCategory in categories) {
-        if ([possibleCategory.identifier isEqualToString:category]) {
-            notificationCategory = possibleCategory;
-            break;
-        }
-    }
-
-    if (!notificationCategory) {
-        UA_LERR(@"Unknown notification category identifier %@", category);
-        return nil;
-    }
-
-    NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:notificationCategory.actions];
-
-    for (UANotificationAction *possibleAction in possibleActions) {
-        if ([possibleAction.identifier isEqualToString:identifier]) {
-            notificationAction = possibleAction;
-            break;
-        }
-    }
-
-    if (!notificationAction) {
-        UA_LERR(@"Unknown notification action identifier %@", identifier);
-        return nil;
-    }
-
-    return notificationAction;
 }
 
 - (void)fireEvent:(NSObject<UACordovaEvent> *)event {

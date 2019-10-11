@@ -26,11 +26,20 @@ extern NSString *const EventRegistration;
 @property (nonatomic, strong, nullable) NSDictionary *data;
 
 /**
- * The registration event constructor.
+ * The registration succeeded event constructor.
  *
+ * @param channelID The channel ID.
+ * @param deviceToken The device token.
  * @return registration event.
  */
-+ (instancetype)eventWithData:(NSDictionary *)data;
++ (instancetype)registrationSucceededEventWithChannelID:channelID deviceToken:(NSString *)deviceToken;
+
+/**
+ * The registration failed event constructor.
+ *
+ * @return registration event.
+*/
++ (instancetype)registrationFailedEvent;
 
 @end
 
