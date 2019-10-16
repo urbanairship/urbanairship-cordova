@@ -43,7 +43,7 @@
     "co-prompt": "^1.0.0",
     "commander": "^2.19.0",
     "fs": "0.0.1-security",
-    "jsdoc": "3.6.3",
+    "jsdoc": "^3.6.3",
     "minami": "1.2.3",
     "semver": "^5.6.0",
     "superagent": "^4.1.0"
