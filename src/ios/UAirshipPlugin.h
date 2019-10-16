@@ -237,38 +237,6 @@
 - (void)isAnalyticsEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
- * Enables or disables location.
- *
- * Expected arguments: Boolean
- *
- * @param command The cordova command.
- */
-- (void)setLocationEnabled:(CDVInvokedUrlCommand *)command;
-
-/**
- * Checks if location is enabled or not.
- *
- * @param command The cordova command.
- */
-- (void)isLocationEnabled:(CDVInvokedUrlCommand *)command;
-
-/**
- * Enables or disables background location.
- *
- * Expected arguments: Boolean
- *
- * @param command The cordova command.
- */
-- (void)setBackgroundLocationEnabled:(CDVInvokedUrlCommand *)command;
-
-/**
- * Checks if background location is enabled or not.
- *
- * @param command The cordova command.
- */
-- (void)isBackgroundLocationEnabled:(CDVInvokedUrlCommand *)command;
-
-/**
  * Runs an Urban Airship action.
  *
  * Expected arguments: String - action name, * - the action value

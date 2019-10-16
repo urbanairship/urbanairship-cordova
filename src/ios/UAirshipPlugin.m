@@ -3,6 +3,7 @@
 #import "UAirshipPlugin.h"
 #import "UAMessageViewController.h"
 #import "UACordovaPluginManager.h"
+#import "UACordovaPushEvent.h"
 
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
@@ -52,8 +53,9 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     // String
     if ([value isKindOfClass:[NSString class]]) {
+        NSCharacterSet *characters = [NSCharacterSet URLHostAllowedCharacterSet];
         return [CDVPluginResult resultWithStatus:status
-                                 messageAsString:[value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                                 messageAsString:[value stringByAddingPercentEncodingWithAllowedCharacters:characters]];
     }
 
     // Number
@@ -346,7 +348,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("getChannelID called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, [UAirship push].channelID ?: @"");
+        completionHandler(CDVCommandStatus_OK, [UAirship channel].identifier ?: @"");
     }];
 }
 
@@ -394,7 +396,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("getTags called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, [UAirship push].tags ?: [NSArray array]);
+        completionHandler(CDVCommandStatus_OK, [UAirship channel].tags ?: [NSArray array]);
     }];
 }
 
@@ -419,8 +421,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSMutableArray *tags = [NSMutableArray arrayWithArray:[args objectAtIndex:0]];
-        [UAirship push].tags = tags;
-        [[UAirship push] updateRegistration];
+        [UAirship channel].tags = tags;
+        [[UAirship channel] updateRegistration];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -520,9 +522,9 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         for (NSDictionary *operation in [args objectAtIndex:0]) {
             NSString *group = operation[@"group"];
             if ([operation[@"operation"] isEqualToString:@"add"]) {
-                [[UAirship push] addTags:operation[@"tags"] group:group];
+                [[UAirship channel] addTags:operation[@"tags"] group:group];
             } else if ([operation[@"operation"] isEqualToString:@"remove"]) {
-                [[UAirship push] removeTags:operation[@"tags"] group:group];
+                [[UAirship channel] removeTags:operation[@"tags"] group:group];
             }
         }
 
@@ -756,10 +758,44 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
             return;
         }
 
-        [self overlayInboxMessage:message];
+        [self showOverlayMessage:message];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
+}
+
+- (void)showOverlayMessage:(UAInboxMessage *)message {
+    UA_LTRACE(@"Displaying overlay message:%@", message);
+
+    if (!self.factoryBlockAssigned) {
+        [[UAirship inAppMessageManager] setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
+            UAInAppMessageHTMLAdapter *adapter = [UAInAppMessageHTMLAdapter adapterForMessage:message];
+            UAInAppMessageHTMLDisplayContent *displayContent = (UAInAppMessageHTMLDisplayContent *) message.displayContent;
+            NSURL *url = [NSURL URLWithString:displayContent.url];
+
+            if ([url.scheme isEqualToString:@"message"]) {
+                self.htmlAdapter = adapter;
+            }
+
+            return adapter;
+        } forDisplayType:UAInAppMessageDisplayTypeHTML];
+
+        self.factoryBlockAssigned = YES;
+    }
+
+    [UAActionRunner runActionWithName:kUAOverlayInboxMessageActionDefaultRegistryName
+                                value:message.messageID
+                            situation:UASituationManualInvocation];
+}
+
+- (void)closeOverlayMessage {
+    UA_LTRACE(@"closeOverlayMessage called");
+
+    UIViewController *vc = [self.htmlAdapter valueForKey:@"htmlViewController"];
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    [vc performSelector:NSSelectorFromString(@"dismissWithoutResolution")];
+# pragma clang diagnostic pop
 }
 
 - (void)refreshInbox:(CDVInvokedUrlCommand *)command {
@@ -784,7 +820,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
                 NSMutableArray *result = [NSMutableArray array];
                 for(UNNotification *unnotification in notifications) {
                     UANotificationContent *content = [UANotificationContent notificationWithUNNotification:unnotification];
-                    [result addObject:[self.pluginManager pushEventFromNotification:content]];
+                    [result addObject:[UACordovaPushEvent pushEventDataFromNotificationContent:content]];
                 }
 
                 completionHandler(CDVCommandStatus_OK, result);
@@ -841,40 +877,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
 
     return true;
-}
-
-- (void)displayOverlayMessage:(UAInboxMessage *)message {
-    UA_LTRACE(@"Displaying overlay message:%@", message);
-
-    if (!self.factoryBlockAssigned) {
-        [[UAirship inAppMessageManager] setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
-            UAInAppMessageHTMLAdapter *adapter = [UAInAppMessageHTMLAdapter adapterForMessage:message];
-            UAInAppMessageHTMLDisplayContent *displayContent = (UAInAppMessageHTMLDisplayContent *) message.displayContent;
-            NSURL *url = [NSURL URLWithString:displayContent.url];
-
-            if ([url.scheme isEqualToString:@"message"]) {
-                self.htmlAdapter = adapter;
-            }
-
-            return adapter;
-        } forDisplayType:UAInAppMessageDisplayTypeHTML];
-
-        self.factoryBlockAssigned = YES;
-    }
-
-    [UAActionRunner runActionWithName:kUAOverlayInboxMessageActionDefaultRegistryName
-                                value:message.messageID
-                            situation:UASituationManualInvocation];
-}
-
-- (void)closeOverlayMessage {
-    UA_LTRACE(@"closeOverlayMessage called");
-
-    UIViewController *vc = [self.htmlAdapter valueForKey:@"htmlViewController"];
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    [vc performSelector:NSSelectorFromString(@"dismissWithoutResolution")];
-# pragma clang diagnostic pop
 }
 
 @end

@@ -1,6 +1,6 @@
 /* Copyright Urban Airship and Contributors */
 
-#import "UACordovaEvent.h"
+#import "UACordovaPushEvent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -9,28 +9,14 @@ extern NSString *const EventNotificationOpened;
 /**
  * Notification opened event.
  */
-@interface UACordovaNotificationOpenedEvent : NSObject<UACordovaEvent>
+@interface UACordovaNotificationOpenedEvent : UACordovaPushEvent
 
 /**
- * The event type.
+ * Notification opened event with notification response.
  *
- * @return The event type.
- */
-@property (nonatomic, strong, nullable) NSString *type;
-
-/**
- * The event data.
- *
- * @return The event data.
- */
-@property (nonatomic, strong, nullable) NSDictionary *data;
-
-/**
- * Open event with event data.
- *
- * @param data The event data.
- */
-+ (instancetype)eventWithData:(NSDictionary *)data;
+ * @param content The notification response.
+*/
++ (instancetype)eventWithNotificationResponse:(UANotificationResponse *)response;
 
 @end
 
