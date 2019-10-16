@@ -1,3 +1,11 @@
+
+Version 9.0.0 - October 14, 2019
+================================
+
+- Updated iOS Airship SDK to 12.0.0
+- Updated iOS minimum deployment target to 11.0
+- Fixed overlayInboxMessage crash on iOS
+
 ==================================
 Version 8.1.0 - September 23, 2019
 ==================================

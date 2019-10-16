@@ -102,6 +102,18 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
                                                  name:UAInboxMessageListUpdatedNotification
                                                object:nil];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(channelRegistrationSucceeded:)
+                                                 name:UAChannelUpdatedEvent
+                                               object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(channelRegistrationFailed)
+                                                 name:UAChannelRegistrationFailedEvent
+                                               object:nil];
+
+
+
     self.isAirshipReady = YES;
 }
 
@@ -269,9 +281,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     completionHandler();
 }
 
-- (UNNotificationPresentationOptions)presentationOptionsForNotification:(UNNotification *)notification NS_AVAILABLE_IOS(10.0) {
-    UNNotificationPresentationOptions options = UNNotificationPresentationOptionNone;
-
+- (UNNotificationPresentationOptions)extendPresentationOptions:(UNNotificationPresentationOptions)options notification:(UNNotification *)notification {
     if ([[self configValueForKey:NotificationPresentationAlertKey] boolValue]) {
         options = options | UNNotificationPresentationOptionAlert;
     }
@@ -288,23 +298,31 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 }
 
 #pragma mark UADeepLinkDelegate
+
 -(void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler {
     self.lastReceivedDeepLink = [url absoluteString];
     [self fireEvent:[UACordovaDeepLinkEvent eventWithDeepLink:url]];
     completionHandler();
 }
 
-#pragma mark UARegistrationDelegate
 
-- (void)registrationSucceededForChannelID:(NSString *)channelID deviceToken:(NSString *)deviceToken {
+#pragma mark Channel Registration Events
+
+- (void)channelRegistrationSucceeded:(NSNotification *)notification {
+    NSString *channelID = notification.userInfo[UAChannelUpdatedEventChannelKey];
+    NSString *deviceToken = [UAirship push].deviceToken;
+
     UA_LINFO(@"Channel registration successful %@.", channelID);
+
     [self fireEvent:[UACordovaRegistrationEvent registrationSucceededEventWithChannelID:channelID deviceToken:deviceToken]];
 }
 
-- (void)registrationFailed {
+- (void)channelRegistrationFailed {
     UA_LINFO(@"Channel registration failed.");
     [self fireEvent:[UACordovaRegistrationEvent registrationFailedEvent]];
 }
+
+#pragma mark UARegistrationDelegate
 
 - (void)notificationAuthorizedSettingsDidChange:(UAAuthorizedNotificationSettings)authorizedSettings {
     UACordovaNotificationOptInEvent *event = [UACordovaNotificationOptInEvent eventWithAuthorizedSettings:authorizedSettings];

@@ -35,7 +35,7 @@ You would only run `pod repo update` if you have the specs-repo already cloned o
  - cococapods >= 1.7.3
 
 #### iOS:
-- Xcode 10+
+- Xcode 11+
 - [APNS Setup](https://docs.airship.com/platform/ios/getting-started/#apple-setup)
 
 #### Android
@@ -171,7 +171,7 @@ You would only run `pod repo update` if you have the specs-repo already cloned o
 
 ### iOS Notification Service Extension
 
-In order to take advantage of iOS 10 notification attachments, such as images,
+In order to take advantage of iOS notification attachments, such as images,
 animated gifs, and video, you will need to create a [notification service extension](https://developer.apple.com/reference/usernotifications/unnotificationserviceextension/)
 by following the [iOS Notification Service Extension Guide](https://docs.airship.com/platform/ios/getting-started/#notification-service-extension).
 

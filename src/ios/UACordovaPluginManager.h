@@ -10,6 +10,8 @@
 @import AirshipKit;
 #endif
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Manager delegate.
  */
@@ -39,7 +41,7 @@
 /**
  * Last received deep link.
  */
-@property (nonatomic, copy) NSString *lastReceivedDeepLink;
+@property (nonatomic, copy, nullable) NSString *lastReceivedDeepLink;
 
 /**
  * Flag that enables/disables auto launching the default message center.
@@ -49,7 +51,7 @@
 /**
  * Last received notification response.
  */
-@property (nonatomic, copy) NSDictionary *lastReceivedNotificationResponse;
+@property (nonatomic, copy, nullable) NSDictionary *lastReceivedNotificationResponse;
 
 /**
  * Checks if Airship is ready.
@@ -96,3 +98,4 @@
 
 @end
 
+NS_ASSUME_NONNULL_END
