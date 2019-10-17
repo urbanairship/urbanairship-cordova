@@ -1,5 +1,5 @@
 
-Version 9.0.0 - October 14, 2019
+Version 9.0.0 - October 16, 2019
 ================================
 
 - Updated iOS Airship SDK to 12.0.0
