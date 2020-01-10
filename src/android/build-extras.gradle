@@ -6,8 +6,8 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.google.gms:google-services:4.2.0'
+        classpath 'com.android.tools.build:gradle:3.5.2'
+        classpath 'com.google.gms:google-services:4.3.3'
     }
 }
 
@@ -19,14 +19,12 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:support-annotations:28.0.0'
-    implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.urbanairship.android:urbanairship-fcm:10.1.3'
+    api "androidx.annotation:annotation:1.0.0"
+    implementation "androidx.appcompat:appcompat:1.1.0"
+    implementation 'com.urbanairship.android:urbanairship-fcm:12.1.0'
 }
 
-ext.cdvCompileSdkVersion = 28
+ext.cdvCompileSdkVersion = 29
 
 // For CI only. Verify our plugin is Java 6 compatible
 if (project.hasProperty('uaInternalJava6CompileOptions') && uaInternalJava6CompileOptions.toBoolean()) {

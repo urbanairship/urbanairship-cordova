@@ -44,15 +44,17 @@ cp $ROOT_PATH/Example/index.html www/index.html
 cp $ROOT_PATH/Example/css/* www/css
 cp $ROOT_PATH/Example/js/* www/js
 
-# add the device plugin
+# add required plugins
 cordova plugin add cordova-plugin-device
+cordova plugin add cordova-plugin-androidx-adapter
+cordova plugin add cordova-plugin-androidx
 
 # set up iOS
 cordova platform add ios@5.0.1
 
 # Build with command `cordova build ios --emulator` in project directory
 # After successful build, connect iOS device to test
-# Test with command `cordova run ios --device --developmentTeam=XXXXXXXXXX` 
+# Test with command `cordova run ios --device --developmentTeam=XXXXXXXXXX`
 #   Please refer to https://cordova.apache.org/docs/en/latest/guide/platforms/ios/#signing-an-app for more information about code signing.
 
 # Open workspace in Xcode with 'open' command, e.g. `open platforms/ios/Test.xcworkspace`
