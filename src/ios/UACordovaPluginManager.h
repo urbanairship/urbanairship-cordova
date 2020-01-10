@@ -2,8 +2,8 @@
 
 #import <Foundation/Foundation.h>
 
-#if __has_include(<AirshipKit/AirshipLib.h>)
-#import <AirshipKit/AirshipLib.h>
+#if __has_include(<Airship/AirshipLib.h>)
+#import <Airship/AirshipLib.h>
 #elif __has_include("AirshipLib.h")
 #import "AirshipLib.h"
 #else

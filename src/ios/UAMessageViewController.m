@@ -20,7 +20,6 @@
     };
 }
 
-
 - (void)inboxMessageDone:(id)sender {
     [self dismissViewControllerAnimated:true completion:nil];
 }

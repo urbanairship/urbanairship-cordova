@@ -3,12 +3,12 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPlugin.h>
 
-#if __has_include(<AirshipKit/AirshipLib.h>)
-#import <AirshipKit/AirshipLib.h>
-#elif __has_include("AirshipLib.h")
+#if __has_include("AirshipLib.h")
 #import "AirshipLib.h"
+#import "AirshipMessageCenterLib.h"
+#import "AirshipAutomationLib.h"
 #else
-@import AirshipKit;
+@import Airship;
 #endif
 
 /**
@@ -330,22 +330,6 @@
  * @param command The cordova command.
  */
 - (void)dismissInboxMessage:(CDVInvokedUrlCommand *)command;
-
-/**
- * Displays an inbox message in the overlay.
- *
- * Expected arguments: String - message ID.
- *
- * @param command The cordova command.
- */
-- (void)overlayInboxMessage:(CDVInvokedUrlCommand *)command;
-
-/**
- * Dismiss an inbox message in the overlay.
- *
- * @param command The cordova command.
- */
-- (void)dismissOverlayInboxMessage:(CDVInvokedUrlCommand *)command;
 
 /**
  * Refreshes the inbox.
