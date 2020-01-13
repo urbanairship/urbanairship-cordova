@@ -1,10 +1,11 @@
 package com.urbanairship.cordova;
 
 import android.content.Context;
-import android.support.annotation.ColorInt;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 
 import com.urbanairship.push.notifications.AirshipNotificationProvider;
 import com.urbanairship.push.notifications.NotificationArguments;

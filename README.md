@@ -41,6 +41,17 @@ You would only run `pod repo update` if you have the specs-repo already cloned o
 #### Android
  - Android [FCM Setup](https://docs.airship.com/platform/android/getting-started/#fcm-setup)
 
+##### Jetpack / AndroidX
+
+This plugin requires modern Jetpack libraries (AndroidX). If the application includes plugins that are still on the old Android
+Support libraries, you will face build issues. The quickest way to work around the issue is to install `cordova-plugin-androidx`
+and `cordova-plugin-androidx-adapter`, which will automatically enable Jetpack and migrate plugins in the application:
+
+```
+cordova plugin add cordova-plugin-androidx-adapter
+cordova plugin add cordova-plugin-androidx
+```
+
 ### Quickstart
 
 1. Install this plugin using Cordova CLI:

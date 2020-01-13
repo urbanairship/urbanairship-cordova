@@ -2,23 +2,18 @@
 
 package com.urbanairship.cordova;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.service.notification.StatusBarNotification;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationManagerCompat;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.urbanairship.Autopilot;
 import com.urbanairship.UAirship;
@@ -26,19 +21,16 @@ import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionCompletionCallback;
 import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.ActionRunRequest;
-import com.urbanairship.actions.OverlayRichPushMessageAction;
-import com.urbanairship.app.GlobalActivityMonitor;
+import com.urbanairship.channel.TagGroupsEditor;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.google.PlayServicesUtils;
-import com.urbanairship.iam.html.HtmlActivity;
+import com.urbanairship.json.JsonMap;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.push.PushMessage;
-import com.urbanairship.push.TagGroupsEditor;
 import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.richpush.RichPushMessage;
-import com.urbanairship.util.HelperActivity;
 import com.urbanairship.util.UAStringUtil;
 
 import org.apache.cordova.CallbackContext;
@@ -78,8 +70,8 @@ public class UAirshipPlugin extends CordovaPlugin {
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
-            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "overlayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
-            "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "dismissOverlayInboxMessage", "setAutoLaunchDefaultMessageCenter",
+            "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
+            "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification");
 
 
@@ -209,14 +201,14 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @throws JSONException
      */
     void takeOff(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
-        JSONObject config = data.getJSONObject(0);
-        JSONObject prod = config.getJSONObject("production");
-        JSONObject dev = config.getJSONObject("development");
+        JsonMap config = JsonValue.wrapOpt(data.getJSONObject(0)).optMap();
+        JsonMap prod = config.get("production").optMap();
+        JsonMap dev = config.get("development").optMap();
 
         pluginManager.editConfig()
-                .setProductionConfig(prod.getString("appKey"), prod.getString("appSecret"))
-                .setDevelopmentConfig(dev.getString("appKey"), dev.getString("appSecret"))
-                .setCloudSite(config.getString("site"))
+                .setProductionConfig(prod.opt("appKey").optString(), prod.opt("appSecret").optString())
+                .setDevelopmentConfig(dev.opt("appKey").optString(), dev.opt("appSecret").optString())
+                .setCloudSite(config.opt("site").optString())
                 .apply();
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -291,8 +283,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      */
     void clearNotifications(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+        NotificationManagerCompat.from(context).cancelAll();
         callbackContext.success();
     }
 
@@ -406,7 +397,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      */
     void getChannelID(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        String channelId = UAirship.shared().getPushManager().getChannelId();
+        String channelId = UAirship.shared().getChannel().getId();
         channelId = channelId != null ? channelId : "";
         callbackContext.success(channelId);
     }
@@ -479,7 +470,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         }
 
         PluginLogger.debug("Settings tags: %s", tagSet);
-        UAirship.shared().getPushManager().setTags(tagSet);
+        UAirship.shared().getChannel().setTags(tagSet);
 
         callbackContext.success();
     }
@@ -672,7 +663,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         PluginLogger.debug("Editing channel tag groups: %s", operations);
 
-        TagGroupsEditor editor = UAirship.shared().getPushManager().editTagGroups();
+        TagGroupsEditor editor = UAirship.shared().getChannel().editTagGroups();
         applyTagGroupOperations(editor, operations);
         editor.apply();
 
@@ -939,54 +930,6 @@ public class UAirshipPlugin extends CordovaPlugin {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         cordova.getActivity().startActivity(intent);
-
-        callbackContext.success();
-    }
-
-    /**
-     * Displays an inbox message using the CustomLandingPageActivity.
-     *
-     * @param data The call data. The message ID is expected to be the first entry.
-     * @param callbackContext The callback context.
-     * @throws JSONException
-     */
-    void overlayInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        final String messageId = data.getString(0);
-        RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
-
-        if (message == null) {
-            callbackContext.error("Message not found: " + messageId);
-            return;
-        }
-
-        cordova.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ActionRunRequest.createRequest(OverlayRichPushMessageAction.DEFAULT_REGISTRY_NAME)
-                        .setValue(messageId)
-                        .run();
-            }
-        });
-
-        callbackContext.success();
-    }
-
-    /**
-     * Dismiss the overlay inbox message.
-     *
-     * @param data The call data. The message ID is expected to be the first entry.
-     * @param callbackContext The callback context.
-     */
-    void dismissOverlayInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        PluginLogger.debug("Dismissing Overlay Inbox Message");
-
-        List<Activity> resumedActivities = GlobalActivityMonitor.shared(context).getResumedActivities();
-
-        for (Activity activity : resumedActivities) {
-            if (activity instanceof HtmlActivity) {
-                activity.finish();
-            }
-        }
 
         callbackContext.success();
     }

@@ -4,9 +4,9 @@ package com.urbanairship.cordova;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.annotation.XmlRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.XmlRes;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
@@ -16,12 +16,15 @@ import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionRegistry;
 import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.DeepLinkAction;
+import com.urbanairship.actions.DeepLinkListener;
 import com.urbanairship.actions.OpenRichPushInboxAction;
 import com.urbanairship.actions.OverlayRichPushMessageAction;
+import com.urbanairship.channel.AirshipChannelListener;
 import com.urbanairship.messagecenter.MessageCenter;
 import com.urbanairship.push.NotificationActionButtonInfo;
 import com.urbanairship.push.NotificationInfo;
 import com.urbanairship.push.NotificationListener;
+import com.urbanairship.push.PushTokenListener;
 import com.urbanairship.push.RegistrationListener;
 import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.push.PushMessage;
@@ -66,33 +69,15 @@ public class CordovaAutopilot extends Autopilot {
         airship.getPushManager().setNotificationProvider(new CordovaNotificationProvider(context, PluginManager.shared(context)));
 
         // Deep link
-        airship.getActionRegistry().getEntry(DeepLinkAction.DEFAULT_REGISTRY_NAME).setDefaultAction(new DeepLinkAction() {
-            @NonNull
+        airship.setDeepLinkListener(new DeepLinkListener() {
             @Override
-            public ActionResult perform(@NonNull ActionArguments arguments) {
-                String deepLink = arguments.getValue().getString();
-                if (deepLink != null) {
-                    pluginManager.deepLinkReceived(deepLink);
-                }
-                return ActionResult.newResult(arguments.getValue());
+            public boolean onDeepLink(@NonNull String deepLink) {
+                pluginManager.deepLinkReceived(deepLink);
+                return true;
             }
         });
 
-        // Auto launch message center
-        airship.getActionRegistry()
-                .getEntry(OverlayRichPushMessageAction.DEFAULT_REGISTRY_NAME)
-                .setPredicate(new ActionRegistry.Predicate() {
-                    @Override
-                    public boolean apply(ActionArguments actionArguments) {
-                        if (actionArguments.getSituation() == Action.SITUATION_PUSH_OPENED) {
-                            return pluginManager.getAutoLaunchMessageCenter();
-                        }
-
-                        return true;
-                    }
-                });
-
-        airship.getPushManager().addRegistrationListener(new RegistrationListener() {
+        airship.getChannel().addChannelListener(new AirshipChannelListener() {
             @Override
             public void onChannelCreated(@NonNull String channelId) {
                 PluginLogger.info("Channel created. Channel ID: %s.", channelId);
@@ -106,10 +91,13 @@ public class CordovaAutopilot extends Autopilot {
                 PluginManager.shared(context).channelUpdated(channelId, true);
                 PluginManager.shared(context).checkOptInStatus();
             }
+        });
 
+
+        airship.getPushManager().addPushTokenListener(new PushTokenListener() {
             @Override
             public void onPushTokenUpdated(@NonNull String pushToken) {
-                PluginLogger.info("Push token updated. Channel ID: %s.", pushToken);
+                PluginLogger.info("Push token updated. Token: %s.", pushToken);
             }
         });
 
@@ -151,19 +139,6 @@ public class CordovaAutopilot extends Autopilot {
             }
         });
 
-        // Auto launch message center
-        airship.getActionRegistry()
-                .getEntry(OpenRichPushInboxAction.DEFAULT_REGISTRY_NAME)
-                .setPredicate(new ActionRegistry.Predicate() {
-                    @Override
-                    public boolean apply(ActionArguments actionArguments) {
-                        if (actionArguments.getSituation() == Action.SITUATION_PUSH_OPENED) {
-                            return pluginManager.getAutoLaunchMessageCenter();
-                        }
-
-                        return true;
-                    }
-                });
 
         // Inbox updates
         airship.getInbox().addListener(new RichPushInbox.Listener() {
@@ -173,10 +148,11 @@ public class CordovaAutopilot extends Autopilot {
             }
         });
 
+
         airship.getMessageCenter().setOnShowMessageCenterListener(new MessageCenter.OnShowMessageCenterListener() {
             @Override
             public boolean onShowMessageCenter(@Nullable String messageId) {
-                if (PreferenceManager.getDefaultSharedPreferences(UAirship.getApplicationContext()).getBoolean(AUTO_LAUNCH_MESSAGE_CENTER, true)) {
+                if (PluginManager.shared(UAirship.getApplicationContext()).getAutoLaunchMessageCenter()) {
                     return false;
                 } else {
                     sendShowInboxEvent(messageId);
