@@ -5,6 +5,7 @@
 #import "UACordovaPluginManager.h"
 #import "UACordovaPushEvent.h"
 
+
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
 
@@ -614,7 +615,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("displayMessageCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship messageCenter] display];
+        [[UAMessageCenter shared] display];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -623,7 +624,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("dismissMessageCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship messageCenter] dismiss];
+        [[UAMessageCenter shared] dismiss];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -635,7 +636,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSMutableArray *messages = [NSMutableArray array];
 
-        for (UAInboxMessage *message in [UAirship inbox].messageList.messages) {
+        for (UAInboxMessage *message in [UAMessageCenter shared].messageList.messages) {
 
             NSDictionary *icons = [message.rawMessageObject objectForKey:@"icons"];
             NSString *iconUrl = [icons objectForKey:@"list_icon"];
@@ -661,7 +662,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *messageID = [command.arguments firstObject];
-        UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+        UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
 
         if (!message) {
             NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
@@ -669,7 +670,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
             return;
         }
 
-        [[UAirship inbox].messageList markMessagesRead:@[message] completionHandler:nil];
+        [[UAMessageCenter shared].messageList markMessagesRead:@[message] completionHandler:nil];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -679,7 +680,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *messageID = [command.arguments firstObject];
-        UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+        UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
 
         if (!message) {
             NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
@@ -687,7 +688,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
             return;
         }
 
-        [[UAirship inbox].messageList markMessagesDeleted:@[message] completionHandler:nil];
+        [[UAMessageCenter shared].messageList markMessagesDeleted:@[message] completionHandler:nil];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -697,7 +698,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *messageID = [command.arguments firstObject];
-        UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
+        UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
 
         if (!message) {
             NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
@@ -708,7 +709,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
 
         UAMessageViewController *mvc = [[UAMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
-                                                                                 bundle:[UAirship resources]];
+                                                                                 bundle:[UAMessageCenterResources bundle]];
 
         UINavigationController *navController =  [[UINavigationController alloc] initWithRootViewController:mvc];
 
@@ -736,73 +737,11 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
-- (void)dismissOverlayInboxMessage:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("dismissOverlayInboxMessage called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [self closeOverlayMessage];
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
-- (void)overlayInboxMessage:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("overlayInboxMessage called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *messageID = [command.arguments firstObject];
-        UAInboxMessage *message = [[UAirship inbox].messageList messageForID:messageID];
-
-        if (!message) {
-            NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
-            completionHandler(CDVCommandStatus_ERROR, error);
-            return;
-        }
-
-        [self showOverlayMessage:message];
-
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
-- (void)showOverlayMessage:(UAInboxMessage *)message {
-    UA_LTRACE(@"Displaying overlay message:%@", message);
-
-    if (!self.factoryBlockAssigned) {
-        [[UAirship inAppMessageManager] setFactoryBlock:^id<UAInAppMessageAdapterProtocol> _Nonnull(UAInAppMessage * _Nonnull message) {
-            UAInAppMessageHTMLAdapter *adapter = [UAInAppMessageHTMLAdapter adapterForMessage:message];
-            UAInAppMessageHTMLDisplayContent *displayContent = (UAInAppMessageHTMLDisplayContent *) message.displayContent;
-            NSURL *url = [NSURL URLWithString:displayContent.url];
-
-            if ([url.scheme isEqualToString:@"message"]) {
-                self.htmlAdapter = adapter;
-            }
-
-            return adapter;
-        } forDisplayType:UAInAppMessageDisplayTypeHTML];
-
-        self.factoryBlockAssigned = YES;
-    }
-
-    [UAActionRunner runActionWithName:kUAOverlayInboxMessageActionDefaultRegistryName
-                                value:message.messageID
-                            situation:UASituationManualInvocation];
-}
-
-- (void)closeOverlayMessage {
-    UA_LTRACE(@"closeOverlayMessage called");
-
-    UIViewController *vc = [self.htmlAdapter valueForKey:@"htmlViewController"];
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-    [vc performSelector:NSSelectorFromString(@"dismissWithoutResolution")];
-# pragma clang diagnostic pop
-}
-
 - (void)refreshInbox:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("refreshInbox called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship inbox].messageList retrieveMessageListWithSuccessBlock:^{
+        [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:^{
             completionHandler(CDVCommandStatus_OK, nil);
         } withFailureBlock:^{
             completionHandler(CDVCommandStatus_ERROR, @"Inbox failed to refresh");

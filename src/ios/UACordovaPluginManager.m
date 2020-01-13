@@ -2,12 +2,11 @@
 
 #import "UACordovaPluginManager.h"
 
-#if __has_include(<AirshipKit/AirshipLib.h>)
-#import <AirshipKit/AirshipLib.h>
-#elif __has_include("AirshipLib.h")
+#if __has_include("AirshipLib.h")
 #import "AirshipLib.h"
+#import "AirshipMessageCenterLib.h"
 #else
-@import AirshipKit;
+@import Airship;
 #endif
 
 #import "UACordovaEvent.h"
@@ -42,7 +41,7 @@ NSString *const CloudSiteEUString = @"EU";
 NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 
-@interface UACordovaPluginManager() <UARegistrationDelegate, UAPushNotificationDelegate, UAInboxDelegate, UADeepLinkDelegate>
+@interface UACordovaPluginManager() <UARegistrationDelegate, UAPushNotificationDelegate, UAMessageCenterDisplayDelegate, UADeepLinkDelegate>
 @property (nonatomic, strong) NSDictionary *defaultConfig;
 @property (nonatomic, strong) NSMutableArray<NSObject<UACordovaEvent> *> *pendingEvents;
 @property (nonatomic, assign) BOOL isAirshipReady;
@@ -53,7 +52,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 - (void)dealloc {
     [UAirship push].pushNotificationDelegate = nil;
     [UAirship push].registrationDelegate = nil;
-    [UAirship inbox].delegate = nil;
+    [UAMessageCenter shared].displayDelegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -94,7 +93,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
-    [UAirship inbox].delegate = self;
+    [UAMessageCenter shared].displayDelegate = self;
     [UAirship shared].deepLinkDelegate = self;
 
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -230,19 +229,26 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 #pragma mark UAInboxDelegate
 
-- (void)showMessageForID:(NSString *)messageID {
+
+- (void)displayMessageCenterForMessageID:(NSString *)messageID animated:(BOOL)animated {
     if (self.autoLaunchMessageCenter) {
-        [[UAirship messageCenter] displayMessageForID:messageID];
+        [[UAMessageCenter shared].defaultUI displayMessageCenterForMessageID:messageID animated:true];
     } else {
         [self fireEvent:[UACordovaShowInboxEvent eventWithMessageID:messageID]];
     }
 }
 
-- (void)showInbox {
+- (void)displayMessageCenterAnimated:(BOOL)animated {
     if (self.autoLaunchMessageCenter) {
-        [[UAirship messageCenter] display];
+        [[UAMessageCenter shared].defaultUI displayMessageCenterAnimated:animated];
     } else {
         [self fireEvent:[UACordovaShowInboxEvent event]];
+    }
+}
+
+- (void)dismissMessageCenterAnimated:(BOOL)animated {
+    if (self.autoLaunchMessageCenter) {
+        [[UAMessageCenter shared].defaultUI dismissMessageCenterAnimated:animated];
     }
 }
 

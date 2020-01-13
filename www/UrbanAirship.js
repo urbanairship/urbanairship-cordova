@@ -599,18 +599,6 @@ module.exports = {
   },
 
   /**
-   * Dismiss the inbox message in the overlay.
-   *
-   * @param {function} [success] Success callback.
-   * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The error message.
-   */
-  dismissOverlayInboxMessage: function(success, failure) {
-    argscheck.checkArgs('FF', 'UAirship.dismissOverlayInboxMessage', arguments)
-    callNative(success, failure, "dismissOverlayInboxMessage")
-  },
-
-  /**
    * Gets the array of inbox messages. Each message will have the following properties:
    * "id": string - The messages ID. Needed to display, mark as read, or delete the message.
    * "title": string - The message title.
@@ -681,19 +669,6 @@ module.exports = {
   refreshInbox: function(success, failure) {
     argscheck.checkArgs('FF', 'UAirship.refreshInbox', arguments)
     callNative(success, failure, 'refreshInbox')
-  },
-
-  /**
-   * Displays the inbox message using an overlay display.
-   *
-   * @param {String} messageId The ID of the message to display.
-   * @param {function} [success] Success callback.
-   * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The error message.
-   */
-  overlayInboxMessage: function(messageId, success, failure) {
-    argscheck.checkArgs('sFF', 'UAirship.overlayInboxMessage', arguments)
-    callNative(success, failure, 'overlayInboxMessage', [messageId])
   },
 
   /**
