@@ -270,6 +270,18 @@
 - (void)editChannelTagGroups:(CDVInvokedUrlCommand *)command;
 
 /**
+ * Edits the channel attributes.
+ *
+ * Expected arguments: An array of objects that contain:
+ * "action": String, either `remove` or `set`
+ * "key": String, the attribute name.
+ * "value": String, the attribute value.
+ *
+ * @param command The cordova command.
+ */
+- (void)editChannelAttributes:(CDVInvokedUrlCommand *)command;
+
+/**
  * Registers a listener for events.
  *
  * @param command The cordova command.

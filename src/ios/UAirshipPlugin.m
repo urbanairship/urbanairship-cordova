@@ -5,6 +5,13 @@
 #import "UACordovaPluginManager.h"
 #import "UACordovaPushEvent.h"
 
+#if __has_include("AirshipLib.h")
+#import "AirshipLib.h"
+#import "AirshipMessageCenterLib.h"
+#import "AirshipAutomationLib.h"
+#else
+@import Airship;
+#endif
 
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
@@ -798,6 +805,30 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
+- (void)editChannelAttributes:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("editChannelAttributes called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        UAAttributeMutations *mutations = [UAAttributeMutations mutations];
+
+        for (NSDictionary *operation in [args objectAtIndex:0]) {
+            NSString *action = operation[@"action"];
+
+            // Only strings are currently supported
+            NSString *name = operation[@"key"];
+            NSString *value = operation[@"value"];
+
+            if ([action isEqualToString:@"set"]) {
+                [mutations setString:value forAttribute:name];
+            } else if ([action isEqualToString:@"remove"]) {
+                [mutations removeAttribute:name];
+            }
+        }
+
+        [[UAirship channel] applyAttributeMutations:mutations];
+    }];
+}
+
 - (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
     UA_LTRACE(@"notifyListener called with event type:%@ and data:%@", eventType, data);
 
@@ -819,4 +850,3 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 @end
-
