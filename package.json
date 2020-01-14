@@ -1,6 +1,6 @@
 {
   "name": "urbanairship-cordova",
-  "version": "9.0.1",
+  "version": "10.0.0",
   "description": "Urban Airship Cordova plugin",
   "cordova": {
     "id": "urbanairship-cordova",

@@ -3,6 +3,9 @@
 package com.urbanairship.cordova;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +22,7 @@ import com.urbanairship.actions.DeepLinkAction;
 import com.urbanairship.actions.DeepLinkListener;
 import com.urbanairship.actions.OpenRichPushInboxAction;
 import com.urbanairship.actions.OverlayRichPushMessageAction;
+import com.urbanairship.analytics.Analytics;
 import com.urbanairship.channel.AirshipChannelListener;
 import com.urbanairship.messagecenter.MessageCenter;
 import com.urbanairship.push.NotificationActionButtonInfo;
@@ -29,6 +33,7 @@ import com.urbanairship.push.RegistrationListener;
 import com.urbanairship.richpush.RichPushInbox;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.cordova.events.ShowInboxEvent;
+import com.urbanairship.util.ManifestUtils;
 
 import static com.urbanairship.cordova.PluginManager.AUTO_LAUNCH_MESSAGE_CENTER;
 
@@ -36,6 +41,8 @@ import static com.urbanairship.cordova.PluginManager.AUTO_LAUNCH_MESSAGE_CENTER;
  * The Urban Airship autopilot to automatically handle takeOff.
  */
 public class CordovaAutopilot extends Autopilot {
+
+    private static final String CORDOVA_VERSION_KEY = "com.urbanairship.cordova.version";
 
     @Override
     public AirshipConfigOptions createAirshipConfigOptions(@NonNull Context context) {
@@ -64,6 +71,8 @@ public class CordovaAutopilot extends Autopilot {
         if (pluginManager.getEnablePushOnLaunch()) {
             airship.getPushManager().setUserNotificationsEnabled(true);
         }
+
+        registerCordovaPluginVersion(context, airship);
 
         // Cordova notification factory
         airship.getPushManager().setNotificationProvider(new CordovaNotificationProvider(context, PluginManager.shared(context)));
@@ -163,6 +172,18 @@ public class CordovaAutopilot extends Autopilot {
 
         loadCustomNotificationButtonGroups(context, airship);
         loadCustomNotificationChannels(context, airship);
+    }
+
+    private void registerCordovaPluginVersion(@NonNull Context context, @NonNull UAirship airship) {
+        try {
+            ApplicationInfo info = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            if (info.metaData != null) {
+                String version = info.metaData.getString(CORDOVA_VERSION_KEY, "0.0.0");
+                airship.getAnalytics().registerSDKExtension(Analytics.EXTENSION_CORDOVA, version);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            PluginLogger.error(e, "Failed to get package info.");
+        }
     }
 
     private void loadCustomNotificationButtonGroups(Context context, UAirship airship) {
