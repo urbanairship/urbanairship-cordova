@@ -34,8 +34,9 @@ NSString *const NotificationPresentationAlertKey = @"com.urbanairship.ios_foregr
 NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foreground_notification_presentation_badge";
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 NSString *const CloudSiteConfigKey = @"com.urbanairship.site";
-
 NSString *const CloudSiteEUString = @"EU";
+
+NSString *const UACordovaPluginVersionKey = @"UACordovaPluginVersion";
 
 // Events
 NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
@@ -82,6 +83,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     }
 
     [UAirship takeOff:config];
+    [self registerCordovaPluginVersion];
 
     [UAirship push].userPushNotificationsEnabledByDefault = [[self configValueForKey:EnablePushOnLaunchConfigKey] boolValue];
 
@@ -152,6 +154,11 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     }
 
     return airshipConfig;
+}
+
+- (void)registerCordovaPluginVersion {
+    NSString *version = [NSBundle mainBundle].infoDictionary[UACordovaPluginVersionKey] ?: @"0.0.0";
+    [[UAirship analytics] registerSDKExtension:UASDKExtensionCordova version:version];
 }
 
 - (id)configValueForKey:(NSString *)key {

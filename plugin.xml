@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="9.0.1"
+        version="10.0.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -34,6 +34,10 @@
         </config-file>
 
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <meta-data
+                android:name="com.urbanairship.cordova.version"
+                android:value="10.0.0"/>
+
             <meta-data
                 android:name="com.urbanairship.autopilot"
                 android:value="com.urbanairship.cordova.CordovaAutopilot"/>
@@ -119,7 +123,6 @@
             src="src/android/events/Event.java"
             target-dir="src/com/urbanairship/cordova/events"/>
 
-
         <framework
             custom="true"
             src="src/android/build-extras.gradle"
@@ -135,6 +138,10 @@
             <array>
                 <string>remote-notification</string>
             </array>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
+            <string>10.0.0</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
