@@ -199,10 +199,9 @@ for details on how to set a gradle property in a Cordova project.
 A sample can be found in the Example directory.
 
 1. Add your UA credentials to the `config_sample.xml` file in the root directory and save.
-2. Add your development team id to the `build_sample.json` file in the root directory and save.
-3. Run the script with the command `./scripts/create_sample.sh PROJECT_PATH PROJECT_NAME`
-4. cd to the newly-created project directory, e.g. sample/test
-5. Build the platform you want to test.
+2. Run the script with the command `./scripts/create_sample.sh PROJECT_PATH PROJECT_NAME`
+3. cd to the newly-created project directory, e.g. sample/test
+4. Build the platform you want to test.
    * iOS
       1. Build with command `cordova build ios --emulator`
       2. After successful build, connect an iOS device to test
