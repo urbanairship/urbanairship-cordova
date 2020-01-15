@@ -21,6 +21,7 @@ import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionCompletionCallback;
 import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.ActionRunRequest;
+import com.urbanairship.channel.AttributeEditor;
 import com.urbanairship.channel.TagGroupsEditor;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
@@ -72,7 +73,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
-            "getActiveNotifications", "clearNotification");
+            "getActiveNotifications", "clearNotification", "editChannelAttributes");
 
 
     /*
@@ -85,6 +86,12 @@ public class UAirshipPlugin extends CordovaPlugin {
     private static final String NOTIFICATION_LARGE_ICON_KEY = "largeIcon";
     private static final String ACCENT_COLOR_KEY = "accentColor";
     private static final String DEFAULT_CHANNEL_ID_KEY = "defaultChannelId";
+
+    private static final String ATTRIBUTE_OPERATION_KEY = "key";
+    private static final String ATTRIBUTE_OPERATION_VALUE = "value";
+    private static final String ATTRIBUTE_OPERATION_TYPE = "action";
+    private static final String ATTRIBUTE_OPERATION_SET = "set";
+    private static final String ATTRIBUTE_OPERATION_REMOVE = "remove";
 
     private Context context;
     private PluginManager pluginManager;
@@ -1041,4 +1048,35 @@ public class UAirshipPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
+    /**
+     * Edits the channel attributes.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void editChannelAttributes(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        JSONArray operations = data.getJSONArray(0);
+        PluginLogger.debug("Editing channel attributes: %s", operations);
+
+        AttributeEditor editor = UAirship.shared().getChannel().editAttributes();
+        for (int i = 0; i < operations.length(); i++) {
+            JSONObject operation = operations.optJSONObject(i);
+            if (operation == null) {
+                continue;
+            }
+
+            String action = operation.optString(ATTRIBUTE_OPERATION_TYPE);
+            String key = operation.optString(ATTRIBUTE_OPERATION_KEY);
+            String value = operation.optString(ATTRIBUTE_OPERATION_VALUE);
+
+            if (ATTRIBUTE_OPERATION_SET.equals(action)) {
+                editor.setAttribute(key, value);
+            } else if (ATTRIBUTE_OPERATION_REMOVE.equals(action)) {
+                editor.removeAttribute(key);
+            }
+        }
+
+        editor.apply();
+        callbackContext.success();
+    }
 }

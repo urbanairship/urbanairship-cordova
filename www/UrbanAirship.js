@@ -102,6 +102,72 @@ function TagGroupEditor(nativeMethod) {
     return editor
 }
 
+/**
+ * Helper object to edit attributes groups.
+ *
+ * Normally not created directly. Instead use [UrbanAirship.editChannelAttributes]{@link module:UrbanAirship.editChannelAttributes}.
+ *
+ * @class AttributeEditor
+ * @param nativeMethod The native method to call on apply.
+ */
+function AttributesEditor(nativeMethod) {
+  var operations = []
+  var editor = {}
+
+  /**
+   * Sets an attribute.
+   * @instance
+   * @memberof AttributesEditor
+   * @function setAttribute
+   *
+   * @param {string} name The attribute name.
+   * @param {string} value The attribute's value.
+   * @return {AttributesEditor} The attribute editor instance.
+   */
+  editor.setAttribute = function(name, value) {
+    argscheck.checkArgs('ss', "AttributesEditor#setAttribute", arguments)
+    var operation = { "action": "set", "value": value, "key": name }
+    operations.push(operation)
+    return editor
+  }
+
+  /**
+   * Removes an attribute.
+   * @instance
+   * @memberof AttributesEditor
+   * @function removeAttribute
+   *
+   * @param {string} name The attribute's name.
+   * @return {AttributesEditor} The attribute editor instance.
+   */
+  editor.removeAttribute = function(name) {
+    argscheck.checkArgs('s', "AttributesEditor#removeAttribute", arguments)
+    var operation = { "action": "remove", "key": name }
+    operations.push(operation)
+    return editor
+  }
+
+  /**
+   * Applies the attribute changes.
+   * @instance
+   * @memberof AttributesEditor
+   * @function apply
+   *
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The failure message.
+   * @return {TagGroupEditor} The tag group editor instance.
+   */
+  editor.apply = function(success, failure) {
+    argscheck.checkArgs('FF', "AttributesEditor#apply", arguments)
+    callNative(success, failure, nativeMethod, [operations])
+    operations = []
+    return editor
+  }
+
+  return editor
+}
+
 function bindDocumentEvent() {
     callNative(function(e) {
       console.log("Firing document event: " + e.eventType)
@@ -546,6 +612,15 @@ module.exports = {
    */
   editChannelTagGroups: function() {
     return new TagGroupEditor('editChannelTagGroups')
+  },
+
+  /**
+   * Creates an editor to modify the channel attributes.
+   *
+   * @return {AttributesEditor} An attributes editor instance.
+   */
+  editChannelAttributes: function() {
+    return new AttributesEditor('editChannelAttributes')
   },
 
   /**
