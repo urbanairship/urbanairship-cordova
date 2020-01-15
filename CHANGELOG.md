@@ -1,3 +1,18 @@
+Version 10.0.0 - January 15, 2020
+=================================
+Major release adding support for channel attributes, which allow
+key value pairs to be associated with the application's Airship channel
+for segmentation purposes.
+
+Custom channel attributes are currently a beta feature. If you wish to
+participate in the beta program, please complete our 
+[signup form](https://www.airship.com/lp/sign-up-now-to-participate-in-the-advanced-segmentation-beta-program/).
+
+Changes
+-------
+- Updated iOS SDK to 13.0.4.
+- Updated Android SDK to 12.1.0. Plugin now requires modern Jetpack libraries (AndroidX).
+- Removed overlay inbox message feature.
 
 Version 9.0.1 - December 6, 2019
 ================================
