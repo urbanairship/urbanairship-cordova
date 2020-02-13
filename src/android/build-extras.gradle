@@ -21,7 +21,7 @@ allprojects {
 dependencies {
     api "androidx.annotation:annotation:1.0.0"
     implementation "androidx.appcompat:appcompat:1.1.0"
-    implementation 'com.urbanairship.android:urbanairship-fcm:12.1.0'
+    implementation 'com.urbanairship.android:urbanairship-fcm:12.2.0'
 }
 
 ext.cdvCompileSdkVersion = 29
