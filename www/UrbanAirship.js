@@ -965,5 +965,18 @@ module.exports = {
     }
 
     _runAction("add_custom_event_action", actionArg, success, failure)
+  },
+
+  /**
+   * Initiates screen tracking for a specific app screen, must be called once per tracked screen.
+   *
+   * @param {string} screen The screen's string identifier.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  trackScreen: function(screen, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.trackScreen', arguments)
+    callNative(success, failure, "trackScreen", [screen])
   }
 }
