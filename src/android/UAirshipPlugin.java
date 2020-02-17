@@ -73,7 +73,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
-            "getActiveNotifications", "clearNotification", "editChannelAttributes");
+            "getActiveNotifications", "clearNotification", "editChannelAttributes", "trackScreen");
 
 
     /*
