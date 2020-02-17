@@ -976,7 +976,7 @@ module.exports = {
    * @param {string} failure.message The error message.
    */
   trackScreen: function(screen, success, failure) {
-    argscheck.checkArgs('*FF', 'UAirship.trackScreen', arguments)
+    argscheck.checkArgs('sFF', 'UAirship.trackScreen', arguments)
     callNative(success, failure, "trackScreen", [screen])
   }
 }

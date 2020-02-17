@@ -1089,8 +1089,8 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      */
     void trackScreen(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        String screen = data.getBoolean(0);
-        UAirship.shared().analytics.trackScreen(screen);
+        String screen = data.getString(0);
+        UAirship.shared().getAnalytics().trackScreen(screen);
         callbackContext.success();
     }
 }
