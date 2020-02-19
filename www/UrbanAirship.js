@@ -965,5 +965,25 @@ module.exports = {
     }
 
     _runAction("add_custom_event_action", actionArg, success, failure)
+  },
+
+  setDataCollectionEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setDataCollectionEnabled', arguments)
+    callNative(success, failure, "setDataCollectionEnabled", [!!enabled])
+  },
+
+  isDataCollectionEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isDataCollectionEnabled', arguments)
+    callNative(success, failure, "isDataCollectionEnabled")
+  },
+
+  setPushTokenRegistrationEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setPushTokenRegistrationEnabled', arguments)
+    callNative(success, failure, "setPushTokenRegistrationEnabled", [!!enabled])
+  },
+
+  isPushTokenRegistrationEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isPushTokenRegistrationEnabled', arguments)
+    callNative(success, failure, "isPushTokenRegistrationEnabled")
   }
 }

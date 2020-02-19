@@ -35,6 +35,7 @@ NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foregr
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 NSString *const CloudSiteConfigKey = @"com.urbanairship.site";
 NSString *const CloudSiteEUString = @"EU";
+NSString *const DataCollectionOptInEnabledConfigKey = @"com.urbanairship.data_collection_opt_in_enabled";
 
 NSString *const UACordovaPluginVersionKey = @"UACordovaPluginVersion";
 
@@ -139,6 +140,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     NSString *cloudSite = [self configValueForKey:CloudSiteConfigKey];
     airshipConfig.site = [UACordovaPluginManager parseCloudSiteString:cloudSite];
 
+    if ([self configValueForKey:DataCollectionOptInEnabledConfigKey] != nil) {
+        airshipConfig.dataCollectionOptInEnabled = [[self configValueForKey:DataCollectionOptInEnabledConfigKey] boolValue];
+    }
+
     if ([self configValueForKey:ProductionConfigKey] != nil) {
         airshipConfig.inProduction = [[self configValueForKey:ProductionConfigKey] boolValue];
     }
@@ -194,6 +199,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 - (void)setCloudSite:(NSString *)site {
     [[NSUserDefaults standardUserDefaults] setValue:site forKey:CloudSiteConfigKey];
+}
+
+- (void)setDataCollectionOptInEnabled:(BOOL)enabled {
+    [[NSUserDefaults standardUserDefaults] setValue:@enabled forKey:DataCollectionOptInEnabledConfigKey];
 }
 
 - (void)setPresentationOptions:(NSUInteger)options {

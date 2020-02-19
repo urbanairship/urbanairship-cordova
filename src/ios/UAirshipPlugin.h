@@ -380,4 +380,36 @@
  */
 - (void)clearNotifications:(CDVInvokedUrlCommand *)command;
 
+/**
+ * Enables or disables data collection.
+ *
+ * Expected arguments: Boolean
+ *
+ * @param command The cordova command.
+ */
+- (void)setDataCollectionEnabled:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Checks if data collection is enabled or not.
+ *
+ * @param command The cordova command.
+ */
+- (void)isDataCollectionEnabled:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Sets whether the push token is sent during channel registration.
+ *
+ * Expected arguments: Boolean
+ *
+ * @param command The cordova command.
+ */
+- (void)setPushTokenRegistrationEnabled:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Determines whether the push token is sent during channel registration.
+ *
+ * @param command The cordova command.
+ */
+- (void)isPushTokenRegistrationEnabled:(CDVInvokedUrlCommand *)command;
+
 @end

@@ -91,6 +91,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setCloudSite:(NSString *)site;
 
 /**
+ * Sets the data collection opt in enabled parameter.
+ * @param enabled The boolean value for the data collection opt in enabled parameter.
+ */
+- (void)setDataCollectionOptInEnabled:(BOOL)enabled;
+
+/**
  * Sets the presentation options.
  * @param options The presentation options.
  */

@@ -121,6 +121,14 @@
           $('#pushEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
+        UAirship.isDataCollectionEnabled(function(isEnabled) {
+          $('#dataCollectionEnabled').val(isEnabled ? 'on' : 'off').change()
+        })
+
+        UAirship.isPushTokenRegistrationEnabled(function(isEnabled) {
+          $('#pushTokenRegistrationEnabled').val(isEnabled ? 'on' : 'off').change()
+        })
+
         UAirship.isQuietTimeEnabled(function(isEnabled) {
           $('#quietTimeEnabled').val(isEnabled ? 'on' : 'off').change()
         })
@@ -157,6 +165,16 @@
         $('#pushEnabled').change(function() {
           var isEnabled = ($('#pushEnabled').val() == "on")
           UAirship.setUserNotificationsEnabled(isEnabled)
+        })
+
+        $('#dataCollectionEnabled').change(function() {
+          var isEnabled = ($('#dataCollectionEnabled').val() == "on")
+          UAirship.setDataCollectionEnabled(isEnabled)
+        })
+
+        $('#pushTokenRegistrationEnabled').change(function() {
+          var isEnabled = ($('#pushTokenRegistrationEnabled').val() == "on")
+          UAirship.setPushTokenRegistrationEnabled(isEnabled)
         })
 
         $("#displayMessageCenterButton").click(function(ev) {
@@ -235,6 +253,21 @@
             </select>
           </div>
 
+          <div data-role="controlgroup">
+            <label for="dataCollectionEnabled">Data Collection Enabled</label>
+            <select name="dataCollectionEnabled" id="dataCollectionEnabled" data-role="slider" data-theme="c" data-track-theme="c">
+              <option value="off">Off</option>
+              <option value="on">On</option>
+            </select>
+          </div>
+
+          <div data-role="controlgroup">
+            <label for="pushTokenRegistrationEnabled">Push Token Registration Enabled</label>
+            <select name="pushTokenRegistrationEnabled" id="pushTokenRegistrationEnabled" data-role="slider" data-theme="c" data-track-theme="c">
+              <option value="off">Off</option>
+              <option value="on">On</option>
+            </select>
+          </div>
 
           <div data-role="controlgroup">
             <label for="quietTimeEnabled">Quiet Time Enabled</label>
