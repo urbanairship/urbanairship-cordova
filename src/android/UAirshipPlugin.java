@@ -1067,10 +1067,17 @@ public class UAirshipPlugin extends CordovaPlugin {
 
             String action = operation.optString(ATTRIBUTE_OPERATION_TYPE);
             String key = operation.optString(ATTRIBUTE_OPERATION_KEY);
-            String value = operation.optString(ATTRIBUTE_OPERATION_VALUE);
 
             if (ATTRIBUTE_OPERATION_SET.equals(action)) {
-                editor.setAttribute(key, value);
+                Object value = operation.opt(ATTRIBUTE_OPERATION_VALUE);
+
+                if (value == JSONObject.NULL) {
+                    continue;
+                } else if (value instanceof String) {
+                    editor.setAttribute(key, (String) value);
+                } else if (value instanceof Number) {
+                    editor.setAttribute(key, ((Number) value).doubleValue());
+                }
             } else if (ATTRIBUTE_OPERATION_REMOVE.equals(action)) {
                 editor.removeAttribute(key);
             }

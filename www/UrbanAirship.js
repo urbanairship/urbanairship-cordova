@@ -125,7 +125,7 @@ function AttributesEditor(nativeMethod) {
    * @return {AttributesEditor} The attribute editor instance.
    */
   editor.setAttribute = function(name, value) {
-    argscheck.checkArgs('ss', "AttributesEditor#setAttribute", arguments)
+    argscheck.checkArgs('s*', "AttributesEditor#setAttribute", arguments)
     var operation = { "action": "set", "value": value, "key": name }
     operations.push(operation)
     return editor

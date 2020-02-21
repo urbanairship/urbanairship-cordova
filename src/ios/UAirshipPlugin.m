@@ -826,13 +826,17 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
         for (NSDictionary *operation in [args objectAtIndex:0]) {
             NSString *action = operation[@"action"];
-
-            // Only strings are currently supported
             NSString *name = operation[@"key"];
-            NSString *value = operation[@"value"];
 
             if ([action isEqualToString:@"set"]) {
-                [mutations setString:value forAttribute:name];
+                id value = operation[@"value"];
+                if ([value isKindOfClass:[NSNull class]]) {
+                    continue;
+                } else if ([value isKindOfClass:[NSString class]]) {
+                    [mutations setString:(NSString *)value forAttribute:name];
+                } else if ([value isKindOfClass:[NSNumber class]]) {
+                    [mutations setNumber:(NSNumber *)value forAttribute:name];
+                }
             } else if ([action isEqualToString:@"remove"]) {
                 [mutations removeAttribute:name];
             }
