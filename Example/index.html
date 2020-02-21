@@ -55,11 +55,11 @@
         document.addEventListener("urbanairship.push", onPushReceived, false)
         document.addEventListener("urbanairship.notification_opened", notificationOpened, false)
         document.addEventListener("urbanairship.deep_link", handleDeepLink, false)
-        
+
         // Handle resume
         document.addEventListener("resume", function() {
           console.log("Device resume!")
-          
+
           UAirship.resetBadge()
 
           // Reregister for urbanairship events if they were removed in pause event
@@ -70,7 +70,7 @@
         // Handle pause
         document.addEventListener("pause", function() {
           console.log("Device pause!")
-         
+
           // Remove urbanairship events.  Important on android to not receive push in the background.
           document.removeEventListener("urbanairship.registration", onRegistration, false)
           document.removeEventListener("urbanairship.push", onPushReceived, false)
@@ -78,7 +78,7 @@
 
         // Initiate the UI
         initiateUI()
-        
+
         // Get the launch notification if its available.
       }
 
@@ -162,6 +162,7 @@
         $("#displayMessageCenterButton").click(function(ev) {
           console.log("Displaying Message Center")
           UAirship.displayMessageCenter()
+          UAirship.trackScreen("Message Center")
 
           })
 
