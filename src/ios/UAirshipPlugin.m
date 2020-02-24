@@ -830,9 +830,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
             if ([action isEqualToString:@"set"]) {
                 id value = operation[@"value"];
-                if ([value isKindOfClass:[NSNull class]]) {
-                    continue;
-                } else if ([value isKindOfClass:[NSString class]]) {
+                if ([value isKindOfClass:[NSString class]]) {
                     [mutations setString:(NSString *)value forAttribute:name];
                 } else if ([value isKindOfClass:[NSNumber class]]) {
                     [mutations setNumber:(NSNumber *)value forAttribute:name];

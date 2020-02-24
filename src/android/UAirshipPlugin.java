@@ -1071,9 +1071,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             if (ATTRIBUTE_OPERATION_SET.equals(action)) {
                 Object value = operation.opt(ATTRIBUTE_OPERATION_VALUE);
 
-                if (value == JSONObject.NULL) {
-                    continue;
-                } else if (value instanceof String) {
+                if (value instanceof String) {
                     editor.setAttribute(key, (String) value);
                 } else if (value instanceof Number) {
                     editor.setAttribute(key, ((Number) value).doubleValue());
