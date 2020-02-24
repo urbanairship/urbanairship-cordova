@@ -202,7 +202,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 }
 
 - (void)setDataCollectionOptInEnabled:(BOOL)enabled {
-    [[NSUserDefaults standardUserDefaults] setValue:@enabled forKey:DataCollectionOptInEnabledConfigKey];
+    [[NSUserDefaults standardUserDefaults] setValue:@(enabled) forKey:DataCollectionOptInEnabledConfigKey];
 }
 
 - (void)setPresentationOptions:(NSUInteger)options {
