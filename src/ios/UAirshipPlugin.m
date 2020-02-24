@@ -555,6 +555,19 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
+- (void)trackScreen:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("trackScreen called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *screen = [args objectAtIndex:0];
+
+        UA_LTRACE("trackScreen set to:%@", screen);
+
+        [[UAirship analytics] trackScreen:screen];
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
 - (void)runAction:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("runAction called with command arguments: %@", command.arguments);
 

@@ -73,7 +73,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
-            "getActiveNotifications", "clearNotification", "editChannelAttributes", "setDataCollectionEnabled", "isDataCollectionEnabled",
+            "getActiveNotifications", "clearNotification", "editChannelAttributes", "trackScreen", "setDataCollectionEnabled", "isDataCollectionEnabled",
             "setPushTokenRegistrationEnabled", "isPushTokenRegistrationEnabled");
 
 
@@ -1079,6 +1079,20 @@ public class UAirshipPlugin extends CordovaPlugin {
         }
 
         editor.apply();
+        callbackContext.success();
+    }
+
+    /**
+     * Initiates screen tracking for a specific app screen.
+     * <p/>
+     * Expected arguments: String
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void trackScreen(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        String screen = data.getString(0);
+        UAirship.shared().getAnalytics().trackScreen(screen);
         callbackContext.success();
     }
 
