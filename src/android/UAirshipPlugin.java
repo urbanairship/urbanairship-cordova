@@ -73,7 +73,8 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
-            "getActiveNotifications", "clearNotification", "editChannelAttributes", "trackScreen");
+            "getActiveNotifications", "clearNotification", "editChannelAttributes", "trackScreen", "setDataCollectionEnabled", "isDataCollectionEnabled",
+            "setPushTokenRegistrationEnabled", "isPushTokenRegistrationEnabled");
 
 
     /*
@@ -216,6 +217,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                 .setProductionConfig(prod.opt("appKey").optString(), prod.opt("appSecret").optString())
                 .setDevelopmentConfig(dev.opt("appKey").optString(), dev.opt("appSecret").optString())
                 .setCloudSite(config.opt("site").optString())
+                .setDataCollectionOptInEnabled(config.opt("dataCollectionOptInEnabled").getBoolean(false))
                 .apply();
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -1097,5 +1099,55 @@ public class UAirshipPlugin extends CordovaPlugin {
         String screen = data.getString(0);
         UAirship.shared().getAnalytics().trackScreen(screen);
         callbackContext.success();
+    }
+
+    /**
+     * Enables or disables data collection.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void setDataCollectionEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        boolean enabled = data.getBoolean(0);
+        UAirship.shared().setDataCollectionEnabled(enabled);
+        callbackContext.success();
+    }
+
+    /**
+     * Checks if data collection is enabled or not.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void isDataCollectionEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+        int value = UAirship.shared().isDataCollectionEnabled() ? 1 : 0;
+        callbackContext.success(value);
+    }
+
+    /**
+     * Sets whether the push token is sent during channel registration.
+     * <p/>
+     * Expected arguments: Boolean
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void setPushTokenRegistrationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        boolean enabled = data.getBoolean(0);
+        UAirship.shared().getPushManager().setPushTokenRegistrationEnabled(enabled);
+        callbackContext.success();
+    }
+
+    /**
+     * Determines whether the push token is sent during channel registration.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    void isPushTokenRegistrationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+        int value = UAirship.shared().getPushManager().isPushTokenRegistrationEnabled() ? 1 : 0;
+        callbackContext.success(value);
     }
 }

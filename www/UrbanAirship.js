@@ -978,5 +978,57 @@ module.exports = {
   trackScreen: function(screen, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.trackScreen', arguments)
     callNative(success, failure, "trackScreen", [screen])
+  },
+
+  /**
+   * Enables or disables data collection.
+   *
+   * @param {boolean} enabled true to enable data collection, false to disable.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  setDataCollectionEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setDataCollectionEnabled', arguments)
+    callNative(success, failure, "setDataCollectionEnabled", [!!enabled])
+  },
+
+  /**
+   * Checks if data collection is enabled or not.
+   *
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if data collection is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  isDataCollectionEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isDataCollectionEnabled', arguments)
+    callNative(success, failure, "isDataCollectionEnabled")
+  },
+
+  /**
+   * Enables or disables push token registration.
+   *
+   * @param {boolean} enabled true to enable push token registration, false to disable.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  setPushTokenRegistrationEnabled: function(enabled, success, failure) {
+    argscheck.checkArgs('*FF', 'UAirship.setPushTokenRegistrationEnabled', arguments)
+    callNative(success, failure, "setPushTokenRegistrationEnabled", [!!enabled])
+  },
+
+  /**
+   * Checks if push token registration is enabled or not.
+   *
+   * @param {function(enabled)} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if push token registration is enabled or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  isPushTokenRegistrationEnabled: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.isPushTokenRegistrationEnabled', arguments)
+    callNative(success, failure, "isPushTokenRegistrationEnabled")
   }
 }

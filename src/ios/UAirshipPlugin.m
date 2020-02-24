@@ -178,6 +178,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
                                [self.pluginManager setCloudSite:config[@"site"]];
 
+                               [self.pluginManager setDataCollectionOptInEnabled:config[@"dataCollectionOptInEnabled"]];
+
                                if (!self.pluginManager.isAirshipReady) {
                                    [self.pluginManager attemptTakeOff];
                                    if (!self.pluginManager.isAirshipReady) {
@@ -862,6 +864,50 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self.commandDelegate sendPluginResult:result callbackId:self.listenerCallbackID];
 
     return true;
+}
+
+- (void)setDataCollectionEnabled:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("setDataCollectionEnabled called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSNumber *value = [args objectAtIndex:0];
+        BOOL enabled = [value boolValue];
+        [UAirship shared].dataCollectionEnabled = enabled;
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)isDataCollectionEnabled:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("isDataCollectionEnabled called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        BOOL enabled = [UAirship shared].dataCollectionEnabled;
+
+        completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
+    }];
+}
+
+- (void)setPushTokenRegistrationEnabled:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("setPushTokenRegistrationEnabled called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSNumber *value = [args objectAtIndex:0];
+        BOOL enabled = [value boolValue];
+        [UAirship push].pushTokenRegistrationEnabled = enabled;
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)isPushTokenRegistrationEnabled:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("isPushTokenRegistrationEnabled called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        BOOL enabled = [UAirship push].pushTokenRegistrationEnabled;
+
+        completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
+    }];
 }
 
 @end
