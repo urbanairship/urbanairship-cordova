@@ -1,0 +1,17 @@
+name: CI
+
+on: [pull_request]
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run CI
+        run: bash ./scripts/run_ci_tasks.sh -a
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Run CI
+        run: bash ./scripts/run_ci_tasks.sh -i
