@@ -11,6 +11,8 @@ jobs:
         run: bash ./scripts/run_ci_tasks.sh -a
   ios:
     runs-on: macos-latest
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_11.3.1.app
     steps:
       - uses: actions/checkout@v1
       - name: Run CI
