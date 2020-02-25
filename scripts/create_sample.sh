@@ -50,7 +50,7 @@ cordova plugin add cordova-plugin-androidx-adapter
 cordova plugin add cordova-plugin-androidx
 
 # set up iOS
-cordova platform add ios@5.0.1
+cordova platform add ios@5.1.1
 
 # Build with command `cordova build ios --emulator` in project directory
 # After successful build, connect iOS device to test
@@ -60,7 +60,7 @@ cordova platform add ios@5.0.1
 # Open workspace in Xcode with 'open' command, e.g. `open platforms/ios/Test.xcworkspace`
 
 # set up android
-cordova platform add android
+cordova platform add android@8.1.0
 
 # Build with command `cordova build android` in project directory
 # After successful build, connect android device to test
