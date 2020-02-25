@@ -6,6 +6,8 @@ cd `dirname "${0}"`/../
 ROOT_PATH="$(pwd)"
 cd -
 
+source "$ROOT_PATH/scripts/config.sh"
+
 CORDOVA_PATH=$1
 
 if [ -z "$1" ]
@@ -26,19 +28,19 @@ cd $CORDOVA_PATH
 
 # create the test project
 rm -rf test
-npm install cordova@9.0.0
+npm install cordova@$CORDOVA_VERSION
 npx cordova create test com.urbanairship.sample Test
 cd test
-npm install cordova@9.0.0
+npm install cordova@$CORDOVA_VERSION
 
 # add the plugin
 npx cordova plugin add $ROOT_PATH
 
 # copy config and example files
-cp $ROOT_PATH/config_sample.xml config.xml
-cp $ROOT_PATH/Example/index.html www/index.html
-cp $ROOT_PATH/Example/css/* www/css
-cp $ROOT_PATH/Example/js/* www/js
+cp "$ROOT_PATH/config_sample.xml" config.xml
+cp "$ROOT_PATH/Example/index.html" www/index.html
+cp "$ROOT_PATH/Example/css/"* www/css
+cp "$ROOT_PATH/Example/js/"* www/js
 
 # add required plugins
 npx cordova plugin add cordova-plugin-device
@@ -46,7 +48,7 @@ npx cordova plugin add cordova-plugin-androidx-adapter
 npx cordova plugin add cordova-plugin-androidx
 
 # set up iOS
-npx cordova platform add ios@5.1.1
+npx cordova platform add ios@$IOS_CORDOVA_VERSION
 
 # Build with command `cordova build ios --emulator` in project directory
 # After successful build, connect iOS device to test
@@ -56,7 +58,7 @@ npx cordova platform add ios@5.1.1
 # Open workspace in Xcode with 'open' command, e.g. `open platforms/ios/Test.xcworkspace`
 
 # set up android
-npx cordova platform add android@8.1.0
+npx cordova platform add android@$ANDROID_CORDOVA_VERSION
 
 # Build with command `cordova build android` in project directory
 # After successful build, connect android device to test
