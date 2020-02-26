@@ -1,3 +1,15 @@
+Version 10.1.0 - February 24, 2020
+==================================
+Minor release that adds support for number attributes, new data collection flags and screen tracking.
+
+Changes
+-------
+- Updated iOS SDK to 13.1.0.
+- Updated Android SDK to 12.2.0.
+- Added number attributes support for iOS and Android
+- Added data collection controls for iOS and Android
+- Added screen tracking for iOS and Android
+
 Version 10.0.0 - January 15, 2020
 =================================
 Major release adding support for channel attributes, which allow
