@@ -6,6 +6,8 @@ cd `dirname "${0}"`/../
 ROOT_PATH="$(pwd)"
 cd -
 
+source "$ROOT_PATH/scripts/config.sh"
+
 CORDOVA_PATH=$1
 
 if [ -z "$1" ]
@@ -20,37 +22,33 @@ fi
 # 2. Run the script with the command `./scripts/create_sample.sh `
 # 3. Build the platform you want to test (see comments below).
 
-# keep cordova up to date
-#npm install cordova -g
-
-# install NPM package
-npm install
-
 # create cordova directory
 mkdir -p $CORDOVA_PATH
 cd $CORDOVA_PATH
 
 # create the test project
 rm -rf test
-cordova create test com.urbanairship.sample Test
+npm install cordova@$CORDOVA_VERSION
+npx cordova create test com.urbanairship.sample Test
 cd test
+npm install cordova@$CORDOVA_VERSION
 
 # add the plugin
-cordova plugin add $ROOT_PATH
+npx cordova plugin add $ROOT_PATH
 
 # copy config and example files
-cp $ROOT_PATH/config_sample.xml config.xml
-cp $ROOT_PATH/Example/index.html www/index.html
-cp $ROOT_PATH/Example/css/* www/css
-cp $ROOT_PATH/Example/js/* www/js
+cp "$ROOT_PATH/config_sample.xml" config.xml
+cp "$ROOT_PATH/Example/index.html" www/index.html
+cp "$ROOT_PATH/Example/css/"* www/css
+cp "$ROOT_PATH/Example/js/"* www/js
 
 # add required plugins
-cordova plugin add cordova-plugin-device
-cordova plugin add cordova-plugin-androidx-adapter
-cordova plugin add cordova-plugin-androidx
+npx cordova plugin add cordova-plugin-device
+npx cordova plugin add cordova-plugin-androidx-adapter
+npx cordova plugin add cordova-plugin-androidx
 
 # set up iOS
-cordova platform add ios@5.0.1
+npx cordova platform add ios@$IOS_CORDOVA_VERSION
 
 # Build with command `cordova build ios --emulator` in project directory
 # After successful build, connect iOS device to test
@@ -60,7 +58,7 @@ cordova platform add ios@5.0.1
 # Open workspace in Xcode with 'open' command, e.g. `open platforms/ios/Test.xcworkspace`
 
 # set up android
-cordova platform add android
+npx cordova platform add android@$ANDROID_CORDOVA_VERSION
 
 # Build with command `cordova build android` in project directory
 # After successful build, connect android device to test

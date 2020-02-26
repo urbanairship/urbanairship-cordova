@@ -55,19 +55,8 @@ if [ "$ANDROID" = "true" ] || [ "$IOS" = "true" ]; then
 fi
 
 if [ "$ANDROID" = "true" ]; then
-  # Make sure google-services.json exists
-  GOOGLE_SERVICES_FILE_PATH="$(pwd)/platforms/android/app/google-services.json"
-  if [[ ! -f ${GOOGLE_SERVICES_FILE_PATH} ]]; then
-    if [[ "${GOOGLE_SERVICES_JSON:-}" == "" ]]; then
-      echo "ERROR: You must provide ${GOOGLE_SERVICES_FILE_PATH}."
-      exit 1
-    else
-      echo $GOOGLE_SERVICES_JSON > ${GOOGLE_SERVICES_FILE_PATH}
-    fi
-  fi
-
   # Build android
-  cordova build android -- ---gradleArg=-PuaInternalJava6CompileOptions=true 2>&1 | tee -a /tmp/CORDOVA-$$.out
+  npx cordova build android -- --gradleArg="-PuaInternalJava6CompileOptions=true" --gradleArg="-PuaSkipApplyGoogleServicesPlugin=true" 2>&1 | tee -a /tmp/CORDOVA-$$.out
 
   # check for failures
   if grep "BUILD FAILED" /tmp/CORDOVA-$$.out; then
@@ -81,8 +70,8 @@ fi
 
 if [ "$IOS" = "true" ]; then
   # Build ios
-  cordova build ios --emulator 2>&1 | tee -a /tmp/CORDOVA-$$.out
-  
+  npx cordova build ios --emulator 2>&1 | tee -a /tmp/CORDOVA-$$.out
+
   # check for failures
   if grep "BUILD FAILED" /tmp/CORDOVA-$$.out; then
     # Set build status to failed
