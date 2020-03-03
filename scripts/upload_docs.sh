@@ -21,4 +21,4 @@ cd out
 tar -czf $TAR_NAME *
 cd -
 
-gsutil cp $ROOT_PATH/out/$TAR_NAME gs://ua-web-ci-prod-docs-transfer/libraries/urbanairship-cordova/$TAR_NAME
+gsutil cp "$ROOT_PATH/$2/$TAR_NAME" gs://ua-web-ci-prod-docs-transfer/libraries/urbanairship-cordova/$TAR_NAME
