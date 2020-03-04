@@ -17,7 +17,7 @@ fi
 ROOT_PATH=`dirname "${0}"`/..
 TAR_NAME="$1.tar.gz"
 
-cd out
+cd $2
 tar -czf $TAR_NAME *
 cd -
 
