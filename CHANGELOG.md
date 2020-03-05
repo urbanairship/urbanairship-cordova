@@ -1,102 +1,81 @@
-Version 10.1.0 - February 24, 2020
-==================================
+# Cordova Plugin Changelog
+
+## Version 10.1.0 - February 24, 2020
 Minor release that adds support for number attributes, new data collection flags and screen tracking.
 
-Changes
--------
+### Changes
 - Updated iOS SDK to 13.1.0.
 - Updated Android SDK to 12.2.0.
 - Added number attributes support for iOS and Android
 - Added data collection controls for iOS and Android
 - Added screen tracking for iOS and Android
 
-Version 10.0.0 - January 15, 2020
-=================================
+## Version 10.0.0 - January 15, 2020
 Major release adding support for channel attributes, which allow
 key value pairs to be associated with the application's Airship channel
 for segmentation purposes.
 
 Custom channel attributes are currently a beta feature. If you wish to
-participate in the beta program, please complete our 
+participate in the beta program, please complete our
 [signup form](https://www.airship.com/lp/sign-up-now-to-participate-in-the-advanced-segmentation-beta-program/).
 
-Changes
--------
+### Changes
 - Updated iOS SDK to 13.0.4.
 - Updated Android SDK to 12.1.0. Plugin now requires modern Jetpack libraries (AndroidX).
 - Removed overlay inbox message feature.
 
-Version 9.0.1 - December 6, 2019
-================================
+## Version 9.0.1 - December 6, 2019
 Patch release to fix a bug affecting loss of tags on iOS during app
 migration to plugin 9.0.0. This patch release fixes the bug
 by combining previous tags with tags that have been set since
 the update to 9.0.0. Applications using 9.0.0 should update.
 
-Changes
--------
+### Changes
 - Updated iOS SDK to 12.1.2
 
-Version 9.0.0 - October 16, 2019
-================================
+## Version 9.0.0 - October 16, 2019
 
 - Updated iOS Airship SDK to 12.0.0
 - Updated iOS minimum deployment target to 11.0
 - Fixed overlayInboxMessage crash on iOS
 
-==================================
-Version 8.1.0 - September 23, 2019
-==================================
+## Version 8.1.0 - September 23, 2019
 
 - Updated Android Airship SDK to 10.1.3
 - Updated iOS Airship SDK to 11.1.2
 - Added support for EU cloud site
 - Updated jsdoc to 3.6.3
 
-=============================
-Version 8.0.0 - July 10, 2019
-=============================
+## Version 8.0.0 - July 10, 2019
 - Updated Android SDK to 10.0.1
 - Updated iOS SDK to 11.1.0
 - Added support for creating new Android notification channels and setting the default notification channel ID in Android
 - Using Airship location now requires adding airship-location-cordova plugin
 - Plugin now requires cordova >= 9.0.0, cordova-ios >= 5.0.1 and cocoapods >= 1.7.3
 
-============================
-Version 7.6.0 - June 5, 2019
-============================
+## Version 7.6.0 - June 5, 2019
 - Added support for app defined notification buttons/categories.
 - Fixed push events not being sent on iOS if a notification was delivered with a deep link.
 
-==============================
-Version 7.5.4 - April 19, 2019
-==============================
+## Version 7.5.4 - April 19, 2019
 - Added a gradle property `uaSkipApplyGoogleServicesPlugin` that will disable applying
 the `GoogleServicesPlugin` if set to `true`. This option should only be used if another
 plugin also applies the `GoogleServicesPlugin` to avoid build errors.
 - Updated Airship iOS SDK to 10.2.2
 
-==============================
-Version 7.5.3 - March 14, 2019
-==============================
+## Version 7.5.3 - March 14, 2019
 Fixed a security issue within Android Urban Airship SDK, that could allow trusted
 URL redirects in certain edge cases. All applications that are using
 urbanairship-cordova version 7.0.0 - 7.5.2 on Android should update as soon as possible.
 For more details, please email security@urbanairship.com.
 
-=============================
-Version 7.5.2 - March 1, 2019
-=============================
+## Version 7.5.2 - March 1, 2019
 - Make Android compatible with Java 1.6
 
-================================
-Version 7.5.1 - February 4, 2019
-================================
+## Version 7.5.1 - February 4, 2019
 - Fix Android crash when receiving a push when push is disabled.
 
-=================================
-Version 7.5.0 - January 23, 2019
-=================================
+## Version 7.5.0 - January 23, 2019
 - Added ShowInbox event
 - Fixed issue with installing directly from our Githup repo
 - Fixed Android build for new version of Cordova (8.1.2)
@@ -104,62 +83,42 @@ Version 7.5.0 - January 23, 2019
 - Updated Android SDK to 9.7.0
 - Updated iOS SDK to 10.0.4
 
-=================================
-Version 7.4.0 - December 21, 2018
-=================================
+## Version 7.4.0 - December 21, 2018
 - Added APIs to manage active notifications
 - Fixed issue with calling takeOff from JS
 
-=================================
-Version 7.3.4 - November 20, 2018
-=================================
+## Version 7.3.4 - November 20, 2018
 - Updated Android SDK to 9.5.6
 
-=================================
-Version 7.3.3 - November 14, 2018
-=================================
+## Version 7.3.3 - November 14, 2018
 - Fixed build issue with 7.3.2
 - Updated Android SDK to 9.5.5
 
-=================================
-Version 7.3.2 - November 13, 2018
-=================================
+## Version 7.3.2 - November 13, 2018
 - Fixed package issue with 7.3.1
 - Updated Android SDK to 9.5.4
 - Updated iOS SDK to 10.0.3
 
-===============================
-Version 7.3.1 - October 9, 2018
-===============================
+## Version 7.3.1 - October 9, 2018
 - Updated Android plugin to be compatible with older versions of Cordova Android.
 
-=================================
-Version 7.3.0 - September 25, 2018
-=================================
+## Version 7.3.0 - September 25, 2018
 - Updated iOS SDK to 10.0.0
 
-=================================
-Version 7.2.1 - September 20, 2018
-=================================
+## Version 7.2.1 - September 20, 2018
 - Updated iOS SDK to 9.4.0
 - Updated Android SDK to 9.5.2
 
-=================================
-Version 7.2.0 - July 26, 2018
-=================================
+## Version 7.2.0 - July 26, 2018
 - Updated iOS SDK to 9.3.3
 - Updated Android SDK to 9.4.1
 - Added setter for foreground presentation options
 - Enabled takeOff from the JS interface for iOS and Android
 
-=================================
-Version 7.1.1 - June 15, 2018
-=================================
+## Version 7.1.1 - June 15, 2018
 - Updated Android SDK to 9.3.1
 
-=================================
-Version 7.1.0 - June 13, 2018
-=================================
+## Version 7.1.0 - June 13, 2018
 - Updated iOS SDK to 9.2.1
 - Updated Android SDK to 9.3.0
 - Added support for FCM on Android
@@ -170,22 +129,16 @@ Version 7.1.0 - June 13, 2018
 - Plugin now requires Cordova 7.0. Earlier versions may work, but integration steps and
   documentation assume Cordova 7.0 or higher moving forward.
 
-=================================
-Version 7.0.1 - March 8, 2018
-=================================
+## Version 7.0.1 - March 8, 2018
 - Updated iOS SDK to 9.0.3.
 - Updated Android SDK to 9.0.2.
 - Fixed build failures by excluding Android libraries version 28 until it is released.
 
-=================================
-Version 7.0.0 - February 14, 2018
-=================================
+## Version 7.0.0 - February 14, 2018
 - Updated iOS SDK to 9.0.2.
 - Updated Android SDK to 9.0.1.
 
-================================
-Version 6.9.3 - February 1, 2018
-================================
+## Version 6.9.3 - February 1, 2018
 - Updated Android SDK to 8.9.7.
 - Updated to be compatible with Cordova Android 7.0.0. Due to an
   [issue in the android resource processing (AAPT2)](https://issuetracker.google.com/issues/69347762),
@@ -195,100 +148,71 @@ Version 6.9.3 - February 1, 2018
 - Added registration token to the channel registration event.
 - Fixed iOS 11 main thread warnings.
 
-=================================
-Version 6.9.2 - November 20, 2017
-=================================
+## Version 6.9.2 - November 20, 2017
 - Updated Android SDK to 8.9.5.
 - Updated iOS SDK to 8.6.3.
 - Fixed build Android plugin build issue with AndroidManifest.
 
-===============================
-Version 6.9.1 - August 22, 2017
-===============================
+## Version 6.9.1 - August 22, 2017
 - Updated iOS Urban Airship SDK to 8.5.3.
 - Fixed missing symbols for StoreKit and WebKit when building for iOS.
 
-=============================
-Version 6.9.0 - August 10, 2017
-=============================
+## Version 6.9.0 - August 10, 2017
 - Updated iOS Urban Airship SDK to 8.5.2
 - Updated Android Urban Airship SDK to 8.8.2
 - Added event `notification_opt_in_status` that will fire when authorization status changes.
 
-=============================
-Version 6.8.0 - June 21, 2017
-=============================
+## Version 6.8.0 - June 21, 2017
 - Updated Android Urban Airship SDK to 8.6.0
 
-Version 6.7.1 - May 23, 2017
-============================
+## Version 6.7.1 - May 23, 2017
  - Updated iOS Urban Airship SDK to 8.3.3
  - Updated Android Urban Airship SDK to 8.4.2
 
-============================
-Version 6.7.0 - May 15, 2017
-============================
+## Version 6.7.0 - May 15, 2017
  - Updated iOS Urban Airship SDK to 8.3.2
  - Updated Android Urban Airship SDK to 8.4.1
  - ‘Alias’ functionality is now deprecated in the plugin. It will be removed in a future version of the plugin. Please use 'Named User'.
  - iOS: Use static library until dynamic framework build issues with Cordova and Cocoapods have been resolved.
  - Android: fix landing page issues
 
-============================
-Version 6.6.0 - Feb 3, 2017
-============================
+## Version 6.6.0 - Feb 3, 2017
  - Updated iOS Urban Airship SDK to 8.0.5
  - Added support for Message Center, Inbox Message and Overlay Inbox Message dismissal in iOS and Android
 
-============================
-Version 6.5.0 - Jan 30, 2017
-============================
+## Version 6.5.0 - Jan 30, 2017
  - Update Android Urban Airship SDK to use the latest version of play services.
  - Updated Android Urban Airship SDK to 8.2.5
 
-============================
-Version 6.4.0 - Jan 6, 2017
-============================
+## Version 6.4.0 - Jan 6, 2017
  - Added support for configuring logging levels.
 
-============================
-Version 6.3.0 - Oct 31, 2016
-============================
+## Version 6.3.0 - Oct 31, 2016
  - Updated min iOS engine to 4.3.0
  - Included Urban Airship SDK using a podspec instead of a static lib
  - Added apns-environment entitlements to the plugin.xml
  - Updated Urban Airship iOS SDK to 8.0.3
 
-===========================
-Version 6.2.0 - Oct 7, 2016
-===========================
+## Version 6.2.0 - Oct 7, 2016
  - Added support for iOS foreground presentation options
  - Added method `addCustomEvent` to add custom events
  - Added event `notification_open` that will fire when a notification is opened
 
-===========================
-Version 6.1.0 - Oct 4, 2016
-===========================
+## Version 6.1.0 - Oct 4, 2016
  - Updated iOS Urban Airship SDK to 8.0.2
  - Added support for enabling/disabling the "displayASAPEnabled" property for in-app messages
 
-=============================
-Version 6.0.1 - Sept 21, 2016
-=============================
+## Version 6.0.1 - Sept 21, 2016
  - Fixed getLaunchNotification and push events for iOS
  - Fixed iOS deep link not accepting non url deep links
  - Removed overriding the Android minSDK to 16
 
-=============================
-Version 6.0.0 - Sept 19, 2016
-=============================
+## Version 6.0.0 - Sept 19, 2016
  - Updated Android Urban Airship SDK to 8.0.1
  - Updated iOS Urban Airship SDK to 8.0.1 (requires Xcode 8)
  - Added support for setting large notification icon in Android
 
-============================
-Version 5.4.0 - Sept 1, 2016
-============================
+## Version 5.4.0 - Sept 1, 2016
  - Updated iOS Urban Airship SDK to 7.3.0
  - Updated Android Urban Airship SDK to 7.3.0
  - All events are now fired after the 'deviceready' event
@@ -296,58 +220,38 @@ Version 5.4.0 - Sept 1, 2016
  - Added `isAppNotificationsEnabled` to check if the user opted in to notifications for the device
  - Added `setAssociatedIdentifier` to set device identifiers for Urban Airship Connect
 
-=============================
-Version 5.3.1 - July 18, 2016
-=============================
+## Version 5.3.1 - July 18, 2016
  - Update Android Urban Airship SDK to use latest version of play services.
 
-=============================
-Version 5.3.0 - June 22, 2016
-=============================
+## Version 5.3.0 - June 22, 2016
  - Updated Android Urban Airship SDK to 7.2.0
 
-============================
-Version 5.2.0 - June 2, 2016
-============================
+## Version 5.2.0 - June 2, 2016
  - Updated iOS Urban Airship SDK to 7.2.0
  - Updated Android Urban Airship SDK to 7.1.5
 
-============================
-Version 5.1.4 - May 20, 2016
-============================
+## Version 5.1.4 - May 20, 2016
  - Fixed bug where Message Center UI is displayed on a background thread
 
-============================
-Version 5.1.3 - May 12, 2016
-============================
+## Version 5.1.3 - May 12, 2016
  - Updated Android Urban Airship SDK to 7.1.3
  - Updated iOS Urban Airship SDK to 7.1.2
 
-==============================
-Version 5.1.2 - April 28, 2016
-==============================
+## Version 5.1.2 - April 28, 2016
  - Updated Android Urban Airship SDK to 7.1.2
 
-==============================
-Version 5.1.1 - April 26, 2016
-==============================
+## Version 5.1.1 - April 26, 2016
  - Updated Android Urban Airship SDK to 7.1.1
 
-==============================
-Version 5.1.0 - April 21, 2016
-==============================
+## Version 5.1.0 - April 21, 2016
  - Updated Android and iOS Urban Airship SDK to 7.1.0
  - Added deep linking support.
  - Added flag to disable auto launching the Message Center when the corresponding push is opened.
 
-==============================
-Version 5.0.1 - Mar 17, 2016
-==============================
+## Version 5.0.1 - Mar 17, 2016
  - Updated Android maven URL to https
 
-==============================
-Version 5.0.0 - Mar 7, 2016
-==============================
+## Version 5.0.0 - Mar 7, 2016
  - Updated Android Urban Airship SDK to 7.0.3
  - All functions now take an optional failure callback. The method runAction now
    returns just the result's value in the success callback and the result's error
@@ -355,14 +259,10 @@ Version 5.0.0 - Mar 7, 2016
  - Added methods to access and modify the inbox listing.
  - Generated JSDocs are now available - http://docs.urbanairship.com/reference/libraries/urbanairship-cordova/latest/
 
-==============================
-Version 4.1.1 - Feb 12, 2016
-==============================
+## Version 4.1.1 - Feb 12, 2016
  - Updated iOS Urban Airship SDK to 7.0.2
 
-==============================
-Version 4.1.0 - Feb 8, 2016
-==============================
+## Version 4.1.0 - Feb 8, 2016
  - Updated iOS Urban Airship SDK to 7.0.1
  - Updated Android Urban Airship SDK to 7.0.1
  - Added Message Center support
@@ -370,114 +270,76 @@ Version 4.1.0 - Feb 8, 2016
  - Removed Cordova minimum version restriction
  - Removed Cordova iOS minimum version restriction
 
-==============================
-Version 4.0.1 - Nov 19, 2015
-==============================
+## Version 4.0.1 - Nov 19, 2015
  - Fixed enabling location for Android below API 23.
 
-==============================
-Version 4.0.0 - Nov 18, 2015
-==============================
+## Version 4.0.0 - Nov 18, 2015
  - Updated to Cordova 5.4.0, Cordova-iOS 3.9.0, Cordova-Android 4.1.0
  - Updated iOS Urban Airship SDK to 6.4.0 (bitcode) compatible with Xcode 7
  - Updated Android Urban Airship SDK to 6.4.1
  - Request Android location permissions for API 23+
 
-==============================
-Version 3.6.0 - Oct 29, 2015
-==============================
+## Version 3.6.0 - Oct 29, 2015
  - Updated iOS Urban Airship SDK to 6.4.0 (non-bitcode) compatible with Xcode 6.4
  - Updated Android Urban Airship SDK to 6.4.0
 
-==============================
-Version 3.5.0 - Oct 2, 2015
-==============================
+## Version 3.5.0 - Oct 2, 2015
  - Updated iOS Urban Airship SDK to 6.3.0 (non-bitcode) compatible with Xcode 6.4
  - Updated Android Urban Airship SDK to 6.3.0
 
-==============================
-Version 3.4.1 - Sept 18, 2015
-==============================
+## Version 3.4.1 - Sept 18, 2015
  - Updated iOS Urban Airship SDK to 6.2.2 (non-bitcode) compatible with Xcode 6.4
  - The urbanairship.registration event on iOS now returns the device token along with the channel ID.
 
-==============================
-Version 3.4.0 - Aug 24, 2015
-==============================
+## Version 3.4.0 - Aug 24, 2015
  - Updated iOS Urban Airship SDK to 6.2.0
  - Updated Android Urban Airship SDK to 6.2.2
 
-==============================
-Version 3.3.3 - Aug 3, 2015
-==============================
+## Version 3.3.3 - Aug 3, 2015
  - Updated iOS Urban Airship SDK to 6.1.4
  - Fixed AndroidRuntimeException when handling any user recoverable Google Play services errors.
 
-==============================
-Version 3.3.2 - July 30, 2015
-==============================
+## Version 3.3.2 - July 30, 2015
  - Updated iOS Urban Airship SDK to 6.1.3
  - Updated Android Urban Airship SDK to 6.1.3
 
-==============================
-Version 3.3.1 - July 14, 2015
-==============================
+## Version 3.3.1 - July 14, 2015
  - Use the CordovaLandingPageView in the landing page activity.
 
-==============================
-Version 3.3.0 - July 13, 2015
-==============================
+## Version 3.3.0 - July 13, 2015
  - Themed the Android landing page to match iOS.
  - Fixed Android security exception when applications try to open a database with 'window.openDatabase' after
    launching the application with a landing page.
 
-==============================
-Version 3.2.2 - July 10, 2015
-==============================
+## Version 3.2.2 - July 10, 2015
  - Updated iOS Urban Airship SDK to 6.1.2
 
-==============================
-Version 3.2.1 - July 7, 2015
-==============================
+## Version 3.2.1 - July 7, 2015
  - Updated iOS Urban Airship SDK to 6.1.1
  - Updated Android Urban Airship SDK to 6.1.2
 
-==============================
-Version 3.2.0 - June 25, 2015
-==============================
+## Version 3.2.0 - June 25, 2015
  - Updated iOS Urban Airship SDK to 6.1.0
  - Updated Android Urban Airship SDK to 6.1.1
  - Added tag group support
 
-==============================
-Version 3.1.4 - May 26, 2015
-==============================
+## Version 3.1.4 - May 26, 2015
  - Updated Android Urban Airship SDK to 6.0.2
  - Added ability to disable analytics through the config
 
-==============================
-Version 3.1.3 - April 29, 2015
-==============================
+## Version 3.1.3 - April 29, 2015
  - Updated iOS Urban Airship SDK to 6.0.2
 
-=================================
-Version 3.1.2 - April 23, 2015
-=================================
+## Version 3.1.2 - April 23, 2015
  - Fixed iOS build error
 
-=================================
-Version 3.1.1 - April 22, 2015
-=================================
+## Version 3.1.1 - April 22, 2015
  - Renamed plugin ID to urbanairship-cordova to better match the IDs for NPM
 
-=================================
-Version 3.1.0 - April 22, 2015
-=================================
+## Version 3.1.0 - April 22, 2015
  - Updated Android plugin to support cordova-android 4.0.0
 
-=================================
-Version 3.0.0 - April 14, 2015
-=================================
+## Version 3.0.0 - April 14, 2015
  - Updated Android and iOS Urban Airship SDK to 6.0.1
  - Removed the cordova device plugin dependency
  - Renamed the plugin ID to "com.urbanairship.cordova" from "com.urbanairship.phonegap.PushNotification"
@@ -493,168 +355,113 @@ Version 3.0.0 - April 14, 2015
  - Android: Added config to set the notification icon and accent color
  - Android: Plugin now depends on "android.support.v4" and "com.google.play.services"
 
-=================================
-Version 2.8.1 - February 12, 2015
-=================================
+## Version 2.8.1 - February 12, 2015
  - Revert min sdk version back to 3.4.0
 
-=================================
-Version 2.8.0 - February 11, 2015
-=================================
+## Version 2.8.0 - February 11, 2015
  - Removed extra manual installation steps by providing plugin hooks.
  - Updated the minimum cordova version to 4.0.0.
 
-================================
-Version 2.7.3 - January 28, 2015
-================================
+## Version 2.7.3 - January 28, 2015
 - Updated Urban Airship Android Library to 5.1.5
 
-=================================
-Version 2.7.2 - December 31, 2014
-=================================
+## Version 2.7.2 - December 31, 2014
 - Updated Urban Airship Android Library to 5.1.4
 
-=================================
-Version 2.7.1 - December 15, 2014
-=================================
+## Version 2.7.1 - December 15, 2014
 - Updated Urban Airship Android Library to 5.1.3
 
-================================
-Version 2.7.0 - December 8, 2014
-================================
+## Version 2.7.0 - December 8, 2014
 - Updated Urban Airship iOS Library to 5.1.0
 - Updated Urban Airship Android Library to 5.1.2
 
-================================
-Version 2.6.0 - November 5, 2014
-================================
+## Version 2.6.0 - November 5, 2014
 - Updated Urban Airship Android Library to 5.1.0
 
-==================================
-Version 2.5.1 - November 3, 2014
-==================================
+## Version 2.5.1 - November 3, 2014
 - Removed writeJavascript calls for compatibility with Cordova 4.0
 
-==================================
-Version 2.5.0 - September 22, 2014
-==================================
+## Version 2.5.0 - September 22, 2014
 - Updated Urban Airship iOS Library to 5.0.0
 
-==================================
-Version 2.4.0 - April 23, 2014
-==================================
+## Version 2.4.0 - April 23, 2014
 - Updated for Cordova 3.4.0+
 - Updated Urban Airship iOS Library to 4.0.0
 - Updated Urban Airship Android Library to 4.0.1,
 CHANGELOG: http://docs.urbanairship.com/reference/libraries/android/latest/android_changelog.txt
 
-==================================
-Version 2.3.3 - April 18, 2014
-==================================
+## Version 2.3.3 - April 18, 2014
 - Added PushNotification.clearNotifications() to clear all notifications for the application on Android.
 
-==================================
-Version 2.3.2 - March 10, 2014
-==================================
+## Version 2.3.2 - March 10, 2014
 - Updated Urban Airship iOS Library to 3.0.3, which fixed detectProvisioningMode behavior when
 inProduction is not set.
 
-==================================
-Version 2.3.1 - February 25, 2014
-==================================
+## Version 2.3.1 - February 25, 2014
 - Updated Urban Airship Android Library to 3.3.1,
 CHANGELOG: http://docs.urbanairship.com/reference/libraries/android/latest/android_changelog.txt
 - Fixes crash with Android background location
 
-==================================
-Version 2.3.0 - January 15, 2014
-==================================
+## Version 2.3.0 - January 15, 2014
 - Updated Urban Airship Android Library to 3.3.0,
 CHANGELOG: http://docs.urbanairship.com/reference/libraries/android/latest/android_changelog.txt
 - Add config to enable push on launch.  When push is not enabled on launch,
 it will be enabled once enablePush is called from javascript.
 
-==================================
-Version 2.2.2 - January 2, 2014
-==================================
+## Version 2.2.2 - January 2, 2014
 - Start iOS location provider automatically when location is enabled
 
-==================================
-Version 2.2.1 - December 30, 2013
-==================================
+## Version 2.2.1 - December 30, 2013
 - Fix iOS location bug
 
-==================================
-Version 2.2.0 - November 18, 2013
-==================================
+## Version 2.2.0 - November 18, 2013
 - Use DOM events for incoming push and registration events
 - Use js-module for including the PushNotification.js file
 - Updated and fixed issues in the provided example
 
-==================================
-Version 2.1.1 - November 18, 2013
-==================================
+## Version 2.1.1 - November 18, 2013
 - Update device plugin dependency id
 - Add log statement to iOS push plugin on initialize
 
-==================================
-Version 2.1.0 - September 20, 2013
-==================================
+## Version 2.1.0 - September 20, 2013
 - Update Urban Airship iOS Library to 3.0.0, CHANGELOG: https://github.com/urbanairship/ios-library/blob/3.0.0/CHANGELOG
 - Requires Xcode 5 now
 
-==============================
-Version 2.0.1 - August 8, 2013
-==============================
+## Version 2.0.1 - August 8, 2013
 - Update Urban Airship iOS Library to 2.0.1 that fixed a bug in UAHTTPConnectionOperation
 causing intermittent crashes during push registration.
 
-==============================
-Version 2.0.0 - July 30, 2013
-==============================
+## Version 2.0.0 - July 30, 2013
 - Updated for PhoneGap 3.0.0
 
-==============================
-Version 1.0.8 - July 23, 2013
-==============================
+## Version 1.0.8 - July 23, 2013
 - Update iOS plugin to latest UAirship release (2.0.0)
 - Fix: Fix possible crash with setQuietTime on iOS
 
-==============================
-Version 1.0.7 - June 12, 2013
-==============================
+## Version 1.0.7 - June 12, 2013
 - Fix: setAlias on Android to actually set the alias.
 - Fix: setQuietTime on iOS now sets the correct time.
 
-==============================
-Version 1.0.6 - April 22, 2013
-==============================
+## Version 1.0.6 - April 22, 2013
 - Updated to Cordova 2.6
 - Sample apps load plugin at startup
 
-=============================
-Version 1.0.5 - March 8, 2013
-=============================
+## Version 1.0.5 - March 8, 2013
 - Moved the plugin intent receiver into the plugin package (Android)
 - Properly handle the Cordova 2.3 changes to the iOS platform value
 
-=================================
-Version 1.0.4 - February 19, 2013
-=================================
+## Version 1.0.4 - February 19, 2013
 - Updated plugin to be compatible with version 2.0.4 of
 the Urban Airship Android library
 
-Version 1.0.3 - December 7, 2012
-=================================
+## Version 1.0.3 - December 7, 2012
 - FIXED: getIncoming now only returns incoming push data once
 - Improved Intent flags in Android sample application when launching
   from a notification
 - Sample applications now log push data to the console instead of
   displaying alert dialogs
 
-=================================
-Version 1.0.2 - November 16, 2012
-=================================
+## Version 1.0.2 - November 16, 2012
 - Updated to PhoneGap 2.2.0
 - FIXED: App delegate surrogate handling was causing edge case issues
   with iOS 6 and certain plugin combinations
@@ -665,9 +472,7 @@ Version 1.0.2 - November 16, 2012
   If you have used previous versions of the plugin, you should update your
   app in order to reflect this change, in order to see the same behavior.
 
-=================================
-Version 1.0.1 - August 23, 2012
-=================================
+## Version 1.0.1 - August 23, 2012
 - FIXED: Addressed crash in the Android plugin caused by Cordova library bug when push or
   registration events occur before the web view is initialized.
 - FIXED: Addressed JSON bug resulting in invalid push extras.

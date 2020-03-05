@@ -36,6 +36,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Get the release notes
+        id: get_release_notes
+        run: |
+          VERSION=${{ steps.get_version.outputs.VERSION }}
+          NOTES=$(awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md)
+          echo ::set-output name=NOTES::$NOTES
       - uses: actions/setup-node@master
         with:
           node-version: 12
@@ -56,6 +65,16 @@ jobs:
           npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      - name: Github Release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: ${{ steps.get_release_notes.outputs.NOTES }}
+          draft: false
+          prerelease: false
       - name: Slack Notification
         uses: homoluctus/slatify@master
         with:
