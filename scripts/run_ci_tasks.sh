@@ -42,7 +42,6 @@ done
 # ckeck for version
 ${SCRIPT_DIRECTORY}/check_plugin_version.sh
 
-
 SAMPLE_APP_PATH=${1:-}
 
 if [ "$ANDROID" = "true" ] || [ "$IOS" = "true" ]; then
