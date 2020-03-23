@@ -83,7 +83,7 @@ jobs:
         with:
           type: ${{ job.status }}
           job_name: "Airship Cordova Plugin Released!"
-          url: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
+          url: ${{ secrets.SLACK_WEBHOOK }}
       - name: Slack Notification
         uses: homoluctus/slatify@master
         if: failure()
