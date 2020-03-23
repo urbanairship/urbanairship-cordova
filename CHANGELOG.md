@@ -1,5 +1,12 @@
 # Cordova Plugin Changelog
 
+## Version 10.1.1 - March 23, 2020
+Patch addressing a regression in iOS SDK 13.1.0 causing channel tag loss
+when upgrading from iOS SDK versions prior to 13.0.1. Apps upgrading from plugin
+9.0.1 or below should avoid plugin versions 10.1.0 in favor of version 10.1.1.
+
+- Updated iOS SDK to 13.1.1
+
 ## Version 10.1.0 - February 24, 2020
 Minor release that adds support for number attributes, new data collection flags and screen tracking.
 
