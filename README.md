@@ -168,8 +168,8 @@ cordova plugin add cordova-plugin-androidx
 #### Common CocoaPod Installation issues
 
 Errors related to CocoaPods can be difficult to diagnose, because the `cordova` command line tool will often
-exit with a status code without providing the necessary context. You may run into something like this when
-attempting to add the plugin to your ios project:
+exit with a status code without providing the necessary context. You may run into something like the following
+when attempting to add the plugin to your ios project:
 
 ```
 Installing "urbanairship-cordova" for ios
@@ -186,7 +186,7 @@ case CocoaPods may be unable to find the version of the native SDK being install
 command `pod repo update` and try re-adding the plugin. You would only need to run `pod repo update` if you
 have the specs-repo already cloned on your machine through `pod setup`.
 
-Another potential cause invovles minimum deployment targets. The Airship iOS SDK supports the three most
+Another potential cause involves minimum deployment targets. The Airship iOS SDK supports the three most
 recent iOS versions, and thus to install the plugin, your app must set its minimum deployment target accordingly,
 in `config.xml`. As an example, see the deployment target in the provided [sample config](https://github.com/urbanairship/urbanairship-cordova/blob/master/config_sample.xml#L35).
 Setting this value correctly should cause Cordova to generate a Podfile in the `ios` subdirectory of your
@@ -196,7 +196,7 @@ cordova will choose its own default value, which may be incorrect, and adding th
 There are also known issues in Cordova that can cause the platform version in `ios/Podfile` to be overwritten with
 Cordova's default version. In both cases, doing the following will fix the issue:
 
-* Update `config.xml` with the correct minimum deployment target, if needed
+* Update `config.xml` with the correct minimum deployment target, if needed.
 * `cordova plugin remove urbanairship-cordova`
 * `cordova platform remove ios`
 * `cordova platform add ios`
