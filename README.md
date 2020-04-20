@@ -11,24 +11,6 @@ This plugin supports Cordova apps running on both iOS and Android.
 
 Please visit http://support.urbanairship.com/ for any issues integrating or using this plugin.
 
-### Common CocoaPod Installation issues
-
-You may run into this error while attempting to add the plugin to your ios project:
-```
-Installing "urbanairship-cordova" for ios
-Failed to install 'urbanairship-cordova':Error: pod: Command failed with exit code 1
-    at ChildProcess.whenDone (/Users/xxxxx/xxxxx/test/platforms/ios/cordova/node_modules/cordova-common/src/superspawn.js:169:23)
-    at emitTwo (events.js:87:13)
-    at ChildProcess.emit (events.js:172:7)
-    at maybeClose (internal/child_process.js:818:16)
-    at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
-Error: pod: Command failed with exit code 1
-```
-
-Please run the command `pod repo update` and re-add the plugin to resolve this issue.
-
-You would only run `pod repo update` if you have the specs-repo already cloned on your machine through `pod setup`.
-
 ### Requirements:
  - cordova >= 9.0.0
  - cordova-ios >= 5.0.1
@@ -147,6 +129,9 @@ cordova plugin add cordova-plugin-androidx
         <!-- iOS Auto Clear Badge -->
         <preference name="com.urbanairship.clear_badge_onlaunch" value="true | false" />
 
+        <!-- Deployment target must be >= iOS 11  -->
+        <preference name="deployment-target" value="11.0" />
+
     `UrbanAirship.takeOff` can be called multiple times but any changes to the app credentials will not apply until the next app start.
 
 5. Enable user notifications:
@@ -179,6 +164,43 @@ cordova plugin add cordova-plugin-androidx
       <resource-file src="UACustomNotificationCategories.plist" />
   </platform>
 ```
+
+#### Common CocoaPod Installation issues
+
+Errors related to CocoaPods can be difficult to diagnose, because the `cordova` command line tool will often
+exit with a status code without providing the necessary context. You may run into something like this when
+attempting to add the plugin to your ios project:
+
+```
+Installing "urbanairship-cordova" for ios
+Failed to install 'urbanairship-cordova':Error: pod: Command failed with exit code 1
+    at ChildProcess.whenDone (/Users/xxxxx/xxxxx/test/platforms/ios/cordova/node_modules/cordova-common/src/superspawn.js:169:23)
+    at emitTwo (events.js:87:13)
+    at ChildProcess.emit (events.js:172:7)
+    at maybeClose (internal/child_process.js:818:16)
+    at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+Error: pod: Command failed with exit code 1
+```
+This exit code can have a few underlying causes. One is that the local spec repo may be out of date, in which
+case CocoaPods may be unable to find the version of the native SDK being installed. To resolve this, run the
+command `pod repo update` and try re-adding the plugin. You would only need to run `pod repo update` if you
+have the specs-repo already cloned on your machine through `pod setup`.
+
+Another potential cause invovles minimum deployment targets. The Airship iOS SDK supports the three most
+recent iOS versions, and thus to install the plugin, your app must set its minimum deployment target accordingly,
+in `config.xml`. As an example, see the deployment target in the provided [sample config](https://github.com/urbanairship/urbanairship-cordova/blob/master/config_sample.xml#L35).
+Setting this value correctly should cause Cordova to generate a Podfile in the `ios` subdirectory of your
+application with the same value for its platform version. If the minimum deployment target is not specified,
+cordova will choose its own default value, which may be incorrect, and adding the plugin will fail with exit code 1.
+
+There are also known issues in Cordova that can cause the platform version in `ios/Podfile` to be overwritten with
+Cordova's default version. In both cases, doing the following will fix the issue:
+
+* Update `config.xml` with the correct minimum deployment target, if needed
+* `cordova plugin remove urbanairship-cordova`
+* `cordova platform remove ios`
+* `cordova platform add ios`
+* `cordova plugin add urbanairship-cordova`
 
 ### iOS Notification Service Extension
 
