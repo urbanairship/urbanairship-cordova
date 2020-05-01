@@ -43,7 +43,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -75,7 +74,6 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "trackScreen", "setDataCollectionEnabled", "isDataCollectionEnabled",
             "setPushTokenRegistrationEnabled", "isPushTokenRegistrationEnabled");
-
 
     /*
      * These actions are available even if airship is not ready.
@@ -121,7 +119,6 @@ public class UAirshipPlugin extends CordovaPlugin {
         }
     }
 
-
     /**
      * To extend the plugin, add the actions to either {@link #AIRSHIP_ACTIONS} or {#link #GLOBAL_ACTIONS} and
      * then define the method with the signature `void <CORDOVA_ACTION>(JSONArray data, final
@@ -147,11 +144,58 @@ public class UAirshipPlugin extends CordovaPlugin {
                     return;
                 }
 
-
                 try {
                     PluginLogger.debug("Plugin Execute: %s", action);
-                    Method method = UAirshipPlugin.class.getDeclaredMethod(action, JSONArray.class, CallbackContext.class);
-                    method.invoke(UAirshipPlugin.this, data, callbackContext);
+                    switch (action) {
+                        case "clearNotification": clearNotification(data, callbackContext); break;
+                        case "clearNotifications": clearNotifications(data, callbackContext); break;
+                        case "deleteInboxMessage": deleteInboxMessage(data, callbackContext); break;
+                        case "dismissInboxMessage": dismissInboxMessage(data, callbackContext); break;
+                        case "dismissMessageCenter": dismissMessageCenter(data, callbackContext); break;
+                        case "displayInboxMessage": displayInboxMessage(data, callbackContext); break;
+                        case "displayMessageCenter": displayMessageCenter(data, callbackContext); break;
+                        case "editChannelAttributes": editChannelAttributes(data, callbackContext); break;
+                        case "editChannelTagGroups": editChannelTagGroups(data, callbackContext); break;
+                        case "editNamedUserTagGroups": editNamedUserTagGroups(data, callbackContext); break;
+                        case "getActiveNotifications": getActiveNotifications(data, callbackContext); break;
+                        case "getChannelID": getChannelID(data, callbackContext); break;
+                        case "getDeepLink": getDeepLink(data, callbackContext); break;
+                        case "getInboxMessages": getInboxMessages(data, callbackContext); break;
+                        case "getLaunchNotification": getLaunchNotification(data, callbackContext); break;
+                        case "getNamedUser": getNamedUser(data, callbackContext); break;
+                        case "getQuietTime": getQuietTime(data, callbackContext); break;
+                        case "getTags": getTags(data, callbackContext); break;
+                        case "isAnalyticsEnabled": isAnalyticsEnabled(data, callbackContext); break;
+                        case "isAppNotificationsEnabled": isAppNotificationsEnabled(data, callbackContext); break;
+                        case "isDataCollectionEnabled": isDataCollectionEnabled(data, callbackContext); break;
+                        case "isInQuietTime": isInQuietTime(data, callbackContext); break;
+                        case "isPushTokenRegistrationEnabled": isPushTokenRegistrationEnabled(data, callbackContext); break;
+                        case "isQuietTimeEnabled": isQuietTimeEnabled(data, callbackContext); break;
+                        case "isSoundEnabled": isSoundEnabled(data, callbackContext); break;
+                        case "isUserNotificationsEnabled": isUserNotificationsEnabled(data, callbackContext); break;
+                        case "isVibrateEnabled": isVibrateEnabled(data, callbackContext); break;
+                        case "markInboxMessageRead": markInboxMessageRead(data, callbackContext); break;
+                        case "refreshInbox": refreshInbox(data, callbackContext); break;
+                        case "registerListener": registerListener(data, callbackContext); break;
+                        case "runAction": runAction(data, callbackContext); break;
+                        case "setAnalyticsEnabled": setAnalyticsEnabled(data, callbackContext); break;
+                        case "setAndroidNotificationConfig": setAndroidNotificationConfig(data, callbackContext); break;
+                        case "setAssociatedIdentifier": setAssociatedIdentifier(data, callbackContext); break;
+                        case "setAutoLaunchDefaultMessageCenter": setAutoLaunchDefaultMessageCenter(data, callbackContext); break;
+                        case "setDataCollectionEnabled": setDataCollectionEnabled(data, callbackContext); break;
+                        case "setNamedUser": setNamedUser(data, callbackContext); break;
+                        case "setPushTokenRegistrationEnabled": setPushTokenRegistrationEnabled(data, callbackContext); break;
+                        case "setQuietTime": setQuietTime(data, callbackContext); break;
+                        case "setQuietTimeEnabled": setQuietTimeEnabled(data, callbackContext); break;
+                        case "setSoundEnabled": setSoundEnabled(data, callbackContext); break;
+                        case "setTags": setTags(data, callbackContext); break;
+                        case "setUserNotificationsEnabled": setUserNotificationsEnabled(data, callbackContext); break;
+                        case "setVibrateEnabled": setVibrateEnabled(data, callbackContext); break;
+                        case "trackScreen": trackScreen(data, callbackContext); break;
+                        default:
+                            PluginLogger.debug("No implementation for action: %s", action);
+                            callbackContext.error("No implementation for action " + action);
+                    }
                 } catch (Exception e) {
                     PluginLogger.error(e, "Action failed to execute: %s", action);
                     callbackContext.error("Action " + action + " failed with exception: " + e.getMessage());
