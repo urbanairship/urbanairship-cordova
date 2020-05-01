@@ -234,6 +234,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         setUserNotificationsEnabled(data, callbackContext);
                     } else if ("setVibrateEnabled".equals(action)) {
                         setVibrateEnabled(data, callbackContext);
+                    } else if ("takeOff".equals(action)) {
+                        takeOff(data, callbackContext);
                     } else if ("trackScreen".equals(action)) {
                         trackScreen(data, callbackContext);
                     } else {
