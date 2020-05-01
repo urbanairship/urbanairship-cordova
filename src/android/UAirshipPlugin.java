@@ -146,55 +146,99 @@ public class UAirshipPlugin extends CordovaPlugin {
 
                 try {
                     PluginLogger.debug("Plugin Execute: %s", action);
-                    switch (action) {
-                        case "clearNotification": clearNotification(data, callbackContext); break;
-                        case "clearNotifications": clearNotifications(data, callbackContext); break;
-                        case "deleteInboxMessage": deleteInboxMessage(data, callbackContext); break;
-                        case "dismissInboxMessage": dismissInboxMessage(data, callbackContext); break;
-                        case "dismissMessageCenter": dismissMessageCenter(data, callbackContext); break;
-                        case "displayInboxMessage": displayInboxMessage(data, callbackContext); break;
-                        case "displayMessageCenter": displayMessageCenter(data, callbackContext); break;
-                        case "editChannelAttributes": editChannelAttributes(data, callbackContext); break;
-                        case "editChannelTagGroups": editChannelTagGroups(data, callbackContext); break;
-                        case "editNamedUserTagGroups": editNamedUserTagGroups(data, callbackContext); break;
-                        case "getActiveNotifications": getActiveNotifications(data, callbackContext); break;
-                        case "getChannelID": getChannelID(data, callbackContext); break;
-                        case "getDeepLink": getDeepLink(data, callbackContext); break;
-                        case "getInboxMessages": getInboxMessages(data, callbackContext); break;
-                        case "getLaunchNotification": getLaunchNotification(data, callbackContext); break;
-                        case "getNamedUser": getNamedUser(data, callbackContext); break;
-                        case "getQuietTime": getQuietTime(data, callbackContext); break;
-                        case "getTags": getTags(data, callbackContext); break;
-                        case "isAnalyticsEnabled": isAnalyticsEnabled(data, callbackContext); break;
-                        case "isAppNotificationsEnabled": isAppNotificationsEnabled(data, callbackContext); break;
-                        case "isDataCollectionEnabled": isDataCollectionEnabled(data, callbackContext); break;
-                        case "isInQuietTime": isInQuietTime(data, callbackContext); break;
-                        case "isPushTokenRegistrationEnabled": isPushTokenRegistrationEnabled(data, callbackContext); break;
-                        case "isQuietTimeEnabled": isQuietTimeEnabled(data, callbackContext); break;
-                        case "isSoundEnabled": isSoundEnabled(data, callbackContext); break;
-                        case "isUserNotificationsEnabled": isUserNotificationsEnabled(data, callbackContext); break;
-                        case "isVibrateEnabled": isVibrateEnabled(data, callbackContext); break;
-                        case "markInboxMessageRead": markInboxMessageRead(data, callbackContext); break;
-                        case "refreshInbox": refreshInbox(data, callbackContext); break;
-                        case "registerListener": registerListener(data, callbackContext); break;
-                        case "runAction": runAction(data, callbackContext); break;
-                        case "setAnalyticsEnabled": setAnalyticsEnabled(data, callbackContext); break;
-                        case "setAndroidNotificationConfig": setAndroidNotificationConfig(data, callbackContext); break;
-                        case "setAssociatedIdentifier": setAssociatedIdentifier(data, callbackContext); break;
-                        case "setAutoLaunchDefaultMessageCenter": setAutoLaunchDefaultMessageCenter(data, callbackContext); break;
-                        case "setDataCollectionEnabled": setDataCollectionEnabled(data, callbackContext); break;
-                        case "setNamedUser": setNamedUser(data, callbackContext); break;
-                        case "setPushTokenRegistrationEnabled": setPushTokenRegistrationEnabled(data, callbackContext); break;
-                        case "setQuietTime": setQuietTime(data, callbackContext); break;
-                        case "setQuietTimeEnabled": setQuietTimeEnabled(data, callbackContext); break;
-                        case "setSoundEnabled": setSoundEnabled(data, callbackContext); break;
-                        case "setTags": setTags(data, callbackContext); break;
-                        case "setUserNotificationsEnabled": setUserNotificationsEnabled(data, callbackContext); break;
-                        case "setVibrateEnabled": setVibrateEnabled(data, callbackContext); break;
-                        case "trackScreen": trackScreen(data, callbackContext); break;
-                        default:
-                            PluginLogger.debug("No implementation for action: %s", action);
-                            callbackContext.error("No implementation for action " + action);
+                    if ("clearNotification".equals(action)) {
+                        clearNotification(data, callbackContext);
+                    } else if ("clearNotifications".equals(action)) {
+                        clearNotifications(data, callbackContext);
+                    } else if ("deleteInboxMessage".equals(action)) {
+                        deleteInboxMessage(data, callbackContext);
+                    } else if ("dismissInboxMessage".equals(action)) {
+                        dismissInboxMessage(data, callbackContext);
+                    } else if ("dismissMessageCenter".equals(action)) {
+                        dismissMessageCenter(data, callbackContext);
+                    } else if ("displayInboxMessage".equals(action)) {
+                        displayInboxMessage(data, callbackContext);
+                    } else if ("displayMessageCenter".equals(action)) {
+                        displayMessageCenter(data, callbackContext);
+                    } else if ("editChannelAttributes".equals(action)) {
+                        editChannelAttributes(data, callbackContext);
+                    } else if ("editChannelTagGroups".equals(action)) {
+                        editChannelTagGroups(data, callbackContext);
+                    } else if ("editNamedUserTagGroups".equals(action)) {
+                        editNamedUserTagGroups(data, callbackContext);
+                    } else if ("getActiveNotifications".equals(action)) {
+                        getActiveNotifications(data, callbackContext);
+                    } else if ("getChannelID".equals(action)) {
+                        getChannelID(data, callbackContext);
+                    } else if ("getDeepLink".equals(action)) {
+                        getDeepLink(data, callbackContext);
+                    } else if ("getInboxMessages".equals(action)) {
+                        getInboxMessages(data, callbackContext);
+                    } else if ("getLaunchNotification".equals(action)) {
+                        getLaunchNotification(data, callbackContext);
+                    } else if ("getNamedUser".equals(action)) {
+                        getNamedUser(data, callbackContext);
+                    } else if ("getQuietTime".equals(action)) {
+                        getQuietTime(data, callbackContext);
+                    } else if ("getTags".equals(action)) {
+                        getTags(data, callbackContext);
+                    } else if ("isAnalyticsEnabled".equals(action)) {
+                        isAnalyticsEnabled(data, callbackContext);
+                    } else if ("isAppNotificationsEnabled".equals(action)) {
+                        isAppNotificationsEnabled(data, callbackContext);
+                    } else if ("isDataCollectionEnabled".equals(action)) {
+                        isDataCollectionEnabled(data, callbackContext);
+                    } else if ("isInQuietTime".equals(action)) {
+                        isInQuietTime(data, callbackContext);
+                    } else if ("isPushTokenRegistrationEnabled".equals(action)) {
+                        isPushTokenRegistrationEnabled(data, callbackContext);
+                    } else if ("isQuietTimeEnabled".equals(action)) {
+                        isQuietTimeEnabled(data, callbackContext);
+                    } else if ("isSoundEnabled".equals(action)) {
+                        isSoundEnabled(data, callbackContext);
+                    } else if ("isUserNotificationsEnabled".equals(action)) {
+                        isUserNotificationsEnabled(data, callbackContext);
+                    } else if ("isVibrateEnabled".equals(action)) {
+                        isVibrateEnabled(data, callbackContext);
+                    } else if ("markInboxMessageRead".equals(action)) {
+                        markInboxMessageRead(data, callbackContext);
+                    } else if ("refreshInbox".equals(action)) {
+                        refreshInbox(data, callbackContext);
+                    } else if ("registerListener".equals(action)) {
+                        registerListener(data, callbackContext);
+                    } else if ("runAction".equals(action)) {
+                        runAction(data, callbackContext);
+                    } else if ("setAnalyticsEnabled".equals(action)) {
+                        setAnalyticsEnabled(data, callbackContext);
+                    } else if ("setAndroidNotificationConfig".equals(action)) {
+                        setAndroidNotificationConfig(data, callbackContext);
+                    } else if ("setAssociatedIdentifier".equals(action)) {
+                        setAssociatedIdentifier(data, callbackContext);
+                    } else if ("setAutoLaunchDefaultMessageCenter".equals(action)) {
+                        setAutoLaunchDefaultMessageCenter(data, callbackContext);
+                    } else if ("setDataCollectionEnabled".equals(action)) {
+                        setDataCollectionEnabled(data, callbackContext);
+                    } else if ("setNamedUser".equals(action)) {
+                        setNamedUser(data, callbackContext);
+                    } else if ("setPushTokenRegistrationEnabled".equals(action)) {
+                        setPushTokenRegistrationEnabled(data, callbackContext);
+                    } else if ("setQuietTime".equals(action)) {
+                        setQuietTime(data, callbackContext);
+                    } else if ("setQuietTimeEnabled".equals(action)) {
+                        setQuietTimeEnabled(data, callbackContext);
+                    } else if ("setSoundEnabled".equals(action)) {
+                        setSoundEnabled(data, callbackContext);
+                    } else if ("setTags".equals(action)) {
+                        setTags(data, callbackContext);
+                    } else if ("setUserNotificationsEnabled".equals(action)) {
+                        setUserNotificationsEnabled(data, callbackContext);
+                    } else if ("setVibrateEnabled".equals(action)) {
+                        setVibrateEnabled(data, callbackContext);
+                    } else if ("trackScreen".equals(action)) {
+                        trackScreen(data, callbackContext);
+                    } else {
+                        PluginLogger.debug("No implementation for action: %s", action);
+                        callbackContext.error("No implementation for action " + action);
                     }
                 } catch (Exception e) {
                     PluginLogger.error(e, "Action failed to execute: %s", action);
