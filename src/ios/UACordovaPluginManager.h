@@ -2,12 +2,10 @@
 
 #import <Foundation/Foundation.h>
 
-#if __has_include(<Airship/AirshipLib.h>)
-#import <Airship/AirshipLib.h>
-#elif __has_include("AirshipLib.h")
+#if __has_include("AirshipLib.h")
 #import "AirshipLib.h"
 #else
-@import AirshipKit;
+@import Airship;
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
