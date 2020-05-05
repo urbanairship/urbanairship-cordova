@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="10.1.1"
+        version="10.1.2"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -36,7 +36,7 @@
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data
                 android:name="com.urbanairship.cordova.version"
-                android:value="10.1.1"/>
+                android:value="10.1.2"/>
 
             <meta-data
                 android:name="com.urbanairship.autopilot"
@@ -138,7 +138,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
-            <string>10.1.1</string>
+            <string>10.1.2</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
