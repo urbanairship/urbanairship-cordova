@@ -48,8 +48,7 @@
 
             <activity
                 android:name="com.urbanairship.cordova.CustomMessageActivity"
-                android:exported="false"
-                android:theme="@android:style/Theme.DeviceDefault.Light">
+                android:exported="false">
                 <intent-filter>
                     <action android:name="com.urbanairship.VIEW_RICH_PUSH_MESSAGE"/>
                     <data android:scheme="message"/>
@@ -60,9 +59,7 @@
             <activity
                 android:exported="false"
                 android:name="com.urbanairship.cordova.CustomMessageCenterActivity"
-                android:launchMode="singleTask"
-                android:theme="@android:style/Theme.DeviceDefault.Light">
-
+                android:launchMode="singleTask">
                 <intent-filter>
                     <action android:name="com.urbanairship.VIEW_RICH_PUSH_INBOX"/>
                     <category android:name="android.intent.category.DEFAULT"/>
