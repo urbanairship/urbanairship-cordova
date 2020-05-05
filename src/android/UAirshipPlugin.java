@@ -29,9 +29,10 @@ import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.google.PlayServicesUtils;
 import com.urbanairship.json.JsonMap;
 import com.urbanairship.json.JsonValue;
+import com.urbanairship.messagecenter.Inbox;
+import com.urbanairship.messagecenter.Message;
+import com.urbanairship.messagecenter.MessageCenter;
 import com.urbanairship.push.PushMessage;
-import com.urbanairship.richpush.RichPushInbox;
-import com.urbanairship.richpush.RichPushMessage;
 import com.urbanairship.util.UAStringUtil;
 
 import org.apache.cordova.CallbackContext;
@@ -55,7 +56,6 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 
 /**
  * The Urban Airship Cordova plugin.
@@ -121,9 +121,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
     /**
      * To extend the plugin, add the actions to either {@link #AIRSHIP_ACTIONS} or {#link #GLOBAL_ACTIONS} and
-     * then define the method with the signature `void <CORDOVA_ACTION>(JSONArray data, final
-     * CallbackContext callbackContext)` and it will automatically be called. All methods will be
-     * ( executed in the ExecutorService. Any exceptions thrown by the actions are automatically caught
+     * All methods will be executed in the ExecutorService. Any exceptions thrown by the actions are automatically caught
      * and the callbackContext will return an error result.
      */
     @Override
@@ -270,7 +268,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void registerListener(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
+    private void registerListener(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
         pluginManager.setListener(new PluginManager.Listener() {
             @Override
             public void onEvent(@NonNull Event event) {
@@ -298,10 +296,10 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext THe callback context.
      * @throws JSONException
      */
-    void takeOff(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
+    private void takeOff(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
         JsonMap config = JsonValue.wrapOpt(data.getJSONObject(0)).optMap();
-        JsonMap prod = config.get("production").optMap();
-        JsonMap dev = config.get("development").optMap();
+        JsonMap prod = config.opt("production").optMap();
+        JsonMap dev = config.opt("development").optMap();
 
         pluginManager.editConfig()
                 .setProductionConfig(prod.opt("appKey").optString(), prod.opt("appSecret").optString())
@@ -343,7 +341,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext THe callback context.
      * @throws JSONException
      */
-    void setAndroidNotificationConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setAndroidNotificationConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONObject config = data.getJSONObject(0);
 
         // Factory will pull the latest values from the config.
@@ -364,7 +362,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext THe callback context.
      * @throws JSONException
      */
-    void setAutoLaunchDefaultMessageCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setAutoLaunchDefaultMessageCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
 
         // Actions that check this value pull latest values from the config.
@@ -381,7 +379,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void clearNotifications(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void clearNotifications(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         NotificationManagerCompat.from(context).cancelAll();
         callbackContext.success();
     }
@@ -394,7 +392,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setUserNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setUserNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         UAirship.shared().getPushManager().setUserNotificationsEnabled(enabled);
         callbackContext.success();
@@ -406,7 +404,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isUserNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void isUserNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().getUserNotificationsEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
@@ -417,7 +415,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isSoundEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void isSoundEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isSoundEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
@@ -428,7 +426,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isVibrateEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void isVibrateEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isVibrateEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
@@ -439,7 +437,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isQuietTimeEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void isQuietTimeEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isQuietTimeEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
@@ -450,7 +448,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isInQuietTime(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void isInQuietTime(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isInQuietTime() ? 1 : 0;
         callbackContext.success(value);
     }
@@ -463,7 +461,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void getLaunchNotification(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void getLaunchNotification(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         boolean clear = data.optBoolean(0, false);
         NotificationOpenedEvent event = pluginManager.getLastLaunchNotificationEvent(clear);
 
@@ -482,7 +480,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void getDeepLink(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void getDeepLink(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         boolean clear = data.optBoolean(0, false);
         DeepLinkEvent event = pluginManager.getLastDeepLinkEvent(clear);
         String deepLink = event == null ? null : event.getDeepLink();
@@ -495,7 +493,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void getChannelID(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void getChannelID(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         String channelId = UAirship.shared().getChannel().getId();
         channelId = channelId != null ? channelId : "";
         callbackContext.success(channelId);
@@ -511,7 +509,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void getQuietTime(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void getQuietTime(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         Date[] quietTime = UAirship.shared().getPushManager().getQuietTimeInterval();
 
         int startHour = 0;
@@ -547,8 +545,8 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void getTags(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        Set<String> tags = UAirship.shared().getPushManager().getTags();
+    private void getTags(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+        Set<String> tags = UAirship.shared().getChannel().getTags();
         PluginLogger.debug("Returning tags");
         callbackContext.success(new JSONArray(tags));
     }
@@ -561,7 +559,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setTags(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setTags(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         HashSet<String> tagSet = new HashSet<String>();
         JSONArray tagsArray = data.getJSONArray(0);
         for (int i = 0; i < tagsArray.length(); ++i) {
@@ -582,7 +580,8 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setSoundEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    @SuppressWarnings("deprecation")
+    private void setSoundEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean soundPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setSoundEnabled(soundPreference);
         PluginLogger.debug("Settings Sound: %s", soundPreference);
@@ -597,7 +596,8 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setVibrateEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    @SuppressWarnings("deprecation")
+    private void setVibrateEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean vibrationPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setVibrateEnabled(vibrationPreference);
         PluginLogger.debug("Settings Vibrate: %s.", vibrationPreference);
@@ -612,7 +612,8 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setQuietTimeEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    @SuppressWarnings("deprecation")
+    private void setQuietTimeEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean quietPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setQuietTimeEnabled(quietPreference);
         PluginLogger.debug("Settings QuietTime: %s", quietPreference);
@@ -628,7 +629,8 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setQuietTime(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    @SuppressWarnings("deprecation")
+    private void setQuietTime(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         Calendar start = new GregorianCalendar();
         Calendar end = new GregorianCalendar();
         int startHour = data.getInt(0);
@@ -660,7 +662,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setAnalyticsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setAnalyticsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         PluginLogger.debug("Settings analyticsEnabled: %s", enabled);
         UAirship.shared().getAnalytics().setEnabled(enabled);
@@ -673,7 +675,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isAnalyticsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void isAnalyticsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getAnalytics().isEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
@@ -688,7 +690,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setAssociatedIdentifier(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setAssociatedIdentifier(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String key = data.getString(0);
         String identifier = data.getString(1);
 
@@ -708,7 +710,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void getNamedUser(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void getNamedUser(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         String namedUserId = UAirship.shared().getNamedUser().getId();
         namedUserId = namedUserId != null ? namedUserId : "";
         callbackContext.success(namedUserId);
@@ -720,7 +722,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setNamedUser(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setNamedUser(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String namedUserId = data.getString(0);
         if (UAStringUtil.isEmpty(namedUserId)) {
             namedUserId = null;
@@ -739,7 +741,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void editNamedUserTagGroups(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void editNamedUserTagGroups(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
 
         PluginLogger.debug("Editing named user tag groups: %s", operations);
@@ -757,7 +759,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void editChannelTagGroups(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void editChannelTagGroups(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
 
         PluginLogger.debug("Editing channel tag groups: %s", operations);
@@ -777,7 +779,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void runAction(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
+    private void runAction(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
         final String actionName = data.getString(0);
         final Object actionValue = data.opt(1);
 
@@ -872,15 +874,15 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      */
-    void displayMessageCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void displayMessageCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         String messageId = data.optString(0);
 
         PluginLogger.debug("Displaying Message Center");
         if (!UAStringUtil.isEmpty(messageId)) {
             Intent intent = new Intent(cordova.getActivity(), CustomMessageCenterActivity.class)
-                    .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
+                    .setAction(MessageCenter.VIEW_MESSAGE_INTENT_ACTION)
                     .setPackage(cordova.getActivity().getPackageName())
-                    .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
+                    .setData(Uri.fromParts(MessageCenter.MESSAGE_DATA_SCHEME, messageId, null))
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             cordova.getActivity().startActivity(intent);
@@ -900,7 +902,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      */
-    void dismissMessageCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void dismissMessageCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         PluginLogger.debug("Dismissing Message Center");
         Intent intent = new Intent(cordova.getActivity(), CustomMessageCenterActivity.class)
                 .setAction(CustomMessageCenterActivity.CLOSE_INTENT_ACTION);
@@ -917,9 +919,9 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      * @throws JSONException
      */
-    void deleteInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void deleteInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String messageId = data.getString(0);
-        RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
+        Message message = MessageCenter.shared().getInbox().getMessage(messageId);
 
         if (message == null) {
             callbackContext.error("Message not found: " + messageId);
@@ -937,9 +939,9 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      * @throws JSONException
      */
-    void markInboxMessageRead(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void markInboxMessageRead(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String messageId = data.getString(0);
-        RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
+        Message message = MessageCenter.shared().getInbox().getMessage(messageId);
 
         if (message == null) {
             callbackContext.error("Message not found: " + messageId);
@@ -957,10 +959,10 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      * @throws JSONException
      */
-    void getInboxMessages(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void getInboxMessages(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray messagesJson = new JSONArray();
 
-        for (RichPushMessage message : UAirship.shared().getInbox().getMessages()) {
+        for (Message message : MessageCenter.shared().getInbox().getMessages()) {
             JSONObject messageJson = new JSONObject();
             messageJson.putOpt("id", message.getMessageId());
             messageJson.putOpt("title", message.getTitle());
@@ -990,9 +992,9 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      * @throws JSONException
      */
-    void displayInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void displayInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         final String messageId = data.getString(0);
-        RichPushMessage message = UAirship.shared().getInbox().getMessage(messageId);
+        Message message = MessageCenter.shared().getInbox().getMessage(messageId);
 
         if (message == null) {
             callbackContext.error("Message not found: " + messageId);
@@ -1003,9 +1005,9 @@ public class UAirshipPlugin extends CordovaPlugin {
             @Override
             public void run() {
                 Intent intent = new Intent(cordova.getActivity(), CustomMessageActivity.class)
-                        .setAction(RichPushInbox.VIEW_MESSAGE_INTENT_ACTION)
+                        .setAction(MessageCenter.VIEW_MESSAGE_INTENT_ACTION)
                         .setPackage(cordova.getActivity().getPackageName())
-                        .setData(Uri.fromParts(RichPushInbox.MESSAGE_DATA_SCHEME, messageId, null))
+                        .setData(Uri.fromParts(MessageCenter.MESSAGE_DATA_SCHEME, messageId, null))
                         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                 cordova.getActivity().startActivity(intent);
@@ -1022,7 +1024,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      * @throws JSONException
      */
-    void dismissInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void dismissInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         PluginLogger.debug("Dismissing Inbox Message");
         Intent intent = new Intent(cordova.getActivity(), CustomMessageActivity.class)
                 .setAction(CustomMessageActivity.CLOSE_INTENT_ACTION)
@@ -1039,11 +1041,11 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      */
-    void refreshInbox(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
+    private void refreshInbox(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                UAirship.shared().getInbox().fetchMessages(new RichPushInbox.FetchMessagesCallback() {
+                MessageCenter.shared().getInbox().fetchMessages(new Inbox.FetchMessagesCallback() {
                     @Override
                     public void onFinished(boolean success) {
                         if (success) {
@@ -1063,7 +1065,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isAppNotificationsEnabled(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
+    private void isAppNotificationsEnabled(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isOptIn() ? 1 : 0;
         callbackContext.success(value);
     }
@@ -1074,7 +1076,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void getActiveNotifications(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
+    private void getActiveNotifications(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             JSONArray notificationsJSON = new JSONArray();
 
@@ -1106,7 +1108,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context
      * @throws JSONException
      */
-    void clearNotification(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
+    private void clearNotification(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
         final String identifier = data.getString(0);
 
         if (UAStringUtil.isEmpty(identifier)) {
@@ -1124,7 +1126,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         String tag = null;
 
         try {
-            id = Integer.valueOf(parts[0]);
+            id = Integer.parseInt(parts[0]);
         } catch (NumberFormatException e) {
             callbackContext.error("Invalid identifier: " + identifier);
             return;
@@ -1146,7 +1148,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void editChannelAttributes(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void editChannelAttributes(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
         PluginLogger.debug("Editing channel attributes: %s", operations);
 
@@ -1185,7 +1187,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void trackScreen(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void trackScreen(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String screen = data.getString(0);
         UAirship.shared().getAnalytics().trackScreen(screen);
         callbackContext.success();
@@ -1199,7 +1201,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setDataCollectionEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setDataCollectionEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         UAirship.shared().setDataCollectionEnabled(enabled);
         callbackContext.success();
@@ -1211,7 +1213,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isDataCollectionEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void isDataCollectionEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().isDataCollectionEnabled() ? 1 : 0;
         callbackContext.success(value);
     }
@@ -1224,7 +1226,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void setPushTokenRegistrationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void setPushTokenRegistrationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
         UAirship.shared().getPushManager().setPushTokenRegistrationEnabled(enabled);
         callbackContext.success();
@@ -1236,7 +1238,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    void isPushTokenRegistrationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+    private void isPushTokenRegistrationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().isPushTokenRegistrationEnabled() ? 1 : 0;
         callbackContext.success(value);
     }

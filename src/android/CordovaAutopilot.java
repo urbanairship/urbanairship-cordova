@@ -4,9 +4,8 @@ package com.urbanairship.cordova;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.XmlRes;
@@ -14,28 +13,16 @@ import androidx.annotation.XmlRes;
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
 import com.urbanairship.UAirship;
-import com.urbanairship.actions.Action;
-import com.urbanairship.actions.ActionArguments;
-import com.urbanairship.actions.ActionRegistry;
-import com.urbanairship.actions.ActionResult;
-import com.urbanairship.actions.DeepLinkAction;
 import com.urbanairship.actions.DeepLinkListener;
-import com.urbanairship.actions.OpenRichPushInboxAction;
-import com.urbanairship.actions.OverlayRichPushMessageAction;
 import com.urbanairship.analytics.Analytics;
 import com.urbanairship.channel.AirshipChannelListener;
+import com.urbanairship.cordova.events.ShowInboxEvent;
+import com.urbanairship.messagecenter.InboxListener;
 import com.urbanairship.messagecenter.MessageCenter;
 import com.urbanairship.push.NotificationActionButtonInfo;
 import com.urbanairship.push.NotificationInfo;
 import com.urbanairship.push.NotificationListener;
 import com.urbanairship.push.PushTokenListener;
-import com.urbanairship.push.RegistrationListener;
-import com.urbanairship.richpush.RichPushInbox;
-import com.urbanairship.push.PushMessage;
-import com.urbanairship.cordova.events.ShowInboxEvent;
-import com.urbanairship.util.ManifestUtils;
-
-import static com.urbanairship.cordova.PluginManager.AUTO_LAUNCH_MESSAGE_CENTER;
 
 /**
  * The Urban Airship autopilot to automatically handle takeOff.
@@ -74,7 +61,7 @@ public class CordovaAutopilot extends Autopilot {
 
         registerCordovaPluginVersion(context, airship);
 
-        // Cordova notification factory
+        // Cordova notification provider
         airship.getPushManager().setNotificationProvider(new CordovaNotificationProvider(context, PluginManager.shared(context)));
 
         // Deep link
@@ -148,9 +135,8 @@ public class CordovaAutopilot extends Autopilot {
             }
         });
 
-
         // Inbox updates
-        airship.getInbox().addListener(new RichPushInbox.Listener() {
+        MessageCenter.shared().getInbox().addListener(new InboxListener() {
             @Override
             public void onInboxUpdated() {
                 pluginManager.inboxUpdated();
@@ -158,7 +144,7 @@ public class CordovaAutopilot extends Autopilot {
         });
 
 
-        airship.getMessageCenter().setOnShowMessageCenterListener(new MessageCenter.OnShowMessageCenterListener() {
+        MessageCenter.shared().setOnShowMessageCenterListener(new MessageCenter.OnShowMessageCenterListener() {
             @Override
             public boolean onShowMessageCenter(@Nullable String messageId) {
                 if (PluginManager.shared(UAirship.getApplicationContext()).getAutoLaunchMessageCenter()) {
@@ -187,8 +173,7 @@ public class CordovaAutopilot extends Autopilot {
     }
 
     private void loadCustomNotificationButtonGroups(Context context, UAirship airship) {
-        String packageName = UAirship.shared().getPackageName();
-        @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", packageName);
+        @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", context.getPackageName());
 
          if (resId != 0) {
              PluginLogger.debug("Loading custom notification button groups");
@@ -197,8 +182,7 @@ public class CordovaAutopilot extends Autopilot {
     }
 
     private void loadCustomNotificationChannels(Context context, UAirship airship) {
-        String packageName = UAirship.shared().getPackageName();
-        @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_channels", "xml", packageName);
+        @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_channels", "xml", context.getPackageName());
 
         if (resId != 0) {
             PluginLogger.debug("Loading custom notification channels");
