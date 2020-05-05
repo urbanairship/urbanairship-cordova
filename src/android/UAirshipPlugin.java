@@ -44,6 +44,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,8 +53,10 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -89,6 +93,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     private static final String ATTRIBUTE_OPERATION_KEY = "key";
     private static final String ATTRIBUTE_OPERATION_VALUE = "value";
     private static final String ATTRIBUTE_OPERATION_TYPE = "action";
+    private static final String ATTRIBUTE_OPERATION_VALUETYPE = "type";
     private static final String ATTRIBUTE_OPERATION_SET = "set";
     private static final String ATTRIBUTE_OPERATION_REMOVE = "remove";
 
@@ -1164,8 +1169,20 @@ public class UAirshipPlugin extends CordovaPlugin {
 
             if (ATTRIBUTE_OPERATION_SET.equals(action)) {
                 Object value = operation.opt(ATTRIBUTE_OPERATION_VALUE);
-
-                if (value instanceof String) {
+                String valueType = (String) operation.opt(ATTRIBUTE_OPERATION_VALUETYPE);
+                if ("date".equals(valueType)) {
+                    // Date type doesn't survive through the JS to native bridge. Value contains an ISO-8601 compliant string.
+                    SimpleDateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+                    ISO_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    try {
+                        Date date = ISO_DATE_FORMAT.parse((String) value);
+                        if (date != null) {
+                            editor.setAttribute(key, date);
+                        }
+                    } catch (ParseException e) {
+                        PluginLogger.debug(e, "Failed to parse date attribute: %s", (String) value);
+                    }
+                } else if (value instanceof String) {
                     editor.setAttribute(key, (String) value);
                 } else if (value instanceof Number) {
                     editor.setAttribute(key, ((Number) value).doubleValue());

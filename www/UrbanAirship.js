@@ -121,14 +121,25 @@ function AttributesEditor(nativeMethod) {
    * @function setAttribute
    *
    * @param {string} name The attribute name.
-   * @param {string} value The attribute's value.
+   * @param {string|number|Date} value The attribute's value.
    * @return {AttributesEditor} The attribute editor instance.
    */
-  editor.setAttribute = function(name, value) {
-    argscheck.checkArgs('s*', "AttributesEditor#setAttribute", arguments)
-    var operation = { "action": "set", "value": value, "key": name }
-    operations.push(operation)
-    return editor
+    editor.setAttribute = function(name, value) {
+        argscheck.checkArgs('s*', "AttributesEditor#setAttribute", arguments)
+        console.log("BDB: typeof value: " + typeof value)
+
+        var operation = { "action": "set", "value": value, "key": name }
+
+        // Date type doesn't survive through the JS to native bridge. Convert value to string and mark as a date.
+        if (value instanceof Date) {
+            console.log("BDB: processing date")
+            operation["value"] = value.toISOString()
+            operation["type"] = "date"
+        }
+        
+        operations.push(operation)
+        
+        return editor
   }
 
   /**
