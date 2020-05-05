@@ -7,7 +7,9 @@
 @import Airship;
 #endif
 
-@interface UAMessageViewController : UAMessageCenterMessageViewController
+@interface UAMessageViewController : UINavigationController
+
+- (void)loadMessageForID:(nullable NSString *)messageID;
 
 @end
 

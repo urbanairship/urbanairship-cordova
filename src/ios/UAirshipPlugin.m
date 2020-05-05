@@ -1,9 +1,9 @@
 /* Copyright Urban Airship and Contributors */
 
 #import "UAirshipPlugin.h"
-#import "UAMessageViewController.h"
 #import "UACordovaPluginManager.h"
 #import "UACordovaPushEvent.h"
+#import "UAMessageViewController.h"
 
 #if __has_include("AirshipLib.h")
 #import "AirshipLib.h"
@@ -719,31 +719,18 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("displayInboxMessage called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *messageID = [command.arguments firstObject];
-        UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
-
-        if (!message) {
-            NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
-            completionHandler(CDVCommandStatus_ERROR, error);
-            return;
-        }
-
         [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
 
-        UAMessageViewController *mvc = [[UAMessageViewController alloc] initWithNibName:@"UAMessageCenterMessageViewController"
-                                                                                 bundle:[UAMessageCenterResources bundle]];
+        UAMessageViewController *mvc = [[UAMessageViewController alloc] init];
+        mvc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        mvc.modalPresentationStyle = UIModalPresentationFullScreen;
+        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:mvc animated:YES completion:nil];
 
-        UINavigationController *navController =  [[UINavigationController alloc] initWithRootViewController:mvc];
+        // Load the message
+        [mvc loadMessageForID:[command.arguments firstObject]];
 
         // Store a weak reference to the MessageViewController so we can dismiss it later
         self.messageViewController = mvc;
-
-        [mvc loadMessageForID:message.messageID onlyIfChanged:YES onError:^{
-            NSString *error = [NSString stringWithFormat:@"Message load resulted in errorMessage not found for message ID: %@", message.messageID];
-            completionHandler(CDVCommandStatus_ERROR, error);
-        }];
-
-        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:navController animated:YES completion:nil];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -909,5 +896,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
     }];
 }
+
+
 
 @end
