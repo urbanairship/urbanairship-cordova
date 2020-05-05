@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 10.1.2 - May 5, 2020
+Patch release updating to the latest Airship SDKs and addressing issues with YouTube video support and channel registration on iOS.
+
+### Changes
+- Updated iOS SDK to 13.3.0
+- Updated Android SDK to 13.1.0
+- Fixed YouTube video support in Message Center and HTML In-app messages.
+- Fixed channel registration to occur every APNs registration change.
+
 ## Version 10.1.1 - March 23, 2020
 Patch addressing a regression in iOS SDK 13.1.0 causing channel tag loss
 when upgrading from iOS SDK versions prior to 13.0.1. Apps upgrading from plugin
