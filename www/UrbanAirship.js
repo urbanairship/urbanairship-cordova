@@ -126,13 +126,11 @@ function AttributesEditor(nativeMethod) {
    */
     editor.setAttribute = function(name, value) {
         argscheck.checkArgs('s*', "AttributesEditor#setAttribute", arguments)
-        console.log("BDB: typeof value: " + typeof value)
 
         var operation = { "action": "set", "value": value, "key": name }
 
         // Date type doesn't survive through the JS to native bridge. Convert value to string and mark as a date.
         if (value instanceof Date) {
-            console.log("BDB: processing date")
             operation["value"] = value.toISOString()
             operation["type"] = "date"
         }
