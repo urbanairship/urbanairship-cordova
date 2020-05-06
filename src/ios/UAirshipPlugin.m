@@ -821,15 +821,18 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
                 id value = operation[@"value"];
                 NSString *valueType = operation[@"type"];
                 if ([valueType isEqualToString:@"date"]) {
-                    // Date type doesn't survive through the JS to native bridge. Value contains an ISO-8601 compliant string.
-                    NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-                    dateFormatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
-                    dateFormatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
-                    dateFormatter.dateFormat = @"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-                    NSDate *date = [dateFormatter dateFromString:value];
+                    // Date type doesn't survive through the JS to native bridge. Value contains number of milliseconds since the epoch.
+                    if (![value isKindOfClass:[NSNumber class]]) {
+                        continue;
+                    }
+                    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
                     if (date) {
                         [mutations setDate:date forAttribute:name];
                     }
+                } else if ([valueType isEqualToString:@"string"]) {
+                    [mutations setString:(NSString *)value forAttribute:name];
+                } else if ([valueType isEqualToString:@"number"]) {
+                    [mutations setNumber:(NSNumber *)value forAttribute:name];
                 } else if ([value isKindOfClass:[NSString class]]) {
                     [mutations setString:(NSString *)value forAttribute:name];
                 } else if ([value isKindOfClass:[NSNumber class]]) {

@@ -129,10 +129,20 @@ function AttributesEditor(nativeMethod) {
 
         var operation = { "action": "set", "value": value, "key": name }
 
-        // Date type doesn't survive through the JS to native bridge. Convert value to string and mark as a date.
-        if (value instanceof Date) {
-            operation["value"] = value.toISOString()
+        if (typeof value === "string") {
+            operation["type"] = "string"
+        } else if (typeof value === "number") {
+            operation["type"] = "number"
+        } else if (typeof value === "boolean") {
+            // No boolean attribute type. Convert value to string.
+            operation["type"] = "string"
+            operation["value"] = value.toString();
+        } else if (value instanceof Date) {
+            // Date type doesn't survive through the JS to native bridge. Convert value to milliseconds since epoch and mark as a date.
             operation["type"] = "date"
+            operation["value"] = value.getTime()
+        } else {
+            operation["type"] = "unknown"
         }
         
         operations.push(operation)

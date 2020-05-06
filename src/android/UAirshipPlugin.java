@@ -1171,17 +1171,19 @@ public class UAirshipPlugin extends CordovaPlugin {
                 Object value = operation.opt(ATTRIBUTE_OPERATION_VALUE);
                 String valueType = (String) operation.opt(ATTRIBUTE_OPERATION_VALUETYPE);
                 if ("date".equals(valueType)) {
-                    // Date type doesn't survive through the JS to native bridge. Value contains an ISO-8601 compliant string.
-                    SimpleDateFormat ISO_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-                    ISO_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    // Date type doesn't survive through the JS to native bridge. Value contains number of milliseconds since the epoch.
                     try {
-                        Date date = ISO_DATE_FORMAT.parse((String) value);
+                        Date date = new Date((Long) value);
                         if (date != null) {
                             editor.setAttribute(key, date);
                         }
-                    } catch (ParseException e) {
-                        PluginLogger.debug(e, "Failed to parse date attribute: %s", (String) value);
+                    } catch (Exception e) {
+                        PluginLogger.warn(e, "Failed to parse date attribute: %d", value);
                     }
+                } else if ("string".equals(valueType)) {
+                    editor.setAttribute(key, (String) value);
+                } else if ("number".equals(valueType)) {
+                    editor.setAttribute(key, ((Number) value).doubleValue());
                 } else if (value instanceof String) {
                     editor.setAttribute(key, (String) value);
                 } else if (value instanceof Number) {
