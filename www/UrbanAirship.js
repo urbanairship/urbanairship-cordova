@@ -142,7 +142,7 @@ function AttributesEditor(nativeMethod) {
             operation["type"] = "date"
             operation["value"] = value.getTime()
         } else {
-            operation["type"] = "unknown"
+            throw("Unsupported attribute type: " + typeof value)
         }
         
         operations.push(operation)

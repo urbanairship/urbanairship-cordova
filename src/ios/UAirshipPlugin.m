@@ -820,23 +820,16 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
             if ([action isEqualToString:@"set"]) {
                 id value = operation[@"value"];
                 NSString *valueType = operation[@"type"];
-                if ([valueType isEqualToString:@"date"]) {
-                    // Date type doesn't survive through the JS to native bridge. Value contains number of milliseconds since the epoch.
-                    if (![value isKindOfClass:[NSNumber class]]) {
-                        continue;
-                    }
-                    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
-                    if (date) {
-                        [mutations setDate:date forAttribute:name];
-                    }
-                } else if ([valueType isEqualToString:@"string"]) {
+                if ([valueType isEqualToString:@"string"]) {
                     [mutations setString:(NSString *)value forAttribute:name];
                 } else if ([valueType isEqualToString:@"number"]) {
                     [mutations setNumber:(NSNumber *)value forAttribute:name];
-                } else if ([value isKindOfClass:[NSString class]]) {
-                    [mutations setString:(NSString *)value forAttribute:name];
-                } else if ([value isKindOfClass:[NSNumber class]]) {
-                    [mutations setNumber:(NSNumber *)value forAttribute:name];
+                } else if ([valueType isEqualToString:@"date"]) {
+                    // Date type doesn't survive through the JS to native bridge. Value contains number of milliseconds since the epoch.
+                    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
+                    [mutations setDate:date forAttribute:name];
+                } else {
+                    UA_LWARN("Unknown channel attribute type: %@", valueType);
                 }
             } else if ([action isEqualToString:@"remove"]) {
                 [mutations removeAttribute:name];
