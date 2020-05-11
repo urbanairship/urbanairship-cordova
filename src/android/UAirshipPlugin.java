@@ -1171,7 +1171,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                 } else if ("number".equals(valueType)) {
                     editor.setAttribute(key, ((Number) value).doubleValue());
                 } else if ("date".equals(valueType)) {
-                    // Date type doesn't survive through the JS to native bridge. Value contains number of milliseconds since the epoch.
+                    // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
                     editor.setAttribute(key, new Date(((Number) value).longValue()));
                 } else {
                     PluginLogger.warn("Unknown channel attribute type: %s", valueType);

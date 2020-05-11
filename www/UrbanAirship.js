@@ -138,7 +138,7 @@ function AttributesEditor(nativeMethod) {
             operation["type"] = "string"
             operation["value"] = value.toString();
         } else if (value instanceof Date) {
-            // Date type doesn't survive through the JS to native bridge. Convert value to milliseconds since epoch and mark as a date.
+            // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
             operation["type"] = "date"
             operation["value"] = value.getTime()
         } else {

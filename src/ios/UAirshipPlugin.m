@@ -825,7 +825,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
                 } else if ([valueType isEqualToString:@"number"]) {
                     [mutations setNumber:(NSNumber *)value forAttribute:name];
                 } else if ([valueType isEqualToString:@"date"]) {
-                    // Date type doesn't survive through the JS to native bridge. Value contains number of milliseconds since the epoch.
+                    // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
                     NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
                     [mutations setDate:date forAttribute:name];
                 } else {
