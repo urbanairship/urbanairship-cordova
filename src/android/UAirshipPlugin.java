@@ -89,6 +89,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     private static final String ATTRIBUTE_OPERATION_KEY = "key";
     private static final String ATTRIBUTE_OPERATION_VALUE = "value";
     private static final String ATTRIBUTE_OPERATION_TYPE = "action";
+    private static final String ATTRIBUTE_OPERATION_VALUETYPE = "type";
     private static final String ATTRIBUTE_OPERATION_SET = "set";
     private static final String ATTRIBUTE_OPERATION_REMOVE = "remove";
 
@@ -1164,11 +1165,16 @@ public class UAirshipPlugin extends CordovaPlugin {
 
             if (ATTRIBUTE_OPERATION_SET.equals(action)) {
                 Object value = operation.opt(ATTRIBUTE_OPERATION_VALUE);
-
-                if (value instanceof String) {
+                String valueType = (String) operation.opt(ATTRIBUTE_OPERATION_VALUETYPE);
+                if ("string".equals(valueType)) {
                     editor.setAttribute(key, (String) value);
-                } else if (value instanceof Number) {
+                } else if ("number".equals(valueType)) {
                     editor.setAttribute(key, ((Number) value).doubleValue());
+                } else if ("date".equals(valueType)) {
+                    // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
+                    editor.setAttribute(key, new Date(((Number) value).longValue()));
+                } else {
+                    PluginLogger.warn("Unknown channel attribute type: %s", valueType);
                 }
             } else if (ATTRIBUTE_OPERATION_REMOVE.equals(action)) {
                 editor.removeAttribute(key);

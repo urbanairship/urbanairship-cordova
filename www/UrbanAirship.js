@@ -121,14 +121,33 @@ function AttributesEditor(nativeMethod) {
    * @function setAttribute
    *
    * @param {string} name The attribute name.
-   * @param {string} value The attribute's value.
+   * @param {string|number|Date} value The attribute's value.
    * @return {AttributesEditor} The attribute editor instance.
    */
-  editor.setAttribute = function(name, value) {
-    argscheck.checkArgs('s*', "AttributesEditor#setAttribute", arguments)
-    var operation = { "action": "set", "value": value, "key": name }
-    operations.push(operation)
-    return editor
+    editor.setAttribute = function(name, value) {
+        argscheck.checkArgs('s*', "AttributesEditor#setAttribute", arguments)
+
+        var operation = { "action": "set", "value": value, "key": name }
+
+        if (typeof value === "string") {
+            operation["type"] = "string"
+        } else if (typeof value === "number") {
+            operation["type"] = "number"
+        } else if (typeof value === "boolean") {
+            // No boolean attribute type. Convert value to string.
+            operation["type"] = "string"
+            operation["value"] = value.toString();
+        } else if (value instanceof Date) {
+            // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
+            operation["type"] = "date"
+            operation["value"] = value.getTime()
+        } else {
+            throw("Unsupported attribute type: " + typeof value)
+        }
+        
+        operations.push(operation)
+        
+        return editor
   }
 
   /**
