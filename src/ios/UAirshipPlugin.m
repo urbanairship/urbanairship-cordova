@@ -811,33 +811,47 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("editChannelAttributes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        UAAttributeMutations *mutations = [UAAttributeMutations mutations];
-
-        for (NSDictionary *operation in [args objectAtIndex:0]) {
-            NSString *action = operation[@"action"];
-            NSString *name = operation[@"key"];
-
-            if ([action isEqualToString:@"set"]) {
-                id value = operation[@"value"];
-                NSString *valueType = operation[@"type"];
-                if ([valueType isEqualToString:@"string"]) {
-                    [mutations setString:(NSString *)value forAttribute:name];
-                } else if ([valueType isEqualToString:@"number"]) {
-                    [mutations setNumber:(NSNumber *)value forAttribute:name];
-                } else if ([valueType isEqualToString:@"date"]) {
-                    // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
-                    NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
-                    [mutations setDate:date forAttribute:name];
-                } else {
-                    UA_LWARN("Unknown channel attribute type: %@", valueType);
-                }
-            } else if ([action isEqualToString:@"remove"]) {
-                [mutations removeAttribute:name];
-            }
-        }
-
+        UAAttributeMutations *mutations = [self mutationsWithOperations:args];
         [[UAirship channel] applyAttributeMutations:mutations];
     }];
+}
+
+- (void)editNamedUserAttributes:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("editNamedUserAttributes called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        UAAttributeMutations *mutations = [self mutationsWithOperations:args];
+        [[UAirship channel] applyAttributeMutations:mutations];
+    }];
+}
+
+- (UAAttributeMutations) mutationsWithOperations:(NSArray *)operations {
+    UAAttributeMutations *mutations = [UAAttributeMutations mutations];
+
+    for (NSDictionary *operation in [args objectAtIndex:0]) {
+        NSString *action = operation[@"action"];
+        NSString *name = operation[@"key"];
+
+        if ([action isEqualToString:@"set"]) {
+            id value = operation[@"value"];
+            NSString *valueType = operation[@"type"];
+            if ([valueType isEqualToString:@"string"]) {
+                [mutations setString:(NSString *)value forAttribute:name];
+            } else if ([valueType isEqualToString:@"number"]) {
+                [mutations setNumber:(NSNumber *)value forAttribute:name];
+            } else if ([valueType isEqualToString:@"date"]) {
+                // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
+                NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
+                [mutations setDate:date forAttribute:name];
+            } else {
+                UA_LWARN("Unknown attribute type: %@", valueType);
+            }
+        } else if ([action isEqualToString:@"remove"]) {
+            [mutations removeAttribute:name];
+        }
+    }
+
+    return mutations;
 }
 
 - (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
