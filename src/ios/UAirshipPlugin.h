@@ -304,7 +304,7 @@
  *
  * @param operations The attribute operations.
  */
-- (UAAttributeMutations)mutationsWithOperations:(NSArray *)operations;
+- (UAAttributeMutations *)mutationsWithOperations:(NSArray *)operations;
 
 /**
  * Registers a listener for events.

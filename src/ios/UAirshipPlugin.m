@@ -821,14 +821,14 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         UAAttributeMutations *mutations = [self mutationsWithOperations:args];
-        [[UAirship channel] applyAttributeMutations:mutations];
+        [[UAirship namedUser] applyAttributeMutations:mutations];
     }];
 }
 
-- (UAAttributeMutations) mutationsWithOperations:(NSArray *)operations {
+- (UAAttributeMutations *) mutationsWithOperations:(NSArray *)operations {
     UAAttributeMutations *mutations = [UAAttributeMutations mutations];
 
-    for (NSDictionary *operation in [args objectAtIndex:0]) {
+    for (NSDictionary *operation in [operations objectAtIndex:0]) {
         NSString *action = operation[@"action"];
         NSString *name = operation[@"key"];
 
