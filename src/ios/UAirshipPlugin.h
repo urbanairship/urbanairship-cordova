@@ -293,19 +293,6 @@
  */
 - (void)editNamedUserAttributes:(CDVInvokedUrlCommand *)command;
 
-
-/**
- * Helper method to prepare attribute mutation object from attribute operations.
- *
- * Expected arguments: An array of objects that contain:
- * "action": String, either `remove` or `set`
- * "key": String, the attribute name.
- * "value": String, the attribute value.
- *
- * @param operations The attribute operations.
- */
-- (UAAttributeMutations *)mutationsWithOperations:(NSArray *)operations;
-
 /**
  * Registers a listener for events.
  *
