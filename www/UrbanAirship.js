@@ -643,6 +643,15 @@ module.exports = {
   },
 
   /**
+   * Creates an editor to modify the named user attributes.
+   *
+   * @return {AttributesEditor} An attributes editor instance.
+   */
+  editNamedUserAttributes: function() {
+    return new AttributesEditor('editNamedUserAttributes')
+  },
+
+  /**
    * Sets an associated identifier for the Connect data stream.
    *
    * @param {string} Custom key for identifier.

@@ -72,7 +72,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
-            "getActiveNotifications", "clearNotification", "editChannelAttributes", "trackScreen", "setDataCollectionEnabled", "isDataCollectionEnabled",
+            "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen", "setDataCollectionEnabled", "isDataCollectionEnabled",
             "setPushTokenRegistrationEnabled", "isPushTokenRegistrationEnabled");
 
     /*
@@ -161,6 +161,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         displayMessageCenter(data, callbackContext);
                     } else if ("editChannelAttributes".equals(action)) {
                         editChannelAttributes(data, callbackContext);
+                    } else if ("editNamedUserAttributes".equals(action)) {
+                        editNamedUserAttributes(data, callbackContext);
                     } else if ("editChannelTagGroups".equals(action)) {
                         editChannelTagGroups(data, callbackContext);
                     } else if ("editNamedUserTagGroups".equals(action)) {
@@ -1151,9 +1153,41 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     private void editChannelAttributes(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
+
         PluginLogger.debug("Editing channel attributes: %s", operations);
 
         AttributeEditor editor = UAirship.shared().getChannel().editAttributes();
+        applyAttributesOperations(editor, operations);
+        editor.apply();
+
+        callbackContext.success();
+    }
+
+    /**
+     * Edits the named user attributes.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    private void editNamedUserAttributes(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        JSONArray operations = data.getJSONArray(0);
+
+        PluginLogger.debug("Editing named user attributes: %s", operations);
+
+        AttributeEditor editor = UAirship.shared().getNamedUser().editAttributes();
+        applyAttributesOperations(editor, operations);
+        editor.apply();
+
+        callbackContext.success();
+    }
+
+    /**
+     * Helper method to apply attribute operations to an AttributeEditor.
+     *
+     * @param editor The attribute editor.
+     * @param operations The attribute operations.
+     */
+    private static void applyAttributesOperations(AttributeEditor editor, JSONArray operations) throws JSONException {
         for (int i = 0; i < operations.length(); i++) {
             JSONObject operation = operations.optJSONObject(i);
             if (operation == null) {
@@ -1180,9 +1214,6 @@ public class UAirshipPlugin extends CordovaPlugin {
                 editor.removeAttribute(key);
             }
         }
-
-        editor.apply();
-        callbackContext.success();
     }
 
     /**
