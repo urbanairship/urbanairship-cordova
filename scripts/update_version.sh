@@ -14,3 +14,6 @@ sed -i '' "s/\version\": \".*\",/\version\": \"$VERSION\",/g" package.json
 sed -E -i '' "s/\version=\"[0-9]+\.[0-9]+\.[0-9]+.*\"/\version=\"$VERSION\"/g" plugin.xml
 sed -E -i '' "s/\android:value=\"[0-9]+\.[0-9]+\.[0-9]+.*\"/\android:value=\"$VERSION\"/g" plugin.xml
 sed -E -i '' "s/\<string>[0-9]+\.[0-9]+\.[0-9]+.*<\/string>/\<string>$VERSION<\/string>/g" plugin.xml
+
+# Update packages
+npm install
