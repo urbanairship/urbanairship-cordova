@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 11.0.0 - June 3, 2020
+Major release adding support for named user and date attributes.
+
+### Changes
+- Added support for named user attributes.
+- Added support for date attributes.
+- Updated iOS SDK to 13.3.2
+- Updated Android SDK to 13.1.2
+
 ## Version 10.1.2 - May 5, 2020
 Patch release updating to the latest Airship SDKs and addressing issues with YouTube video support and channel registration on iOS.
 
