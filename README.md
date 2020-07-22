@@ -188,7 +188,7 @@ have the specs-repo already cloned on your machine through `pod setup`.
 
 Another potential cause involves minimum deployment targets. The Airship iOS SDK supports the three most
 recent iOS versions, and thus to install the plugin, your app must set its minimum deployment target accordingly,
-in `config.xml`. As an example, see the deployment target in the provided [sample config](https://github.com/urbanairship/urbanairship-cordova/blob/master/config_sample.xml#L35).
+in `config.xml`. As an example, see the deployment target in the provided [sample config](https://github.com/urbanairship/urbanairship-cordova/blob/main/config_sample.xml#L35).
 Setting this value correctly should cause Cordova to generate a Podfile in the `ios` subdirectory of your
 application with the same value for its platform version. If the minimum deployment target is not specified,
 cordova will choose its own default value, which may be incorrect, and adding the plugin will fail with exit code 1.
