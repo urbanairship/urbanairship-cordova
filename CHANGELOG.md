@@ -1,5 +1,19 @@
 # Cordova Plugin Changelog
 
+## Version 11.0.1 - August 17, 2020
+Patch release updating iOS and Android SDK versions to 13.5.4 and 13.3.2, respectively.
+
+### iOS
+- Xcode 12 and iOS 14 support.
+- In App Automation bugfixes.
+- Addresses [Dynamic Type](https://developer.apple.com/documentation/uikit/uifont/scaling_fonts_automatically) build warnings and Message Center Inbox UI issues.
+For more details, see the [iOS CHANGELOG](https://github.com/urbanairship/ios-library/blob/13.5.4/CHANGELOG.md).
+
+### Android
+- Fixes In-App Automation version triggers to only fire on app updates instead of new installs.
+- Fixes ADM registration exceptions that occur on first run and text alignment issues with In-App Automation.
+For more details, see the [Android CHANGELOG](https://github.com/urbanairship/android-library/blob/13.3.2/CHANGELOG.md).
+
 ## Version 11.0.0 - June 3, 2020
 Major release adding support for named user and date attributes.
 
