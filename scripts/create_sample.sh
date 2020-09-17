@@ -42,10 +42,12 @@ cp "$ROOT_PATH/Example/index.html" www/index.html
 cp "$ROOT_PATH/Example/css/"* www/css
 cp "$ROOT_PATH/Example/js/"* www/js
 
+# copy mock google-servicces.json
+cp "$ROOT_PATH/scripts/mock-google-services.json"  google-services.json
+
+
 # add required plugins
 npx cordova plugin add cordova-plugin-device
-npx cordova plugin add cordova-plugin-androidx-adapter
-npx cordova plugin add cordova-plugin-androidx
 
 # set up iOS
 npx cordova platform add ios@$IOS_CORDOVA_VERSION
