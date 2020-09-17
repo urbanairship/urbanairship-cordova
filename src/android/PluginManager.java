@@ -213,7 +213,7 @@ public class PluginManager {
      * @param success {@code true} if the channel updated successfully, otherwise {@code false}.
      */
     public void channelUpdated(@Nullable String channel, boolean success) {
-        notifyListener(new RegistrationEvent(channel, UAirship.shared().getPushManager().getRegistrationToken(), success));
+        notifyListener(new RegistrationEvent(channel, UAirship.shared().getPushManager().getPushToken(), success));
     }
 
     /**
@@ -325,7 +325,8 @@ public class PluginManager {
                 .setDevelopmentLogLevel(ConfigUtils.parseLogLevel(getConfigString(DEVELOPMENT_LOG_LEVEL, ""), Log.DEBUG))
                 .setProductionLogLevel(ConfigUtils.parseLogLevel(getConfigString(PRODUCTION_LOG_LEVEL, ""), Log.ERROR))
                 .setSite(ConfigUtils.parseCloudSite(getConfigValue(CLOUD_SITE)))
-                .setDataCollectionOptInEnabled(getConfigBoolean(DATA_COLLECTION_OPT_IN_ENABLED, false));
+                .setDataCollectionOptInEnabled(getConfigBoolean(DATA_COLLECTION_OPT_IN_ENABLED, false))
+                .setUrlAllowListScopeOpenUrl(new String[]{"*"});
 
         if (hasConfig(IN_PRODUCTION)) {
             builder.setInProduction(getConfigBoolean(IN_PRODUCTION, false));

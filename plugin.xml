@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="11.0.1"
+        version="12.0.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -11,8 +11,8 @@
     <repo>https://github.com/urbanairship/urbanairship-cordova.git</repo>
 
     <engines>
-        <engine name="cordova-android" version=">=4.1.0"/>
-        <engine name="cordova-ios" version=">=5.0.1"/>
+        <engine name="cordova-android" version=">=9.0.0"/>
+        <engine name="cordova-ios" version=">=6.1.0"/>
         <engine name="cordova" version=">=9.0.1"/>
     </engines>
 
@@ -22,6 +22,10 @@
 
     <!-- android -->
     <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <preference name="GradlePluginGoogleServicesEnabled" value="true" />
+            <preference name="GradlePluginGoogleServicesVersion" value="4.2.0" />
+        </config-file>
         <config-file parent="/widget" target="res/xml/config.xml">
             <feature name="UAirship">
                 <param
@@ -36,7 +40,7 @@
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data
                 android:name="com.urbanairship.cordova.version"
-                android:value="11.0.1"/>
+                android:value="12.0.0"/>
 
             <meta-data
                 android:name="com.urbanairship.autopilot"
@@ -138,7 +142,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
-            <string>11.0.1</string>
+            <string>12.0.0</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
@@ -189,7 +193,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship" spec="13.5.4" />
+                <pod name="Airship" spec="14.1.0" />
             </pods>
         </podspec>
 
