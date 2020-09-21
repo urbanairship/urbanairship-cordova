@@ -4,7 +4,9 @@ on: [pull_request]
 
 jobs:
   android:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
     steps:
       - uses: actions/checkout@v1
       - name: Run CI
@@ -12,7 +14,7 @@ jobs:
   ios:
     runs-on: macos-latest
     env:
-      DEVELOPER_DIR: /Applications/Xcode_11.3.1.app
+      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
     steps:
       - uses: actions/checkout@v1
       - name: Run CI

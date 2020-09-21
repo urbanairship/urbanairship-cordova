@@ -136,6 +136,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     airshipConfig.productionAppSecret = [self configValueForKey:ProductionAppSecretConfigKey];
     airshipConfig.developmentAppKey = [self configValueForKey:DevelopmentAppKeyConfigKey];
     airshipConfig.developmentAppSecret = [self configValueForKey:DevelopmentAppSecretConfigKey];
+    airshipConfig.URLAllowListScopeOpenURL = @[@"*"];
 
     NSString *cloudSite = [self configValueForKey:CloudSiteConfigKey];
     airshipConfig.site = [UACordovaPluginManager parseCloudSiteString:cloudSite];

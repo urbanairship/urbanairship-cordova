@@ -54,6 +54,7 @@ if [ "$ANDROID" = "true" ] || [ "$IOS" = "true" ]; then
   if [[ ! -d $SAMPLE_APP_PATH/test ]]; then
     ${SCRIPT_DIRECTORY}/create_sample.sh $SAMPLE_APP_PATH
   fi
+
   cd $SAMPLE_APP_PATH/test
 fi
 

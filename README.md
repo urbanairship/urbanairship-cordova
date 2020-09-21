@@ -13,11 +13,12 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
 ### Requirements:
  - cordova >= 9.0.0
- - cordova-ios >= 5.0.1
- - cococapods >= 1.7.3
+ - cordova-ios >= 6.1.0
+ - cordova-android >= 9.0.0
+ - cococapods >= 1.9
 
 #### iOS:
-- Xcode 11+
+- Xcode 12+
 - [APNS Setup](https://docs.airship.com/platform/ios/getting-started/#apple-setup)
 
 #### Android
@@ -25,13 +26,10 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
 ##### Jetpack / AndroidX
 
-This plugin requires modern Jetpack libraries (AndroidX). If the application includes plugins that are still on the old Android
-Support libraries, you will face build issues. The quickest way to work around the issue is to install `cordova-plugin-androidx`
-and `cordova-plugin-androidx-adapter`, which will automatically enable Jetpack and migrate plugins in the application:
+This plugin requires modern Jetpack libraries (AndroidX). Enable AndroidX in your config.xml:
 
 ```
-cordova plugin add cordova-plugin-androidx-adapter
-cordova plugin add cordova-plugin-androidx
+<preference name="AndroidXEnabled" value="true" />
 ```
 
 ### Quickstart
@@ -207,14 +205,6 @@ Cordova's default version. In both cases, doing the following will fix the issue
 In order to take advantage of iOS notification attachments, such as images,
 animated gifs, and video, you will need to create a [notification service extension](https://developer.apple.com/reference/usernotifications/unnotificationserviceextension/)
 by following the [iOS Notification Service Extension Guide](https://docs.airship.com/platform/ios/getting-started/#notification-service-extension).
-
-### Android GoogleServicesPlugin
-
-The plugin will automatically apply the `GoogleServicesPlugin` for FCM. This can cause conflicts with other plugins that also apply
-the `GoogleServicesPlugin`. Applications can disable applying the plugin by setting the gradle property `uaSkipApplyGoogleServicesPlugin`
-to `true`. See (Setting Gradle Properties)[https://cordova.apache.org/docs/en/latest/guide/platforms/android/#setting-gradle-properties]
-for details on how to set a gradle property in a Cordova project.
-
 
 ### Sample
 

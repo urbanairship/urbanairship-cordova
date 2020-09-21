@@ -1,16 +1,4 @@
 
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-        classpath 'com.google.gms:google-services:4.3.3'
-    }
-}
-
 allprojects {
     repositories {
         google()
@@ -19,7 +7,7 @@ allprojects {
 }
 
 dependencies {
-    def airshipVersion = "13.3.2"
+    def airshipVersion = "14.0.0"
     implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"
@@ -34,13 +22,5 @@ if (project.hasProperty('uaInternalJava6CompileOptions') && uaInternalJava6Compi
             sourceCompatibility JavaVersion.VERSION_1_6
             targetCompatibility JavaVersion.VERSION_1_6
         }
-    })
-}
-
-// Used to avoid conflicts with other plugins that also apply the GoogleServicesPlugin
-// See https://cordova.apache.org/docs/en/latest/guide/platforms/android/#setting-gradle-properties
-if (!project.hasProperty('uaSkipApplyGoogleServicesPlugin') || !uaSkipApplyGoogleServicesPlugin) {
-    cdvPluginPostBuildExtras.push({
-        apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
     })
 }
