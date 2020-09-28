@@ -1,14 +1,26 @@
 # Cordova Plugin Changelog
 
+## Version 12.0.1 - September 28, 2020
+
+Patch release updating iOS and SDK versions to 14.1.2 and 14.0.1, respectively.
+
+### iOS
+- Fixes a crash related to sending In-App Messages through push notifications.
+- Fixes a crash in the Airship and AirshipAutomation XCFramework.
+For more details, see the [iOS CHANGELOG](https://github.com/urbanairship/ios-library/blob/14.1.2/CHANGELOG.md).
+
+### Android
+- Fixes an exception caused by too many alarms being scheduled for in-app automation message intervals on Samsung devices.
+For more details, see the [Android CHANGELOG](https://github.com/urbanairship/android-library/blob/14.0.1/CHANGELOG.md).
+
 ## Version 12.0.0 - September 17, 2020
 
 Major release for Airship Android SDK 14.0 and iOS SDK 14.1.
 
-## Changes
+### Changes
 - Xcode 12 is now required.
 - Requires Cordova iOS 6.1.0+, Cordova Android 9.0.0+.
 - Fixed conflict with play services with Cordova Android 9.0.0.
-
 
 ## Version 11.0.1 - August 17, 2020
 Patch release updating iOS and Android SDK versions to 13.5.4 and 13.3.2, respectively.
