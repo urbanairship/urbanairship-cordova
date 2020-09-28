@@ -1,6 +1,6 @@
 {
   "name": "urbanairship-cordova",
-  "version": "12.0.0",
+  "version": "12.0.1",
   "description": "Urban Airship Cordova plugin",
   "cordova": {
     "id": "urbanairship-cordova",
@@ -50,5 +50,8 @@
   },
   "scripts": {
     "generate-docs": "jsdoc ./www/UrbanAirship.js -t ./node_modules/minami/ -r jsdoc_readme.md"
+  },
+  "dependencies": {
+    "cordova": "^10.0.0"
   }
 }

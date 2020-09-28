@@ -7,7 +7,7 @@ allprojects {
 }
 
 dependencies {
-    def airshipVersion = "14.0.0"
+    def airshipVersion = "14.0.1"
     implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"
