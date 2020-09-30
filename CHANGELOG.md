@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 12.0.1 - September 28, 2020
+## Version 12.0.1 - September 30, 2020
 
 Patch release updating iOS and Android SDK versions to 14.1.2 and 14.0.1, respectively.
 
