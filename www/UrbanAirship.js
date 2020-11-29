@@ -1,6 +1,6 @@
 /* Copyright Urban Airship and Contributors */
 
-var cardova = require("cordova"),
+var cordova = require("cordova"),
     exec = require("cordova/exec"),
     argscheck = require('cordova/argscheck')
 
