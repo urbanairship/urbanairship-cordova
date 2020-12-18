@@ -193,7 +193,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship" spec="14.1.2" />
+                <pod name="Airship" spec="14.2.0" />
             </pods>
         </podspec>
 
