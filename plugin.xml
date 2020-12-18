@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="12.0.1"
+        version="12.1.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -40,7 +40,7 @@
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data
                 android:name="com.urbanairship.cordova.version"
-                android:value="12.0.1"/>
+                android:value="12.1.0"/>
 
             <meta-data
                 android:name="com.urbanairship.autopilot"
@@ -142,7 +142,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
-            <string>12.0.1</string>
+            <string>12.1.0</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
@@ -193,7 +193,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship" spec="14.2.0" />
+                <pod name="Airship" spec="14.2.1" />
             </pods>
         </podspec>
 
