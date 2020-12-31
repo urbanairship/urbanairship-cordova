@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 12.1.0 - December 31, 2020
+
+Minor release that adds support for In-App Automation message limits and segments.
+
+### Changes
+- Updated iOS SDK to 14.2.1
+- Updated Android SDK to 14.1.1
+
+
 ## Version 12.0.1 - September 30, 2020
 
 Patch release updating iOS and Android SDK versions to 14.1.2 and 14.0.1, respectively.
