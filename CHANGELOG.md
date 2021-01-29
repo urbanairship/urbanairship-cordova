@@ -1,5 +1,16 @@
 # Cordova Plugin Changelog
 
+## Version 12.1.1 - January 29, 2020
+
+Patch release updating iOS SDK version 14.2.2.
+
+### Changes
+- Fixed attributes updates when the named user has invalid URL characters.
+- Fixed accessing UIApplication state on a background queue warning.
+- Initial channel creation will wait up to 10 seconds for device token registration.
+
+For more details, see the [iOS CHANGELOG](https://github.com/urbanairship/ios-library/blob/14.1.2/CHANGELOG.md).
+
 ## Version 12.1.0 - December 31, 2020
 
 Minor release that adds support for In-App Automation message limits and segments.
