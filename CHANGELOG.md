@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 12.1.1 - January 29, 2020
+## Version 12.1.1 - February 2, 2021
 
 Patch release updating iOS SDK version 14.2.2.
 
@@ -9,7 +9,7 @@ Patch release updating iOS SDK version 14.2.2.
 - Fixed accessing UIApplication state on a background queue warning.
 - Initial channel creation will wait up to 10 seconds for device token registration.
 
-For more details, see the [iOS CHANGELOG](https://github.com/urbanairship/ios-library/blob/14.1.2/CHANGELOG.md).
+For more details, see the [iOS CHANGELOG](https://github.com/urbanairship/ios-library/blob/14.2.2/CHANGELOG.md).
 
 ## Version 12.1.0 - December 31, 2020
 
