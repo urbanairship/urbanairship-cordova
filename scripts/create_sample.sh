@@ -4,6 +4,8 @@ set -euxo pipefail
 
 cd `dirname "${0}"`/../
 ROOT_PATH="$(pwd)"
+CORDOVA_AIRSHIP_MODULE="$ROOT_PATH/urbanairship-cordova"
+CORDOVA_AIRSHIP_ACCENGAGE_MODULE="$ROOT_PATH/urbanairship-accengage-cordova"
 cd -
 
 source "$ROOT_PATH/scripts/config.sh"
@@ -34,7 +36,7 @@ cd test
 npm install cordova@$CORDOVA_VERSION
 
 # add the plugin
-npx cordova plugin add $ROOT_PATH
+npx cordova plugin add $CORDOVA_AIRSHIP_MODULE
 
 # copy config and example files
 cp "$ROOT_PATH/config_sample.xml" config.xml
