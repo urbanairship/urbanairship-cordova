@@ -7,6 +7,7 @@
     ]
   },
   "scripts": {
+    "generate-docs": "yarn workspace urbanairship-cordova run generate-docs",
     "create-sample": "bash ./scripts/create_sample.sh ../cordova-sample",
     "build-android": "cd ../cordova-sample/test; cordova build android",
     "build-ios": "cd ../cordova-sample/test; cordova build ios",
