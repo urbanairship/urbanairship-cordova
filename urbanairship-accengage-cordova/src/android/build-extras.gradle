@@ -1,0 +1,34 @@
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.3'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+dependencies {
+    implementation 'com.urbanairship.android:urbanairship-accengage:13.3.2'
+}
+
+ext.cdvCompileSdkVersion = 29
+
+// For CI only. Verify our plugin is Java 6 compatible
+if (project.hasProperty('uaInternalJava6CompileOptions') && uaInternalJava6CompileOptions.toBoolean()) {
+    cdvPluginPostBuildExtras.push({
+        android.compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_6
+            targetCompatibility JavaVersion.VERSION_1_6
+        }
+    })
+}

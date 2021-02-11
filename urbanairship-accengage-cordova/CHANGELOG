@@ -1,0 +1,8 @@
+# Airship Accengage Cordova Plugin Changelog
+
+## Version 11.0.1 - August 17, 2020
+
+Initial release.
+
+- Updated iOS Accengage module to 13.5.4
+- Update Android Accengage module to 13.3.2
