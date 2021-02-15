@@ -35,6 +35,8 @@ npx cordova create test com.urbanairship.sample Test
 cd test
 npm install cordova@$CORDOVA_VERSION
 
+yarn install
+
 # add the plugin
 npx cordova plugin add $CORDOVA_AIRSHIP_MODULE
 
