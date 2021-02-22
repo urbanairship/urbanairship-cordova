@@ -66,9 +66,14 @@ jobs:
           service_account_key: ${{ secrets.GCP_SA_KEY }}
       - name: Upload docs
         run: bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} out
-      - name: Publish library
+      - name: Publish modules
         run: |
-          npm publish
+          cd urbanairship-cordova/
+          yarn publish
+          cd -
+          cd urbanairship-accengage-cordova/
+          yarn publish
+          cd -
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - name: Github Release

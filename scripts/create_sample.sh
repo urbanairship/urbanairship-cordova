@@ -35,8 +35,9 @@ npx cordova create test com.urbanairship.sample Test
 cd test
 npm install cordova@$CORDOVA_VERSION
 
-# add the plugin
+# add the plugins
 npx cordova plugin add $CORDOVA_AIRSHIP_MODULE
+npx cordova plugin add $CORDOVA_AIRSHIP_ACCENGAGE_MODULE
 
 # copy config and example files
 cp "$ROOT_PATH/config_sample.xml" config.xml
