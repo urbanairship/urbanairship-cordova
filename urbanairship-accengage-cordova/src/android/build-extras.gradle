@@ -1,4 +1,15 @@
 
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.3'
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -7,10 +18,7 @@ allprojects {
 }
 
 dependencies {
-    def airshipVersion = "14.1.1"
-    implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
-    implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
-    implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"
+    implementation 'com.urbanairship.android:urbanairship-accengage:14.2.0'
 }
 
 ext.cdvCompileSdkVersion = 29

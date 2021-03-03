@@ -1,0 +1,43 @@
+{
+  "name": "urbanairship-accengage-cordova",
+  "version": "11.0.1",
+  "description": "Urban Airship-Accengage Cordova plugin",
+  "cordova": {
+    "id": "urbanairship-accengage-cordova",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urbanairship/urbanairship-accengage-cordova.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "urbanairship",
+    "accengage",
+    "cordova-ios",
+    "cordova-android"
+  ],
+  "engines": [
+    {
+      "name": "cordova-android",
+      "version": ">=4.1.0"
+    },
+    {
+      "name": "cordova-ios",
+      "version": ">=5.0.1"
+    },
+    {
+      "name": "cordova-plugman",
+      "version": ">=4.2.0"
+    }
+  ],
+  "author": "Urban Airship",
+  "license": "Apache 2.0",
+  "homepage": "https://github.com/urbanairship/urbanairship-accengage-cordova.git",
+  "bugs": {
+    "url": "https://github.com/urbanairship/urbanairship-accengage-cordova/issues"
+  }
+}

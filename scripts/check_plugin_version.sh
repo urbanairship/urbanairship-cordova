@@ -5,12 +5,12 @@ set -x
 ROOT_PATH=`dirname "${0}"`/..
 
 # Get version from package.json file
-packageJSONFilePath="$ROOT_PATH/package.json"
+packageJSONFilePath="$ROOT_PATH/urbanairship-cordova/package.json"
 packageJSONVersionRegex='"version": ?"[0-9]+\.[0-9]+\.[0-9]+"'
 packageJSONVersion=$(grep -E "$packageJSONVersionRegex" $packageJSONFilePath | cut -f4 -d \")
 
 # Get version from plugin.xml file
-pluginXMLFilePath="$ROOT_PATH/plugin.xml"
+pluginXMLFilePath="$ROOT_PATH/urbanairship-cordova/plugin.xml"
 
 # Get plugin version
 pluginXMLFileVersionRegex='version= ?"[0-9]+\.[0-9]+\.[0-9]+"'
