@@ -18,7 +18,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-accengage:14.2.0'
+    implementation 'com.urbanairship.android:urbanairship-accengage:14.3.0'
 }
 
 ext.cdvCompileSdkVersion = 29
