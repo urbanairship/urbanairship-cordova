@@ -3,7 +3,8 @@
   "workspaces": {
     "packages": [
       "urbanairship-cordova",
-      "urbanairship-accengage-cordova"
+      "urbanairship-accengage-cordova",
+      "urbanairship-hms-cordova"
     ]
   },
   "scripts": {
@@ -14,6 +15,8 @@
     "run-android": "cd ../cordova-sample/test; cordova run android",
     "run-ios": "cd ../cordova-sample/test; cordova run ios",
     "add-accengage-module": "cd ../cordova-sample/test; cordova plugin add ../../urbanairship-cordova/urbanairship-accengage-cordova",
-    "remove-accengage-module": "cd ../cordova-sample/test; cordova plugin rm urbanairship-accengage-cordova"
+    "remove-accengage-module": "cd ../cordova-sample/test; cordova plugin rm urbanairship-accengage-cordova",
+    "add-hms-module": "cd ../cordova-sample/test; cordova plugin add ../../urbanairship-cordova/urbanairship-hms-cordova",
+    "remove-hms-module": "cd ../cordova-sample/test; cordova plugin rm urbanairship-hms-cordova"
   }
 }
