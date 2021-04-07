@@ -3,6 +3,7 @@ buildscript {
     repositories {
         google()
         jcenter()
+        maven { url 'http://developer.huawei.com/repo/' }
     }
 
     dependencies {
@@ -19,6 +20,7 @@ allprojects {
 
 dependencies {
     implementation 'com.urbanairship.android:urbanairship-hms:14.3.0'
+    implementation 'com.huawei.hms:push:5.1.1.301'
 }
 
 ext.cdvCompileSdkVersion = 29
@@ -32,3 +34,4 @@ if (project.hasProperty('uaInternalJava6CompileOptions') && uaInternalJava6Compi
         }
     })
 }
+apply plugin: 'com.huawei.agconnect'
