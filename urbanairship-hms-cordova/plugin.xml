@@ -15,7 +15,7 @@
         <engine name="cordova" version=">=9.0.1"/>
     </engines>
 
-    <dependency id="urbanairship-cordova" version=">=11.0.1"/>
+    <dependency id="urbanairship-cordova" version="12.2.0"/>
 
     <!-- android -->
     <platform name="android">
