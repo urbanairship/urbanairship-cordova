@@ -23,6 +23,8 @@
         custom="true"
         src="src/android/build-extras.gradle"
         type="gradleReference"/>
+
+        <hook type="before_build" src="scripts/before_build.js" />
     </platform>
 
 </plugin>
