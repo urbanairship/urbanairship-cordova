@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 12.2.0 - April 22, 2021
+## Version 12.2.0 - April 29, 2021
 
 Minor release updating iOS and Android SDK versions to 14.3.1 and 14.3.0, respectively.
 
