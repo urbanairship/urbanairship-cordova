@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 12.2.0 - April 29, 2021
+
+Minor release updating iOS and Android SDK versions to 14.3.1 and 14.3.0, respectively.
+
+### Changes
+- Updated iOS SDK to 14.3.1
+- Updated Android SDK to 14.3.0
+- Added support for HMS with our [HMS module](https://github.com/urbanairship/urbanairship-cordova/tree/main/urbanairship-hms-cordova)
+
 ## Version 12.1.1 - February 2, 2021
 
 Patch release updating iOS SDK version 14.2.2.

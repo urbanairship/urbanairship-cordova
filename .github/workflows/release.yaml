@@ -74,6 +74,9 @@ jobs:
           cd urbanairship-accengage-cordova/
           yarn publish
           cd -
+          cd urbanairship-hms-cordova/
+          yarn publish
+          cd -
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - name: Github Release
