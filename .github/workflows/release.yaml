@@ -59,9 +59,9 @@ jobs:
         run: |
           yarn install
           yarn generate-docs
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@daadedc81d5f9d3c06d2c92f49202a3cc2b919ba # v0.2.1
         with:
-          version: "270.0.0"
+          version: '351.0.0'
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
       - name: Upload docs
