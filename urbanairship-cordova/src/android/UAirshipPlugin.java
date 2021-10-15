@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.urbanairship.Autopilot;
+import com.urbanairship.PrivacyManager;
 import com.urbanairship.UAirship;
 import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionCompletionCallback;
@@ -32,6 +33,7 @@ import com.urbanairship.json.JsonValue;
 import com.urbanairship.messagecenter.Inbox;
 import com.urbanairship.messagecenter.Message;
 import com.urbanairship.messagecenter.MessageCenter;
+import com.urbanairship.preferencecenter.PreferenceCenter;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.util.UAStringUtil;
 
@@ -44,6 +46,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -72,8 +75,8 @@ public class UAirshipPlugin extends CordovaPlugin {
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
-            "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen", "setDataCollectionEnabled", "isDataCollectionEnabled",
-            "setPushTokenRegistrationEnabled", "isPushTokenRegistrationEnabled");
+            "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
+            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter");
 
     /*
      * These actions are available even if airship is not ready.
@@ -92,6 +95,20 @@ public class UAirshipPlugin extends CordovaPlugin {
     private static final String ATTRIBUTE_OPERATION_VALUETYPE = "type";
     private static final String ATTRIBUTE_OPERATION_SET = "set";
     private static final String ATTRIBUTE_OPERATION_REMOVE = "remove";
+
+    private static final Map<String, Integer> AUTHORIZED_FEATURES = new HashMap<>();
+    static {
+        AUTHORIZED_FEATURES.put("FEATURE_NONE", PrivacyManager.FEATURE_NONE);
+        AUTHORIZED_FEATURES.put("FEATURE_IN_APP_AUTOMATION", PrivacyManager.FEATURE_IN_APP_AUTOMATION);
+        AUTHORIZED_FEATURES.put("FEATURE_MESSAGE_CENTER", PrivacyManager.FEATURE_MESSAGE_CENTER);
+        AUTHORIZED_FEATURES.put("FEATURE_PUSH", PrivacyManager.FEATURE_PUSH);
+        AUTHORIZED_FEATURES.put("FEATURE_CHAT", PrivacyManager.FEATURE_CHAT);
+        AUTHORIZED_FEATURES.put("FEATURE_ANALYTICS", PrivacyManager.FEATURE_ANALYTICS);
+        AUTHORIZED_FEATURES.put("FEATURE_TAGS_AND_ATTRIBUTES", PrivacyManager.FEATURE_TAGS_AND_ATTRIBUTES);
+        AUTHORIZED_FEATURES.put("FEATURE_CONTACTS", PrivacyManager.FEATURE_CONTACTS);
+        AUTHORIZED_FEATURES.put("FEATURE_LOCATION", PrivacyManager.FEATURE_LOCATION);
+        AUTHORIZED_FEATURES.put("FEATURE_ALL", PrivacyManager.FEATURE_ALL);
+    }
 
     private Context context;
     private PluginManager pluginManager;
@@ -187,12 +204,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         isAnalyticsEnabled(data, callbackContext);
                     } else if ("isAppNotificationsEnabled".equals(action)) {
                         isAppNotificationsEnabled(data, callbackContext);
-                    } else if ("isDataCollectionEnabled".equals(action)) {
-                        isDataCollectionEnabled(data, callbackContext);
                     } else if ("isInQuietTime".equals(action)) {
                         isInQuietTime(data, callbackContext);
-                    } else if ("isPushTokenRegistrationEnabled".equals(action)) {
-                        isPushTokenRegistrationEnabled(data, callbackContext);
                     } else if ("isQuietTimeEnabled".equals(action)) {
                         isQuietTimeEnabled(data, callbackContext);
                     } else if ("isSoundEnabled".equals(action)) {
@@ -217,12 +230,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         setAssociatedIdentifier(data, callbackContext);
                     } else if ("setAutoLaunchDefaultMessageCenter".equals(action)) {
                         setAutoLaunchDefaultMessageCenter(data, callbackContext);
-                    } else if ("setDataCollectionEnabled".equals(action)) {
-                        setDataCollectionEnabled(data, callbackContext);
                     } else if ("setNamedUser".equals(action)) {
                         setNamedUser(data, callbackContext);
-                    } else if ("setPushTokenRegistrationEnabled".equals(action)) {
-                        setPushTokenRegistrationEnabled(data, callbackContext);
                     } else if ("setQuietTime".equals(action)) {
                         setQuietTime(data, callbackContext);
                     } else if ("setQuietTimeEnabled".equals(action)) {
@@ -239,6 +248,18 @@ public class UAirshipPlugin extends CordovaPlugin {
                         takeOff(data, callbackContext);
                     } else if ("trackScreen".equals(action)) {
                         trackScreen(data, callbackContext);
+                    } else if ("enableFeature".equals(action)) {
+                        enableFeature(data, callbackContext);
+                    } else if ("disableFeature".equals(action)) {
+                        disableFeature(data, callbackContext);
+                    } else if ("setEnabledFeatures".equals(action)) {
+                        setEnabledFeatures(data, callbackContext);
+                    } else if ("getEnabledFeatures".equals(action)) {
+                        getEnabledFeatures(data, callbackContext);
+                    } else if ("isFeatureEnabled".equals(action)) {
+                        isFeatureEnabled(data, callbackContext);
+                    } else if ("openPreferenceCenter".equals(action)) {
+                        openPreferenceCenter(data, callbackContext);
                     } else {
                         PluginLogger.debug("No implementation for action: %s", action);
                         callbackContext.error("No implementation for action " + action);
@@ -308,7 +329,6 @@ public class UAirshipPlugin extends CordovaPlugin {
                 .setProductionConfig(prod.opt("appKey").optString(), prod.opt("appSecret").optString())
                 .setDevelopmentConfig(dev.opt("appKey").optString(), dev.opt("appSecret").optString())
                 .setCloudSite(config.opt("site").optString())
-                .setDataCollectionOptInEnabled(config.opt("dataCollectionOptInEnabled").getBoolean(false))
                 .apply();
 
         final CountDownLatch latch = new CountDownLatch(1);
@@ -1231,52 +1251,151 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     * Enables or disables data collection.
-     * <p/>
-     * Expected arguments: Boolean
+     * Enables features, adding them to the set of currently enabled features.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    private void enableFeature(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        JSONArray features = data.getJSONArray(0);
+        if (isValidFeature(features)) {
+            UAirship.shared().getPrivacyManager().enable(stringToFeature(features));
+            callbackContext.success();
+        } else {
+            callbackContext.error("Invalid features " + features);
+        }
+    }
+
+    /**
+     * Disables features, removing them from the set of currently enabled features.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    private void disableFeature(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        JSONArray features = data.getJSONArray(0);
+        if (isValidFeature(features)) {
+            UAirship.shared().getPrivacyManager().disable(stringToFeature(features));
+            callbackContext.success();
+        } else {
+            callbackContext.error("Invalid features " + features);
+        }
+    }
+
+    /**
+     * Sets the current enabled features, replacing any currently enabled features with the given set.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    private void setEnabledFeatures(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        JSONArray features = data.getJSONArray(0);
+        if (isValidFeature(features)) {
+            UAirship.shared().getPrivacyManager().setEnabledFeatures(stringToFeature(features));
+            callbackContext.success();
+        } else {
+            callbackContext.error("Invalid features " + features);
+        }
+    }
+
+    /**
+     * Gets the current enabled features.
      *
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    private void setDataCollectionEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        boolean enabled = data.getBoolean(0);
-        UAirship.shared().setDataCollectionEnabled(enabled);
+    private void getEnabledFeatures(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+        callbackContext.success(featureToString(UAirship.shared().getPrivacyManager().getEnabledFeatures()));
+    }
+
+    /**
+     * Checks if all of the given features are enabled.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    private void isFeatureEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        JSONArray features = data.getJSONArray(0);
+        if (isValidFeature(features)) {
+            int value = UAirship.shared().getPrivacyManager().isEnabled(stringToFeature(features)) ? 1 : 0;
+            callbackContext.success(value);
+        } else {
+            callbackContext.error("Invalid features " + features);
+        }
+    }
+
+    /**
+     * Opens the Preference Center with the given preferenceCenterId.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     * @throws JSONException
+     */
+    private void openPreferenceCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        String preferenceCenterId = data.getString(0);
+        PreferenceCenter.shared().open(preferenceCenterId);
         callbackContext.success();
     }
 
     /**
-     * Checks if data collection is enabled or not.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
+     * Helper method to verify if a Feature is authorized.
+     * @param features The String features to verify.
+     * @return {@code true} if the provided features are authorized, otherwise {@code false}.
      */
-    private void isDataCollectionEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        int value = UAirship.shared().isDataCollectionEnabled() ? 1 : 0;
-        callbackContext.success(value);
+    private boolean isValidFeature(JSONArray features) throws JSONException {
+        if (features == null || features.length() == 0) {
+            return false;
+        }
+
+        for (int i = 0; i < features.length(); i++) {
+            if (!AUTHORIZED_FEATURES.containsKey(features.getString(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * Sets whether the push token is sent during channel registration.
-     * <p/>
-     * Expected arguments: Boolean
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
+     * Helper method to parse a String features JSONArray into {@link PrivacyManager.Feature} int array.
+     * @param features The String features JSONArray to parse.
+     * @return The {@link PrivacyManager.Feature} int array.
      */
-    private void setPushTokenRegistrationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        boolean enabled = data.getBoolean(0);
-        UAirship.shared().getPushManager().setPushTokenRegistrationEnabled(enabled);
-        callbackContext.success();
+    @PrivacyManager.Feature
+    private @NonNull int[] stringToFeature(@NonNull JSONArray features) throws JSONException {
+        @PrivacyManager.Feature
+        int[] intFeatures = new int[features.length() ];
+
+        for (int i = 0; i < features.length(); i++) {
+            intFeatures[i] = (int) AUTHORIZED_FEATURES.get(features.getString(i));
+        }
+        return intFeatures;
     }
 
     /**
-     * Determines whether the push token is sent during channel registration.
-     *
-     * @param data The call data.
-     * @param callbackContext The callback context.
+     * Helper method to parse a {@link PrivacyManager.Feature} int array into a String features JSONArray.
+     * @param features The {@link PrivacyManager.Feature} int array to parse.
+     * @return The String feature JSONArray.
      */
-    private void isPushTokenRegistrationEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        int value = UAirship.shared().getPushManager().isPushTokenRegistrationEnabled() ? 1 : 0;
-        callbackContext.success(value);
+    private @NonNull JSONArray featureToString(@PrivacyManager.Feature int features) {
+        List<String> stringFeatures = new ArrayList<>();
+
+        if (features == PrivacyManager.FEATURE_ALL) {
+            stringFeatures.add("FEATURE_ALL");
+        } else if (features == PrivacyManager.FEATURE_NONE) {
+            stringFeatures.add("FEATURE_NONE");
+        } else {
+            for (String feature : AUTHORIZED_FEATURES.keySet()) {
+                @PrivacyManager.Feature
+                int intFeature = (int) AUTHORIZED_FEATURES.get(feature);
+                if (((intFeature & features) != 0) && (intFeature != PrivacyManager.FEATURE_ALL)) {
+                    stringFeatures.add(feature);
+                }
+            }
+        }
+        return new JSONArray(stringFeatures);
     }
+
 }

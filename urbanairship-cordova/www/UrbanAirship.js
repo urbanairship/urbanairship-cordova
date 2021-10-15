@@ -1,3 +1,4 @@
+cordova.define("urbanairship-cordova.UrbanAirship", function(require, exports, module) {
 /* Copyright Urban Airship and Contributors */
 
 var cordova = require("cordova"),
@@ -30,6 +31,22 @@ function _runAction(actionName, actionValue, success, failure) {
 
   callNative(successWrapper, failure, "runAction", [actionName, actionValue])
 }
+
+/**
+ * Enum of authorized Features.
+ */
+/*const feature = {
+  FEATURE_NONE = "FEATURE_NONE",
+  FEATURE_IN_APP_AUTOMATION = "FEATURE_IN_APP_AUTOMATION",
+  FEATURE_MESSAGE_CENTER = "FEATURE_MESSAGE_CENTER",
+  FEATURE_PUSH = "FEATURE_PUSH",
+  FEATURE_CHAT = "FEATURE_CHAT",
+  FEATURE_ANALYTICS = "FEATURE_ANALYTICS",
+  FEATURE_TAGS_AND_ATTRIBUTES = "FEATURE_TAGS_AND_ATTRIBUTES",
+  FEATURE_CONTACTS = "FEATURE_CONTACTS",
+  FEATURE_LOCATION = "FEATURE_LOCATION",
+  FEATURE_ALL = "FEATURE_ALL"
+}*/
 
 /**
  * Helper object to edit tag groups.
@@ -1009,54 +1026,81 @@ module.exports = {
   },
 
   /**
-   * Enables or disables data collection.
+   * Enables features, adding them to the set of currently enabled features.
    *
-   * @param {boolean} enabled true to enable data collection, false to disable.
+   * @param {array<string>} features The features to enable.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
    */
-  setDataCollectionEnabled: function(enabled, success, failure) {
-    argscheck.checkArgs('*FF', 'UAirship.setDataCollectionEnabled', arguments)
-    callNative(success, failure, "setDataCollectionEnabled", [!!enabled])
+  enableFeature: function(features, success, failure) {
+    argscheck.checkArgs('aFF', 'UAirship.enableFeature', arguments)
+    callNative(success, failure, "enableFeature", [features])
   },
 
   /**
-   * Checks if data collection is enabled or not.
+   * Disables features, removing them from the set of currently enabled features.
    *
-   * @param {function(enabled)} success Success callback.
-   * @param {boolean} success.enabled Flag indicating if data collection is enabled or not.
-   * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The error message.
-   */
-  isDataCollectionEnabled: function(success, failure) {
-    argscheck.checkArgs('fF', 'UAirship.isDataCollectionEnabled', arguments)
-    callNative(success, failure, "isDataCollectionEnabled")
-  },
-
-  /**
-   * Enables or disables push token registration.
-   *
-   * @param {boolean} enabled true to enable push token registration, false to disable.
+   * @param {array<string>} features The features to disable.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
    */
-  setPushTokenRegistrationEnabled: function(enabled, success, failure) {
-    argscheck.checkArgs('*FF', 'UAirship.setPushTokenRegistrationEnabled', arguments)
-    callNative(success, failure, "setPushTokenRegistrationEnabled", [!!enabled])
+  disableFeature: function(features, success, failure) {
+    argscheck.checkArgs('aFF', 'UAirship.disableFeature', arguments)
+    callNative(success, failure, "disableFeature", [features])
   },
 
   /**
-   * Checks if push token registration is enabled or not.
+   * Sets the current enabled features, replacing any currently enabled features with the given set.
    *
-   * @param {function(enabled)} success Success callback.
-   * @param {boolean} success.enabled Flag indicating if push token registration is enabled or not.
+   * @param {array<string>} features The features to set as enabled.
+   * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
    */
-  isPushTokenRegistrationEnabled: function(success, failure) {
-    argscheck.checkArgs('fF', 'UAirship.isPushTokenRegistrationEnabled', arguments)
-    callNative(success, failure, "isPushTokenRegistrationEnabled")
+  setEnabledFeatures: function(features, success, failure) {
+    argscheck.checkArgs('aFF', 'UAirship.setEnabledFeatures', arguments)
+    callNative(success, failure, "setEnabledFeatures", [features])
+  },
+
+  /**
+   * Gets the current enabled features.
+   *
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  getEnabledFeatures: function(success, failure) {
+    argscheck.checkArgs('FF', 'UAirship.getEnabledFeatures', arguments)
+    callNative(success, failure, "getEnabledFeatures")
+  },
+
+  /**
+   * Checks if all of the given features are enabled.
+   *
+   * @param {array<string>} features The features to check.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  isFeatureEnabled: function(features, success, failure) {
+    argscheck.checkArgs('aFF', 'UAirship.isFeatureEnabled', arguments)
+    callNative(success, failure, "isFeatureEnabled", [features])
+  },
+
+  /**
+   * Opens the Preference Center with the given preferenceCenterId.
+   *
+   * @param {string} prenferenceCenterId The preference center ID.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  openPreferenceCenter: function(prenferenceCenterId, success, failure) {
+    argscheck.checkArgs('sFF', 'UAirship.openPreferenceCenter', arguments)
+    callNative(success, failure, "openPreferenceCenter", [prenferenceCenterId])
   }
 }
+
+});

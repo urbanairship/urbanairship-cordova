@@ -3,7 +3,7 @@
 #if __has_include("AirshipLib.h")
 #import "AirshipLib.h"
 #else
-@import Airship;
+@import AirshipKit;
 #endif
 
 #import "UACordovaNotificationOpenedEvent.h"
@@ -12,19 +12,19 @@ NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
 
 @implementation UACordovaNotificationOpenedEvent
 
-- (instancetype)initWithNotificationResponse:(UANotificationResponse *)response {
+- (instancetype)initWithNotificationResponse:(UNNotificationResponse *)response {
     self = [super init];
 
     if (self) {
         self.type = EventNotificationOpened;
 
-        NSDictionary *pushEvent = [[self class] pushEventDataFromNotificationContent:response.notificationContent];
+        NSDictionary *pushEvent = [[self class] pushEventDataFromNotificationContent:response.notification.request.content.userInfo];
         NSMutableDictionary *data = [NSMutableDictionary dictionaryWithDictionary:pushEvent];
 
-        if ([response.actionIdentifier isEqualToString:UANotificationDefaultActionIdentifier]) {
+        if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
             [data setValue:@(YES) forKey:@"isForeground"];
         } else {
-            UANotificationAction *notificationAction = [self notificationActionForCategory:response.notificationContent.categoryIdentifier
+            UNNotificationAction *notificationAction = [self notificationActionForCategory:response.notification.request.content.categoryIdentifier
                                                                           actionIdentifier:response.actionIdentifier];
 
             BOOL isForeground = notificationAction.options & UNNotificationActionOptionForeground;
@@ -38,17 +38,17 @@ NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
     return self;
 }
 
-+ (instancetype)eventWithNotificationResponse:(UANotificationResponse *)response {
++ (instancetype)eventWithNotificationResponse:(UNNotificationResponse *)response {
     return [[self alloc] initWithNotificationResponse:response];
 }
 
-- (UANotificationAction *)notificationActionForCategory:(NSString *)category actionIdentifier:(NSString *)identifier {
+- (UNNotificationAction *)notificationActionForCategory:(NSString *)category actionIdentifier:(NSString *)identifier {
     NSSet *categories = [UAirship push].combinedCategories;
 
-    UANotificationCategory *notificationCategory;
-    UANotificationAction *notificationAction;
+    UNNotificationCategory *notificationCategory;
+    UNNotificationAction *notificationAction;
 
-    for (UANotificationCategory *possibleCategory in categories) {
+    for (UNNotificationCategory *possibleCategory in categories) {
         if ([possibleCategory.identifier isEqualToString:category]) {
             notificationCategory = possibleCategory;
             break;
@@ -62,7 +62,7 @@ NSString *const EventNotificationOpened = @"urbanairship.notification_opened";
 
     NSMutableArray *possibleActions = [NSMutableArray arrayWithArray:notificationCategory.actions];
 
-    for (UANotificationAction *possibleAction in possibleActions) {
+    for (UNNotificationAction *possibleAction in possibleActions) {
         if ([possibleAction.identifier isEqualToString:identifier]) {
             notificationAction = possibleAction;
             break;

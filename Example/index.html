@@ -121,12 +121,8 @@
           $('#pushEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        UAirship.isDataCollectionEnabled(function(isEnabled) {
-          $('#dataCollectionEnabled').val(isEnabled ? 'on' : 'off').change()
-        })
-
-        UAirship.isPushTokenRegistrationEnabled(function(isEnabled) {
-          $('#pushTokenRegistrationEnabled').val(isEnabled ? 'on' : 'off').change()
+        UAirship.isFeatureEnabled(["FEATURE_ALL"], function(isEnabled) {
+          $('#allFeaturesEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
         UAirship.isQuietTimeEnabled(function(isEnabled) {
@@ -167,14 +163,13 @@
           UAirship.setUserNotificationsEnabled(isEnabled)
         })
 
-        $('#dataCollectionEnabled').change(function() {
-          var isEnabled = ($('#dataCollectionEnabled').val() == "on")
-          UAirship.setDataCollectionEnabled(isEnabled)
-        })
-
-        $('#pushTokenRegistrationEnabled').change(function() {
-          var isEnabled = ($('#pushTokenRegistrationEnabled').val() == "on")
-          UAirship.setPushTokenRegistrationEnabled(isEnabled)
+        $('#allFeaturesEnabled').change(function() {
+          var isEnabled = ($('#allFeaturesEnabled').val() == "on")
+          if (isEnabled) {
+            UAirship.setEnabledFeatures(["FEATURE_ALL"])
+          } else {
+            UAirship.setEnabledFeatures(["FEATURE_NONE"])
+          }
         })
 
         $("#displayMessageCenterButton").click(function(ev) {
@@ -255,16 +250,8 @@
           </div>
 
           <div data-role="controlgroup">
-            <label for="dataCollectionEnabled">Data Collection Enabled</label>
-            <select name="dataCollectionEnabled" id="dataCollectionEnabled" data-role="slider" data-theme="c" data-track-theme="c">
-              <option value="off">Off</option>
-              <option value="on">On</option>
-            </select>
-          </div>
-
-          <div data-role="controlgroup">
-            <label for="pushTokenRegistrationEnabled">Push Token Registration Enabled</label>
-            <select name="pushTokenRegistrationEnabled" id="pushTokenRegistrationEnabled" data-role="slider" data-theme="c" data-track-theme="c">
+            <label for="allFeaturesEnabled">Features Enabled</label>
+            <select name="allFeaturesEnabled" id="allFeaturesEnabled" data-role="slider" data-theme="c" data-track-theme="c">
               <option value="off">Off</option>
               <option value="on">On</option>
             </select>

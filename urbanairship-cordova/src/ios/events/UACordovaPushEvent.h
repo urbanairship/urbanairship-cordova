@@ -3,7 +3,7 @@
 #if __has_include("AirshipLib.h")
 #import "AirshipLib.h"
 #else
-@import Airship;
+@import AirshipKit;
 #endif
 
 #import "UACordovaEvent.h"
@@ -34,17 +34,17 @@ extern NSString *const EventPushReceived;
 /**
  * Push event with notification content.
  *
- * @param content The notification content.
+ * @param userInfo The notification content.
  */
-+ (instancetype)eventWithNotificationContent:(UANotificationContent *)content;
++ (instancetype)eventWithNotificationContent:(NSDictionary *)userInfo;
 
 /**
  * Helper method for producing sanitized push payloads from notification content.
  *
- * @param notificationContent The notification content.
+ * @param userInfo The notification content.
  * @return A push payload dictionary.
  */
-+ (NSDictionary *)pushEventDataFromNotificationContent:(UANotificationContent *)notificationContent;
++ (NSDictionary *)pushEventDataFromNotificationContent:(NSDictionary *)userInfo;
 
 @end
 

@@ -16,7 +16,7 @@ extern NSString *const EventNotificationOpened;
  *
  * @param content The notification response.
 */
-+ (instancetype)eventWithNotificationResponse:(UANotificationResponse *)response;
++ (instancetype)eventWithNotificationResponse:(UNNotificationResponse *)response;
 
 @end
 

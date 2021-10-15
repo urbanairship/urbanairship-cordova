@@ -7,10 +7,11 @@ allprojects {
 }
 
 dependencies {
-    def airshipVersion = "14.3.0"
+    def airshipVersion = "15.1.0"
     implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"
+    implementation "com.urbanairship.android:urbanairship-preference-center:$airshipVersion"
 }
 
 ext.cdvCompileSdkVersion = 29

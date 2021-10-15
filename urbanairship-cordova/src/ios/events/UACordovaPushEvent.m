@@ -6,27 +6,27 @@ NSString *const EventPushReceived = @"urbanairship.push";
 
 @implementation UACordovaPushEvent
 
-+ (instancetype)eventWithNotificationContent:(UANotificationContent *)content  {
-    return [[self alloc] initWithNotificationContent:content];
++ (instancetype)eventWithNotificationContent:(NSDictionary *)userInfo {
+    return [[self alloc] initWithNotificationContent:userInfo];
 }
 
-- (instancetype)initWithNotificationContent:(UANotificationContent *)content {
+- (instancetype)initWithNotificationContent:(NSDictionary *)userInfo {
     self = [super init];
 
     if (self) {
         self.type = EventPushReceived;
-        self.data = [[self class] pushEventDataFromNotificationContent:content];
+        self.data = [[self class] pushEventDataFromNotificationContent:userInfo];
     }
 
     return self;
 }
 
-+ (NSDictionary *)pushEventDataFromNotificationContent:(UANotificationContent *)notificationContent {
-    if (!notificationContent) {
-        return @{ @"message": @"", @"extras": @{}};
++ (NSDictionary *)pushEventDataFromNotificationContent:(NSDictionary *)userInfo {
+    if (!userInfo) {
+        return @{@"extras": @{}};
     }
 
-    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
+    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:userInfo];
 
     // remove the send ID
     if([[info allKeys] containsObject:@"_"]) {
@@ -40,14 +40,6 @@ NSString *const EventPushReceived = @"urbanairship.push";
         result[@"aps"] = info[@"aps"];
         [info removeObjectForKey:@"aps"];
     }
-
-    result[@"message"] = notificationContent.alertBody ?: @"";
-
-    // Set the title and subtitle as top level objects, if present
-    NSString *title = notificationContent.alertTitle;
-    NSString *subtitle = notificationContent.notification.request.content.subtitle;
-    [result setValue:title forKey:@"title"];
-    [result setValue:subtitle forKey:@"subtitle"];
 
     // Set the remaining info as extras
     result[@"extras"] = info;
