@@ -32,20 +32,45 @@ function _runAction(actionName, actionValue, success, failure) {
 }
 
 /**
- * Enum of authorized Features.
+ * Constant for Feature NONE.
  */
-/*const feature = {
-  FEATURE_NONE = "FEATURE_NONE",
-  FEATURE_IN_APP_AUTOMATION = "FEATURE_IN_APP_AUTOMATION",
-  FEATURE_MESSAGE_CENTER = "FEATURE_MESSAGE_CENTER",
-  FEATURE_PUSH = "FEATURE_PUSH",
-  FEATURE_CHAT = "FEATURE_CHAT",
-  FEATURE_ANALYTICS = "FEATURE_ANALYTICS",
-  FEATURE_TAGS_AND_ATTRIBUTES = "FEATURE_TAGS_AND_ATTRIBUTES",
-  FEATURE_CONTACTS = "FEATURE_CONTACTS",
-  FEATURE_LOCATION = "FEATURE_LOCATION",
-  FEATURE_ALL = "FEATURE_ALL"
-}*/
+const FEATURE_NONE = "FEATURE_NONE"
+/**
+ * Constant for InApp Automation Feature.
+ */
+const FEATURE_IN_APP_AUTOMATION = "FEATURE_IN_APP_AUTOMATION"
+/**
+ * Constant for Message Center Feature.
+ */
+const FEATURE_MESSAGE_CENTER = "FEATURE_MESSAGE_CENTER"
+/**
+ * Constant for Push Feature.
+ */
+const FEATURE_PUSH = "FEATURE_PUSH"
+/**
+ * Constant for Chat Feature.
+ */
+const FEATURE_CHAT = "FEATURE_CHAT"
+/**
+ * Constant for Analytics Feature.
+ */
+const FEATURE_ANALYTICS = "FEATURE_ANALYTICS"
+/**
+ * Constant for Tags and Attributes Feature.
+ */
+const FEATURE_TAGS_AND_ATTRIBUTES = "FEATURE_TAGS_AND_ATTRIBUTES"
+/**
+ * Constant for Contacts Feature.
+ */
+const FEATURE_CONTACTS = "FEATURE_CONTACTS"
+/**
+ * Constant for Location Feature.
+ */
+const FEATURE_LOCATION = "FEATURE_LOCATION"
+/**
+ * Constant for all Feature.
+ */
+const FEATURE_ALL = "FEATURE_ALL"
 
 /**
  * Helper object to edit tag groups.
@@ -216,6 +241,17 @@ document.addEventListener("deviceready", bindDocumentEvent, false)
  * @module UrbanAirship
  */
 module.exports = {
+
+  FEATURE_NONE: FEATURE_NONE,
+  FEATURE_IN_APP_AUTOMATION: FEATURE_IN_APP_AUTOMATION,
+  FEATURE_MESSAGE_CENTER: FEATURE_MESSAGE_CENTER,
+  FEATURE_PUSH: FEATURE_PUSH,
+  FEATURE_CHAT: FEATURE_CHAT,
+  FEATURE_ANALYTICS: FEATURE_ANALYTICS,
+  FEATURE_TAGS_AND_ATTRIBUTES: FEATURE_TAGS_AND_ATTRIBUTES,
+  FEATURE_CONTACTS: FEATURE_CONTACTS,
+  FEATURE_LOCATION: FEATURE_LOCATION,
+  FEATURE_ALL: FEATURE_ALL,
 
   /**
    * Event fired when a new deep link is received.

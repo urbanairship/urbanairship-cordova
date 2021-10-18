@@ -121,7 +121,7 @@
           $('#pushEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        UAirship.isFeatureEnabled(["FEATURE_ALL"], function(isEnabled) {
+        UAirship.isFeatureEnabled([UAirship.FEATURE_ALL], function(isEnabled) {
           $('#allFeaturesEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
@@ -166,9 +166,12 @@
         $('#allFeaturesEnabled').change(function() {
           var isEnabled = ($('#allFeaturesEnabled').val() == "on")
           if (isEnabled) {
-            UAirship.setEnabledFeatures(["FEATURE_ALL"])
+            console.log("Enables all Features")
+            UAirship.setEnabledFeatures([UAirship.FEATURE_ALL])
           } else {
-            UAirship.setEnabledFeatures(["FEATURE_NONE"])
+            console.log("Disables all Features")
+            console.log("Displaying Message Center")
+            UAirship.setEnabledFeatures([UAirship.FEATURE_NONE])
           }
         })
 
