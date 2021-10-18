@@ -179,6 +179,12 @@
 
           })
 
+        $("#openPreferenceCenterButton").click(function(ev) {
+          console.log("Opening Preference Center")
+          UAirship.openPreferenceCenter("test")
+          UAirship.trackScreen("Preference Center")
+        })
+
         $("#addTagButton").click(function(ev) {
           var tag = $("#addTagField").val()
           console.log("Adding new tag: " + tag)
@@ -282,6 +288,8 @@
           </div>
 
           <input type="button" id="displayMessageCenterButton" value="Display MC" />
+
+          <input type="button" id="openPreferenceCenterButton" value="OpenPreferenceCenter" />
 
         </div>
       </form>

@@ -1,4 +1,3 @@
-cordova.define("urbanairship-cordova.UrbanAirship", function(require, exports, module) {
 /* Copyright Urban Airship and Contributors */
 
 var cordova = require("cordova"),
@@ -1102,5 +1101,3 @@ module.exports = {
     callNative(success, failure, "openPreferenceCenter", [prenferenceCenterId])
   }
 }
-
-});
