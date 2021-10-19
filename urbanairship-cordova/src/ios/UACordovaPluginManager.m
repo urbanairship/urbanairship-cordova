@@ -35,7 +35,6 @@ NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foregr
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 NSString *const CloudSiteConfigKey = @"com.urbanairship.site";
 NSString *const CloudSiteEUString = @"EU";
-NSString *const EnabledFeaturesConfigKey = @"com.urbanairship.enabled_features";
 
 NSString *const UACordovaPluginVersionKey = @"UACordovaPluginVersion";
 
