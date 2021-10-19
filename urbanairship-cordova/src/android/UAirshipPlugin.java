@@ -96,7 +96,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     private static final String ATTRIBUTE_OPERATION_SET = "set";
     private static final String ATTRIBUTE_OPERATION_REMOVE = "remove";
 
-    private static final Map<String, Integer> AUTHORIZED_FEATURES = new HashMap<>();
+    private static final Map<String, Integer> AUTHORIZED_FEATURES = new HashMap<String, Integer>();
     static {
         AUTHORIZED_FEATURES.put("FEATURE_NONE", PrivacyManager.FEATURE_NONE);
         AUTHORIZED_FEATURES.put("FEATURE_IN_APP_AUTOMATION", PrivacyManager.FEATURE_IN_APP_AUTOMATION);
@@ -1380,7 +1380,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @return The String feature JSONArray.
      */
     private @NonNull JSONArray featureToString(@PrivacyManager.Feature int features) {
-        List<String> stringFeatures = new ArrayList<>();
+        List<String> stringFeatures = new ArrayList<String>();
 
         if (features == PrivacyManager.FEATURE_ALL) {
             stringFeatures.add("FEATURE_ALL");

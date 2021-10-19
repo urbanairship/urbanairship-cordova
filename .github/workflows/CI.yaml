@@ -4,9 +4,9 @@ on: [pull_request]
 
 jobs:
   android:
-    runs-on: macos-latest
+    runs-on: macos-11
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.0.app/Contents/Developer
     steps:
       - uses: actions/checkout@v1
         # Build tools 31.0.0 doesn't include dx (only d8), which Cordova expects to find.
@@ -17,9 +17,9 @@ jobs:
       - name: Run CI
         run: bash ./scripts/run_ci_tasks.sh -a
   ios:
-    runs-on: macos-latest
+    runs-on: macos-11
     env:
-      DEVELOPER_DIR: /Applications/Xcode_12.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_13.0.app/Contents/Developer
     steps:
       - uses: actions/checkout@v1
       - name: Run CI
