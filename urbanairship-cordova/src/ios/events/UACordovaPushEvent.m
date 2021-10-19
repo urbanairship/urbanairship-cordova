@@ -23,7 +23,7 @@ NSString *const EventPushReceived = @"urbanairship.push";
 
 + (NSDictionary *)pushEventDataFromNotificationContent:(NSDictionary *)userInfo {
     if (!userInfo) {
-        return @{@"extras": @{}};
+        return @{ @"message": @"", @"extras": @{}};
     }
 
     NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:userInfo];
@@ -37,6 +37,23 @@ NSString *const EventPushReceived = @"urbanairship.push";
 
     // If there is an aps dictionary in the extras, remove it and set it as a top level object
     if([[info allKeys] containsObject:@"aps"]) {
+        NSDictionary* aps = info[@"aps"];
+
+        if ([[aps allKeys] containsObject:@"alert"]) {
+
+            NSDictionary *alert = aps[@"alert"];
+            if ([[alert allKeys] containsObject:@"body"]) {
+                result[@"message"] = alert[@"body"];
+            } else {
+                result[@"message"] = @"";
+            }
+            if ([[alert allKeys] containsObject:@"title"]) {
+                [result setValue:alert[@"title"] forKey:@"title"];
+            }
+            if ([[alert allKeys] containsObject:@"subtitle"]) {
+                [result setValue:alert[@"subtitle"] forKey:@"subtitle"];
+            }
+        }
         result[@"aps"] = info[@"aps"];
         [info removeObjectForKey:@"aps"];
     }
