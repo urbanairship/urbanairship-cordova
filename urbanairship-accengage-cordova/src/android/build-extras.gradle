@@ -23,12 +23,12 @@ dependencies {
 
 ext.cdvCompileSdkVersion = 29
 
-// For CI only. Verify our plugin is Java 6 compatible
+// For CI only. Verify our plugin is Java 8 compatible
 if (project.hasProperty('uaInternalJava6CompileOptions') && uaInternalJava6CompileOptions.toBoolean()) {
     cdvPluginPostBuildExtras.push({
         android.compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_6
-            targetCompatibility JavaVersion.VERSION_1_6
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
         }
     })
 }
