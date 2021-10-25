@@ -890,7 +890,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("enableFeature called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSArray *features = [args objectAtIndex:0];
+        NSArray *features = [args firstObject];
         if ([self isValidFeature:features]) {
             [[UAirship shared].privacyManager enableFeatures:[self stringToFeature:features]];
             completionHandler(CDVCommandStatus_OK, nil);
@@ -904,7 +904,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("disableFeature called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSArray *features = [args objectAtIndex:0];
+        NSArray *features = [args firstObject];
         if ([self isValidFeature:features]) {
             [[UAirship shared].privacyManager disableFeatures:[self stringToFeature:features]];
             completionHandler(CDVCommandStatus_OK, nil);
@@ -918,7 +918,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("setEnabledFeatures called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSArray *features = [args objectAtIndex:0];
+        NSArray *features = [args firstObject];
         if ([self isValidFeature:features]) {
             [UAirship shared].privacyManager.enabledFeatures = [self stringToFeature:features];
             completionHandler(CDVCommandStatus_OK, nil);
@@ -940,7 +940,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("isFeatureEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSArray *features = [args objectAtIndex:0];
+        NSArray *features = [args firstObject];
         if ([self isValidFeature:features]) {
             completionHandler(CDVCommandStatus_OK, @([[UAirship shared].privacyManager isEnabled:[self stringToFeature:features]]));
         } else {
@@ -953,7 +953,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("openPreferenceCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *preferenceCenterID = [args objectAtIndex:0];
+        NSString *preferenceCenterID = [args firstObject];
         [[UAPreferenceCenter shared] openPreferenceCenter:preferenceCenterID];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -976,13 +976,13 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 - (UAFeatures)stringToFeature:(NSArray *)features {
     NSDictionary *authorizedFeatures = [self authorizedFeatures];
 
-    NSNumber* objectFeature = authorizedFeatures[[features objectAtIndex:0]];
+    NSNumber *objectFeature = authorizedFeatures[[features objectAtIndex:0]];
     UAFeatures convertedFeatures = [objectFeature longValue];
 
     if ([features count] > 1) {
         int i;
         for (i = 1; i < [features count]; i++) {
-            NSNumber* objectFeature = authorizedFeatures[[features objectAtIndex:i]];
+            NSNumber *objectFeature = authorizedFeatures[[features objectAtIndex:i]];
             convertedFeatures |= [objectFeature longValue];
         }
     }

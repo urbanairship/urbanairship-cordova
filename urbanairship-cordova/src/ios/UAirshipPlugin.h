@@ -379,7 +379,7 @@
 /**
  * Clears notifications by identifier.
  *
- * Expected arguemts: String - notification identifier.
+ * Expected arguments: String - notification identifier.
  *
  * @param command The cordova command.
  */
@@ -395,7 +395,7 @@
 /**
  * Enables features, adding them to the set of currently enabled features.
  *
- * Expected arguemts: NSArray - the features.
+ * Expected arguments: NSArray - the features.
  *
  * @param command The cordova command.
  */
@@ -404,7 +404,7 @@
 /**
  * Disables features, removing them from the set of currently enabled features.
  *
- * Expected arguemts: NSArray - the features.
+ * Expected arguments: NSArray - the features.
  *
  * @param command The cordova command.
  */
@@ -413,7 +413,7 @@
 /**
  * Sets the current enabled features, replacing any currently enabled features with the given set.
  *
- * Expected arguemts: NSArray - the features.
+ * Expected arguments: NSArray - the features.
  *
  * @param command The cordova command.
  */
@@ -429,7 +429,7 @@
 /**
  * Checks if all of the given features are enabled.
  *
- * Expected arguemts: NSArray - the features.
+ * Expected arguments: NSArray - the features.
  *
  * @param command The cordova command.
  */
@@ -438,7 +438,7 @@
 /**
  * Opens the Preference Center with the given preferenceCenterId.
  *
- * Expected arguemts: String - the preference center id.
+ * Expected arguments: String - the preference center id.
  *
  * @param command The cordova command.
  */

@@ -198,7 +198,6 @@
                 <pod name="Airship/Automation" spec="16.0.1" />
                 <pod name="Airship/ExtendedActions" spec="16.0.1" />
                 <pod name="Airship/PreferenceCenter" spec="16.0.1" />
-                <pod name="Airship/Chat" spec="16.0.1" />
             </pods>
         </podspec>
 
