@@ -2,7 +2,7 @@
 
 ## Version 13.0.0 - October 21, 2021
 
-Major release for Airship Android SDK 16.0.1 and iOS SDK 16.1.0.
+Major release for Airship Android SDK 16.0.0 and iOS SDK 16.0.1.
 
 ### Changes
 - Updated compile and target sdk version to 31.
