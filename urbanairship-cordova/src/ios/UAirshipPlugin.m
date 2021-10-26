@@ -10,7 +10,7 @@
 #import "AirshipMessageCenterLib.h"
 #import "AirshipAutomationLib.h"
 #else
-@import Airship;
+@import AirshipKit;
 #endif
 
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
@@ -178,8 +178,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
                                [self.pluginManager setCloudSite:config[@"site"]];
 
-                               [self.pluginManager setDataCollectionOptInEnabled:config[@"dataCollectionOptInEnabled"]];
-
                                if (!self.pluginManager.isAirshipReady) {
                                    [self.pluginManager attemptTakeOff];
                                    if (!self.pluginManager.isAirshipReady) {
@@ -243,18 +241,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
-- (void)setAnalyticsEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setAnalyticsEnabled called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSNumber *value = [args objectAtIndex:0];
-        BOOL enabled = [value boolValue];
-        [UAirship shared].analytics.enabled = enabled;
-
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
 - (void)setAssociatedIdentifier:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("setAssociatedIdentifier called with command arguments: %@", command.arguments);
 
@@ -262,9 +248,25 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         NSString *key = [args objectAtIndex:0];
         NSString *identifier = [args objectAtIndex:1];
 
-        UAAssociatedIdentifiers *identifiers = [[UAirship shared].analytics currentAssociatedDeviceIdentifiers];
+        UAAssociatedIdentifiers *identifiers = [UAirship.analytics currentAssociatedDeviceIdentifiers];
         [identifiers setIdentifier:identifier forKey:key];
-        [[UAirship shared].analytics associateDeviceIdentifiers:identifiers];
+        [UAirship.analytics associateDeviceIdentifiers:identifiers];
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)setAnalyticsEnabled:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("setAnalyticsEnabled called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSNumber *value = [args objectAtIndex:0];
+        BOOL enabled = [value boolValue];
+        if (enabled) {
+            [[UAirship shared].privacyManager enableFeatures:UAFeaturesAnalytics];
+        } else {
+            [[UAirship shared].privacyManager disableFeatures:UAFeaturesAnalytics];
+        }
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -274,7 +276,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("isAnalyticsEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [UAirship shared].analytics.enabled;
+        BOOL enabled = [[UAirship shared].privacyManager isEnabled:UAFeaturesAnalytics];
 
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
     }];
@@ -767,8 +769,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
                 NSMutableArray *result = [NSMutableArray array];
                 for(UNNotification *unnotification in notifications) {
-                    UANotificationContent *content = [UANotificationContent notificationWithUNNotification:unnotification];
-                    [result addObject:[UACordovaPushEvent pushEventDataFromNotificationContent:content]];
+                    UNNotificationContent *content = unnotification.request.content;
+                    [result addObject:[UACordovaPushEvent pushEventDataFromNotificationContent:content.userInfo]];
                 }
 
                 completionHandler(CDVCommandStatus_OK, result);
@@ -884,50 +886,143 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     return true;
 }
 
-- (void)setDataCollectionEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setDataCollectionEnabled called with command arguments: %@", command.arguments);
+- (void)enableFeature:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("enableFeature called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSNumber *value = [args objectAtIndex:0];
-        BOOL enabled = [value boolValue];
-        [UAirship shared].dataCollectionEnabled = enabled;
+        NSArray *features = [args firstObject];
+        if ([self isValidFeature:features]) {
+            [[UAirship shared].privacyManager enableFeatures:[self stringToFeature:features]];
+            completionHandler(CDVCommandStatus_OK, nil);
+        } else {
+            completionHandler(CDVCommandStatus_ERROR, @"Invalid feature, cancelling the action.");
+        }
+    }];
+}
 
+- (void)disableFeature:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("disableFeature called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSArray *features = [args firstObject];
+        if ([self isValidFeature:features]) {
+            [[UAirship shared].privacyManager disableFeatures:[self stringToFeature:features]];
+            completionHandler(CDVCommandStatus_OK, nil);
+        } else {
+            completionHandler(CDVCommandStatus_ERROR, @"Invalid feature, cancelling the action.");
+        }
+    }];
+}
+
+- (void)setEnabledFeatures:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("setEnabledFeatures called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSArray *features = [args firstObject];
+        if ([self isValidFeature:features]) {
+            [UAirship shared].privacyManager.enabledFeatures = [self stringToFeature:features];
+            completionHandler(CDVCommandStatus_OK, nil);
+        } else {
+            completionHandler(CDVCommandStatus_ERROR, @"Invalid feature, cancelling the action.");
+        }
+    }];
+}
+
+- (void)getEnabledFeatures:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("getEnabledFeatures called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        completionHandler(CDVCommandStatus_OK, [self featureToString:[UAirship shared].privacyManager.enabledFeatures]);
+    }];
+}
+
+- (void)isFeatureEnabled:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("isFeatureEnabled called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSArray *features = [args firstObject];
+        if ([self isValidFeature:features]) {
+            completionHandler(CDVCommandStatus_OK, @([[UAirship shared].privacyManager isEnabled:[self stringToFeature:features]]));
+        } else {
+            completionHandler(CDVCommandStatus_ERROR, @"Invalid feature, cancelling the action.");
+        }
+    }];
+}
+
+- (void)openPreferenceCenter:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("openPreferenceCenter called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *preferenceCenterID = [args firstObject];
+        [[UAPreferenceCenter shared] openPreferenceCenter:preferenceCenterID];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
 
-- (void)isDataCollectionEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("isDataCollectionEnabled called with command arguments: %@", command.arguments);
+- (BOOL)isValidFeature:(NSArray *)features {
+    if (!features || [features count] == 0) {
+        return NO;
+    }
+    NSDictionary *authorizedFeatures = [self authorizedFeatures];
 
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [UAirship shared].dataCollectionEnabled;
-
-        completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
-    }];
+    for (NSString *feature in features) {
+        if (![authorizedFeatures objectForKey:feature]) {
+            return NO;
+        }
+    }
+    return YES;
 }
 
-- (void)setPushTokenRegistrationEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setPushTokenRegistrationEnabled called with command arguments: %@", command.arguments);
+- (UAFeatures)stringToFeature:(NSArray *)features {
+    NSDictionary *authorizedFeatures = [self authorizedFeatures];
 
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSNumber *value = [args objectAtIndex:0];
-        BOOL enabled = [value boolValue];
-        [UAirship push].pushTokenRegistrationEnabled = enabled;
+    NSNumber *objectFeature = authorizedFeatures[[features objectAtIndex:0]];
+    UAFeatures convertedFeatures = [objectFeature longValue];
 
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
+    if ([features count] > 1) {
+        int i;
+        for (i = 1; i < [features count]; i++) {
+            NSNumber *objectFeature = authorizedFeatures[[features objectAtIndex:i]];
+            convertedFeatures |= [objectFeature longValue];
+        }
+    }
+    return convertedFeatures;
 }
 
-- (void)isPushTokenRegistrationEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("isPushTokenRegistrationEnabled called with command arguments: %@", command.arguments);
+- (NSArray *)featureToString:(UAFeatures)features {
+    NSMutableArray *convertedFeatures = [[NSMutableArray alloc] init];
 
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [UAirship push].pushTokenRegistrationEnabled;
+    NSDictionary *authorizedFeatures = [self authorizedFeatures];
 
-        completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
-    }];
+    if (features == UAFeaturesAll) {
+        [convertedFeatures addObject:@"FEATURE_ALL"];
+    } else if (features == UAFeaturesNone) {
+        [convertedFeatures addObject:@"FEATURE_NONE"];
+    } else {
+        for (NSString *feature in authorizedFeatures) {
+            NSNumber *objectFeature = authorizedFeatures[feature];
+            long longFeature = [objectFeature longValue];
+            if ((longFeature & features) && (longFeature != UAFeaturesAll)) {
+                [convertedFeatures addObject:feature];
+            }
+        }
+    }
+    return convertedFeatures;
 }
 
-
+- (NSDictionary *)authorizedFeatures {
+    NSMutableDictionary *authorizedFeatures = [[NSMutableDictionary alloc] init];
+    [authorizedFeatures setValue:@(UAFeaturesNone) forKey:@"FEATURE_NONE"];
+    [authorizedFeatures setValue:@(UAFeaturesInAppAutomation) forKey:@"FEATURE_IN_APP_AUTOMATION"];
+    [authorizedFeatures setValue:@(UAFeaturesMessageCenter) forKey:@"FEATURE_MESSAGE_CENTER"];
+    [authorizedFeatures setValue:@(UAFeaturesPush) forKey:@"FEATURE_PUSH"];
+    [authorizedFeatures setValue:@(UAFeaturesChat) forKey:@"FEATURE_CHAT"];
+    [authorizedFeatures setValue:@(UAFeaturesAnalytics) forKey:@"FEATURE_ANALYTICS"];
+    [authorizedFeatures setValue:@(UAFeaturesTagsAndAttributes) forKey:@"FEATURE_TAGS_AND_ATTRIBUTES"];
+    [authorizedFeatures setValue:@(UAFeaturesContacts) forKey:@"FEATURE_CONTACTS"];
+    [authorizedFeatures setValue:@(UAFeaturesLocation) forKey:@"FEATURE_LOCATION"];
+    [authorizedFeatures setValue:@(UAFeaturesAll) forKey:@"FEATURE_ALL"];
+    return authorizedFeatures;
+}
 
 @end

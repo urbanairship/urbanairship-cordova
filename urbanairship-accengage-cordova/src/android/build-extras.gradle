@@ -18,17 +18,14 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-accengage:14.3.0'
+    implementation 'com.urbanairship.android:urbanairship-accengage:16.0.0'
 }
 
 ext.cdvCompileSdkVersion = 29
 
-// For CI only. Verify our plugin is Java 6 compatible
-if (project.hasProperty('uaInternalJava6CompileOptions') && uaInternalJava6CompileOptions.toBoolean()) {
-    cdvPluginPostBuildExtras.push({
-        android.compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_6
-            targetCompatibility JavaVersion.VERSION_1_6
-        }
-    })
-}
+cdvPluginPostBuildExtras.push({
+    android.compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+})

@@ -8,7 +8,7 @@
 #import "AirshipMessageCenterLib.h"
 #import "AirshipAutomationLib.h"
 #else
-@import Airship;
+@import AirshipKit;
 #endif
 
 /**
@@ -379,7 +379,7 @@
 /**
  * Clears notifications by identifier.
  *
- * Expected arguemts: String - notification identifier.
+ * Expected arguments: String - notification identifier.
  *
  * @param command The cordova command.
  */
@@ -393,35 +393,55 @@
 - (void)clearNotifications:(CDVInvokedUrlCommand *)command;
 
 /**
- * Enables or disables data collection.
+ * Enables features, adding them to the set of currently enabled features.
  *
- * Expected arguments: Boolean
+ * Expected arguments: NSArray - the features.
  *
  * @param command The cordova command.
  */
-- (void)setDataCollectionEnabled:(CDVInvokedUrlCommand *)command;
+- (void)enableFeature:(CDVInvokedUrlCommand *)command;
 
 /**
- * Checks if data collection is enabled or not.
+ * Disables features, removing them from the set of currently enabled features.
+ *
+ * Expected arguments: NSArray - the features.
  *
  * @param command The cordova command.
  */
-- (void)isDataCollectionEnabled:(CDVInvokedUrlCommand *)command;
+- (void)disableFeature:(CDVInvokedUrlCommand *)command;
 
 /**
- * Sets whether the push token is sent during channel registration.
+ * Sets the current enabled features, replacing any currently enabled features with the given set.
  *
- * Expected arguments: Boolean
+ * Expected arguments: NSArray - the features.
  *
  * @param command The cordova command.
  */
-- (void)setPushTokenRegistrationEnabled:(CDVInvokedUrlCommand *)command;
+- (void)setEnabledFeatures:(CDVInvokedUrlCommand *)command;
 
 /**
- * Determines whether the push token is sent during channel registration.
+ * Gets the current enabled features.
  *
  * @param command The cordova command.
  */
-- (void)isPushTokenRegistrationEnabled:(CDVInvokedUrlCommand *)command;
+- (void)getEnabledFeatures:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Checks if all of the given features are enabled.
+ *
+ * Expected arguments: NSArray - the features.
+ *
+ * @param command The cordova command.
+ */
+- (void)isFeatureEnabled:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Opens the Preference Center with the given preferenceCenterId.
+ *
+ * Expected arguments: String - the preference center id.
+ *
+ * @param command The cordova command.
+ */
+- (void)openPreferenceCenter:(CDVInvokedUrlCommand *)command;
 
 @end

@@ -3,7 +3,7 @@
 #if __has_include("AirshipLib.h")
 #import "AirshipLib.h"
 #else
-@import Airship;
+@import AirshipKit;
 #endif
 
 #import "UACordovaEvent.h"

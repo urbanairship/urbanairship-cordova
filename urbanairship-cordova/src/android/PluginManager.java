@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.urbanairship.AirshipConfigOptions;
+import com.urbanairship.PrivacyManager;
 import com.urbanairship.UAirship;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
@@ -52,7 +53,6 @@ public class PluginManager {
     private static final String PRODUCTION_LOG_LEVEL = "com.urbanairship.production_log_level";
     private static final String DEVELOPMENT_LOG_LEVEL = "com.urbanairship.development_log_level";
     private static final String IN_PRODUCTION = "com.urbanairship.in_production";
-    private static final String GCM_SENDER = "com.urbanairship.gcm_sender";
     private static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
     private static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
     private static final String NOTIFICATION_LARGE_ICON = "com.urbanairship.notification_large_icon";
@@ -61,7 +61,6 @@ public class PluginManager {
     static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
     private static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
     private static final String CLOUD_SITE = "com.urbanairship.site";
-    private static final String DATA_COLLECTION_OPT_IN_ENABLED = "com.urbanairship.data_collection_opt_in_enabled";
 
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
     private static final String DEFAULT_NOTIFICATION_CHANNEL_ID  = "com.urbanairship.default_notification_channel_id";
@@ -320,12 +319,11 @@ public class PluginManager {
                 .setDevelopmentAppSecret(getConfigString(DEVELOPMENT_SECRET, ""))
                 .setProductionAppKey(getConfigString(PRODUCTION_KEY, ""))
                 .setProductionAppSecret(getConfigString(PRODUCTION_SECRET, ""))
-                .setFcmSenderId(ConfigUtils.parseSender(getConfigString(GCM_SENDER, null)))
                 .setAnalyticsEnabled(getConfigBoolean(ENABLE_ANALYTICS, true))
                 .setDevelopmentLogLevel(ConfigUtils.parseLogLevel(getConfigString(DEVELOPMENT_LOG_LEVEL, ""), Log.DEBUG))
                 .setProductionLogLevel(ConfigUtils.parseLogLevel(getConfigString(PRODUCTION_LOG_LEVEL, ""), Log.ERROR))
                 .setSite(ConfigUtils.parseCloudSite(getConfigValue(CLOUD_SITE)))
-                .setDataCollectionOptInEnabled(getConfigBoolean(DATA_COLLECTION_OPT_IN_ENABLED, false))
+                .setEnabledFeatures(PrivacyManager.FEATURE_ALL)
                 .setUrlAllowListScopeOpenUrl(new String[]{"*"});
 
         if (hasConfig(IN_PRODUCTION)) {
@@ -646,18 +644,6 @@ public class PluginManager {
         @NonNull
         public ConfigEditor setCloudSite(String site) {
             editor.putString(CLOUD_SITE, site);
-            return this;
-        }
-
-        /**
-         * Sets the data collection opt in enabled parameter.
-         *
-         * @param enabled The boolean value for the data collection opt in enabled parameter.
-         * @return The config editor.
-         */
-        @NonNull
-        public ConfigEditor setDataCollectionOptInEnabled(boolean enabled) {
-            editor.putString(DATA_COLLECTION_OPT_IN_ENABLED, Boolean.toString(enabled));
             return this;
         }
 

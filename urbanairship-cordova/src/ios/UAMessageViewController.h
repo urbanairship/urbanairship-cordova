@@ -4,7 +4,7 @@
 #import "AirshipLib.h"
 #import "AirshipMessageCenterLib.h"
 #else
-@import Airship;
+@import AirshipKit;
 #endif
 
 @interface UAMessageViewController : UINavigationController

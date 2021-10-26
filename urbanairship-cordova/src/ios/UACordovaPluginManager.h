@@ -5,7 +5,7 @@
 #if __has_include("AirshipLib.h")
 #import "AirshipLib.h"
 #else
-@import Airship;
+@import AirshipKit;
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -69,6 +69,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)attemptTakeOff;
 
 /**
+ * Attempts takeOff if Airship is not already flying with launch options.
+ */
+- (void)attemptTakeOffWithLaunchOptions:(nullable NSDictionary *)launchOptions;
+
+/**
  * Sets the development credentials.
  * @param appKey UA app key.
  * @param appSecret UA app secret.
@@ -87,12 +92,6 @@ NS_ASSUME_NONNULL_BEGIN
  * @param site The site, either "US" or "EU".
  */
 - (void)setCloudSite:(NSString *)site;
-
-/**
- * Sets the data collection opt in enabled parameter.
- * @param enabled The boolean value for the data collection opt in enabled parameter.
- */
-- (void)setDataCollectionOptInEnabled:(BOOL)enabled;
 
 /**
  * Sets the presentation options.

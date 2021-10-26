@@ -6,27 +6,27 @@ NSString *const EventPushReceived = @"urbanairship.push";
 
 @implementation UACordovaPushEvent
 
-+ (instancetype)eventWithNotificationContent:(UANotificationContent *)content  {
-    return [[self alloc] initWithNotificationContent:content];
++ (instancetype)eventWithNotificationContent:(NSDictionary *)userInfo {
+    return [[self alloc] initWithNotificationContent:userInfo];
 }
 
-- (instancetype)initWithNotificationContent:(UANotificationContent *)content {
+- (instancetype)initWithNotificationContent:(NSDictionary *)userInfo {
     self = [super init];
 
     if (self) {
         self.type = EventPushReceived;
-        self.data = [[self class] pushEventDataFromNotificationContent:content];
+        self.data = [[self class] pushEventDataFromNotificationContent:userInfo];
     }
 
     return self;
 }
 
-+ (NSDictionary *)pushEventDataFromNotificationContent:(UANotificationContent *)notificationContent {
-    if (!notificationContent) {
++ (NSDictionary *)pushEventDataFromNotificationContent:(NSDictionary *)userInfo {
+    if (!userInfo) {
         return @{ @"message": @"", @"extras": @{}};
     }
 
-    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:notificationContent.notificationInfo];
+    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:userInfo];
 
     // remove the send ID
     if([[info allKeys] containsObject:@"_"]) {
@@ -37,17 +37,26 @@ NSString *const EventPushReceived = @"urbanairship.push";
 
     // If there is an aps dictionary in the extras, remove it and set it as a top level object
     if([[info allKeys] containsObject:@"aps"]) {
+        NSDictionary* aps = info[@"aps"];
+
+        if ([[aps allKeys] containsObject:@"alert"]) {
+
+            NSDictionary *alert = aps[@"alert"];
+            if ([[alert allKeys] containsObject:@"body"]) {
+                result[@"message"] = alert[@"body"];
+            } else {
+                result[@"message"] = @"";
+            }
+            if ([[alert allKeys] containsObject:@"title"]) {
+                [result setValue:alert[@"title"] forKey:@"title"];
+            }
+            if ([[alert allKeys] containsObject:@"subtitle"]) {
+                [result setValue:alert[@"subtitle"] forKey:@"subtitle"];
+            }
+        }
         result[@"aps"] = info[@"aps"];
         [info removeObjectForKey:@"aps"];
     }
-
-    result[@"message"] = notificationContent.alertBody ?: @"";
-
-    // Set the title and subtitle as top level objects, if present
-    NSString *title = notificationContent.alertTitle;
-    NSString *subtitle = notificationContent.notification.request.content.subtitle;
-    [result setValue:title forKey:@"title"];
-    [result setValue:subtitle forKey:@"subtitle"];
 
     // Set the remaining info as extras
     result[@"extras"] = info;

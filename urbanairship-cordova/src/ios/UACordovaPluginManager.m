@@ -6,7 +6,7 @@
 #import "AirshipLib.h"
 #import "AirshipMessageCenterLib.h"
 #else
-@import Airship;
+@import AirshipKit;
 #endif
 
 #import "UACordovaEvent.h"
@@ -35,7 +35,6 @@ NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foregr
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 NSString *const CloudSiteConfigKey = @"com.urbanairship.site";
 NSString *const CloudSiteEUString = @"EU";
-NSString *const DataCollectionOptInEnabledConfigKey = @"com.urbanairship.data_collection_opt_in_enabled";
 
 NSString *const UACordovaPluginVersionKey = @"UACordovaPluginVersion";
 
@@ -50,6 +49,15 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 @end
 @implementation UACordovaPluginManager
+
+- (void)load {
+    [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification
+                                                      object:nil
+                                                       queue:nil usingBlock:^(NSNotification * _Nonnull note) {
+        
+        [self attemptTakeOffWithLaunchOptions:note.userInfo];
+    }];
+}
 
 - (void)dealloc {
     [UAirship push].pushNotificationDelegate = nil;
@@ -74,6 +82,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 }
 
 - (void)attemptTakeOff {
+    [self attemptTakeOffWithLaunchOptions:nil];
+}
+
+- (void)attemptTakeOffWithLaunchOptions:(NSDictionary *)launchOptions {
     if (self.isAirshipReady) {
         return;
     }
@@ -83,10 +95,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
         return;
     }
 
-    [UAirship takeOff:config];
+    [UAirship takeOff:config launchOptions:launchOptions];
     [self registerCordovaPluginVersion];
 
-    [UAirship push].userPushNotificationsEnabledByDefault = [[self configValueForKey:EnablePushOnLaunchConfigKey] boolValue];
+    [UAirship push].userPushNotificationsEnabled = [[self configValueForKey:EnablePushOnLaunchConfigKey] boolValue];
 
     if ([[self configValueForKey:ClearBadgeOnLaunchConfigKey] boolValue]) {
         [[UAirship push] resetBadge];
@@ -106,12 +118,12 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(channelRegistrationSucceeded:)
-                                                 name:UAChannelUpdatedEvent
+                                                 name:UAChannel.channelUpdatedEvent
                                                object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(channelRegistrationFailed)
-                                                 name:UAChannelRegistrationFailedEvent
+                                                 name:UAChannel.channelRegistrationFailedEvent
                                                object:nil];
 
 
@@ -141,10 +153,6 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     NSString *cloudSite = [self configValueForKey:CloudSiteConfigKey];
     airshipConfig.site = [UACordovaPluginManager parseCloudSiteString:cloudSite];
 
-    if ([self configValueForKey:DataCollectionOptInEnabledConfigKey] != nil) {
-        airshipConfig.dataCollectionOptInEnabled = [[self configValueForKey:DataCollectionOptInEnabledConfigKey] boolValue];
-    }
-
     if ([self configValueForKey:ProductionConfigKey] != nil) {
         airshipConfig.inProduction = [[self configValueForKey:ProductionConfigKey] boolValue];
     }
@@ -156,8 +164,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
                                            defaultLogLevel:UALogLevelError];
 
     if ([self configValueForKey:EnableAnalyticsConfigKey] != nil) {
-        airshipConfig.analyticsEnabled = [[self configValueForKey:EnableAnalyticsConfigKey] boolValue];
+        airshipConfig.isAnalyticsEnabled = [[self configValueForKey:EnableAnalyticsConfigKey] boolValue];
     }
+    
+    airshipConfig.enabledFeatures = UAFeaturesAll;
 
     return airshipConfig;
 }
@@ -200,10 +210,6 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 - (void)setCloudSite:(NSString *)site {
     [[NSUserDefaults standardUserDefaults] setValue:site forKey:CloudSiteConfigKey];
-}
-
-- (void)setDataCollectionOptInEnabled:(BOOL)enabled {
-    [[NSUserDefaults standardUserDefaults] setValue:@(enabled) forKey:DataCollectionOptInEnabledConfigKey];
 }
 
 - (void)setPresentationOptions:(NSUInteger)options {
@@ -276,25 +282,25 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 #pragma mark UAPushNotificationDelegate
 
--(void)receivedForegroundNotification:(UANotificationContent *)notificationContent completionHandler:(void (^)(void))completionHandler {
-    UA_LDEBUG(@"Received a notification while the app was already in the foreground %@", notificationContent);
+-(void)receivedForegroundNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))completionHandler {
+    UA_LDEBUG(@"Received a notification while the app was already in the foreground %@", userInfo);
 
-    [self fireEvent:[UACordovaPushEvent eventWithNotificationContent:notificationContent]];
+    [self fireEvent:[UACordovaPushEvent eventWithNotificationContent:userInfo]];
 
     completionHandler();
 }
 
-- (void)receivedBackgroundNotification:(UANotificationContent *)notificationContent
+- (void)receivedBackgroundNotification:(NSDictionary *)userInfo
                      completionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
 
-    UA_LDEBUG(@"Received a background notification %@", notificationContent);
+    UA_LDEBUG(@"Received a background notification %@", userInfo);
 
-    [self fireEvent:[UACordovaPushEvent eventWithNotificationContent:notificationContent]];
+    [self fireEvent:[UACordovaPushEvent eventWithNotificationContent:userInfo]];
 
     completionHandler(UIBackgroundFetchResultNoData);
 }
 
--(void)receivedNotificationResponse:(UANotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler {
+-(void)receivedNotificationResponse:(UNNotificationResponse *)notificationResponse completionHandler:(void (^)(void))completionHandler {
     UA_LDEBUG(@"The application was launched or resumed from a notification %@", notificationResponse);
 
     UACordovaNotificationOpenedEvent *event = [UACordovaNotificationOpenedEvent eventWithNotificationResponse:notificationResponse];
@@ -332,7 +338,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 #pragma mark Channel Registration Events
 
 - (void)channelRegistrationSucceeded:(NSNotification *)notification {
-    NSString *channelID = notification.userInfo[UAChannelUpdatedEventChannelKey];
+    NSString *channelID = notification.userInfo[UAChannel.channelIdentifierKey];
     NSString *deviceToken = [UAirship push].deviceToken;
 
     UA_LINFO(@"Channel registration successful %@.", channelID);
