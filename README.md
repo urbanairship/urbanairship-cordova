@@ -18,11 +18,15 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
  - cococapods >= 1.9
 
 #### iOS:
-- Xcode 12+
+- Xcode 13+
 - [APNS Setup](https://docs.airship.com/platform/ios/getting-started/#apple-setup)
 
 #### Android
- - Android [FCM Setup](https://docs.airship.com/platform/android/getting-started/#fcm-setup)
+- `minSdkVersion` 21+
+- `compileSdkVersion` and `targetSdkVersion` 31+
+- Gradle Plugin version 3.0.0+
+- Java 8
+- Android [FCM Setup](https://docs.airship.com/platform/android/getting-started/#fcm-setup)
 
 ##### Jetpack / AndroidX
 

@@ -1,5 +1,18 @@
 # Cordova Plugin Changelog
 
+## Version 13.0.0 - October 26, 2021
+
+Major release for Airship Android SDK 16.0.0 and iOS SDK 16.0.1.
+
+### Changes
+- Updated compile and target sdk version to 31.
+- Updated Java source and target compatibility versions to 1.8.
+- Xcode 13 is now required.
+- Added Privacy Manager methods `enableFeature`, `disableFeature`, `setEnabledFeatures`, `getEnabledFeatures` and `isFeatureEnabled` that replace `getDataCollectionEnabled`, `setDataCollectionEnabled`, `getPushTokenRegistrationEnabled` and `setPushTokenRegistrationEnabled`.
+- Support for OOTB Preference Center
+
+See the [Android Migration Guide](https://github.com/urbanairship/android-library/blob/main/documentation/migration/migration-guide-15-16.md) for further details.
+
 ## Version 12.2.0 - April 29, 2021
 
 Minor release updating iOS and Android SDK versions to 14.3.1 and 14.3.0, respectively.
