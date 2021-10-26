@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 13.0.0 - October 21, 2021
+## Version 13.0.0 - October 26, 2021
 
 Major release for Airship Android SDK 16.0.0 and iOS SDK 16.0.1.
 
