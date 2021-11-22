@@ -18,7 +18,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-hms:16.0.0'
+    implementation 'com.urbanairship.android:urbanairship-hms:16.1.0'
     implementation 'com.huawei.hms:push:5.1.1.301'
     implementation 'com.huawei.agconnect:agconnect-core:1.5.1.300'
 }
