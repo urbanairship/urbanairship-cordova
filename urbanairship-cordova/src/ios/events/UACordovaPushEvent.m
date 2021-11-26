@@ -41,18 +41,23 @@ NSString *const EventPushReceived = @"urbanairship.push";
 
         if ([[aps allKeys] containsObject:@"alert"]) {
 
-            NSDictionary *alert = aps[@"alert"];
-            if ([[alert allKeys] containsObject:@"body"]) {
-                result[@"message"] = alert[@"body"];
+            id alert = aps[@"alert"];
+            if ([alert isKindOfClass:[NSDictionary class]]) {
+                if ([[alert allKeys] containsObject:@"body"]) {
+                    result[@"message"] = alert[@"body"];
+                } else {
+                    result[@"message"] = @"";
+                }
+                if ([[alert allKeys] containsObject:@"title"]) {
+                    [result setValue:alert[@"title"] forKey:@"title"];
+                }
+                if ([[alert allKeys] containsObject:@"subtitle"]) {
+                    [result setValue:alert[@"subtitle"] forKey:@"subtitle"];
+                }
             } else {
-                result[@"message"] = @"";
+                [result setValue:alert forKey:@"message"];
             }
-            if ([[alert allKeys] containsObject:@"title"]) {
-                [result setValue:alert[@"title"] forKey:@"title"];
-            }
-            if ([[alert allKeys] containsObject:@"subtitle"]) {
-                [result setValue:alert[@"subtitle"] forKey:@"subtitle"];
-            }
+            
         }
         result[@"aps"] = info[@"aps"];
         [info removeObjectForKey:@"aps"];
