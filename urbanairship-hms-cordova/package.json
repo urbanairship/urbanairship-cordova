@@ -1,6 +1,6 @@
 {
   "name": "urbanairship-hms-cordova",
-  "version": "13.0.1",
+  "version": "13.1.0",
   "description": "Urban Airship HMS Cordova plugin",
   "cordova": {
     "id": "urbanairship-hms-cordova",
