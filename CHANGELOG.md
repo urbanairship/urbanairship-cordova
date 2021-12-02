@@ -1,5 +1,13 @@
 # Cordova Plugin Changelog
 
+## Version 13.1.0 - December 2, 2021
+
+Minor release updating iOS SDK to 16.1.1 and Android SDK to 16.1.0
+
+### Changes
+- Updated iOS SDK to 16.1.1
+- Updated Android SDK to 16.1.0
+
 ## Version 13.0.1 - November 5, 2021
 
 Patch release that fixes preferences resetting on iOS when upgrading to 13.0.0. This update will restore old preferences that have not been modified new plugin.
