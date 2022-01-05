@@ -98,7 +98,9 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     [UAirship takeOff:config launchOptions:launchOptions];
     [self registerCordovaPluginVersion];
 
-    [UAirship push].userPushNotificationsEnabled = [[self configValueForKey:EnablePushOnLaunchConfigKey] boolValue];
+    if ([[self configValueForKey:EnablePushOnLaunchConfigKey] boolValue]) {
+        [UAirship push].userPushNotificationsEnabled = true;
+    }
 
     if ([[self configValueForKey:ClearBadgeOnLaunchConfigKey] boolValue]) {
         [[UAirship push] resetBadge];
