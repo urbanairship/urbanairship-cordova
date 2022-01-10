@@ -13,7 +13,12 @@ jobs:
         # Uninstalling causes automatic build-tools resolution to fall back to an older
         # version that does include dx.
       - name: Workaround "Build-tool 31.0.0 is missing DX" error
-        run: bash $ANDROID_SDK_ROOT/tools/bin/sdkmanager --uninstall 'build-tools;31.0.0' 
+        run: bash $ANDROID_SDK_ROOT/tools/bin/sdkmanager --uninstall 'build-tools;31.0.0'
+        # Build tools 32.0.0 doesn't include dx (only d8), which Cordova expects to find.
+        # Uninstalling causes automatic build-tools resolution to fall back to an older
+        # version that does include dx.
+      - name: Workaround "Build-tool 32.0.0 is missing DX" error
+        run: bash $ANDROID_SDK_ROOT/tools/bin/sdkmanager --uninstall 'build-tools;32.0.0'
       - name: Run CI
         run: bash ./scripts/run_ci_tasks.sh -a
   ios:
