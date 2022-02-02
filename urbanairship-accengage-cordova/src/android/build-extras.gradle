@@ -1,27 +1,6 @@
-
-buildscript {
-    repositories {
-        google()
-        jcenter()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
-
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-accengage:16.1.1'
+    implementation 'com.urbanairship.android:urbanairship-accengage:16.2.0'
 }
-
-ext.cdvCompileSdkVersion = 29
 
 cdvPluginPostBuildExtras.push({
     android.compileOptions {

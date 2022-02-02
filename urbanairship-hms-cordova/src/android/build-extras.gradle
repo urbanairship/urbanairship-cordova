@@ -2,28 +2,27 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.huawei.agconnect:agcp:1.6.0.300'
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
+        maven { url 'https://developer.huawei.com/repo/' }
     }
 }
 
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-hms:16.1.1'
-    implementation 'com.huawei.hms:push:5.1.1.301'
-    implementation 'com.huawei.agconnect:agconnect-core:1.5.1.300'
+    implementation 'com.urbanairship.android:urbanairship-hms:16.2.0'
+    implementation 'com.huawei.hms:push:6.1.0.300'
 }
-
-ext.cdvCompileSdkVersion = 29
 
 cdvPluginPostBuildExtras.push({
     android.compileOptions {
@@ -31,4 +30,7 @@ cdvPluginPostBuildExtras.push({
         targetCompatibility JavaVersion.VERSION_1_8
     }
 })
-apply plugin: 'com.huawei.agconnect'
+
+ext.postBuildExtras = {
+    apply plugin: 'com.huawei.agconnect'
+}

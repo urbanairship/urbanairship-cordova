@@ -11,8 +11,8 @@
     <repo>https://github.com/urbanairship/urbanairship-accengage-cordova.git</repo>
 
     <engines>
-        <engine name="cordova-android" version=">=4.1.0"/>
-        <engine name="cordova-ios" version=">=5.0.1"/>
+        <engine name="cordova-android" version=">=10.0.0"/>
+        <engine name="cordova-ios" version=">=6.2.0"/>
         <engine name="cordova" version=">=9.0.1"/>
     </engines>
 
@@ -31,7 +31,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship/Accengage" spec="16.1.2" />
+                <pod name="Airship/Accengage" spec="16.2.0" />
             </pods>
         </podspec>
 

@@ -1,20 +1,10 @@
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
-
 dependencies {
-    def airshipVersion = "16.1.1"
+    def airshipVersion = "16.2.0"
     implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-preference-center:$airshipVersion"
 }
-
-ext.cdvCompileSdkVersion = 29
 
 cdvPluginPostBuildExtras.push({
     android.compileOptions {

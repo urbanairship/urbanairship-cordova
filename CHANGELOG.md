@@ -1,5 +1,11 @@
 # Cordova Plugin Changelog
 
+## Version 13.2.0 - February 1, 2021
+Minor release that updates the Airship SDKs to 16.2.0
+
+### Changes
+- Update iOS & Android Airship SDK to 16.2.0
+
 ## Version 13.1.1 - January 11, 2021
 Patch release that updates to latest Airship SDKs and fixes an opt-in issue
 with iOS when enable_push_onlaunch flag is false/not set.
