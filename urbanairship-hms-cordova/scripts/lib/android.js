@@ -19,12 +19,14 @@ Android.addDependencyToRootGradle = function(artifactDef, repositoryDef) {
     	rootGradle = rootGradle.replace("dependencies {", "dependencies {\n"+gradleDependency);
     	fs.writeFileSync(path.resolve(ROOT_GRADLE_FILEPATH), rootGradle);
     	console.log("UALib - Added dependency to root gradle: " + artifactDef);
+		console.log("UALib: " + rootGradle);
 	}
 
 	if (!rootGradle.match(gradleRepository)) {
     	rootGradle = rootGradle.replace(/repositories {/g, "repositories {\n"+gradleRepository);
     	fs.writeFileSync(path.resolve(ROOT_GRADLE_FILEPATH), rootGradle);
     	console.log("UALib - Added maven repository to root gradle: " + repositoryDef);
+		console.log("UALib: " + rootGradle);
 	}
 };
 
