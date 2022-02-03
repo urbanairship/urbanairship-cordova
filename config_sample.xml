@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.urbanairship.sample" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.urbanairship.sample" version="1.0.0" 
+    xmlns="http://www.w3.org/ns/widgets" 
+    xmlns:cdv="http://cordova.apache.org/ns/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    
     <name>Test</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
@@ -19,6 +23,13 @@
     <platform name="android">
         <allow-intent href="market:*" />
         <resource-file src="google-services.json" target="app/google-services.json" />
+        <!-- Edit manifest to add explicit android:exported attribute so that we can target Android 12. -->
+        <edit-config
+            file="AndroidManifest.xml"
+            target="/manifest/application/activity[@android:name='MainActivity']"
+            mode="merge">
+            <activity android:exported="true"></activity>
+        </edit-config>
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
