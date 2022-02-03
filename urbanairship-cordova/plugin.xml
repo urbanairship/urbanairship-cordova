@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="13.1.1"
+        version="13.2.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -11,8 +11,8 @@
     <repo>https://github.com/urbanairship/urbanairship-cordova.git</repo>
 
     <engines>
-        <engine name="cordova-android" version=">=9.0.0"/>
-        <engine name="cordova-ios" version=">=6.1.0"/>
+        <engine name="cordova-android" version=">=10.0.0"/>
+        <engine name="cordova-ios" version=">=6.2.0"/>
         <engine name="cordova" version=">=9.0.1"/>
     </engines>
 
@@ -24,7 +24,7 @@
     <platform name="android">
         <config-file target="config.xml" parent="/*">
             <preference name="GradlePluginGoogleServicesEnabled" value="true" />
-            <preference name="GradlePluginGoogleServicesVersion" value="4.2.0" />
+            <preference name="GradlePluginGoogleServicesVersion" value="4.3.10" />
         </config-file>
         <config-file parent="/widget" target="res/xml/config.xml">
             <feature name="UAirship">
@@ -40,7 +40,7 @@
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data
                 android:name="com.urbanairship.cordova.version"
-                android:value="13.1.1"/>
+                android:value="13.2.0"/>
 
             <meta-data
                 android:name="com.urbanairship.autopilot"
@@ -142,7 +142,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
-            <string>13.1.1</string>
+            <string>13.2.0</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
@@ -193,11 +193,11 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship/Core" spec="16.1.2" />
-                <pod name="Airship/MessageCenter" spec="16.1.2" />
-                <pod name="Airship/Automation" spec="16.1.2" />
-                <pod name="Airship/ExtendedActions" spec="16.1.2" />
-                <pod name="Airship/PreferenceCenter" spec="16.1.2" />
+                <pod name="Airship/Core" spec="16.2.0" />
+                <pod name="Airship/MessageCenter" spec="16.2.0" />
+                <pod name="Airship/Automation" spec="16.2.0" />
+                <pod name="Airship/ExtendedActions" spec="16.2.0" />
+                <pod name="Airship/PreferenceCenter" spec="16.2.0" />
             </pods>
         </podspec>
 

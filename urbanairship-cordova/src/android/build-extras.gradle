@@ -1,24 +1,26 @@
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-    }
-}
-
 dependencies {
-    def airshipVersion = "16.1.1"
+    configurations.all {
+        resolutionStrategy { force 'androidx.core:core:1.7.0' }
+    }
+
+    def airshipVersion = "16.2.0"
     implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-preference-center:$airshipVersion"
 }
 
-ext.cdvCompileSdkVersion = 29
-
 cdvPluginPostBuildExtras.push({
-    android.compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+    android {
+        compileSdkVersion 31
+
+        defaultConfig {
+            targetSdkVersion 31
+        }
+        
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
     }
 })
