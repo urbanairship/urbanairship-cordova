@@ -63,7 +63,7 @@ jobs:
           echo ::set-output name=NOTES::"$NOTES"
       - uses: actions/setup-node@master
         with:
-          node-version: 12
+          node-version: 14
           registry-url: https://registry.npmjs.org/
       - name: Generate documentation
         run: |
