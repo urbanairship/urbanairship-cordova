@@ -546,6 +546,26 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
+- (void)editSubscriptionLists:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("editSubscriptionLists called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+
+        for (NSDictionary *operation in [args objectAtIndex:0]) {
+            NSString *listId = operation[@"listId"];
+            if ([operation[@"operation"] isEqualToString:@"subscribe"]) {
+                [[[UAirship channel] editSubscriptionLists] subscribe:listId];
+            } else if ([operation[@"operation"] isEqualToString:@"unsubscribe"]) {
+                [[[UAirship channel] editSubscriptionLists] unsubscribe:listId];
+            }
+        }
+
+        [[[UAirship channel] editSubscriptionLists] apply];
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
 - (void)resetBadge:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("resetBadge called with command arguments: %@", command.arguments);
 
@@ -958,6 +978,18 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
+
+- (void)getConfig:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("getConfig called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *preferenceCenterID = [args firstObject];
+        [[UAPreferenceCenter shared] configForPreferenceCenterID:preferenceCenterID completionHandler:^(UAPreferenceCenterConfig * _Nullable config) {
+            completionHandler(CDVCommandStatus_OK, config);
+        }];
+    }];
+}
+
 
 - (BOOL)isValidFeature:(NSArray *)features {
     if (!features || [features count] == 0) {

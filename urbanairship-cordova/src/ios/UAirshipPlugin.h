@@ -444,4 +444,25 @@
  */
 - (void)openPreferenceCenter:(CDVInvokedUrlCommand *)command;
 
+
+/**
+ * Gets the configuration of the Preference Center with the given Id trough a callback method.
+ *
+ * Expected arguments: String - the preference center Id.
+ *
+ * @param command The cordova command.
+ */
+- (void)getConfig:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Edits channel subscription lists.
+ *
+ * Expected arguments: An array of objects that contain:
+ * "operation": String, either `subscribe` or `unsubscribe`
+ * "listId": String, the listID.
+ *
+ * @param command The cordova command.
+ */
+- (void)editSubscriptionLists:(CDVInvokedUrlCommand *)command;
+
 @end
