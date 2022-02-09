@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.urbanairship.Autopilot;
+import com.urbanairship.PendingResult;
 import com.urbanairship.PrivacyManager;
 import com.urbanairship.UAirship;
 import com.urbanairship.actions.ActionArguments;
@@ -23,6 +24,7 @@ import com.urbanairship.actions.ActionCompletionCallback;
 import com.urbanairship.actions.ActionResult;
 import com.urbanairship.actions.ActionRunRequest;
 import com.urbanairship.channel.AttributeEditor;
+import com.urbanairship.channel.SubscriptionListEditor;
 import com.urbanairship.channel.TagGroupsEditor;
 import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
@@ -34,6 +36,7 @@ import com.urbanairship.messagecenter.Inbox;
 import com.urbanairship.messagecenter.Message;
 import com.urbanairship.messagecenter.MessageCenter;
 import com.urbanairship.preferencecenter.PreferenceCenter;
+import com.urbanairship.preferencecenter.data.PreferenceCenterConfig;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.util.UAStringUtil;
 
@@ -72,11 +75,11 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
-            "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "displayMessageCenter", "markInboxMessageRead",
+            "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "editSubscriptionLists", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
-            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter");
+            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter", "getConfig");
 
     /*
      * These actions are available even if airship is not ready.
@@ -184,6 +187,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         editChannelTagGroups(data, callbackContext);
                     } else if ("editNamedUserTagGroups".equals(action)) {
                         editNamedUserTagGroups(data, callbackContext);
+                    }  else if ("editSubscriptionLists".equals(action)) {
+                        editSubscriptionLists(data, callbackContext);
                     } else if ("getActiveNotifications".equals(action)) {
                         getActiveNotifications(data, callbackContext);
                     } else if ("getChannelID".equals(action)) {
@@ -260,6 +265,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         isFeatureEnabled(data, callbackContext);
                     } else if ("openPreferenceCenter".equals(action)) {
                         openPreferenceCenter(data, callbackContext);
+                    } else if ("getConfig".equals(action)) {
+                        getConfig(data, callbackContext);
                     } else {
                         PluginLogger.debug("No implementation for action: %s", action);
                         callbackContext.error("No implementation for action " + action);
@@ -789,6 +796,41 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         TagGroupsEditor editor = UAirship.shared().getChannel().editTagGroups();
         applyTagGroupOperations(editor, operations);
+        editor.apply();
+
+        callbackContext.success();
+    }
+
+    /**
+     * Edits the subscription lists.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    private void editSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+
+        JSONArray operations = data.getJSONArray(0);
+
+        com.urbanairship.cordova.PluginLogger.debug("Editing subscription lists: %s", operations);
+
+        SubscriptionListEditor editor = UAirship.shared().getChannel().editSubscriptionLists();
+        for (int i = 0; i < operations.length(); i++) {
+            JSONObject operation = operations.getJSONObject(i);
+
+            String listId = operation.getString("listId");
+            String operationType = operation.getString("operation");
+
+            if ((listId == null) || (operationType == null)) {
+                continue;
+            }
+
+            if ("subscribe".equals(operationType)) {
+                editor.subscribe(listId);
+            } else if ("unsubscribe".equals(operationType)) {
+                editor.unsubscribe(listId);
+            }
+        }
+
         editor.apply();
 
         callbackContext.success();
@@ -1337,6 +1379,18 @@ public class UAirshipPlugin extends CordovaPlugin {
     private void openPreferenceCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String preferenceCenterId = data.getString(0);
         PreferenceCenter.shared().open(preferenceCenterId);
+        callbackContext.success();
+    }
+
+    /**
+     * Gets the configuration of the Preference Center with the given Id trough a callback method.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    private void getConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        String preferenceCenterId = data.getString(0);
+        PendingResult<PreferenceCenterConfig> configPendingResult = PreferenceCenter.shared().getConfig(preferenceCenterId);
         callbackContext.success();
     }
 
