@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.service.notification.StatusBarNotification;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.urbanairship.Autopilot;
@@ -36,7 +37,10 @@ import com.urbanairship.messagecenter.Inbox;
 import com.urbanairship.messagecenter.Message;
 import com.urbanairship.messagecenter.MessageCenter;
 import com.urbanairship.preferencecenter.PreferenceCenter;
+import com.urbanairship.preferencecenter.data.CommonDisplay;
+import com.urbanairship.preferencecenter.data.Item;
 import com.urbanairship.preferencecenter.data.PreferenceCenterConfig;
+import com.urbanairship.preferencecenter.data.Section;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.util.UAStringUtil;
 
