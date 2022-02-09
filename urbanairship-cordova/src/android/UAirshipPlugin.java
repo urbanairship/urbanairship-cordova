@@ -1391,7 +1391,73 @@ public class UAirshipPlugin extends CordovaPlugin {
     private void getConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String preferenceCenterId = data.getString(0);
         PendingResult<PreferenceCenterConfig> configPendingResult = PreferenceCenter.shared().getConfig(preferenceCenterId);
-        callbackContext.success();
+        callbackContext.success(getConfigData(configPendingResult.getResult()));
+    }
+
+    public JSONObject getConfigData(PreferenceCenterConfig configPendingResult) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            if (configPendingResult != null) {
+                jsonObject.put("id", configPendingResult.getId());
+
+                List<Section> sections = configPendingResult.getSections();
+                if (sections != null) {
+                    JSONArray sectionArray = new JSONArray();
+                    for (Section section : sections) {
+                        JSONObject sectionMap = new JSONObject();
+                        sectionMap.put("id", section.getId());
+
+                        List<Item> items = section.getItems();
+                        if (items != null) {
+                            JSONArray itemArray = new JSONArray();
+                            for (Item item : items) {
+                                JSONObject itemMap = new JSONObject();
+                                itemMap.put("id", item.getId());
+                                if (item instanceof Item.ChannelSubscription) {
+                                    Item.ChannelSubscription subscription = (Item.ChannelSubscription) item;
+                                    itemMap.put("subscriptionId", subscription.getSubscriptionId());
+                                }
+
+                                CommonDisplay commonDisplay = item.getDisplay();
+                                if (commonDisplay != null) {
+                                    JSONObject commonDisplayMap = new JSONObject();
+                                    commonDisplayMap.put("name", commonDisplay.getName());
+                                    commonDisplayMap.put("description", commonDisplay.getDescription());
+                                    itemMap.put("display", commonDisplayMap);
+                                }
+                                itemArray.put(itemMap);
+                            }
+                            sectionMap.put("items", itemArray);
+                        }
+
+                        CommonDisplay sectionCommonDisplay = section.getDisplay();
+                        JSONObject sectionCommonDisplayMap = new JSONObject();
+                        if (sectionCommonDisplay != null) {
+                            sectionCommonDisplayMap.put("name", sectionCommonDisplay.getName());
+                            sectionCommonDisplayMap.put("description", sectionCommonDisplay.getDescription());
+                            sectionMap.put("display", sectionCommonDisplayMap);
+                        }
+
+                        sectionArray.put(sectionMap);
+                    }
+                    jsonObject.put("sections", sectionArray);
+                }
+
+                CommonDisplay configCommonDisplay = configPendingResult.getDisplay();
+                JSONObject configCommonDisplayMap = new JSONObject();
+                if (configCommonDisplay != null) {
+                    configCommonDisplayMap.put("name", configCommonDisplay.getName());
+                    configCommonDisplayMap.put("description", configCommonDisplay.getDescription());
+                    jsonObject.put("display", configCommonDisplayMap);
+                }
+            }
+
+        } catch (JSONException e) {
+            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
+        }
+
+        return jsonObject;
     }
 
     /**
