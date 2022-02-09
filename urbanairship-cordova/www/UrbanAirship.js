@@ -143,6 +143,74 @@ function TagGroupEditor(nativeMethod) {
     return editor
 }
 
+    /**
+     * Helper object to subscribe/unsubscribe to/from a list.
+     *
+     * Normally not created directly. Instead use [UrbanAirship.editSubscriptionLists]{@link module:UrbanAirship.editSubscriptionLists}.
+     *
+     * @class SubscriptionListEditor
+     * @param nativeMethod The native method to call on apply.
+     */
+    function SubscriptionListEditor(nativeMethod) {
+
+        // Store the raw operations and let the SDK combine them
+        var operations = []
+
+        var editor = {}
+
+        /**
+         * Subscribes to a list.
+         * @instance
+         * @memberof SubscriptionListEditor
+         * @function subscribe
+         *
+         * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+         * @return {SubscriptionListEditor} The subscription list editor instance.
+         */
+        editor.subscribe = function(subscriptionListID) {
+            argscheck.checkArgs('s', "SubscriptionListEditor#subscribe", arguments)
+            var operation = { "operation": "subscribe", "listId": subscriptionListID}
+            operations.push(operation)
+            return editor
+        }
+
+        /**
+         * Unsubscribes from a list.
+         * @instance
+         * @memberof SubscriptionListEditor
+         * @function unsubscribe
+         *
+         * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+         * @return {SubscriptionListEditor} The subscription list editor instance.
+         */
+        editor.unsubscribe = function(subscriptionListID) {
+            argscheck.checkArgs('s', "SubscriptionListEditor#unsubscribe", arguments)
+            var operation = { "operation": "unsubscribe", "listId": subscriptionListID}
+            operations.push(operation)
+            return editor
+        }
+
+        /**
+         * Applies subscription list changes.
+         * @instance
+         * @memberof SubscriptionListEditor
+         * @function apply
+         *
+         * @param {function} [success] Success callback.
+         * @param {function(message)} [failure] Failure callback.
+         * @param {string} failure.message The failure message.
+         * @return {SubscriptionListEditor} The subscription List editor instance.
+         */
+        editor.apply = function(success, failure) {
+            argscheck.checkArgs('FF', "SubscriptionListEditor#apply", arguments)
+            callNative(success, failure, nativeMethod, [operations])
+            operations = []
+            return editor
+        }
+
+        return editor
+    }
+
 /**
  * Helper object to edit attributes groups.
  *
@@ -1154,80 +1222,9 @@ module.exports = {
      * @param {function(message)} [failure] Failure callback.
      * @param {string} failure.message The error message.
      */
-    getConfigurations: function(prenferenceCenterId, success, failure) {
+    getConfiguration: function(prenferenceCenterId, success, failure) {
         argscheck.checkArgs('sFF', 'UAirship.getConfig', arguments)
         callNative(success, failure, "getConfig", [prenferenceCenterId])
     }
 
 }
-
-
-    /**
-     * Helper object to subscribe/unsubscribe to/from a list.
-     *
-     * Normally not created directly. Instead use [UrbanAirship.editSubscriptionLists]{@link module:UrbanAirship.editSubscriptionLists}.
-     *
-     * @class SubscriptionListEditor
-     * @param nativeMethod The native method to call on apply.
-     */
-    function SubscriptionListEditor(nativeMethod) {
-
-        // Store the raw operations and let the SDK combine them
-        var operations = []
-
-        var editor = {}
-
-        /**
-         * Subscribes to a list.
-         * @instance
-         * @memberof SubscriptionListEditor
-         * @function subscribe
-         *
-         * @param {subscriptionListID} subscriptionListID The subscription list identifier.
-         * @return {SubscriptionListEditor} The subscription list editor instance.
-         */
-        editor.subscribe = function(subscriptionListID) {
-            argscheck.checkArgs('s', "SubscriptionListEditor#subscribe", arguments)
-            var operation = { "operation": "subscribe", "listId": subscriptionListID}
-            operations.push(operation)
-            return editor
-        }
-
-        /**
-         * Unsubscribes from a list.
-         * @instance
-         * @memberof SubscriptionListEditor
-         * @function unsubscribe
-         *
-         * @param {subscriptionListID} subscriptionListID The subscription list identifier.
-         * @return {SubscriptionListEditor} The subscription list editor instance.
-         */
-        editor.unsubscribe = function(subscriptionListID) {
-            argscheck.checkArgs('s', "SubscriptionListEditor#unsubscribe", arguments)
-            var operation = { "operation": "unsubscribe", "listId": subscriptionListID}
-            operations.push(operation)
-            return editor
-        }
-
-        /**
-         * Applies subscription list changes.
-         * @instance
-         * @memberof SubscriptionListEditor
-         * @function apply
-         *
-         * @param {function} [success] Success callback.
-         * @param {function(message)} [failure] Failure callback.
-         * @param {string} failure.message The failure message.
-         * @return {SubscriptionListEditor} The subscription List editor instance.
-         */
-        editor.apply = function(success, failure) {
-            argscheck.checkArgs('FF', "SubscriptionListEditor#apply", arguments)
-            callNative(success, failure, nativeMethod, [operations])
-            operations = []
-            return editor
-        }
-
-        return editor
-    }
-
-});
