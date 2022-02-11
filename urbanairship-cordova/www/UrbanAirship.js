@@ -1227,4 +1227,14 @@ module.exports = {
         callNative(success, failure, "getConfig", [prenferenceCenterId])
     }
 
+    /**
+     * Sets the use custom preference center.
+     *
+     * @param {useCustomUi}  useCustomUi The preferencde center use custom UI.
+     */
+    setUseCustomPreferenceCenterUi: function(useCustomUi, success, failure) {
+      argscheck.checkArgs("*FF", "UAirship.setUseCustomPreferenceCenterUi", arguments);
+      callNative(success, failure, "setUseCustomPreferenceCenterUi", [config]);
+    },
+
 }

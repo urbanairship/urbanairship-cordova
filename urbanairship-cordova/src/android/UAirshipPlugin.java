@@ -83,7 +83,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
-            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter", "getConfig");
+            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter", "getConfig", "setUseCustomPreferenceCenterUi", "addPreferenceCenterOpenListener");
 
     /*
      * These actions are available even if airship is not ready.
@@ -271,6 +271,10 @@ public class UAirshipPlugin extends CordovaPlugin {
                         openPreferenceCenter(data, callbackContext);
                     } else if ("getConfig".equals(action)) {
                         getConfig(data, callbackContext);
+                    } else if ("setUseCustomPreferenceCenterUi".equals(action)) {
+                        setUseCustomPreferenceCenterUi(data, callbackContext);
+                    } else if ("addPreferenceCenterOpenListener".equals(action)) {
+                        addPreferenceCenterOpenListener(data, callbackContext);
                     } else {
                         PluginLogger.debug("No implementation for action: %s", action);
                         callbackContext.error("No implementation for action " + action);

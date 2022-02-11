@@ -990,6 +990,18 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
+- (void)setUseCustomPreferenceCenterUi:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("set the custom preference center use called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        BOOL useCustomUi = [args firstObject];
+        NSString *preferenceId = [args firstObject];
+        [[NSUserDefaults standardUserDefaults] setBool:useCustomUi forKey:preferenceId];
+        [UAPreferenceCenter shared].openDelegate = useCustomUi ? self : nil;
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
 - (NSMutableDictionary *)configData:(UAPreferenceCenterConfig *)config {
 
     NSMutableDictionary *configurationDictionary = [NSMutableDictionary dictionary];
