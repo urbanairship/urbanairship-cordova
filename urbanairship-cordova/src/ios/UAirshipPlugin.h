@@ -454,6 +454,10 @@
  */
 - (void)getConfig:(CDVInvokedUrlCommand *)command;
 
+- (void)setUseCustomPreferenceCenterUi:(CDVInvokedUrlCommand *)command;
+
+- (void)addPreferenceCenterOpenListener:(CDVInvokedUrlCommand *)command;
+
 /**
  * Edits channel subscription lists.
  *

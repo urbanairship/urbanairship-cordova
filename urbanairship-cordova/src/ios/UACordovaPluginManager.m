@@ -258,7 +258,6 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 #pragma mark -
 #pragma mark UAInboxDelegate
 
-
 - (void)displayMessageCenterForMessageID:(NSString *)messageID animated:(BOOL)animated {
     if (self.autoLaunchMessageCenter) {
         [[UAMessageCenter shared].defaultUI displayMessageCenterForMessageID:messageID animated:true];
@@ -404,7 +403,9 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 - (BOOL)openPreferenceCenter:(NSString * _Nonnull)preferenceCenterId {
     [self fireEvent:[UACordovaPreferenceCenterEvent eventWithPreferenceCenterId:preferenceCenterId]];
-    return [[NSUserDefaults standardUserDefaults] boolForKey:preferenceCenterId];
+    BOOL useCustomUi = [[NSUserDefaults standardUserDefaults] boolForKey:preferenceCenterId];
+    [UAPreferenceCenter shared].openDelegate = useCustomUi ? self : nil;
+    return useCustomUi;
 }
 
 @end

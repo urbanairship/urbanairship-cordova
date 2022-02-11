@@ -1225,16 +1225,25 @@ module.exports = {
     getConfiguration: function(prenferenceCenterId, success, failure) {
         argscheck.checkArgs('sFF', 'UAirship.getConfig', arguments)
         callNative(success, failure, "getConfig", [prenferenceCenterId])
-    }
+    },
 
     /**
      * Sets the use custom preference center.
      *
-     * @param {useCustomUi}  useCustomUi The preferencde center use custom UI.
+     * @param {useCustomUi}  useCustomUi The preference center use custom UI.
      */
-    setUseCustomPreferenceCenterUi: function(useCustomUi, success, failure) {
+    setUseCustomPreferenceCenterUi: function(preferenceCenterId, useCustomUi, success, failure) {
       argscheck.checkArgs("*FF", "UAirship.setUseCustomPreferenceCenterUi", arguments);
-      callNative(success, failure, "setUseCustomPreferenceCenterUi", [config]);
+      callNative(success, failure, "setUseCustomPreferenceCenterUi", [preferenceCenterId, useCustomUi]);
     },
+
+    /**
+    * Add the use custom preference center  listener.
+    *
+    */
+    addPreferenceCenterOpenListener: function(success, failure) {
+        argscheck.checkArgs("*FF", "UAirship.addPreferenceCenterOpenListener", arguments);
+        callNative(success, failure, "addPreferenceCenterOpenListener", [config]);
+    }
 
 }
