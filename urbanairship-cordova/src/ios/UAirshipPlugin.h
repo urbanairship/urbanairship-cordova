@@ -454,8 +454,22 @@
  */
 - (void)getConfig:(CDVInvokedUrlCommand *)command;
 
+/**
+ * Set to true of override the preference center UI
+ *
+ * Expected arguments: An array of objects that contain:
+ * "preferenceCenterId": the preference center Id.
+ * "userCustomUi": Boolean: true to use your custom preference center otherwise set to false.
+ *
+ * @param command The cordova command.
+ */
 - (void)setUseCustomPreferenceCenterUi:(CDVInvokedUrlCommand *)command;
 
+/**
+ * Add the preference center listener to be called wheb the preference center is opened.
+ *
+ * @param command The cordova command.
+ */
 - (void)addPreferenceCenterOpenListener:(CDVInvokedUrlCommand *)command;
 
 /**

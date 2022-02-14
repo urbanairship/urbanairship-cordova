@@ -4,7 +4,7 @@
 
    NS_ASSUME_NONNULL_BEGIN
 
-   extern NSString *const EventDeepLink;
+   extern NSString *const PreferenceCenterLink;
 
    /**
     * Preference Center event when the open preference center listener is called.

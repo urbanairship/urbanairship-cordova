@@ -2,6 +2,8 @@
 
 package com.urbanairship.cordova;
 
+import android.preference.PreferenceManager;
+
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -1466,6 +1468,25 @@ public class UAirshipPlugin extends CordovaPlugin {
         }
 
         return jsonObject;
+    }
+
+    /**
+     * Set to true the override the preference center.
+     * @param preferenceCenterId The preference center Id.
+     * @param userCustomUi set to true to use your custom preference cdenter otherwise set to false..
+     */
+    private void setUseCustomPreferenceCenterUi(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        String preferenceCenterId = data.getString(0);
+        Boolean useCustomUi = data.getBoolean(1);
+        PreferenceManager.getDefaultSharedPreferences(UAirship.getApplicationContext()).edit().putBoolean(preferenceCenterId, useCustomUi).apply();
+    }
+
+    /**
+     *
+     * @param
+     * @param
+     */
+    private void addPreferenceCenterOpenListener(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
     }
 
     /**
