@@ -1001,14 +1001,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
-- (void)addPreferenceCenterOpenListener:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("addPreferenceCenterOpenListener called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
 - (NSMutableDictionary *)configData:(UAPreferenceCenterConfig *)config {
 
     NSMutableDictionary *configurationDictionary = [NSMutableDictionary dictionary];

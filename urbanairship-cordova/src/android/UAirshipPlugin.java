@@ -1482,14 +1482,6 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     /**
-     *
-     * @param
-     * @param
-     */
-    private void addPreferenceCenterOpenListener(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-    }
-
-    /**
      * Helper method to verify if a Feature is authorized.
      * @param features The String features to verify.
      * @return {@code true} if the provided features are authorized, otherwise {@code false}.

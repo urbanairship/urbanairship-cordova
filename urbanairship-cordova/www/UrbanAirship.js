@@ -1235,14 +1235,6 @@ module.exports = {
     setUseCustomPreferenceCenterUi: function(preferenceCenterId, useCustomUi, success, failure) {
       argscheck.checkArgs("s*FF", "UAirship.setUseCustomPreferenceCenterUi", arguments);
       callNative(success, failure, "setUseCustomPreferenceCenterUi", [preferenceCenterId, useCustomUi]);
-    },
-
-    /**
-    * Add the use custom preference center  listener.
-    */
-    addPreferenceCenterOpenListener: function(success, failure) {
-        argscheck.checkArgs("*FF", "UAirship.addPreferenceCenterOpenListener", arguments);
-        callNative(success, failure, "addPreferenceCenterOpenListener", [config]);
     }
 
 }

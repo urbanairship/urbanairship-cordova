@@ -466,13 +466,6 @@
 - (void)setUseCustomPreferenceCenterUi:(CDVInvokedUrlCommand *)command;
 
 /**
- * Add the preference center listener to be called wheb the preference center is opened.
- *
- * @param command The cordova command.
- */
-- (void)addPreferenceCenterOpenListener:(CDVInvokedUrlCommand *)command;
-
-/**
  * Edits channel subscription lists.
  *
  * Expected arguments: An array of objects that contain:
