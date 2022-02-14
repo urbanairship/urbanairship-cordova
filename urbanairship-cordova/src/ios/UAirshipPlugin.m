@@ -995,7 +995,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *preferenceId = [args firstObject];
-        BOOL useCustomUi = [args objectAtIndex:1];
+        BOOL useCustomUi = [[args objectAtIndex:1] boolValue];
         [[NSUserDefaults standardUserDefaults] setBool:useCustomUi forKey:preferenceId];
         completionHandler(CDVCommandStatus_OK, nil);
     }];

@@ -402,9 +402,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 #pragma mark UAPreferenceCenterOpenDelegate
 
 - (BOOL)openPreferenceCenter:(NSString * _Nonnull)preferenceCenterId {
-    [self fireEvent:[UACordovaPreferenceCenterEvent eventWithPreferenceCenterId:preferenceCenterId]];
     BOOL useCustomUi = [[NSUserDefaults standardUserDefaults] boolForKey:preferenceCenterId];
-    [UAPreferenceCenter shared].openDelegate = useCustomUi ? self : nil;
+    if (useCustomUi) {
+        [self fireEvent:[UACordovaPreferenceCenterEvent eventWithPreferenceCenterId:preferenceCenterId]];
+    }
     return useCustomUi;
 }
 
