@@ -150,7 +150,7 @@ public class CordovaAutopilot extends Autopilot {
         MessageCenter.shared().setOnShowMessageCenterListener(new MessageCenter.OnShowMessageCenterListener() {
             @Override
             public boolean onShowMessageCenter(@Nullable String messageId) {
-                if (com.urbanairship.cordova.PluginManager.shared(UAirship.getApplicationContext()).getAutoLaunchMessageCenter()) {
+                if (PluginManager.shared(UAirship.getApplicationContext()).getAutoLaunchMessageCenter()) {
                     return false;
                 } else {
                     sendShowInboxEvent(messageId);
@@ -185,7 +185,7 @@ public class CordovaAutopilot extends Autopilot {
                 airship.getAnalytics().registerSDKExtension(Analytics.EXTENSION_CORDOVA, version);
             }
         } catch (PackageManager.NameNotFoundException e) {
-            com.urbanairship.cordova.PluginLogger.error(e, "Failed to get package info.");
+            PluginLogger.error(e, "Failed to get package info.");
         }
     }
 
@@ -193,7 +193,7 @@ public class CordovaAutopilot extends Autopilot {
         @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", context.getPackageName());
 
         if (resId != 0) {
-            com.urbanairship.cordova.PluginLogger.debug("Loading custom notification button groups");
+            PluginLogger.debug("Loading custom notification button groups");
             airship.getPushManager().addNotificationActionButtonGroups(context, resId);
         }
     }
@@ -202,18 +202,18 @@ public class CordovaAutopilot extends Autopilot {
         @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_channels", "xml", context.getPackageName());
 
         if (resId != 0) {
-            com.urbanairship.cordova.PluginLogger.debug("Loading custom notification channels");
+            PluginLogger.debug("Loading custom notification channels");
             airship.getPushManager().getNotificationChannelRegistry().createNotificationChannels(resId);
         }
     }
 
     private static void sendShowInboxEvent(@NonNull String messageId) {
         Context context = UAirship.getApplicationContext();
-        com.urbanairship.cordova.PluginManager.shared(context).sendShowInboxEvent(new ShowInboxEvent(messageId));
+        PluginManager.shared(context).sendShowInboxEvent(new ShowInboxEvent(messageId));
     }
 
     private static void sendPreferenceCenterEvent(@NonNull String preferenceCenterId) {
         Context context = UAirship.getApplicationContext();
-        com.urbanairship.cordova.PluginManager.shared(context).sendPreferenceCenterEvent(new PreferenceCenterEvent(preferenceCenterId));
+        PluginManager.shared(context).sendPreferenceCenterEvent(new PreferenceCenterEvent(preferenceCenterId));
     }
 }
