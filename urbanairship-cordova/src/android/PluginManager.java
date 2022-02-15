@@ -147,7 +147,7 @@ public class PluginManager {
     }
 
     /**
-     * Called to open the preference center when use the custom UI is disabled.
+     * Called to open the preference center when use custom UI is disabled.
      *
      * @param sendPreferenceCenterEvent .
      */

@@ -85,7 +85,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
-            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter", "getConfig", "setUseCustomPreferenceCenterUi", "addPreferenceCenterOpenListener");
+            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter", "getConfig", "setUseCustomPreferenceCenterUi");
 
     /*
      * These actions are available even if airship is not ready.
@@ -1471,7 +1471,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Set to true the override the preference center.
      * @param preferenceCenterId The preference center Id.
-     * @param userCustomUi set to true to use your custom preference cdenter otherwise set to false..
+     * @param userCustomUi set to true to use your custom preference center otherwise set to false..
      */
     private void setUseCustomPreferenceCenterUi(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String preferenceCenterId = data.getString(0);
