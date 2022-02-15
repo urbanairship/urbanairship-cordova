@@ -20,6 +20,7 @@ import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.InboxEvent;
 import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.cordova.events.NotificationOptInEvent;
+import com.urbanairship.cordova.events.PreferenceCenterEvent;
 import com.urbanairship.cordova.events.PushEvent;
 import com.urbanairship.cordova.events.RegistrationEvent;
 import com.urbanairship.cordova.events.ShowInboxEvent;
@@ -141,6 +142,19 @@ public class PluginManager {
         synchronized (lock) {
             if (!notifyListener(showInboxEvent)) {
                 pendingEvents.add(showInboxEvent);
+            }
+        }
+    }
+
+    /**
+     * Called to open the preference center when use the custom UI is disabled.
+     *
+     * @param sendPreferenceCenterEvent .
+     */
+    public void sendPreferenceCenterEvent(@NonNull PreferenceCenterEvent preferenceCenterEvent) {
+        synchronized (lock) {
+            if (!notifyListener(preferenceCenterEvent)) {
+                pendingEvents.add(preferenceCenterEvent);
             }
         }
     }

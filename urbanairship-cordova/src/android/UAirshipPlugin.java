@@ -275,8 +275,6 @@ public class UAirshipPlugin extends CordovaPlugin {
                         getConfig(data, callbackContext);
                     } else if ("setUseCustomPreferenceCenterUi".equals(action)) {
                         setUseCustomPreferenceCenterUi(data, callbackContext);
-                    } else if ("addPreferenceCenterOpenListener".equals(action)) {
-                        addPreferenceCenterOpenListener(data, callbackContext);
                     } else {
                         PluginLogger.debug("No implementation for action: %s", action);
                         callbackContext.error("No implementation for action " + action);

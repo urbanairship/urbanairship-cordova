@@ -5,6 +5,7 @@ package com.urbanairship.cordova;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +18,10 @@ import com.urbanairship.actions.DeepLinkListener;
 import com.urbanairship.analytics.Analytics;
 import com.urbanairship.channel.AirshipChannelListener;
 import com.urbanairship.cordova.events.ShowInboxEvent;
+import com.urbanairship.cordova.events.PreferenceCenterEvent;
 import com.urbanairship.messagecenter.InboxListener;
 import com.urbanairship.messagecenter.MessageCenter;
+import com.urbanairship.preferencecenter.PreferenceCenter;
 import com.urbanairship.push.NotificationActionButtonInfo;
 import com.urbanairship.push.NotificationInfo;
 import com.urbanairship.push.NotificationListener;
@@ -147,11 +150,25 @@ public class CordovaAutopilot extends Autopilot {
         MessageCenter.shared().setOnShowMessageCenterListener(new MessageCenter.OnShowMessageCenterListener() {
             @Override
             public boolean onShowMessageCenter(@Nullable String messageId) {
-                if (PluginManager.shared(UAirship.getApplicationContext()).getAutoLaunchMessageCenter()) {
+                if (com.urbanairship.cordova.PluginManager.shared(UAirship.getApplicationContext()).getAutoLaunchMessageCenter()) {
                     return false;
                 } else {
                     sendShowInboxEvent(messageId);
                     return true;
+                }
+            }
+        });
+
+        PreferenceCenter.shared().setOpenListener(new PreferenceCenter.OnOpenListener() {
+            @Override
+            public boolean onOpenPreferenceCenter(String preferenceCenterId) {
+                boolean isCustomPreferenceCenterUiEnabled = PreferenceManager.getDefaultSharedPreferences(UAirship.getApplicationContext())
+                        .getBoolean(preferenceCenterId, false);
+                if (isCustomPreferenceCenterUiEnabled) {
+                    sendPreferenceCenterEvent(preferenceCenterId);
+                    return true;
+                } else {
+                    return false;
                 }
             }
         });
@@ -168,16 +185,16 @@ public class CordovaAutopilot extends Autopilot {
                 airship.getAnalytics().registerSDKExtension(Analytics.EXTENSION_CORDOVA, version);
             }
         } catch (PackageManager.NameNotFoundException e) {
-            PluginLogger.error(e, "Failed to get package info.");
+            com.urbanairship.cordova.PluginLogger.error(e, "Failed to get package info.");
         }
     }
 
     private void loadCustomNotificationButtonGroups(Context context, UAirship airship) {
         @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", context.getPackageName());
 
-         if (resId != 0) {
-             PluginLogger.debug("Loading custom notification button groups");
-             airship.getPushManager().addNotificationActionButtonGroups(context, resId);
+        if (resId != 0) {
+            com.urbanairship.cordova.PluginLogger.debug("Loading custom notification button groups");
+            airship.getPushManager().addNotificationActionButtonGroups(context, resId);
         }
     }
 
@@ -185,13 +202,18 @@ public class CordovaAutopilot extends Autopilot {
         @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_channels", "xml", context.getPackageName());
 
         if (resId != 0) {
-            PluginLogger.debug("Loading custom notification channels");
+            com.urbanairship.cordova.PluginLogger.debug("Loading custom notification channels");
             airship.getPushManager().getNotificationChannelRegistry().createNotificationChannels(resId);
         }
     }
 
     private static void sendShowInboxEvent(@NonNull String messageId) {
         Context context = UAirship.getApplicationContext();
-        PluginManager.shared(context).sendShowInboxEvent(new ShowInboxEvent(messageId));
+        com.urbanairship.cordova.PluginManager.shared(context).sendShowInboxEvent(new ShowInboxEvent(messageId));
+    }
+
+    private static void sendPreferenceCenterEvent(@NonNull String preferenceCenterId) {
+        Context context = UAirship.getApplicationContext();
+        com.urbanairship.cordova.PluginManager.shared(context).sendPreferenceCenterEvent(new PreferenceCenterEvent(preferenceCenterId));
     }
 }

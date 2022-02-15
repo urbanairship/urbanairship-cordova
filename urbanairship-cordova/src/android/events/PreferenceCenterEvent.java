@@ -1,6 +1,6 @@
 /* Copyright Urban Airship and Contributors */
 
-package events;
+package com.urbanairship.cordova.events;
 
 import com.urbanairship.cordova.PluginLogger;
 
@@ -8,9 +8,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Deep link event when a new deep link is received.
+ * Preference Center event when the open preference center listener is called.
  */
-public class PreferenceCenterEvent implements Event {
+public class PreferenceCenterEvent implements com.urbanairship.cordova.events.Event {
     private static final String EVENT_PREFERENCE_CENTER_ACTION = "urbanairship.open_preference_center";
 
     private final String preferenceCenterId;
@@ -34,7 +34,7 @@ public class PreferenceCenterEvent implements Event {
         try {
             jsonObject.putOpt("preferenceCenterId", preferenceCenterId);
         } catch (JSONException e) {
-            PluginLogger.error(e, "Error constructing deep preference center event");
+            PluginLogger.error(e, "Error constructing preference center event");
         }
         return jsonObject;
     }

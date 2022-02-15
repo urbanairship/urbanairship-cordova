@@ -115,6 +115,9 @@
             src="src/android/events/PushEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
+            src="src/android/events/PreferenceCenterEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
             src="src/android/events/NotificationOpenedEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
