@@ -50,11 +50,17 @@
             console.log("Deep link: " + event.deepLink)
         }
 
+        // Deep link callback
+        var handleOpenPreferenceCenter = function(event)  {
+            console.log("Open preference Center: " + event.PreferenceCenterLink)
+        }
+
         // Register for any urban airship events
         document.addEventListener("urbanairship.registration", onRegistration, false)
         document.addEventListener("urbanairship.push", onPushReceived, false)
         document.addEventListener("urbanairship.notification_opened", notificationOpened, false)
         document.addEventListener("urbanairship.deep_link", handleDeepLink, false)
+        document.addEventListener("urbanairship.open_preference_center", handleOpenPreferenceCenter, false)
 
         // Handle resume
         document.addEventListener("resume", function() {
@@ -183,9 +189,42 @@
           })
 
         $("#openPreferenceCenterButton").click(function(ev) {
-          console.log("Opening Preference Center")
-          UAirship.openPreferenceCenter("test")
+
+         console.log("setting UseCustomPreferenceCenterUi")
+         UAirship.setUseCustomPreferenceCenterUi("test", false, function() {
+             console.log("setUseCustomPreferenceCenterUi : false")
+         })
+
+         console.log("Opening Preference Center")
+         UAirship.openPreferenceCenter("test")
+         
+         
+         // Set the setUseCustomPreferenceCenterUi to true to override the preference center IUI
+         // console.log("setting UseCustomPreferenceCenterUi")
+         // UAirship.setUseCustomPreferenceCenterUi("test", true, function() {
+         //     console.log("setUseCustomPreferenceCenterUi : true")
+         // })
+
+         // console.log("Opening Preference Center")
+         // UAirship.openPreferenceCenter("test")
+
+          console.log("track screen Preference Center")
           UAirship.trackScreen("Preference Center")
+
+          // Get the preference center config
+          // console.log("get Preference Center config")
+          // UAirship.getConfiguration("test", function(config) {
+          //     console.log(config)
+          // })
+
+          // Edit the subscription list
+          // console.log("subscription list editor")
+          // var editor = UAirship.editSubscriptionLists()
+          // editor.subscribe("food")
+          // editor.unsubscribe("test")
+          // editor.apply()
+          // console.log(editor)
+
         })
 
         $("#addTagButton").click(function(ev) {

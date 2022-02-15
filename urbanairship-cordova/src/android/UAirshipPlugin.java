@@ -1477,6 +1477,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         String preferenceCenterId = data.getString(0);
         Boolean useCustomUi = data.getBoolean(1);
         PreferenceManager.getDefaultSharedPreferences(UAirship.getApplicationContext()).edit().putBoolean(preferenceCenterId, useCustomUi).apply();
+        callbackContext.success();
     }
 
     /**
