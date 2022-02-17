@@ -474,6 +474,18 @@
  *
  * @param command The cordova command.
  */
-- (void)editSubscriptionLists:(CDVInvokedUrlCommand *)command;
+- (void)editChannelSubscriptionLists:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Edits contact subscription lists.
+ *
+ * Expected arguments: An array of objects that contain:
+ * "operation": String, either `subscribe` or `unsubscribe`
+ * "listId": String, the listID.
+ * "scope": Defines the channel types that the change applies to
+ *
+ * @param command The cordova command.
+ */
+- (void)editContactSubscriptionLists:(CDVInvokedUrlCommand *)command;
 
 @end

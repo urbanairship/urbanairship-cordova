@@ -143,73 +143,143 @@ function TagGroupEditor(nativeMethod) {
     return editor
 }
 
+/**
+* Helper object to subscribe/unsubscribe to/from a list.
+*
+* Normally not created directly. Instead use [UrbanAirship.editSubscriptionLists]{@link module:UrbanAirship.editSubscriptionLists}.
+*
+* @class ChannelSubscriptionListEditor
+* @param nativeMethod The native method to call on apply.
+*/
+function ChannelSubscriptionListEditor(nativeMethod) {
+
+    // Store the raw operations and let the SDK combine them
+    var operations = []
+
+    var editor = {}
+
     /**
-     * Helper object to subscribe/unsubscribe to/from a list.
+     * Subscribes to a list.
+     * @instance
+     * @memberof ChannelSubscriptionListEditor
+     * @function subscribe
      *
-     * Normally not created directly. Instead use [UrbanAirship.editSubscriptionLists]{@link module:UrbanAirship.editSubscriptionLists}.
-     *
-     * @class SubscriptionListEditor
-     * @param nativeMethod The native method to call on apply.
+     * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+     * @return {ChannelSubscriptionListEditor} The subscription list editor instance.
      */
-    function SubscriptionListEditor(nativeMethod) {
-
-        // Store the raw operations and let the SDK combine them
-        var operations = []
-
-        var editor = {}
-
-        /**
-         * Subscribes to a list.
-         * @instance
-         * @memberof SubscriptionListEditor
-         * @function subscribe
-         *
-         * @param {subscriptionListID} subscriptionListID The subscription list identifier.
-         * @return {SubscriptionListEditor} The subscription list editor instance.
-         */
-        editor.subscribe = function(subscriptionListID) {
-            argscheck.checkArgs('s', "SubscriptionListEditor#subscribe", arguments)
-            var operation = { "operation": "subscribe", "listId": subscriptionListID}
-            operations.push(operation)
-            return editor
-        }
-
-        /**
-         * Unsubscribes from a list.
-         * @instance
-         * @memberof SubscriptionListEditor
-         * @function unsubscribe
-         *
-         * @param {subscriptionListID} subscriptionListID The subscription list identifier.
-         * @return {SubscriptionListEditor} The subscription list editor instance.
-         */
-        editor.unsubscribe = function(subscriptionListID) {
-            argscheck.checkArgs('s', "SubscriptionListEditor#unsubscribe", arguments)
-            var operation = { "operation": "unsubscribe", "listId": subscriptionListID}
-            operations.push(operation)
-            return editor
-        }
-
-        /**
-         * Applies subscription list changes.
-         * @instance
-         * @memberof SubscriptionListEditor
-         * @function apply
-         *
-         * @param {function} [success] Success callback.
-         * @param {function(message)} [failure] Failure callback.
-         * @param {string} failure.message The failure message.
-         * @return {SubscriptionListEditor} The subscription List editor instance.
-         */
-        editor.apply = function(success, failure) {
-            argscheck.checkArgs('FF', "SubscriptionListEditor#apply", arguments)
-            callNative(success, failure, nativeMethod, [operations])
-            operations = []
-            return editor
-        }
-
+    editor.subscribe = function(subscriptionListID) {
+        argscheck.checkArgs('s', "ChannelSubscriptionListEditor#subscribe", arguments)
+        var operation = { "operation": "subscribe", "listId": subscriptionListID}
+        operations.push(operation)
         return editor
     }
+
+    /**
+     * Unsubscribes from a list.
+     * @instance
+     * @memberof ChannelSubscriptionListEditor
+     * @function unsubscribe
+     *
+     * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+     * @return {ChannelSubscriptionListEditor} The subscription list editor instance.
+     */
+    editor.unsubscribe = function(subscriptionListID) {
+        argscheck.checkArgs('s', "ChannelSubscriptionListEditor#unsubscribe", arguments)
+        var operation = { "operation": "unsubscribe", "listId": subscriptionListID}
+        operations.push(operation)
+        return editor
+    }
+
+    /**
+     * Applies subscription list changes.
+     * @instance
+     * @memberof ChannelSubscriptionListEditor
+     * @function apply
+     *
+     * @param {function} [success] Success callback.
+     * @param {function(message)} [failure] Failure callback.
+     * @param {string} failure.message The failure message.
+     * @return {ChannelSubscriptionListEditor} The subscription List editor instance.
+     */
+    editor.apply = function(success, failure) {
+        argscheck.checkArgs('FF', "ChannelSubscriptionListEditor#apply", arguments)
+        callNative(success, failure, nativeMethod, [operations])
+        operations = []
+        return editor
+    }
+
+    return editor
+}
+
+/**
+* Helper object to subscribe/unsubscribe to/from a list.
+*
+* Normally not created directly. Instead use [UrbanAirship.editContactSubscriptionLists]{@link module:UrbanAirship.editContactSubscriptionLists}.
+*
+* @class ContactSubscriptionListEditor
+* @param nativeMethod The native method to call on apply.
+*/
+function ContactSubscriptionListEditor(nativeMethod) {
+
+    // Store the raw operations and let the SDK combine them
+    var operations = []
+
+    var editor = {}
+
+    /**
+     * Subscribes to a contact list.
+     * @instance
+     * @memberof ContactSubscriptionListEditor
+     * @function subscribe
+     *
+     * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+     * @param {contactScope} contactScope Defines the channel types that the change applies to.
+     * @return {ContactSubscriptionListEditor} The subscription list editor instance.
+     */
+    editor.subscribe = function(contactSubscriptionListID, contactScope) {
+        argscheck.checkArgs('ss', "ContactSubscriptionListEditor#subscribe", arguments)
+        var operation = { "operation": "subscribe", "listId": contactSubscriptionListID, "scope": contactScope}
+        operations.push(operation)
+        return editor
+    }
+
+    /**
+     * Unsubscribes from a contact list.
+     * @instance
+     * @memberof ContactSubscriptionListEditor
+     * @function unsubscribe
+     *
+     * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+     * @param {contactScope} contactScope Defines the channel types that the change applies to.
+     * @return {ContactSubscriptionListEditor} The subscription list editor instance.
+     */
+    editor.unsubscribe = function(contactSubscriptionListID, contactScope) {
+        argscheck.checkArgs('ss', "ContactSubscriptionListEditor#unsubscribe", arguments)
+        var operation = { "operation": "unsubscribe", "listId": contactSubscriptionListID, "scope": contactScope}
+        operations.push(operation)
+        return editor
+    }
+
+    /**
+     * Applies subscription list changes.
+     * @instance
+     * @memberof ContactSubscriptionListEditor
+     * @function apply
+     *
+     * @param {function} [success] Success callback.
+     * @param {function(message)} [failure] Failure callback.
+     * @param {string} failure.message The failure message.
+     * @return {ContactSubscriptionListEditor} The subscription List editor instance.
+     */
+    editor.apply = function(success, failure) {
+        argscheck.checkArgs('FF', "ContactSubscriptionListEditor#apply", arguments)
+        callNative(success, failure, nativeMethod, [operations])
+        operations = []
+        return editor
+    }
+
+    return editor
+}
 
 /**
  * Helper object to edit attributes groups.
@@ -253,9 +323,9 @@ function AttributesEditor(nativeMethod) {
         } else {
             throw("Unsupported attribute type: " + typeof value)
         }
-        
+
         operations.push(operation)
-        
+
         return editor
   }
 
@@ -762,14 +832,23 @@ module.exports = {
     return new AttributesEditor('editChannelAttributes')
   },
 
-    /**
-     * Creates an editor to modify the subscription lists.
-     *
-     * @return {SubscriptionListEditor} A subscription list editor instance.
-     */
-    editSubscriptionLists: function() {
-      return new SubscriptionListEditor('editSubscriptionLists')
-    },
+  /**
+   * Creates an editor to modify the channel subscription lists.
+   *
+   * @return {ChannelSubscriptionListEditor} A subscription list editor instance.
+   */
+  editChannelSubscriptionLists: function() {
+    return new ChannelSubscriptionListEditor('editChannelSubscriptionLists')
+  },
+
+  /**
+   * Creates an editor to modify the contact subscription lists.
+   *
+   * @return {ContacttSubscriptionListEditor} A subscription list editor instance.
+   */
+  editContactSubscriptionLists: function() {
+    return new ContactSubscriptionListEditor('editContactSubscriptionLists')
+  },
 
   /**
    * Creates an editor to modify the named user attributes.

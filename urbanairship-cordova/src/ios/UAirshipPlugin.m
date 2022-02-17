@@ -546,8 +546,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
-- (void)editSubscriptionLists:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("editSubscriptionLists called with command arguments: %@", command.arguments);
+- (void)editChannelSubscriptionLists:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("editChannelSubscriptionLists called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
@@ -564,6 +564,42 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
+}
+
+- (void)editContactSubscriptionLists:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("editContactSubscriptionLists called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        for (NSDictionary *operation in [args objectAtIndex:0]) {
+            NSString *listId = operation[@"listId"];
+            NSString *scope = operation[@"scope"];
+            NSArray *allChannelScope = @[@"sms", @"email", @"app", @"web"];
+            if ((listId != nil) & [allChannelScope containsObject:scope]) {
+                UAChannelScope channelScope = [self getScope:scope];
+                if ([operation[@"operation"] isEqualToString:@"subscribe"]) {
+                    [[[UAirship contact] editSubscriptionLists] subscribe:listId scope:channelScope];
+                } else if ([operation[@"operation"] isEqualToString:@"unsubscribe"]) {
+                    [[[UAirship contact] editSubscriptionLists] unsubscribe:listId scope:channelScope];
+                }
+            }
+        }
+
+        [[[UAirship contact] editSubscriptionLists] apply];
+
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (UAChannelScope)getScope:(NSString* )scope {
+    if ([scope isEqualToString:@"sms"]) {
+        return UAChannelScopeSms;
+    } else if ([scope isEqualToString:@"email"]) {
+        return UAChannelScopeEmail;
+    } else if ([scope isEqualToString:@"app"]) {
+        return UAChannelScopeApp;
+    } else {
+        return UAChannelScopeWeb;
+    }
 }
 
 - (void)resetBadge:(CDVInvokedUrlCommand *)command {
