@@ -43,6 +43,9 @@ import com.urbanairship.messagecenter.MessageCenter;
 import com.urbanairship.preferencecenter.PreferenceCenter;
 import com.urbanairship.preferencecenter.data.CommonDisplay;
 import com.urbanairship.preferencecenter.data.Item;
+import com.urbanairship.preferencecenter.data.Item.ChannelSubscription;
+import com.urbanairship.preferencecenter.data.Item.ContactSubscriptionGroup;
+import com.urbanairship.preferencecenter.data.Item.ContactSubscription;
 import com.urbanairship.preferencecenter.data.PreferenceCenterConfig;
 import com.urbanairship.preferencecenter.data.Section;
 import com.urbanairship.push.PushMessage;
@@ -107,6 +110,20 @@ public class UAirshipPlugin extends CordovaPlugin {
     private static final String ATTRIBUTE_OPERATION_VALUETYPE = "type";
     private static final String ATTRIBUTE_OPERATION_SET = "set";
     private static final String ATTRIBUTE_OPERATION_REMOVE = "remove";
+
+    private static final String CONFIG_IDENTIFIER_KEY = "id";
+    private static final String CONFIG_SECTIONS_KEY = "sections";
+    private static final String CONFIG_DISPLAY_KEY = "display";
+    private static final String CONFIG_DISPLAY_NAME_KEY = "name";
+    private static final String CONFIG_DISPLAY_DESCRIPTION_KEY = "description";
+    private static final String CONFIG_ITEMS_KEY = "items";
+    private static final String CONFIG_SUBSCRIPTION_IDENTIFIER_KEY = "subscriptionId";
+    private static final String CONFIG_COMPONENTS_KEY = "components";
+    private static final String CONFIG_SCOPES_KEY = "scopes";
+    private static final String CONFIG_SCOPES_WEB_KEY = "web";
+    private static final String CONFIG_SCOPES_EMAIL_KEY = "email";
+    private static final String CONFIG_SCOPES_APP_KEY = "app";
+    private static final String CONFIG_SCOPES_SMS_KEY = "sms";
 
     private static final Map<String, Integer> AUTHORIZED_FEATURES = new HashMap<String, Integer>();
     static {
@@ -1463,57 +1480,19 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         try {
             if (configPendingResult != null) {
-                jsonObject.put("id", configPendingResult.getId());
+                //Identifier
+                jsonObject.put(CONFIG_IDENTIFIER_KEY, configPendingResult.getId());
 
+                //Sections
                 List<Section> sections = configPendingResult.getSections();
                 if (sections != null) {
-                    JSONArray sectionArray = new JSONArray();
-                    for (Section section : sections) {
-                        JSONObject sectionMap = new JSONObject();
-                        sectionMap.put("id", section.getId());
-
-                        List<Item> items = section.getItems();
-                        if (items != null) {
-                            JSONArray itemArray = new JSONArray();
-                            for (Item item : items) {
-                                JSONObject itemMap = new JSONObject();
-                                itemMap.put("id", item.getId());
-                                if (item instanceof Item.ChannelSubscription) {
-                                    Item.ChannelSubscription subscription = (Item.ChannelSubscription) item;
-                                    itemMap.put("subscriptionId", subscription.getSubscriptionId());
-                                }
-
-                                CommonDisplay commonDisplay = item.getDisplay();
-                                if (commonDisplay != null) {
-                                    JSONObject commonDisplayMap = new JSONObject();
-                                    commonDisplayMap.put("name", commonDisplay.getName());
-                                    commonDisplayMap.put("description", commonDisplay.getDescription());
-                                    itemMap.put("display", commonDisplayMap);
-                                }
-                                itemArray.put(itemMap);
-                            }
-                            sectionMap.put("items", itemArray);
-                        }
-
-                        CommonDisplay sectionCommonDisplay = section.getDisplay();
-                        JSONObject sectionCommonDisplayMap = new JSONObject();
-                        if (sectionCommonDisplay != null) {
-                            sectionCommonDisplayMap.put("name", sectionCommonDisplay.getName());
-                            sectionCommonDisplayMap.put("description", sectionCommonDisplay.getDescription());
-                            sectionMap.put("display", sectionCommonDisplayMap);
-                        }
-
-                        sectionArray.put(sectionMap);
-                    }
-                    jsonObject.put("sections", sectionArray);
+                    jsonObject.put(CONFIG_SECTIONS_KEY, createSections(sections));
                 }
 
+                //Display
                 CommonDisplay configCommonDisplay = configPendingResult.getDisplay();
-                JSONObject configCommonDisplayMap = new JSONObject();
                 if (configCommonDisplay != null) {
-                    configCommonDisplayMap.put("name", configCommonDisplay.getName());
-                    configCommonDisplayMap.put("description", configCommonDisplay.getDescription());
-                    jsonObject.put("display", configCommonDisplayMap);
+                    jsonObject.put(CONFIG_DISPLAY_KEY, createDisplay(configCommonDisplay));
                 }
             }
 
@@ -1524,6 +1503,123 @@ public class UAirshipPlugin extends CordovaPlugin {
         return jsonObject;
     }
 
+    private  JSONArray createSections(@NonNull List<Section> sections) {
+        JSONArray sectionArray = new JSONArray();
+        try {
+            for (Section section : sections) {
+                JSONObject sectionMap = new JSONObject();
+
+                //Identifier
+                sectionMap.put(CONFIG_IDENTIFIER_KEY, section.getId());
+
+                //Items
+                List<Item> items = section.getItems();
+                if (items != null) {
+                    sectionMap.put(CONFIG_ITEMS_KEY, createItems(items));
+                }
+
+                //Display
+                CommonDisplay sectionCommonDisplay = section.getDisplay();
+                if (sectionCommonDisplay != null) {
+                    sectionMap.put(CONFIG_DISPLAY_KEY, createDisplay(sectionCommonDisplay));
+                }
+
+                sectionArray.put(sectionMap);
+            }
+        } catch (JSONException e) {
+            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
+        }
+        return sectionArray;
+    }
+
+    private JSONArray createItems(@NonNull List<Item> items) {
+        JSONArray itemArray = new JSONArray();
+        try {
+            for (Item item : items) {
+                JSONObject itemMap = new JSONObject();
+
+                //Identifier
+                itemMap.put(CONFIG_IDENTIFIER_KEY, item.getId());
+
+                //Item
+                if (item instanceof Item.ChannelSubscription) {
+                    Item.ChannelSubscription channelSubscription = (Item.ChannelSubscription) item;
+                    //Subscription Id
+                    itemMap.put(CONFIG_SUBSCRIPTION_IDENTIFIER_KEY, channelSubscription.getSubscriptionId());
+                } else if (item instanceof  Item.ContactSubscription) {
+                    Item.ContactSubscription contactSubscription = (Item.ContactSubscription) item;
+                    //Subscription Id
+                    itemMap.put(CONFIG_SUBSCRIPTION_IDENTIFIER_KEY, contactSubscription.getSubscriptionId());
+                    //Scopes
+                    itemMap.put(CONFIG_SCOPES_KEY, createScopes(contactSubscription.getScopes()));
+                } else if (item instanceof Item.ContactSubscriptionGroup) {
+                    Item.ContactSubscriptionGroup contactSubscriptionGroup = (Item.ContactSubscriptionGroup) item;
+                    //Subscription Id
+                    itemMap.put(CONFIG_SUBSCRIPTION_IDENTIFIER_KEY, contactSubscriptionGroup.getSubscriptionId());
+                    //Components
+                    itemMap.put(CONFIG_COMPONENTS_KEY, createComponents(contactSubscriptionGroup.getComponents()));
+                }
+
+                //Display
+                CommonDisplay commonDisplay = item.getDisplay();
+                if (commonDisplay != null) {
+                    itemMap.put(CONFIG_DISPLAY_KEY, createDisplay(commonDisplay));
+                }
+                itemArray.put(itemMap);
+            }
+        } catch (JSONException e) {
+            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
+        }
+        return itemArray;
+    }
+
+    private JSONArray createComponents(@NonNull List<ContactSubscriptionGroup.Component> components) {
+        JSONArray componentsArray = new JSONArray();
+        try {
+            for (ContactSubscriptionGroup.Component component:components) {
+                JSONObject componentMap = new JSONObject();
+                //Scopes
+                componentMap.put(CONFIG_SCOPES_KEY, createScopes(component.getScopes()));
+                //Display
+                CommonDisplay commonDisplay = component.getDisplay();
+                if (commonDisplay != null) {
+                    componentMap.put(CONFIG_DISPLAY_KEY, createDisplay(commonDisplay));
+                }
+                componentsArray.put(componentMap);
+            }
+        } catch (JSONException e) {
+            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
+        }
+        return componentsArray;
+    }
+
+    private JSONArray createScopes(@NonNull Set<Scope> scopes) {
+        JSONArray scopesArray = new JSONArray();
+        for (Scope scope : scopes) {
+            switch (scope) {
+                case APP:
+                    scopesArray.put(CONFIG_SCOPES_APP_KEY);
+                case EMAIL:
+                    scopesArray.put(CONFIG_SCOPES_EMAIL_KEY);
+                case SMS:
+                    scopesArray.put(CONFIG_SCOPES_SMS_KEY);
+                case WEB:
+                    scopesArray.put(CONFIG_SCOPES_WEB_KEY);
+            }
+        }
+        return scopesArray;
+    }
+
+    private JSONObject createDisplay(@NonNull CommonDisplay commonDisplay) {
+        JSONObject configCommonDisplayMap = new JSONObject();
+        try {
+            configCommonDisplayMap.put(CONFIG_DISPLAY_NAME_KEY, commonDisplay.getName());
+            configCommonDisplayMap.put(CONFIG_DISPLAY_DESCRIPTION_KEY, commonDisplay.getDescription());
+        } catch (JSONException e) {
+            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
+        }
+        return configCommonDisplayMap;
+    }
     /**
      * Set to true the override the preference center.
      * @param callbackContext The callback context.
