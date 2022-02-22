@@ -13,6 +13,20 @@
 @import AirshipKit;
 #endif
 
+NSString *const PreferenceCenterIdKey = @"id";
+NSString *const PreferenceCenterSectionsKey = @"sections";
+NSString *const PreferenceCenterDisplayKey = @"display";
+NSString *const PreferenceCenterDisplayNameKey = @"name";
+NSString *const PreferenceCenterDisplayDescriptionKey = @"description";
+NSString *const PreferenceCenterItemsKey = @"items";
+NSString *const PreferenceCenterSubscriptionIdKey = @"subscriptionId";
+NSString *const PreferenceCenterComponentsKey = @"components";
+NSString *const PreferenceCenterScopesKey = @"scopes";
+NSString *const PreferenceCenterScopeWebKey = @"web";
+NSString *const PreferenceCenterScopeEmailKey = @"email";
+NSString *const PreferenceCenterScopeAppKey = @"app";
+NSString *const PreferenceCenterScopeSmsKey = @"sms";
+
 typedef void (^UACordovaCompletionHandler)(CDVCommandStatus, id);
 typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandler completionHandler);
 
@@ -158,35 +172,35 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self performCallbackWithCommand:command
                      airshipRequired:NO
                            withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-                               UA_LDEBUG(@"Performing takeOff with args: %@", args);
+        UA_LDEBUG(@"Performing takeOff with args: %@", args);
 
-                               NSDictionary *config = [args objectAtIndex:0];
-                               if (!config[@"production"] || !config[@"development"]) {
-                                   completionHandler(CDVCommandStatus_ERROR, @"Invalid config");
-                                   return;
-                               }
+        NSDictionary *config = [args objectAtIndex:0];
+        if (!config[@"production"] || !config[@"development"]) {
+            completionHandler(CDVCommandStatus_ERROR, @"Invalid config");
+            return;
+        }
 
-                               if (self.pluginManager.isAirshipReady) {
-                                   UA_LINFO(@"TakeOff already called. Config will be applied next app start.");
-                               }
+        if (self.pluginManager.isAirshipReady) {
+            UA_LINFO(@"TakeOff already called. Config will be applied next app start.");
+        }
 
-                               NSDictionary *development = config[@"development"];
-                               [self.pluginManager setDevelopmentAppKey:development[@"appKey"] appSecret:development[@"appSecret"]];
+        NSDictionary *development = config[@"development"];
+        [self.pluginManager setDevelopmentAppKey:development[@"appKey"] appSecret:development[@"appSecret"]];
 
-                               NSDictionary *production = config[@"production"];
-                               [self.pluginManager setProductionAppKey:production[@"appKey"] appSecret:production[@"appSecret"]];
+        NSDictionary *production = config[@"production"];
+        [self.pluginManager setProductionAppKey:production[@"appKey"] appSecret:production[@"appSecret"]];
 
-                               [self.pluginManager setCloudSite:config[@"site"]];
+        [self.pluginManager setCloudSite:config[@"site"]];
 
-                               if (!self.pluginManager.isAirshipReady) {
-                                   [self.pluginManager attemptTakeOff];
-                                   if (!self.pluginManager.isAirshipReady) {
-                                       completionHandler(CDVCommandStatus_ERROR, @"Invalid config. Airship unable to takeOff.");
-                                   }
-                               }
+        if (!self.pluginManager.isAirshipReady) {
+            [self.pluginManager attemptTakeOff];
+            if (!self.pluginManager.isAirshipReady) {
+                completionHandler(CDVCommandStatus_ERROR, @"Invalid config. Airship unable to takeOff.");
+            }
+        }
 
-                               completionHandler(CDVCommandStatus_OK, nil);
-                           }];
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
 }
 
 - (void)setAutoLaunchDefaultMessageCenter:(CDVInvokedUrlCommand *)command {
@@ -638,21 +652,21 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
                                 situation:UASituationManualInvocation
                         completionHandler:^(UAActionResult *actionResult) {
 
-                            if (actionResult.status == UAActionStatusCompleted) {
+            if (actionResult.status == UAActionStatusCompleted) {
 
-                                /*
-                                 * We are wrapping the value in an object to be consistent
-                                 * with the Android implementation.
-                                 */
+                /*
+                 * We are wrapping the value in an object to be consistent
+                 * with the Android implementation.
+                 */
 
-                                NSMutableDictionary *result = [NSMutableDictionary dictionary];
-                                [result setValue:actionResult.value forKey:@"value"];
-                                completionHandler(CDVCommandStatus_OK, result);
-                            } else {
-                                NSString *error = [self errorMessageForAction:actionName result:actionResult];
-                                completionHandler(CDVCommandStatus_ERROR, error);
-                            }
-                        }];
+                NSMutableDictionary *result = [NSMutableDictionary dictionary];
+                [result setValue:actionResult.value forKey:@"value"];
+                completionHandler(CDVCommandStatus_OK, result);
+            } else {
+                NSString *error = [self errorMessageForAction:actionName result:actionResult];
+                completionHandler(CDVCommandStatus_ERROR, error);
+            }
+        }];
 
     }];
 }
@@ -1044,73 +1058,150 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     if (config) {
 
         //Identifier
-        [configurationDictionary setValue:config.identifier forKey:@"id"];
+        [configurationDictionary setValue:config.identifier forKey:PreferenceCenterIdKey];
 
         //Sections
         NSArray* sections = config.sections;
         if (sections) {
-            NSMutableArray *sectionArray = [NSMutableArray array];
-            for (id<UAPreferenceSection> section in sections) {
-                NSMutableDictionary *sectionDictionary = [NSMutableDictionary dictionary];
-                // Section identifier
-                [sectionDictionary setValue:section.identifier forKey:@"id"];
-
-                // Section items
-                NSArray* items = section.items;
-                if (items) {
-                    NSMutableArray *itemArray = [NSMutableArray array];
-                    for (id item in items) {
-
-                        id<UAPreferenceItem> preferenceItem = item;
-                        NSMutableDictionary *itemDictionary = [NSMutableDictionary dictionary];
-                        [itemDictionary setValue:preferenceItem.identifier forKey:@"id"];
-
-                        if ([item isKindOfClass:[UAPreferenceChannelSubscriptionItem class]]) {
-                            UAPreferenceChannelSubscriptionItem* subscriptionItem = (UAPreferenceChannelSubscriptionItem*) item;
-                            [itemDictionary setValue:subscriptionItem.subscriptionID forKey:@"subscriptionId"];
-                        }
-
-                        UAPreferenceCommonDisplay* itemCommonDisplay = preferenceItem.display;
-                        if (itemCommonDisplay) {
-                            NSMutableDictionary *itemDisplayDictionary = [NSMutableDictionary dictionary];
-                            [itemDisplayDictionary setValue:itemCommonDisplay.title forKey:@"name"];
-                            [itemDisplayDictionary setValue:itemCommonDisplay.subtitle forKey:@"description"];
-                            [itemDictionary setValue:itemDisplayDictionary forKey:@"display"];
-                        }
-                        [itemArray addObject:itemDictionary];
-                    }
-                    [sectionDictionary setValue:itemArray forKey:@"items"];
-
-                    // Section display
-                    UAPreferenceCommonDisplay* sectionDisplay = section.display;
-                    if (sectionDisplay) {
-                        NSMutableDictionary *sectionDisplayDictionary = [NSMutableDictionary dictionary];
-                        [sectionDisplayDictionary setValue:sectionDisplay.title forKey:@"name"];
-                        [sectionDisplayDictionary setValue:sectionDisplay.subtitle forKey:@"description"];
-                        [sectionDictionary setValue:sectionDisplayDictionary forKey:@"display"];
-                    }
-                    [sectionArray addObject:sectionDictionary];
-
-                }
-            }
-
-            [configurationDictionary setValue:sectionArray forKey:@"sections"];
+            [configurationDictionary setValue:[self createSections:sections] forKey:PreferenceCenterSectionsKey];
         }
 
         //Display
         UAPreferenceCommonDisplay* configDisplay = config.display;
         if (configDisplay) {
-            NSMutableDictionary *configDisplayDictionary = [NSMutableDictionary dictionary];
-            [configDisplayDictionary setValue:configDisplay.title forKey:@"name"];
-            [configDisplayDictionary setValue:configDisplay.subtitle forKey:@"description"];
-            [configurationDictionary setValue:configDisplayDictionary forKey:@"display"];
+            [configurationDictionary setValue:[self createDisplay:configDisplay] forKey:PreferenceCenterDisplayKey];
         }
     }
 
     return configurationDictionary;
 }
 
+- (NSArray *)createSections:(NSArray *)sections {
 
+    NSMutableArray *sectionArray = [NSMutableArray array];
+    for (id<UAPreferenceSection> section in sections) {
+
+        NSMutableDictionary *sectionDictionary = [NSMutableDictionary dictionary];
+
+        // Section identifier
+        [sectionDictionary setValue:section.identifier forKey:PreferenceCenterIdKey];
+
+        // Section items
+        NSArray* items = section.items;
+        if (items) {
+            [sectionDictionary setValue:[self createItems:items] forKey:PreferenceCenterItemsKey];
+        }
+
+        // Section display
+        UAPreferenceCommonDisplay* sectionDisplay = section.display;
+        if (sectionDisplay) {
+            [sectionDictionary setValue:[self createDisplay:sectionDisplay] forKey:PreferenceCenterDisplayKey];
+        }
+
+        [sectionArray addObject:sectionDictionary];
+
+    }
+
+    return sectionArray;
+}
+
+- (NSArray *)createItems:(NSArray *)items {
+
+    NSMutableArray *itemArray = [NSMutableArray array];
+    for (id item in items) {
+        id<UAPreferenceItem> preferenceItem = item;
+        NSMutableDictionary *itemDictionary = [NSMutableDictionary dictionary];
+
+        // Item identifier
+        [itemDictionary setValue:preferenceItem.identifier forKey:PreferenceCenterIdKey];
+
+        if ([item isKindOfClass:[UAPreferenceChannelSubscriptionItem class]]) {
+            UAPreferenceChannelSubscriptionItem* channelSubscriptionItem = (UAPreferenceChannelSubscriptionItem*) item;
+
+            //SubscriptionId
+            [itemDictionary setValue:channelSubscriptionItem.subscriptionID forKey:PreferenceCenterSubscriptionIdKey];
+        } else if ([item isKindOfClass:[UAPreferenceContactSubscriptionItem class]]) {
+            UAPreferenceContactSubscriptionItem* contactSubscriptionItem = (UAPreferenceContactSubscriptionItem*) item;
+
+            //SubscriptionId
+            [itemDictionary setValue:contactSubscriptionItem.subscriptionID forKey:PreferenceCenterSubscriptionIdKey];
+
+            //Scopes
+            [itemDictionary setValue:[self createScopes:contactSubscriptionItem.scopes] forKey:PreferenceCenterScopesKey];
+
+        } else if ([item isKindOfClass:[UAPreferenceContactSubscriptionGroupItem class]]) {
+            UAPreferenceContactSubscriptionGroupItem* contactSubscriptionGroupItem = (UAPreferenceContactSubscriptionGroupItem*) item;
+
+            //SubscriptionId
+            [itemDictionary setValue:contactSubscriptionGroupItem.subscriptionID forKey:PreferenceCenterSubscriptionIdKey];
+
+            //Components
+            NSArray *components = contactSubscriptionGroupItem.components;
+            if (components) {
+                [itemDictionary setValue:[self createComponents:components] forKey:PreferenceCenterComponentsKey];
+            }
+        }
+
+
+        // Item Display
+        UAPreferenceCommonDisplay* itemCommonDisplay = preferenceItem.display;
+        if (itemCommonDisplay) {
+            [itemDictionary setValue:[self createDisplay:itemCommonDisplay] forKey:PreferenceCenterDisplayKey];
+        }
+        [itemArray addObject:itemDictionary];
+    }
+
+    return itemArray;
+}
+
+- (NSDictionary *)createDisplay:(UAPreferenceCommonDisplay *)commonDisplay {
+    NSMutableDictionary *configDisplayDictionary = [NSMutableDictionary dictionary];
+    [configDisplayDictionary setValue:commonDisplay.title forKey:PreferenceCenterDisplayNameKey];
+    [configDisplayDictionary setValue:commonDisplay.subtitle forKey:PreferenceCenterDisplayDescriptionKey];
+    return configDisplayDictionary;
+}
+
+- (NSArray *)createComponents:(NSArray *)components {
+    NSMutableArray *componentsArray = [NSMutableArray array];
+    for (Component *component in components) {
+        NSMutableDictionary* componentDictionary = [NSMutableDictionary dictionary];
+
+        //Component Scopes
+        UAChannelScopes *scopes = component.scopes;
+        if (scopes) {
+            [componentDictionary setValue:[self createScopes:scopes] forKey:PreferenceCenterScopesKey];
+        }
+
+        //Component display
+        UAPreferenceCommonDisplay* display = component.display;
+        if (display) {
+            [componentDictionary setValue:[self createDisplay:display] forKey:PreferenceCenterDisplayKey];
+        }
+
+        [componentsArray addObject:componentDictionary];
+    }
+
+    return componentsArray;
+}
+
+- (NSArray *)createScopes:(UAChannelScopes *)scopes {
+    NSMutableArray *scopesArray = [NSMutableArray array];
+    for (id scope in scopes.values) {
+        UAChannelScope channelScope = (UAChannelScope)[scope intValue];
+        switch (channelScope) {
+            case UAChannelScopeWeb:
+                [scopesArray addObject:PreferenceCenterScopeWebKey];
+            case UAChannelScopeApp:
+                [scopesArray addObject:PreferenceCenterScopeAppKey];
+            case UAChannelScopeSms:
+                [scopesArray addObject:PreferenceCenterScopeSmsKey];
+            case UAChannelScopeEmail:
+                [scopesArray addObject:PreferenceCenterScopeEmailKey];
+        }
+    }
+
+    return scopesArray;
+}
 
 - (BOOL)isValidFeature:(NSArray *)features {
     if (!features || [features count] == 0) {
