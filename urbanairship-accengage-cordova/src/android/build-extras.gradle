@@ -3,7 +3,7 @@ dependencies {
         resolutionStrategy { force 'androidx.core:core:1.7.0' }
     }
 
-    implementation 'com.urbanairship.android:urbanairship-accengage:16.3.0'
+    implementation 'com.urbanairship.android:urbanairship-accengage:16.3.1'
 }
 
 cdvPluginPostBuildExtras.push({
