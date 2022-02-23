@@ -808,7 +808,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     private void editNamedUserTagGroups(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
 
-        com.urbanairship.cordova.PluginLogger.debug("Editing named user tag groups: %s", operations);
+        PluginLogger.debug("Editing named user tag groups: %s", operations);
 
         TagGroupsEditor editor = UAirship.shared().getNamedUser().editTagGroups();
         applyTagGroupOperations(editor, operations);
