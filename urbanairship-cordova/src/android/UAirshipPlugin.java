@@ -86,7 +86,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
-            "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "editChannelSubscriptionLists", "editContactSubscriptionLists", "displayMessageCenter", "markInboxMessageRead",
+            "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "editChannelSubscriptionLists", "editContactSubscriptionLists", "getChannelSubscriptionLists", "getContactSubscriptionLists", "displayMessageCenter", "markInboxMessageRead",
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
@@ -217,6 +217,10 @@ public class UAirshipPlugin extends CordovaPlugin {
                         editChannelSubscriptionLists(data, callbackContext);
                     } else if ("editContactSubscriptionLists".equals(action)) {
                         editContactSubscriptionLists(data, callbackContext);
+                    } else if ("getChannelSubscriptionLists".equals(action)) {
+                        getChannelSubscriptionLists(data, callbackContext);
+                    } else if ("getContactSubscriptionLists".equals(action)) {
+                        getContactSubscriptionLists(data, callbackContext);
                     } else if ("getActiveNotifications".equals(action)) {
                         getActiveNotifications(data, callbackContext);
                     } else if ("getChannelID".equals(action)) {
@@ -917,6 +921,37 @@ public class UAirshipPlugin extends CordovaPlugin {
             return Scope.WEB;
         }
     }
+
+    /**
+     * Returns the current set of the subscription lists for this channel.
+     * An empty set indicates that this channel is not subscribed to any lists.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    private void getChannelSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
+        Boolean includePendingUpdates = data.getBoolean(0);
+        PendingResult<Set<String>> subscriptionsPendingResult = UAirship.shared().getChannel().getSubscriptionLists(includePendingUpdates);
+        JSONArray jsonArray = new JSONArray(subscriptionsPendingResult.getResult());
+        callbackContext.success(jsonArray);
+    }
+
+    /**
+     * Returns the current set of the subscription lists for this contact.
+     * An empty set indicates that this channel is not subscribed to any lists.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    private void getContactSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
+        Boolean includePendingUpdates = data.getBoolean(0);
+        PendingResult<Map<String, Set<Scope>>> subscriptionsPendingResult = UAirship.shared().getContact().getSubscriptionLists(includePendingUpdates);
+        JSONArray jsonArray = new JSONArray(subscriptionsPendingResult.getResult());
+        callbackContext.success(jsonArray);
+    }
+
     /**
      * Runs an Urban Airship action.
      * <p>
