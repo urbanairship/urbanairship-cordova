@@ -616,6 +616,67 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }
 }
 
+- (NSString *)getScopeString:(UAChannelScope )scope {
+    switch (scope) {
+        case UAChannelScopeSms:
+            return @"sms";
+        case UAChannelScopeEmail:
+            return @"email";
+        case UAChannelScopeApp:
+            return @"app";
+        case UAChannelScopeWeb:
+            return @"web";
+    }
+}
+
+- (void)getChannelSubscriptionLists:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("getChannelSubscriptionLists called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+
+        [[UAChannel shared] fetchSubscriptionListsWithCompletionHandler:^(NSArray<NSString *> * _Nullable channelSubscriptionLists, NSError * _Nullable error) {
+            if (error) {
+                completionHandler(CDVCommandStatus_ERROR, error);
+            }
+            if (!channelSubscriptionLists) {
+                completionHandler(CDVCommandStatus_ERROR, @"channel subscription list null");
+            }
+            completionHandler(CDVCommandStatus_OK, channelSubscriptionLists);
+        }];
+
+    }];
+}
+
+- (void)getContactSubscriptionLists:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("getContactSubscriptionLists called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+
+        [[UAContact shared] fetchSubscriptionListsWithCompletionHandler:^(NSDictionary<NSString *,UAChannelScopes *> * _Nullable contactSubscriptionLists, NSError * _Nullable error) {
+            if (error) {
+                completionHandler(CDVCommandStatus_ERROR, error);
+            }
+            if (!contactSubscriptionLists) {
+                completionHandler(CDVCommandStatus_ERROR, @"contact subscription list null");
+            }
+
+            NSMutableDictionary *contactSubscriptionListDict = [NSMutableDictionary dictionary];
+            for (NSString* identifier in contactSubscriptionLists.allKeys) {
+                UAChannelScopes *scopes = contactSubscriptionLists[identifier];
+                NSMutableArray *scopesArray = [NSMutableArray array];
+                for (id scope in scopes.values) {
+                    UAChannelScope channelScope = (UAChannelScope)[scope intValue];
+                    [scopesArray addObject:[self getScopeString:channelScope]];
+                }
+                [contactSubscriptionListDict setValue:scopesArray forKey:identifier];
+            }
+            completionHandler(CDVCommandStatus_OK, contactSubscriptionListDict);
+        }];
+
+    }];
+}
+
+
 - (void)resetBadge:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("resetBadge called with command arguments: %@", command.arguments);
 
