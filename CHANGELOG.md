@@ -1,5 +1,13 @@
 # Cordova Plugin Changelog
 
+## Version 13.3.0 - February 25, 2021
+Minor release that updates the Airship SDKs to 16.3.1
+
+### Changes
+- Update iOS & Android Airship SDK to 16.3.1.
+- Added preference center methods: `setUseCustomPreferenceCenterUi`, `getConfiguration`, `editChannelSubscriptionLists`, `editContactSubscriptionLists`, `getChannelSubscriptionLists`, `getContactSubscriptionLists`.
+- Add `urbanairship.open_preference_center` event.
+
 ## Version 13.2.0 - February 1, 2021
 Minor release that updates the Airship SDKs to 16.2.0
 
