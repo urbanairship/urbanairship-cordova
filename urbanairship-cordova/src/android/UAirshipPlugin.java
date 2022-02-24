@@ -68,6 +68,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -948,8 +949,15 @@ public class UAirshipPlugin extends CordovaPlugin {
         com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
         Boolean includePendingUpdates = data.getBoolean(0);
         PendingResult<Map<String, Set<Scope>>> subscriptionsPendingResult = UAirship.shared().getContact().getSubscriptionLists(includePendingUpdates);
-        JSONArray jsonArray = new JSONArray(subscriptionsPendingResult.getResult());
-        callbackContext.success(jsonArray);
+        Map<String, JSONArray> resultMap = new HashMap<String, JSONArray>();
+        for (Map.Entry<String, Set<Scope>> entry : subscriptionsPendingResult.getResult().entrySet()) {
+            JSONArray scopesArray = new JSONArray();
+            for (Scope scope : entry.getValue()) {
+                scopesArray.put(scope.name().toLowerCase(Locale.ROOT));
+            }
+            resultMap.put(entry.getKey(), scopesArray);
+        }
+        callbackContext.success(resultMap.toString());
     }
 
     /**
