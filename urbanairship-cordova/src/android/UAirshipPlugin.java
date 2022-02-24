@@ -21,6 +21,7 @@ import androidx.core.app.NotificationManagerCompat;
 import com.urbanairship.Autopilot;
 import com.urbanairship.PendingResult;
 import com.urbanairship.PrivacyManager;
+import com.urbanairship.ResultCallback;
 import com.urbanairship.UAirship;
 import com.urbanairship.actions.ActionArguments;
 import com.urbanairship.actions.ActionCompletionCallback;
@@ -895,6 +896,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                 continue;
             }
 
+
             if (!CHANNEL_SCOPE.contains(scope)) {
                 continue;
             }
@@ -933,9 +935,15 @@ public class UAirshipPlugin extends CordovaPlugin {
     private void getChannelSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
         Boolean includePendingUpdates = data.getBoolean(0);
-        PendingResult<Set<String>> subscriptionsPendingResult = UAirship.shared().getChannel().getSubscriptionLists(includePendingUpdates);
-        JSONArray jsonArray = new JSONArray(subscriptionsPendingResult.getResult());
-        callbackContext.success(jsonArray);
+        UAirship.shared().getChannel().getSubscriptionLists(includePendingUpdates).addResultCallback(new ResultCallback<Set<String>>() {
+
+            @Override
+            public void onResult(@Nullable Set<String> channelSubscriptionList) {
+                JSONArray jsonArray = new JSONArray(channelSubscriptionList);
+                callbackContext.success(jsonArray);
+
+            }
+        });
     }
 
     /**
@@ -948,16 +956,23 @@ public class UAirshipPlugin extends CordovaPlugin {
     private void getContactSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
         Boolean includePendingUpdates = data.getBoolean(0);
-        PendingResult<Map<String, Set<Scope>>> subscriptionsPendingResult = UAirship.shared().getContact().getSubscriptionLists(includePendingUpdates);
-        Map<String, JSONArray> resultMap = new HashMap<String, JSONArray>();
-        for (Map.Entry<String, Set<Scope>> entry : subscriptionsPendingResult.getResult().entrySet()) {
-            JSONArray scopesArray = new JSONArray();
-            for (Scope scope : entry.getValue()) {
-                scopesArray.put(scope.name().toLowerCase(Locale.ROOT));
+        UAirship.shared().getContact().getSubscriptionLists(includePendingUpdates).addResultCallback(new ResultCallback<Map<String, Set<Scope>>>() {
+
+            @Override
+            public void onResult(@Nullable Map<String, Set<Scope>> contactSubscriptionList) {
+                Map<String, JSONArray> resultMap = new HashMap<String, JSONArray>();
+                for (Map.Entry<String, Set<Scope>> entry : contactSubscriptionList.entrySet()) {
+                    JSONArray scopesArray = new JSONArray();
+                    for (Scope scope : entry.getValue()) {
+                        scopesArray.put(scope.name().toLowerCase(Locale.ROOT));
+                    }
+                    resultMap.put(entry.getKey(), scopesArray);
+                }
+                callbackContext.success(resultMap.toString());
+
             }
-            resultMap.put(entry.getKey(), scopesArray);
-        }
-        callbackContext.success(resultMap.toString());
+        });
+
     }
 
     /**
@@ -1514,8 +1529,12 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     private void getConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String preferenceCenterId = data.getString(0);
-        PendingResult<PreferenceCenterConfig> configPendingResult = PreferenceCenter.shared().getConfig(preferenceCenterId);
-        callbackContext.success(getConfigData(configPendingResult.getResult()));
+        PreferenceCenter.shared().getConfig(preferenceCenterId).addResultCallback(new ResultCallback<PreferenceCenterConfig>() {
+            @Override
+            public void onResult(@Nullable PreferenceCenterConfig configPendingResult) {
+                callbackContext.success(getConfigData(configPendingResult));
+            }
+        });
     }
 
     public JSONObject getConfigData(PreferenceCenterConfig configPendingResult) {
