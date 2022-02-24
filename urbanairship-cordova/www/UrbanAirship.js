@@ -1316,8 +1316,8 @@ module.exports = {
     * @param {string} failure.message The error message.
     */
   getChannelSubscriptionLists: function(includePendingUpdates, success, failure) {
-    argscheck.checkArgs('*FF', 'UAirship.getContactSubscriptionLists', arguments)
-    callNative(success, failure, "getContactSubscriptionLists", [includePendingUpdates])
+    argscheck.checkArgs('*FF', 'UAirship.getChannelSubscriptionLists', arguments)
+    callNative(success, failure, "getChannelSubscriptionLists", [includePendingUpdates])
   },
 
   /**
@@ -1330,8 +1330,8 @@ module.exports = {
    * @param {string} failure.message The error message.
    */
    getContactSubscriptionLists: function(includePendingUpdates, success, failure) {
-     argscheck.checkArgs('*FF', 'UAirship.getChannelSubscriptionLists', arguments)
-     callNative(success, failure, "getChannelSubscriptionLists", [includePendingUpdates])
+     argscheck.checkArgs('*FF', 'UAirship.getContactSubscriptionLists', arguments)
+     callNative(success, failure, "getContactSubscriptionLists", [includePendingUpdates])
    },
 
    /**
