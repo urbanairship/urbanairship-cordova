@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="13.2.0"
+        version="13.3.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -40,7 +40,7 @@
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data
                 android:name="com.urbanairship.cordova.version"
-                android:value="13.2.0"/>
+                android:value="13.3.0"/>
 
             <meta-data
                 android:name="com.urbanairship.autopilot"
@@ -115,6 +115,9 @@
             src="src/android/events/PushEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
+            src="src/android/events/PreferenceCenterEvent.java"
+            target-dir="src/com/urbanairship/cordova/events"/>
+        <source-file
             src="src/android/events/NotificationOpenedEvent.java"
             target-dir="src/com/urbanairship/cordova/events"/>
         <source-file
@@ -142,7 +145,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
-            <string>13.2.0</string>
+            <string>13.3.0</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
@@ -186,6 +189,8 @@
         <source-file src="src/ios/events/UACordovaRegistrationEvent.m"/>
         <header-file src="src/ios/events/UACordovaShowInboxEvent.h"/>
         <source-file src="src/ios/events/UACordovaShowInboxEvent.m"/>
+        <header-file src="src/ios/events/UACordovaPreferenceCenterEvent.h"/>
+        <source-file src="src/ios/events/UACordovaPreferenceCenterEvent.m"/>
 
         <!-- Airship library -->
         <podspec>
@@ -193,11 +198,11 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship/Core" spec="16.2.0" />
-                <pod name="Airship/MessageCenter" spec="16.2.0" />
-                <pod name="Airship/Automation" spec="16.2.0" />
-                <pod name="Airship/ExtendedActions" spec="16.2.0" />
-                <pod name="Airship/PreferenceCenter" spec="16.2.0" />
+                <pod name="Airship/Core" spec="16.4.0" />
+                <pod name="Airship/MessageCenter" spec="16.4.0" />
+                <pod name="Airship/Automation" spec="16.4.0" />
+                <pod name="Airship/ExtendedActions" spec="16.4.0" />
+                <pod name="Airship/PreferenceCenter" spec="16.4.0" />
             </pods>
         </podspec>
 

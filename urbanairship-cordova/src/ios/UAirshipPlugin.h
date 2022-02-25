@@ -444,4 +444,64 @@
  */
 - (void)openPreferenceCenter:(CDVInvokedUrlCommand *)command;
 
+
+/**
+ * Gets the configuration of the Preference Center with the given Id trough a callback method.
+ *
+ * Expected arguments: String - the preference center Id.
+ *
+ * @param command The cordova command.
+ */
+- (void)getPreferenceCenterConfig:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Set to true of override the preference center UI
+ *
+ * Expected arguments: An array of objects that contain:
+ * "preferenceCenterId": the preference center Id.
+ * "userCustomUi": Boolean: true to use your custom preference center otherwise set to false.
+ *
+ * @param command The cordova command.
+ */
+- (void)setUseCustomPreferenceCenterUi:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Edits channel subscription lists.
+ *
+ * Expected arguments: An array of objects that contain:
+ * "operation": String, either `subscribe` or `unsubscribe`
+ * "listId": String, the listID.
+ *
+ * @param command The cordova command.
+ */
+- (void)editChannelSubscriptionLists:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Edits contact subscription lists.
+ *
+ * Expected arguments: An array of objects that contain:
+ * "operation": String, either `subscribe` or `unsubscribe`
+ * "listId": String, the listID.
+ * "scope": Defines the channel types that the change applies to
+ *
+ * @param command The cordova command.
+ */
+- (void)editContactSubscriptionLists:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Returns the current set of subscription lists for the current channel,
+ * optionally applying pending subscription list changes that will be applied during the next channel update.
+ *
+ * @param command The cordova command.
+ */
+- (void)getChannelSubscriptionLists:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Returns the current set of subscription lists for the current contact,
+ * optionally applying pending subscription list changes that will be applied during the next contact update.
+ *
+ * @param command The cordova command.
+ */
+- (void)getContactSubscriptionLists:(CDVInvokedUrlCommand *)command;
+
 @end

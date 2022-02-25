@@ -50,11 +50,17 @@
             console.log("Deep link: " + event.deepLink)
         }
 
+        // Deep link callback
+        var handleOpenPreferenceCenter = function(event)  {
+            console.log("Open preference Center: " + event.PreferenceCenterLink)
+        }
+
         // Register for any urban airship events
         document.addEventListener("urbanairship.registration", onRegistration, false)
         document.addEventListener("urbanairship.push", onPushReceived, false)
         document.addEventListener("urbanairship.notification_opened", notificationOpened, false)
         document.addEventListener("urbanairship.deep_link", handleDeepLink, false)
+        document.addEventListener("urbanairship.open_preference_center", handleOpenPreferenceCenter, false)
 
         // Handle resume
         document.addEventListener("resume", function() {

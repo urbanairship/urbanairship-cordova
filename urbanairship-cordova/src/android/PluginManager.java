@@ -20,6 +20,7 @@ import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.InboxEvent;
 import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.cordova.events.NotificationOptInEvent;
+import com.urbanairship.cordova.events.PreferenceCenterEvent;
 import com.urbanairship.cordova.events.PushEvent;
 import com.urbanairship.cordova.events.RegistrationEvent;
 import com.urbanairship.cordova.events.ShowInboxEvent;
@@ -146,6 +147,19 @@ public class PluginManager {
     }
 
     /**
+     * Called to open the preference center when use custom UI is disabled.
+     *
+     * @param sendPreferenceCenterEvent .
+     */
+    public void sendPreferenceCenterEvent(@NonNull PreferenceCenterEvent preferenceCenterEvent) {
+        synchronized (lock) {
+            if (!notifyListener(preferenceCenterEvent)) {
+                pendingEvents.add(preferenceCenterEvent);
+            }
+        }
+    }
+
+    /**
      * Called on app resume and when registration changes.
      */
     public void checkOptInStatus() {
@@ -175,6 +189,19 @@ public class PluginManager {
      */
     public void setDefaultNotificationChannelId(@Nullable String value) {
         sharedPreferences.edit().putString(DEFAULT_NOTIFICATION_CHANNEL_ID, value).apply();
+    }
+
+
+    public void setUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId, boolean useCustomUi) {
+        sharedPreferences.edit().putBoolean(useCustomPreferenceCenterUiKey(preferenceCenterId), useCustomUi).apply();
+    }
+
+     public boolean getUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId) {
+        return sharedPreferences.getBoolean(useCustomPreferenceCenterUiKey(preferenceCenterId), false);
+    }
+
+    private static String useCustomPreferenceCenterUiKey(@NonNull String preferenceCenterId) {
+        return "preference_" + preferenceCenterId + "_use_custom_ui";
     }
 
     /**

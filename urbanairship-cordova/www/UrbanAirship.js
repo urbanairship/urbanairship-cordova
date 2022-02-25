@@ -144,6 +144,144 @@ function TagGroupEditor(nativeMethod) {
 }
 
 /**
+* Helper object to subscribe/unsubscribe to/from a list.
+*
+* Normally not created directly. Instead use [UrbanAirship.editSubscriptionLists]{@link module:UrbanAirship.editSubscriptionLists}.
+*
+* @class ChannelSubscriptionListEditor
+* @param nativeMethod The native method to call on apply.
+*/
+function ChannelSubscriptionListEditor(nativeMethod) {
+
+    // Store the raw operations and let the SDK combine them
+    var operations = []
+
+    var editor = {}
+
+    /**
+     * Subscribes to a list.
+     * @instance
+     * @memberof ChannelSubscriptionListEditor
+     * @function subscribe
+     *
+     * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+     * @return {ChannelSubscriptionListEditor} The subscription list editor instance.
+     */
+    editor.subscribe = function(subscriptionListID) {
+        argscheck.checkArgs('s', "ChannelSubscriptionListEditor#subscribe", arguments)
+        var operation = { "operation": "subscribe", "listId": subscriptionListID}
+        operations.push(operation)
+        return editor
+    }
+
+    /**
+     * Unsubscribes from a list.
+     * @instance
+     * @memberof ChannelSubscriptionListEditor
+     * @function unsubscribe
+     *
+     * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+     * @return {ChannelSubscriptionListEditor} The subscription list editor instance.
+     */
+    editor.unsubscribe = function(subscriptionListID) {
+        argscheck.checkArgs('s', "ChannelSubscriptionListEditor#unsubscribe", arguments)
+        var operation = { "operation": "unsubscribe", "listId": subscriptionListID}
+        operations.push(operation)
+        return editor
+    }
+
+    /**
+     * Applies subscription list changes.
+     * @instance
+     * @memberof ChannelSubscriptionListEditor
+     * @function apply
+     *
+     * @param {function} [success] Success callback.
+     * @param {function(message)} [failure] Failure callback.
+     * @param {string} failure.message The failure message.
+     * @return {ChannelSubscriptionListEditor} The subscription List editor instance.
+     */
+    editor.apply = function(success, failure) {
+        argscheck.checkArgs('FF', "ChannelSubscriptionListEditor#apply", arguments)
+        callNative(success, failure, nativeMethod, [operations])
+        operations = []
+        return editor
+    }
+
+    return editor
+}
+
+/**
+* Helper object to subscribe/unsubscribe to/from a list.
+*
+* Normally not created directly. Instead use [UrbanAirship.editContactSubscriptionLists]{@link module:UrbanAirship.editContactSubscriptionLists}.
+*
+* @class ContactSubscriptionListEditor
+* @param nativeMethod The native method to call on apply.
+*/
+function ContactSubscriptionListEditor(nativeMethod) {
+
+    // Store the raw operations and let the SDK combine them
+    var operations = []
+
+    var editor = {}
+
+    /**
+     * Subscribes to a contact list.
+     * @instance
+     * @memberof ContactSubscriptionListEditor
+     * @function subscribe
+     *
+     * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+     * @param {contactScope} contactScope Defines the channel types that the change applies to.
+     * @return {ContactSubscriptionListEditor} The subscription list editor instance.
+     */
+    editor.subscribe = function(contactSubscriptionListID, contactScope) {
+        argscheck.checkArgs('ss', "ContactSubscriptionListEditor#subscribe", arguments)
+        var operation = { "operation": "subscribe", "listId": contactSubscriptionListID, "scope": contactScope}
+        operations.push(operation)
+        return editor
+    }
+
+    /**
+     * Unsubscribes from a contact list.
+     * @instance
+     * @memberof ContactSubscriptionListEditor
+     * @function unsubscribe
+     *
+     * @param {subscriptionListID} subscriptionListID The subscription list identifier.
+     * @param {contactScope} contactScope Defines the channel types that the change applies to.
+     * @return {ContactSubscriptionListEditor} The subscription list editor instance.
+     */
+    editor.unsubscribe = function(contactSubscriptionListID, contactScope) {
+        argscheck.checkArgs('ss', "ContactSubscriptionListEditor#unsubscribe", arguments)
+        var operation = { "operation": "unsubscribe", "listId": contactSubscriptionListID, "scope": contactScope}
+        operations.push(operation)
+        return editor
+    }
+
+    /**
+     * Applies subscription list changes.
+     * @instance
+     * @memberof ContactSubscriptionListEditor
+     * @function apply
+     *
+     * @param {function} [success] Success callback.
+     * @param {function(message)} [failure] Failure callback.
+     * @param {string} failure.message The failure message.
+     * @return {ContactSubscriptionListEditor} The subscription List editor instance.
+     */
+    editor.apply = function(success, failure) {
+        argscheck.checkArgs('FF', "ContactSubscriptionListEditor#apply", arguments)
+        callNative(success, failure, nativeMethod, [operations])
+        operations = []
+        return editor
+    }
+
+    return editor
+}
+
+/**
  * Helper object to edit attributes groups.
  *
  * Normally not created directly. Instead use [UrbanAirship.editChannelAttributes]{@link module:UrbanAirship.editChannelAttributes}.
@@ -185,9 +323,9 @@ function AttributesEditor(nativeMethod) {
         } else {
             throw("Unsupported attribute type: " + typeof value)
         }
-        
+
         operations.push(operation)
-        
+
         return editor
   }
 
@@ -695,6 +833,24 @@ module.exports = {
   },
 
   /**
+   * Creates an editor to modify the channel subscription lists.
+   *
+   * @return {ChannelSubscriptionListEditor} A subscription list editor instance.
+   */
+  editChannelSubscriptionLists: function() {
+    return new ChannelSubscriptionListEditor('editChannelSubscriptionLists')
+  },
+
+  /**
+   * Creates an editor to modify the contact subscription lists.
+   *
+   * @return {ContacttSubscriptionListEditor} A subscription list editor instance.
+   */
+  editContactSubscriptionLists: function() {
+    return new ContactSubscriptionListEditor('editContactSubscriptionLists')
+  },
+
+  /**
    * Creates an editor to modify the named user attributes.
    *
    * @return {AttributesEditor} An attributes editor instance.
@@ -1127,13 +1283,64 @@ module.exports = {
   /**
    * Opens the Preference Center with the given preferenceCenterId.
    *
-   * @param {string} prenferenceCenterId The preference center ID.
+   * @param {string} preferenceCenterId The preference center ID.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
    */
-  openPreferenceCenter: function(prenferenceCenterId, success, failure) {
+  openPreferenceCenter: function(preferenceCenterId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.openPreferenceCenter', arguments)
-    callNative(success, failure, "openPreferenceCenter", [prenferenceCenterId])
-  }
+    callNative(success, failure, "openPreferenceCenter", [preferenceCenterId])
+  },
+
+  /**
+   * Returns the configuration of the Preference Center with the given ID trough a callback method.
+   *
+   * @param {string} preferenceCenterId The preference center ID.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+   getPreferenceCenterConfig: function(preferenceCenterId, success, failure) {
+     argscheck.checkArgs('sFF', 'UAirship.getPreferenceCenterConfig', arguments)
+     callNative(success, failure, "getPreferenceCenterConfig", [preferenceCenterId])
+  },
+
+   /**
+    * Returns the current set of subscription lists for the current channel,
+    * optionally applying pending subscription list changes that will be applied during the next channel update.
+    * An empty set indicates that this contact is not subscribed to any lists.
+    *
+    * @param {function} [success] Success callback.
+    * @param {string} failure.message The error message.
+    */
+  getChannelSubscriptionLists: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.getChannelSubscriptionLists', arguments)
+    callNative(success, failure, "getChannelSubscriptionLists")
+  },
+
+  /**
+   * Returns the current set of subscription lists for the current contact,
+   * optionally applying pending subscription list changes that will be applied during the next contact update.
+   * An empty set indicates that this contact is not subscribed to any lists.
+   *
+   * @param {function} [success] Success callback.
+   * @param {string} failure.message The error message.
+   */
+   getContactSubscriptionLists: function(success, failure) {
+     argscheck.checkArgs('fF', 'UAirship.getContactSubscriptionLists', arguments)
+     callNative(success, failure, "getContactSubscriptionLists")
+   },
+
+   /**
+    * Sets the use custom preference center.
+    * 
+    * @param {string} preferenceCenterId The preference center ID.
+    * @param {boolean} useCustomUi The preference center use custom UI.
+    */
+    setUseCustomPreferenceCenterUi: function(preferenceCenterId, useCustomUi, success, failure) {
+      argscheck.checkArgs("s*FF", "UAirship.setUseCustomPreferenceCenterUi", arguments);
+      callNative(success, failure, "setUseCustomPreferenceCenterUi", [preferenceCenterId, useCustomUi]);
+    }
+
 }

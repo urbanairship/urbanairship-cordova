@@ -5,6 +5,7 @@ package com.urbanairship.cordova;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,8 +18,10 @@ import com.urbanairship.actions.DeepLinkListener;
 import com.urbanairship.analytics.Analytics;
 import com.urbanairship.channel.AirshipChannelListener;
 import com.urbanairship.cordova.events.ShowInboxEvent;
+import com.urbanairship.cordova.events.PreferenceCenterEvent;
 import com.urbanairship.messagecenter.InboxListener;
 import com.urbanairship.messagecenter.MessageCenter;
+import com.urbanairship.preferencecenter.PreferenceCenter;
 import com.urbanairship.push.NotificationActionButtonInfo;
 import com.urbanairship.push.NotificationInfo;
 import com.urbanairship.push.NotificationListener;
@@ -156,6 +159,19 @@ public class CordovaAutopilot extends Autopilot {
             }
         });
 
+        PreferenceCenter.shared().setOpenListener(new PreferenceCenter.OnOpenListener() {
+            @Override
+            public boolean onOpenPreferenceCenter(String preferenceCenterId) {
+                boolean isCustomPreferenceCenterUiEnabled = pluginManager.getUseCustomPreferenceCenterUi(preferenceCenterId);
+                if (isCustomPreferenceCenterUiEnabled) {
+                    sendPreferenceCenterEvent(preferenceCenterId);
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
+
         loadCustomNotificationButtonGroups(context, airship);
         loadCustomNotificationChannels(context, airship);
     }
@@ -175,9 +191,9 @@ public class CordovaAutopilot extends Autopilot {
     private void loadCustomNotificationButtonGroups(Context context, UAirship airship) {
         @XmlRes int resId = context.getResources().getIdentifier("ua_custom_notification_buttons", "xml", context.getPackageName());
 
-         if (resId != 0) {
-             PluginLogger.debug("Loading custom notification button groups");
-             airship.getPushManager().addNotificationActionButtonGroups(context, resId);
+        if (resId != 0) {
+            PluginLogger.debug("Loading custom notification button groups");
+            airship.getPushManager().addNotificationActionButtonGroups(context, resId);
         }
     }
 
@@ -193,5 +209,10 @@ public class CordovaAutopilot extends Autopilot {
     private static void sendShowInboxEvent(@NonNull String messageId) {
         Context context = UAirship.getApplicationContext();
         PluginManager.shared(context).sendShowInboxEvent(new ShowInboxEvent(messageId));
+    }
+
+    private static void sendPreferenceCenterEvent(@NonNull String preferenceCenterId) {
+        Context context = UAirship.getApplicationContext();
+        PluginManager.shared(context).sendPreferenceCenterEvent(new PreferenceCenterEvent(preferenceCenterId));
     }
 }

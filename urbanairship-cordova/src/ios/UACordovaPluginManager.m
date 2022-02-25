@@ -17,6 +17,7 @@
 #import "UACordovaPushEvent.h"
 #import "UACordovaRegistrationEvent.h"
 #import "UACordovaShowInboxEvent.h"
+#import "UACordovaPreferenceCenterEvent.h"
 
 // Config keys
 NSString *const ProductionAppKeyConfigKey = @"com.urbanairship.production_app_key";
@@ -42,7 +43,7 @@ NSString *const UACordovaPluginVersionKey = @"UACordovaPluginVersion";
 NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 
-@interface UACordovaPluginManager() <UARegistrationDelegate, UAPushNotificationDelegate, UAMessageCenterDisplayDelegate, UADeepLinkDelegate>
+@interface UACordovaPluginManager() <UARegistrationDelegate, UAPushNotificationDelegate, UAMessageCenterDisplayDelegate, UADeepLinkDelegate, UAPreferenceCenterOpenDelegate>
 @property (nonatomic, strong) NSDictionary *defaultConfig;
 @property (nonatomic, strong) NSMutableArray<NSObject<UACordovaEvent> *> *pendingEvents;
 @property (nonatomic, assign) BOOL isAirshipReady;
@@ -54,7 +55,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidFinishLaunchingNotification
                                                       object:nil
                                                        queue:nil usingBlock:^(NSNotification * _Nonnull note) {
-        
+
         [self attemptTakeOffWithLaunchOptions:note.userInfo];
     }];
 }
@@ -63,6 +64,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     [UAirship push].pushNotificationDelegate = nil;
     [UAirship push].registrationDelegate = nil;
     [UAMessageCenter shared].displayDelegate = nil;
+    [UAPreferenceCenter shared].openDelegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -112,6 +114,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     [UAirship push].registrationDelegate = self;
     [UAMessageCenter shared].displayDelegate = self;
     [UAirship shared].deepLinkDelegate = self;
+    [UAPreferenceCenter shared].openDelegate = self;
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(inboxUpdated)
@@ -168,7 +171,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     if ([self configValueForKey:EnableAnalyticsConfigKey] != nil) {
         airshipConfig.isAnalyticsEnabled = [[self configValueForKey:EnableAnalyticsConfigKey] boolValue];
     }
-    
+
     airshipConfig.enabledFeatures = UAFeaturesAll;
 
     return airshipConfig;
@@ -252,8 +255,8 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     }
 }
 
+#pragma mark -
 #pragma mark UAInboxDelegate
-
 
 - (void)displayMessageCenterForMessageID:(NSString *)messageID animated:(BOOL)animated {
     if (self.autoLaunchMessageCenter) {
@@ -282,6 +285,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     [self fireEvent:[UACordovaInboxUpdatedEvent event]];
 }
 
+#pragma mark -
 #pragma mark UAPushNotificationDelegate
 
 -(void)receivedForegroundNotification:(NSDictionary *)userInfo completionHandler:(void (^)(void))completionHandler {
@@ -328,6 +332,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     return options;
 }
 
+#pragma mark -
 #pragma mark UADeepLinkDelegate
 
 -(void)receivedDeepLink:(NSURL *_Nonnull)url completionHandler:(void (^_Nonnull)(void))completionHandler {
@@ -336,7 +341,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     completionHandler();
 }
 
-
+#pragma mark -
 #pragma mark Channel Registration Events
 
 - (void)channelRegistrationSucceeded:(NSNotification *)notification {
@@ -353,6 +358,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     [self fireEvent:[UACordovaRegistrationEvent registrationFailedEvent]];
 }
 
+#pragma mark -
 #pragma mark UARegistrationDelegate
 
 - (void)notificationAuthorizedSettingsDidChange:(UAAuthorizedNotificationSettings)authorizedSettings {
@@ -390,6 +396,25 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
             }
         }
     }
+}
+
+#pragma mark -
+#pragma mark UAPreferenceCenterOpenDelegate
+
+- (BOOL)openPreferenceCenter:(NSString * _Nonnull)preferenceCenterID {
+    BOOL useCustomUi = [[NSUserDefaults standardUserDefaults] boolForKey:[self preferenceCenterUIKey:preferenceCenterID]];
+    if (useCustomUi) {
+        [self fireEvent:[UACordovaPreferenceCenterEvent eventWithPreferenceCenterId:preferenceCenterID]];
+    }
+    return useCustomUi;
+}
+
+- (void)setPreferenceCenter:(NSString *)preferenceCenterID useCustomUI:(BOOL)useCustomUI {
+    [[NSUserDefaults standardUserDefaults] setBool:useCustomUI forKey:[self preferenceCenterUIKey:preferenceCenterID]];
+}
+
+- (NSString *)preferenceCenterUIKey:(NSString *)preferenceCenterID {
+    return [NSString stringWithFormat:@"com.urbanairship.preference_%@_custom_ui", preferenceCenterID];
 }
 
 @end
