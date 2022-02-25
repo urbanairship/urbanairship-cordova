@@ -452,7 +452,7 @@
  *
  * @param command The cordova command.
  */
-- (void)getConfig:(CDVInvokedUrlCommand *)command;
+- (void)getPreferenceCenterConfig:(CDVInvokedUrlCommand *)command;
 
 /**
  * Set to true of override the preference center UI
@@ -487,5 +487,21 @@
  * @param command The cordova command.
  */
 - (void)editContactSubscriptionLists:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Returns the current set of subscription lists for the current channel,
+ * optionally applying pending subscription list changes that will be applied during the next channel update.
+ *
+ * @param command The cordova command.
+ */
+- (void)getChannelSubscriptionLists:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Returns the current set of subscription lists for the current contact,
+ * optionally applying pending subscription list changes that will be applied during the next contact update.
+ *
+ * @param command The cordova command.
+ */
+- (void)getContactSubscriptionLists:(CDVInvokedUrlCommand *)command;
 
 @end

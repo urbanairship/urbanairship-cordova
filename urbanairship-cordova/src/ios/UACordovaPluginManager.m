@@ -404,13 +404,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 - (BOOL)openPreferenceCenter:(NSString * _Nonnull)preferenceCenterID {
     BOOL useCustomUi = [[NSUserDefaults standardUserDefaults] boolForKey:[self preferenceCenterUIKey:preferenceCenterID]];
     if (useCustomUi) {
-        [self fireEvent:[UACordovaPreferenceCenterEvent eventWithPreferenceCenterId:preferenceCenterId]];
+        [self fireEvent:[UACordovaPreferenceCenterEvent eventWithPreferenceCenterId:preferenceCenterID]];
     }
     return useCustomUi;
 }
-
-@end
-
 
 - (void)setPreferenceCenter:(NSString *)preferenceCenterID useCustomUI:(BOOL)useCustomUI {
     [[NSUserDefaults standardUserDefaults] setBool:useCustomUI forKey:[self preferenceCenterUIKey:preferenceCenterID]];
@@ -419,3 +416,5 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 - (NSString *)preferenceCenterUIKey:(NSString *)preferenceCenterID {
     return [NSString stringWithFormat:@"com.urbanairship.preference_%@_custom_ui", preferenceCenterID];
 }
+
+@end

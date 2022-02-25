@@ -193,10 +193,10 @@ public class PluginManager {
 
 
     public void setUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId, boolean useCustomUi) {
-        sharedPreferences.edit().putString(useCustomPreferenceCenterUiKey(preferenceCenterId), useCustomUi).apply();
+        sharedPreferences.edit().putBoolean(useCustomPreferenceCenterUiKey(preferenceCenterId), useCustomUi).apply();
     }
 
-     public String getUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId) {
+     public Boolean getUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId) {
         return sharedPreferences.getBoolean(useCustomPreferenceCenterUiKey(preferenceCenterId), false);
     }
 

@@ -934,8 +934,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     private void getChannelSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
-        Boolean includePendingUpdates = data.getBoolean(0);
-        UAirship.shared().getChannel().getSubscriptionLists(includePendingUpdates).addResultCallback(new ResultCallback<Set<String>>() {
+        UAirship.shared().getChannel().getSubscriptionLists(true).addResultCallback(new ResultCallback<Set<String>>() {
 
             @Override
             public void onResult(@Nullable Set<String> channelSubscriptionList) {
@@ -955,8 +954,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     private void getContactSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
-        Boolean includePendingUpdates = data.getBoolean(0);
-        UAirship.shared().getContact().getSubscriptionLists(includePendingUpdates).addResultCallback(new ResultCallback<Map<String, Set<Scope>>>() {
+        UAirship.shared().getContact().getSubscriptionLists(true).addResultCallback(new ResultCallback<Map<String, Set<Scope>>>() {
 
             @Override
             public void onResult(@Nullable Map<String, Set<Scope>> contactSubscriptionList) {
