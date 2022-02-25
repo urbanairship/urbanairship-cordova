@@ -1535,7 +1535,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         });
     }
 
-    public JSONObject getConfigData(PreferenceCenterConfig configPendingResult) {
+    private JSONObject getConfigData(PreferenceCenterConfig configPendingResult) {
         JSONObject jsonObject = new JSONObject();
 
         try {
