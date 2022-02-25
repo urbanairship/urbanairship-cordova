@@ -191,6 +191,19 @@ public class PluginManager {
         sharedPreferences.edit().putString(DEFAULT_NOTIFICATION_CHANNEL_ID, value).apply();
     }
 
+
+    public void setUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId, boolean useCustomUi) {
+        sharedPreferences.edit().putString(useCustomPreferenceCenterUiKey(preferenceCenterId), useCustomUi).apply();
+    }
+
+     public String getUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId) {
+        return sharedPreferences.getBoolean(useCustomPreferenceCenterUiKey(preferenceCenterId), false);
+    }
+
+    private static String useCustomPreferenceCenterUiKey(@NonNull String preferenceCenterId) {
+        return "preference_" + preferenceCenterId + "_use_custom_ui";
+    }
+
     /**
      * Called when the notification is opened.
      *

@@ -1090,8 +1090,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
-- (void)getConfig:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getConfig called with command arguments: %@", command.arguments);
+- (void)getPreferenceCenterConfig:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("getPreferenceCenterConfig called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *preferenceCenterID = [args firstObject];
@@ -1102,12 +1102,11 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setUseCustomPreferenceCenterUi:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("set the custom preference center use called with command arguments: %@", command.arguments);
-
+    UA_LTRACE("setUseCustomPreferenceCenterUi called with command arguments: %@", command.arguments);
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *preferenceId = [args firstObject];
-        BOOL useCustomUi = [[args objectAtIndex:1] boolValue];
-        [[NSUserDefaults standardUserDefaults] setBool:useCustomUi forKey:preferenceId];
+        NSString *preferenceCenterID = [args firstObject];
+        BOOL useCustomUI = [[args objectAtIndex:1] boolValue];
+        [self.pluginManager setPreferenceCenter:preferenceCenterID useCustomUI:useCustomUI];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }

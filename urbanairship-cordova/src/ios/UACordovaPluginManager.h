@@ -99,6 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)setPresentationOptions:(NSUInteger)options;
 
+- (void)setPreferenceCenter:(NSString *)preferenceCenterID useCustomUI:(BOOL)useCustomUI;
 @end
 
 NS_ASSUME_NONNULL_END

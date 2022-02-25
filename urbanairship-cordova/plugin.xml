@@ -198,11 +198,11 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship/Core" spec="16.3.1" />
-                <pod name="Airship/MessageCenter" spec="16.3.1" />
-                <pod name="Airship/Automation" spec="16.3.1" />
-                <pod name="Airship/ExtendedActions" spec="16.3.1" />
-                <pod name="Airship/PreferenceCenter" spec="16.3.1" />
+                <pod name="Airship/Core" spec="16.4.0" />
+                <pod name="Airship/MessageCenter" spec="16.4.0" />
+                <pod name="Airship/Automation" spec="16.4.0" />
+                <pod name="Airship/ExtendedActions" spec="16.4.0" />
+                <pod name="Airship/PreferenceCenter" spec="16.4.0" />
             </pods>
         </podspec>
 

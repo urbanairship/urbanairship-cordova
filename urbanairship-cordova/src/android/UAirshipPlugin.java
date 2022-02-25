@@ -92,7 +92,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
-            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter", "getConfig", "setUseCustomPreferenceCenterUi");
+            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter", "getPreferenceCenterConfig", "setUseCustomPreferenceCenterUi");
 
     /*
      * These actions are available even if airship is not ready.
@@ -299,8 +299,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         isFeatureEnabled(data, callbackContext);
                     } else if ("openPreferenceCenter".equals(action)) {
                         openPreferenceCenter(data, callbackContext);
-                    } else if ("getConfig".equals(action)) {
-                        getConfig(data, callbackContext);
+                    } else if ("getPreferenceCenterConfig".equals(action)) {
+                        getPreferenceCenterConfig(data, callbackContext);
                     } else if ("setUseCustomPreferenceCenterUi".equals(action)) {
                         setUseCustomPreferenceCenterUi(data, callbackContext);
                     } else {
@@ -1527,7 +1527,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param data The call data.
      * @param callbackContext The callback context.
      */
-    private void getConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+    private void getPreferenceCenterConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String preferenceCenterId = data.getString(0);
         PreferenceCenter.shared().getConfig(preferenceCenterId).addResultCallback(new ResultCallback<PreferenceCenterConfig>() {
             @Override

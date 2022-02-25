@@ -162,8 +162,7 @@ public class CordovaAutopilot extends Autopilot {
         PreferenceCenter.shared().setOpenListener(new PreferenceCenter.OnOpenListener() {
             @Override
             public boolean onOpenPreferenceCenter(String preferenceCenterId) {
-                boolean isCustomPreferenceCenterUiEnabled = PreferenceManager.getDefaultSharedPreferences(UAirship.getApplicationContext())
-                        .getBoolean(preferenceCenterId, false);
+                boolean isCustomPreferenceCenterUiEnabled = pluginManager.getUseCustomPreferenceCenterUi(preferenceCenterId);
                 if (isCustomPreferenceCenterUiEnabled) {
                     sendPreferenceCenterEvent(preferenceCenterId);
                     return true;

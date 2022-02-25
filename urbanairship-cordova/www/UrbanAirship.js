@@ -1283,27 +1283,27 @@ module.exports = {
   /**
    * Opens the Preference Center with the given preferenceCenterId.
    *
-   * @param {string} prenferenceCenterId The preference center ID.
+   * @param {string} preferenceCenterId The preference center ID.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
    */
-  openPreferenceCenter: function(prenferenceCenterId, success, failure) {
+  openPreferenceCenter: function(preferenceCenterId, success, failure) {
     argscheck.checkArgs('sFF', 'UAirship.openPreferenceCenter', arguments)
-    callNative(success, failure, "openPreferenceCenter", [prenferenceCenterId])
+    callNative(success, failure, "openPreferenceCenter", [preferenceCenterId])
   },
 
   /**
    * Returns the configuration of the Preference Center with the given ID trough a callback method.
    *
-   * @param {string} prenferenceCenterId The preference center ID.
+   * @param {string} preferenceCenterId The preference center ID.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
    */
-  getConfiguration: function(prenferenceCenterId, success, failure) {
-     argscheck.checkArgs('sFF', 'UAirship.getConfig', arguments)
-     callNative(success, failure, "getConfig", [prenferenceCenterId])
+   getPreferenceCenterConfig: function(preferenceCenterId, success, failure) {
+     argscheck.checkArgs('sFF', 'UAirship.getPreferenceCenterConfig', arguments)
+     callNative(success, failure, "getPreferenceCenterConfig", [preferenceCenterId])
   },
 
    /**
@@ -1311,11 +1311,10 @@ module.exports = {
     * optionally applying pending subscription list changes that will be applied during the next channel update.
     * An empty set indicates that this contact is not subscribed to any lists.
     *
-    * @param {boolean} includePendingUpdates : true to apply pending updates to the returned set, false to return the set without pending updates.
     * @param {function} [success] Success callback.
     * @param {string} failure.message The error message.
     */
-  getChannelSubscriptionLists: function(includePendingUpdates, success, failure) {
+  getChannelSubscriptionLists: function(success, failure) {
     argscheck.checkArgs('*FF', 'UAirship.getChannelSubscriptionLists', arguments)
     callNative(success, failure, "getChannelSubscriptionLists", [includePendingUpdates])
   },
@@ -1325,18 +1324,18 @@ module.exports = {
    * optionally applying pending subscription list changes that will be applied during the next contact update.
    * An empty set indicates that this contact is not subscribed to any lists.
    *
-   * @param {boolean} includePendingUpdates : true to apply pending updates to the returned set, false to return the set without pending updates.
    * @param {function} [success] Success callback.
    * @param {string} failure.message The error message.
    */
-   getContactSubscriptionLists: function(includePendingUpdates, success, failure) {
-     argscheck.checkArgs('*FF', 'UAirship.getContactSubscriptionLists', arguments)
+   getContactSubscriptionLists: function(success, failure) {
+     argscheck.checkArgs('FF', 'UAirship.getContactSubscriptionLists', arguments)
      callNative(success, failure, "getContactSubscriptionLists", [includePendingUpdates])
    },
 
    /**
     * Sets the use custom preference center.
-    *
+    * 
+    * @param {string} preferenceCenterId The preference center ID.
     * @param {boolean} useCustomUi The preference center use custom UI.
     */
     setUseCustomPreferenceCenterUi: function(preferenceCenterId, useCustomUi, success, failure) {
