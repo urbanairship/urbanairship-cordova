@@ -85,7 +85,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * These actions are only available after takeOff.
      */
     private final static List<String> AIRSHIP_ACTIONS = Arrays.asList("setUserNotificationsEnabled",
-            "isUserNotificationsEnabled", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime",
+            "isUserNotificationsEnabled", "enableUserNotifications", "isSoundEnabled", "isVibrateEnabled", "isQuietTimeEnabled", "isInQuietTime",
             "getLaunchNotification", "getChannelID", "getQuietTime", "getTags", "setTags", "setSoundEnabled", "setVibrateEnabled",
             "setQuietTimeEnabled", "setQuietTime", "clearNotifications", "setAnalyticsEnabled", "isAnalyticsEnabled",
             "setNamedUser", "getNamedUser", "runAction", "editNamedUserTagGroups", "editChannelTagGroups", "editChannelSubscriptionLists", "editContactSubscriptionLists", "getChannelSubscriptionLists", "getContactSubscriptionLists", "displayMessageCenter", "markInboxMessageRead",
@@ -281,6 +281,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         setTags(data, callbackContext);
                     } else if ("setUserNotificationsEnabled".equals(action)) {
                         setUserNotificationsEnabled(data, callbackContext);
+                    } else if ("enableUserNotifications".equals(action)) {
+                        enableUserNotifications(data, callbackContext);
                     } else if ("setVibrateEnabled".equals(action)) {
                         setVibrateEnabled(data, callbackContext);
                     } else if ("takeOff".equals(action)) {
@@ -473,6 +475,17 @@ public class UAirshipPlugin extends CordovaPlugin {
     private void isUserNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         int value = UAirship.shared().getPushManager().getUserNotificationsEnabled() ? 1 : 0;
         callbackContext.success(value);
+    }
+
+    /**
+     * Enables user notifications.
+     *
+     * @param data The call data.
+     * @param callbackContext The callback context.
+     */
+    private void enableUserNotifications(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
+        UAirship.shared().getPushManager().setUserNotificationsEnabled(true);
+        callbackContext.success(1);
     }
 
     /**

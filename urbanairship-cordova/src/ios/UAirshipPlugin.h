@@ -45,6 +45,13 @@
 - (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand *)command;
 
 /**
+ * Enables user push notifications.
+ *
+ * @param command The cordova command.
+ */
+- (void)enableUserNotifications:(CDVInvokedUrlCommand *)command;
+
+/**
  * Checks if user push notifications are enabled or not.
  *
  * @param command The cordova command.

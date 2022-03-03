@@ -255,6 +255,16 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
+- (void)enableUserNotifications:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("enableUserNotifications called with command arguments: %@", command.arguments);
+    
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        [[UAirship push] enableUserPushNotifications:^(BOOL success) {
+            completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:success]);
+        }];
+    }];
+}
+
 - (void)setAssociatedIdentifier:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("setAssociatedIdentifier called with command arguments: %@", command.arguments);
 
