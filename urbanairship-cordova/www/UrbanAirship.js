@@ -547,6 +547,19 @@ module.exports = {
   },
 
   /**
+   * Enables user notifications.
+   *
+   * @param {function} success Success callback.
+   * @param {boolean} success.enabled Flag indicating if user notifications enablement was authorized or not.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+  enableUserNotifications: function(success, failure) {
+    argscheck.checkArgs('fF', 'UAirship.enableUserNotifications', arguments)
+    callNative(success, failure, "enableUserNotifications")
+  },
+
+  /**
    * Checks if app notifications are enabled or not. Its possible to have `userNotificationsEnabled`
    * but app notifications being disabled if the user opted out of notifications.
    *
