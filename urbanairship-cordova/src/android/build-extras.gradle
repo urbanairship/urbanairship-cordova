@@ -1,9 +1,5 @@
 dependencies {
-    configurations.all {
-        resolutionStrategy { force 'androidx.core:core:1.7.0' }
-    }
-
-    def airshipVersion = "16.3.1"
+    def airshipVersion = "16.3.3"
     implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"
@@ -13,10 +9,6 @@ dependencies {
 cdvPluginPostBuildExtras.push({
     android {
         compileSdkVersion 31
-
-        defaultConfig {
-            targetSdkVersion 31
-        }
         
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8

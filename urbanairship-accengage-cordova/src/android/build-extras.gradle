@@ -1,19 +1,11 @@
 dependencies {
-    configurations.all {
-        resolutionStrategy { force 'androidx.core:core:1.7.0' }
-    }
-
-    implementation 'com.urbanairship.android:urbanairship-accengage:16.3.1'
+    implementation 'com.urbanairship.android:urbanairship-accengage:16.3.3'
 }
 
 cdvPluginPostBuildExtras.push({
     android {
         compileSdkVersion 31
 
-        defaultConfig {
-            targetSdkVersion 31
-        }
-    
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8

@@ -5,26 +5,18 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-hms:16.2.0'
+    implementation 'com.urbanairship.android:urbanairship-hms:16.3.3'
     implementation 'com.huawei.hms:push:6.1.0.300'
 }
 
 cdvPluginPostBuildExtras.push({    
     android {
         compileSdkVersion 31
-
-        defaultConfig {
-            targetSdkVersion 31
-        }
     
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
             targetCompatibility JavaVersion.VERSION_1_8
         }
-    }
-
-    configurations.all {
-        resolutionStrategy { force 'androidx.core:core:1.7.0' }
     }
 })
 
