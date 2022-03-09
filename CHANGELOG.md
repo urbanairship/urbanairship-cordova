@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 14.0.0 - March 8, 2022
+## Version 14.0.0 - March 9, 2022
 Major release that changes the config returned by `getPreferenceCenterConfig`.
 
 ### Changes
