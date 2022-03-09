@@ -936,19 +936,13 @@ public class UAirshipPlugin extends CordovaPlugin {
 
             @Override
             public void onResult(@Nullable Map<String, Set<Scope>> contactSubscriptionList) {
-                Map<String, JSONArray> resultMap = new HashMap<String, JSONArray>();
-                for (Map.Entry<String, Set<Scope>> entry : contactSubscriptionList.entrySet()) {
-                    JSONArray scopesArray = new JSONArray();
-                    for (Scope scope : entry.getValue()) {
-                        scopesArray.put(scope.name().toLowerCase(Locale.ROOT));
-                    }
-                    resultMap.put(entry.getKey(), scopesArray);
+                try {
+                    callbackContext.success(new JSONObject(JsonValue.wrap(contactSubscriptionList, JsonMap.EMPTY_MAP.toJsonValue()).toString()));
+                } catch (JSONException e) {
+                    callbackContext.error(e.getMessage());
                 }
-                callbackContext.success(resultMap.toString());
-
             }
         });
-
     }
 
     /**
