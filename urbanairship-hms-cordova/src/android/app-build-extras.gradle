@@ -10,14 +10,6 @@ buildscript {
     }
 }
 
-allprojects {
-    dependencies {
-        configurations.all {
-            resolutionStrategy { force 'androidx.core:core:1.7.0' }
-        }
-    }
-}
-
 ext.postBuildExtras = {
     apply plugin: 'com.huawei.agconnect'
 }

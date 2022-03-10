@@ -448,7 +448,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("getNamedUser called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, [UAirship namedUser].identifier ?: @"");
+        completionHandler(CDVCommandStatus_OK, UAirship.contact.namedUserID ?: @"");
     }];
 }
 
@@ -523,8 +523,11 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         NSString *namedUserID = [args objectAtIndex:0];
         namedUserID = [namedUserID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
 
-        [UAirship namedUser].identifier = [namedUserID length] ? namedUserID : nil;
-
+        if (namedUserID.length) {
+            [UAirship.contact identify:namedUserID];
+        } else {
+            [UAirship.contact reset];
+        }
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -534,17 +537,9 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
-        UANamedUser *namedUser = [UAirship namedUser];
-        for (NSDictionary *operation in [args objectAtIndex:0]) {
-            NSString *group = operation[@"group"];
-            if ([operation[@"operation"] isEqualToString:@"add"]) {
-                [namedUser addTags:operation[@"tags"] group:group];
-            } else if ([operation[@"operation"] isEqualToString:@"remove"]) {
-                [namedUser removeTags:operation[@"tags"] group:group];
-            }
-        }
-
-        [namedUser updateTags];
+        [UAirship.contact editTagGroups:^(UATagGroupsEditor * editor) {
+            [self applyTagGroupEdits:[args objectAtIndex:0] editor:editor];
+        }];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -555,36 +550,67 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
-        for (NSDictionary *operation in [args objectAtIndex:0]) {
-            NSString *group = operation[@"group"];
-            if ([operation[@"operation"] isEqualToString:@"add"]) {
-                [[UAirship channel] addTags:operation[@"tags"] group:group];
-            } else if ([operation[@"operation"] isEqualToString:@"remove"]) {
-                [[UAirship channel] removeTags:operation[@"tags"] group:group];
-            }
-        }
-
-        [[UAirship push] updateRegistration];
+        [UAirship.channel editTagGroups:^(UATagGroupsEditor * editor) {
+            [self applyTagGroupEdits:[args objectAtIndex:0] editor:editor];
+        }];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
+}
+
+- (void)applyTagGroupEdits:(NSDictionary *)edits editor:(UATagGroupsEditor *)editor {
+    for (NSDictionary *edit in edits) {
+        NSString *group = edit[@"group"];
+        if ([edit[@"operation"] isEqualToString:@"add"]) {
+            [editor addTags:edit[@"tags"] group:group];
+        } else if ([edit[@"operation"] isEqualToString:@"remove"]) {
+            [editor removeTags:edit[@"tags"] group:group];
+        }
+    }
+}
+
+- (void)applyAttributeEdits:(NSDictionary *)edits editor:(UAAttributesEditor *)editor {
+    for (NSDictionary *edit in edits) {
+        NSString *action = edit[@"action"];
+        NSString *name = edit[@"key"];
+
+        if ([action isEqualToString:@"set"]) {
+            id value = edit[@"value"];
+            NSString *valueType = edit[@"type"];
+            if ([valueType isEqualToString:@"string"]) {
+                [editor setString:value attribute:name];
+            } else if ([valueType isEqualToString:@"number"]) {
+                [editor setNumber:value attribute:name];
+            } else if ([valueType isEqualToString:@"date"]) {
+                // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
+                NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
+                [editor setDate:date attribute:name];
+
+            } else {
+                UA_LWARN("Unknown attribute type: %@", valueType);
+            }
+        } else if ([action isEqualToString:@"remove"]) {
+            [editor removeAttribute:name];
+        }
+    }
 }
 
 - (void)editChannelSubscriptionLists:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("editChannelSubscriptionLists called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        [UAirship.channel editSubscriptionLists:^(UASubscriptionListEditor *editor) {
+            for (NSDictionary *edit in [args objectAtIndex:0]) {
+                NSString *listID = edit[@"listId"];
+                NSString *operation = edit[@"operation"];
 
-        for (NSDictionary *operation in [args objectAtIndex:0]) {
-            NSString *listId = operation[@"listId"];
-            if ([operation[@"operation"] isEqualToString:@"subscribe"]) {
-                [[[UAirship channel] editSubscriptionLists] subscribe:listId];
-            } else if ([operation[@"operation"] isEqualToString:@"unsubscribe"]) {
-                [[[UAirship channel] editSubscriptionLists] unsubscribe:listId];
+                if ([operation isEqualToString:@"subscribe"]) {
+                    [editor subscribe:listID];
+                } else if ([operation isEqualToString:@"unsubscribe"]) {
+                    [editor unsubscribe:listID];
+                }
             }
-        }
-
-        [[[UAirship channel] editSubscriptionLists] apply];
+        }];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -593,22 +619,25 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 - (void)editContactSubscriptionLists:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("editContactSubscriptionLists called with command arguments: %@", command.arguments);
 
+    NSArray *allChannelScope = @[@"sms", @"email", @"app", @"web"];
+
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        for (NSDictionary *operation in [args objectAtIndex:0]) {
-            NSString *listId = operation[@"listId"];
-            NSString *scope = operation[@"scope"];
-            NSArray *allChannelScope = @[@"sms", @"email", @"app", @"web"];
-            if ((listId != nil) & [allChannelScope containsObject:scope]) {
-                UAChannelScope channelScope = [self getScope:scope];
-                if ([operation[@"operation"] isEqualToString:@"subscribe"]) {
-                    [[[UAirship contact] editSubscriptionLists] subscribe:listId scope:channelScope];
-                } else if ([operation[@"operation"] isEqualToString:@"unsubscribe"]) {
-                    [[[UAirship contact] editSubscriptionLists] unsubscribe:listId scope:channelScope];
+        [UAirship.contact editSubscriptionLists:^(UAScopedSubscriptionListEditor *editor) {
+            for (NSDictionary *edit in [args objectAtIndex:0]) {
+                NSString *listID = edit[@"listId"];
+                NSString *scope = edit[@"scope"];
+                NSString *operation = edit[@"operation"];
+
+                if ((listID != nil) & [allChannelScope containsObject:scope]) {
+                    UAChannelScope channelScope = [self getScope:scope];
+                    if ([operation isEqualToString:@"subscribe"]) {
+                        [editor subscribe:listID scope:channelScope];
+                    } else if ([operation isEqualToString:@"unsubscribe"]) {
+                        [editor unsubscribe:listID scope:channelScope];
+                    }
                 }
             }
-        }
-
-        [[[UAirship contact] editSubscriptionLists] apply];
+        }];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -954,8 +983,10 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("editChannelAttributes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        UAAttributeMutations *mutations = [self mutationsWithOperations:args];
-        [[UAirship channel] applyAttributeMutations:mutations];
+
+        [UAirship.channel editAttributes:^(UAAttributesEditor *editor) {
+            [self applyAttributeEdits:[args objectAtIndex:0] editor:editor];
+        }];
     }];
 }
 
@@ -963,49 +994,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("editNamedUserAttributes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        UAAttributeMutations *mutations = [self mutationsWithOperations:args];
-        [[UAirship namedUser] applyAttributeMutations:mutations];
+        [UAirship.contact editAttributes:^(UAAttributesEditor *editor) {
+            [self applyAttributeEdits:[args objectAtIndex:0] editor:editor];
+        }];
     }];
 }
 
-/**
- * Helper method to prepare attribute mutation object from attribute operations.
- *
- * Expected arguments: An array of objects that contain:
- * "action": String, either `remove` or `set`
- * "key": String, the attribute name.
- * "value": String, the attribute value.
- *
- * @param operations The attribute operations.
- */
-- (UAAttributeMutations *) mutationsWithOperations:(NSArray *)operations {
-    UAAttributeMutations *mutations = [UAAttributeMutations mutations];
-
-    for (NSDictionary *operation in [operations objectAtIndex:0]) {
-        NSString *action = operation[@"action"];
-        NSString *name = operation[@"key"];
-
-        if ([action isEqualToString:@"set"]) {
-            id value = operation[@"value"];
-            NSString *valueType = operation[@"type"];
-            if ([valueType isEqualToString:@"string"]) {
-                [mutations setString:(NSString *)value forAttribute:name];
-            } else if ([valueType isEqualToString:@"number"]) {
-                [mutations setNumber:(NSNumber *)value forAttribute:name];
-            } else if ([valueType isEqualToString:@"date"]) {
-                // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
-                NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
-                [mutations setDate:date forAttribute:name];
-            } else {
-                UA_LWARN("Unknown attribute type: %@", valueType);
-            }
-        } else if ([action isEqualToString:@"remove"]) {
-            [mutations removeAttribute:name];
-        }
-    }
-
-    return mutations;
-}
 
 - (BOOL)notifyListener:(NSString *)eventType data:(NSDictionary *)data {
     UA_LTRACE(@"notifyListener called with event type:%@ and data:%@", eventType, data);
@@ -1105,9 +1099,23 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *preferenceCenterID = [args firstObject];
-        [[UAPreferenceCenter shared] configForPreferenceCenterID:preferenceCenterID completionHandler:^(UAPreferenceCenterConfig * _Nullable config) {
-            completionHandler(CDVCommandStatus_OK, [self configData:config]);
-        }];
+        UARemoteDataManager *remoteData = (UARemoteDataManager *)[UAirship componentForClassName:@"UARemoteDataManager"];
+
+            __block UADisposable *disposable = [remoteData subscribeWithTypes:@[@"preference_forms"] block:^(NSArray<UARemoteDataPayload *> *payloads) {
+                NSArray *forms = [payloads firstObject].data[@"preference_forms"];
+
+                id result;
+                for (id form in forms) {
+                    NSString *formID = form[@"form"][@"id"];
+                    if ([formID isEqualToString:preferenceCenterID]) {
+                        result = form[@"form"];
+                        break;
+                    }
+                }
+
+                [disposable dispose];
+                completionHandler(CDVCommandStatus_OK, result);
+            }];
     }];
 }
 
@@ -1119,158 +1127,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         [self.pluginManager setPreferenceCenter:preferenceCenterID useCustomUI:useCustomUI];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
-}
-
-- (NSMutableDictionary *)configData:(UAPreferenceCenterConfig *)config {
-
-    NSMutableDictionary *configurationDictionary = [NSMutableDictionary dictionary];
-
-    if (config) {
-
-        //Identifier
-        [configurationDictionary setValue:config.identifier forKey:PreferenceCenterIdKey];
-
-        //Sections
-        NSArray* sections = config.sections;
-        if (sections) {
-            [configurationDictionary setValue:[self createSections:sections] forKey:PreferenceCenterSectionsKey];
-        }
-
-        //Display
-        UAPreferenceCommonDisplay* configDisplay = config.display;
-        if (configDisplay) {
-            [configurationDictionary setValue:[self createDisplay:configDisplay] forKey:PreferenceCenterDisplayKey];
-        }
-    }
-
-    return configurationDictionary;
-}
-
-- (NSArray *)createSections:(NSArray *)sections {
-
-    NSMutableArray *sectionArray = [NSMutableArray array];
-    for (id<UAPreferenceSection> section in sections) {
-
-        NSMutableDictionary *sectionDictionary = [NSMutableDictionary dictionary];
-
-        // Section identifier
-        [sectionDictionary setValue:section.identifier forKey:PreferenceCenterIdKey];
-
-        // Section items
-        NSArray* items = section.items;
-        if (items) {
-            [sectionDictionary setValue:[self createItems:items] forKey:PreferenceCenterItemsKey];
-        }
-
-        // Section display
-        UAPreferenceCommonDisplay* sectionDisplay = section.display;
-        if (sectionDisplay) {
-            [sectionDictionary setValue:[self createDisplay:sectionDisplay] forKey:PreferenceCenterDisplayKey];
-        }
-
-        [sectionArray addObject:sectionDictionary];
-
-    }
-
-    return sectionArray;
-}
-
-- (NSArray *)createItems:(NSArray *)items {
-
-    NSMutableArray *itemArray = [NSMutableArray array];
-    for (id item in items) {
-        id<UAPreferenceItem> preferenceItem = item;
-        NSMutableDictionary *itemDictionary = [NSMutableDictionary dictionary];
-
-        // Item identifier
-        [itemDictionary setValue:preferenceItem.identifier forKey:PreferenceCenterIdKey];
-
-        if ([item isKindOfClass:[UAPreferenceChannelSubscriptionItem class]]) {
-            UAPreferenceChannelSubscriptionItem* channelSubscriptionItem = (UAPreferenceChannelSubscriptionItem*) item;
-
-            //SubscriptionId
-            [itemDictionary setValue:channelSubscriptionItem.subscriptionID forKey:PreferenceCenterSubscriptionIdKey];
-        } else if ([item isKindOfClass:[UAPreferenceContactSubscriptionItem class]]) {
-            UAPreferenceContactSubscriptionItem* contactSubscriptionItem = (UAPreferenceContactSubscriptionItem*) item;
-
-            //SubscriptionId
-            [itemDictionary setValue:contactSubscriptionItem.subscriptionID forKey:PreferenceCenterSubscriptionIdKey];
-
-            //Scopes
-            [itemDictionary setValue:[self createScopes:contactSubscriptionItem.scopes] forKey:PreferenceCenterScopesKey];
-
-        } else if ([item isKindOfClass:[UAPreferenceContactSubscriptionGroupItem class]]) {
-            UAPreferenceContactSubscriptionGroupItem* contactSubscriptionGroupItem = (UAPreferenceContactSubscriptionGroupItem*) item;
-
-            //SubscriptionId
-            [itemDictionary setValue:contactSubscriptionGroupItem.subscriptionID forKey:PreferenceCenterSubscriptionIdKey];
-
-            //Components
-            NSArray *components = contactSubscriptionGroupItem.components;
-            if (components) {
-                [itemDictionary setValue:[self createComponents:components] forKey:PreferenceCenterComponentsKey];
-            }
-        }
-
-
-        // Item Display
-        UAPreferenceCommonDisplay* itemCommonDisplay = preferenceItem.display;
-        if (itemCommonDisplay) {
-            [itemDictionary setValue:[self createDisplay:itemCommonDisplay] forKey:PreferenceCenterDisplayKey];
-        }
-        [itemArray addObject:itemDictionary];
-    }
-
-    return itemArray;
-}
-
-- (NSDictionary *)createDisplay:(UAPreferenceCommonDisplay *)commonDisplay {
-    NSMutableDictionary *configDisplayDictionary = [NSMutableDictionary dictionary];
-    [configDisplayDictionary setValue:commonDisplay.title forKey:PreferenceCenterDisplayNameKey];
-    [configDisplayDictionary setValue:commonDisplay.subtitle forKey:PreferenceCenterDisplayDescriptionKey];
-    return configDisplayDictionary;
-}
-
-- (NSArray *)createComponents:(NSArray *)components {
-    NSMutableArray *componentsArray = [NSMutableArray array];
-    for (Component *component in components) {
-        NSMutableDictionary* componentDictionary = [NSMutableDictionary dictionary];
-
-        //Component Scopes
-        UAChannelScopes *scopes = component.scopes;
-        if (scopes) {
-            [componentDictionary setValue:[self createScopes:scopes] forKey:PreferenceCenterScopesKey];
-        }
-
-        //Component display
-        UAPreferenceCommonDisplay* display = component.display;
-        if (display) {
-            [componentDictionary setValue:[self createDisplay:display] forKey:PreferenceCenterDisplayKey];
-        }
-
-        [componentsArray addObject:componentDictionary];
-    }
-
-    return componentsArray;
-}
-
-- (NSArray *)createScopes:(UAChannelScopes *)scopes {
-    NSMutableArray *scopesArray = [NSMutableArray array];
-    for (id scope in scopes.values) {
-        UAChannelScope channelScope = (UAChannelScope)[scope intValue];
-        switch (channelScope) {
-            case UAChannelScopeWeb:
-                [scopesArray addObject:PreferenceCenterScopeWebKey];
-            case UAChannelScopeApp:
-                [scopesArray addObject:PreferenceCenterScopeAppKey];
-            case UAChannelScopeSms:
-                [scopesArray addObject:PreferenceCenterScopeSmsKey];
-            case UAChannelScopeEmail:
-                [scopesArray addObject:PreferenceCenterScopeEmailKey];
-        }
-    }
-
-    return scopesArray;
 }
 
 - (BOOL)isValidFeature:(NSArray *)features {

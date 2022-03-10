@@ -2,8 +2,7 @@
 
 package com.urbanairship.cordova;
 
-import android.preference.PreferenceManager;
-
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.service.notification.StatusBarNotification;
 
 import androidx.annotation.NonNull;
@@ -36,20 +36,16 @@ import com.urbanairship.cordova.events.DeepLinkEvent;
 import com.urbanairship.cordova.events.Event;
 import com.urbanairship.cordova.events.NotificationOpenedEvent;
 import com.urbanairship.google.PlayServicesUtils;
+import com.urbanairship.json.JsonList;
 import com.urbanairship.json.JsonMap;
 import com.urbanairship.json.JsonValue;
 import com.urbanairship.messagecenter.Inbox;
 import com.urbanairship.messagecenter.Message;
 import com.urbanairship.messagecenter.MessageCenter;
 import com.urbanairship.preferencecenter.PreferenceCenter;
-import com.urbanairship.preferencecenter.data.CommonDisplay;
-import com.urbanairship.preferencecenter.data.Item;
-import com.urbanairship.preferencecenter.data.Item.ChannelSubscription;
-import com.urbanairship.preferencecenter.data.Item.ContactSubscriptionGroup;
-import com.urbanairship.preferencecenter.data.Item.ContactSubscription;
-import com.urbanairship.preferencecenter.data.PreferenceCenterConfig;
-import com.urbanairship.preferencecenter.data.Section;
 import com.urbanairship.push.PushMessage;
+import com.urbanairship.reactive.Observable;
+import com.urbanairship.reactive.Subscriber;
 import com.urbanairship.util.UAStringUtil;
 
 import org.apache.cordova.CallbackContext;
@@ -113,21 +109,8 @@ public class UAirshipPlugin extends CordovaPlugin {
     private static final String ATTRIBUTE_OPERATION_SET = "set";
     private static final String ATTRIBUTE_OPERATION_REMOVE = "remove";
 
-    private static final String CONFIG_IDENTIFIER_KEY = "id";
-    private static final String CONFIG_SECTIONS_KEY = "sections";
-    private static final String CONFIG_DISPLAY_KEY = "display";
-    private static final String CONFIG_DISPLAY_NAME_KEY = "name";
-    private static final String CONFIG_DISPLAY_DESCRIPTION_KEY = "description";
-    private static final String CONFIG_ITEMS_KEY = "items";
-    private static final String CONFIG_SUBSCRIPTION_IDENTIFIER_KEY = "subscriptionId";
-    private static final String CONFIG_COMPONENTS_KEY = "components";
-    private static final String CONFIG_SCOPES_KEY = "scopes";
-    private static final String CONFIG_SCOPES_WEB_KEY = "web";
-    private static final String CONFIG_SCOPES_EMAIL_KEY = "email";
-    private static final String CONFIG_SCOPES_APP_KEY = "app";
-    private static final String CONFIG_SCOPES_SMS_KEY = "sms";
-
     private static final Map<String, Integer> AUTHORIZED_FEATURES = new HashMap<String, Integer>();
+
     static {
         AUTHORIZED_FEATURES.put("FEATURE_NONE", PrivacyManager.FEATURE_NONE);
         AUTHORIZED_FEATURES.put("FEATURE_IN_APP_AUTOMATION", PrivacyManager.FEATURE_IN_APP_AUTOMATION);
@@ -142,16 +125,16 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     private Context context;
-    private com.urbanairship.cordova.PluginManager pluginManager;
+    private PluginManager pluginManager;
 
     @Override
     public void initialize(@NonNull CordovaInterface cordova, @NonNull CordovaWebView webView) {
         super.initialize(cordova, webView);
-        com.urbanairship.cordova.PluginLogger.info("Initializing Urban Airship cordova plugin.");
+        PluginLogger.info("Initializing Urban Airship cordova plugin.");
         context = cordova.getActivity().getApplicationContext();
 
         Autopilot.automaticTakeOff(context);
-        pluginManager = com.urbanairship.cordova.PluginManager.shared(context);
+        pluginManager = PluginManager.shared(context);
     }
 
     @Override
@@ -179,7 +162,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         final boolean isAirshipAction = AIRSHIP_ACTIONS.contains(action);
 
         if (!isAirshipAction && !isGlobalAction) {
-            com.urbanairship.cordova.PluginLogger.debug("Invalid action: %s", action);
+            PluginLogger.debug("Invalid action: %s", action);
             return false;
         }
 
@@ -192,7 +175,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                 }
 
                 try {
-                    com.urbanairship.cordova.PluginLogger.debug("Plugin Execute: %s", action);
+                    PluginLogger.debug("Plugin Execute: %s", action);
                     if ("clearNotification".equals(action)) {
                         clearNotification(data, callbackContext);
                     } else if ("clearNotifications".equals(action)) {
@@ -215,7 +198,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                         editChannelTagGroups(data, callbackContext);
                     } else if ("editNamedUserTagGroups".equals(action)) {
                         editNamedUserTagGroups(data, callbackContext);
-                    }  else if ("editChannelSubscriptionLists".equals(action)) {
+                    } else if ("editChannelSubscriptionLists".equals(action)) {
                         editChannelSubscriptionLists(data, callbackContext);
                     } else if ("editContactSubscriptionLists".equals(action)) {
                         editContactSubscriptionLists(data, callbackContext);
@@ -306,11 +289,11 @@ public class UAirshipPlugin extends CordovaPlugin {
                     } else if ("setUseCustomPreferenceCenterUi".equals(action)) {
                         setUseCustomPreferenceCenterUi(data, callbackContext);
                     } else {
-                        com.urbanairship.cordova.PluginLogger.debug("No implementation for action: %s", action);
+                        PluginLogger.debug("No implementation for action: %s", action);
                         callbackContext.error("No implementation for action " + action);
                     }
                 } catch (Exception e) {
-                    com.urbanairship.cordova.PluginLogger.error(e, "Action failed to execute: %s", action);
+                    PluginLogger.error(e, "Action failed to execute: %s", action);
                     callbackContext.error("Action " + action + " failed with exception: " + e.getMessage());
                 }
             }
@@ -334,11 +317,11 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Registers for events.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void registerListener(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
-        pluginManager.setListener(new com.urbanairship.cordova.PluginManager.Listener() {
+        pluginManager.setListener(new PluginManager.Listener() {
             @Override
             public void onEvent(@NonNull Event event) {
                 JSONObject eventData = new JSONObject();
@@ -347,7 +330,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                     eventData.putOpt("eventType", event.getEventName());
                     eventData.putOpt("eventData", event.getEventData());
                 } catch (JSONException e) {
-                    com.urbanairship.cordova.PluginLogger.error("Failed to create event: %s", event);
+                    PluginLogger.error("Failed to create event: %s", event);
                     return;
                 }
 
@@ -361,7 +344,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Initializes the Urban Airship plugin.
      *
-     * @param data The data.
+     * @param data            The data.
      * @param callbackContext THe callback context.
      * @throws JSONException
      */
@@ -397,7 +380,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         try {
             latch.await();
         } catch (InterruptedException e) {
-            com.urbanairship.cordova.PluginLogger.error(e, "Failed to takeOff");
+            PluginLogger.error(e, "Failed to takeOff");
             Thread.currentThread().interrupt();
         }
     }
@@ -405,7 +388,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Configures the notification factory for Android.
      *
-     * @param data The data.
+     * @param data            The data.
      * @param callbackContext THe callback context.
      * @throws JSONException
      */
@@ -426,7 +409,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Enables/disables auto launching the message center.
      *
-     * @param data The data.
+     * @param data            The data.
      * @param callbackContext THe callback context.
      * @throws JSONException
      */
@@ -444,7 +427,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Clears all notifications posted by the application.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void clearNotifications(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -457,7 +440,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: Boolean
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void setUserNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
@@ -469,7 +452,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Checks if user notifications are enabled or not.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void isUserNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -480,7 +463,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Enables user notifications.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void enableUserNotifications(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -491,7 +474,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Checks if notification sound is enabled or not.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void isSoundEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -502,7 +485,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Checks if notification vibration is enabled or not.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void isVibrateEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -513,7 +496,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Checks if quiet time is enabled or not.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void isQuietTimeEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -524,7 +507,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Checks if the device is currently in quiet time.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void isInQuietTime(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -537,7 +520,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: Boolean - `YES` to clear the notification
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getLaunchNotification(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -556,7 +539,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: Boolean - `YES` to clear the deep link
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getDeepLink(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -569,7 +552,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Returns the channel ID.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getChannelID(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -585,7 +568,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * "endHour": Number,
      * "endMinute": Number
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getQuietTime(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
@@ -614,19 +597,19 @@ public class UAirshipPlugin extends CordovaPlugin {
         returnObject.put("endHour", endHour);
         returnObject.put("endMinute", endMinute);
 
-        com.urbanairship.cordova.PluginLogger.debug("Returning quiet time");
+        PluginLogger.debug("Returning quiet time");
         callbackContext.success(returnObject);
     }
 
     /**
      * Returns the tags as an array.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getTags(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         Set<String> tags = UAirship.shared().getChannel().getTags();
-        com.urbanairship.cordova.PluginLogger.debug("Returning tags");
+        PluginLogger.debug("Returning tags");
         callbackContext.success(new JSONArray(tags));
     }
 
@@ -635,7 +618,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: An array of Strings
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void setTags(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
@@ -645,7 +628,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             tagSet.add(tagsArray.getString(i));
         }
 
-        com.urbanairship.cordova.PluginLogger.debug("Settings tags: %s", tagSet);
+        PluginLogger.debug("Settings tags: %s", tagSet);
         UAirship.shared().getChannel().setTags(tagSet);
 
         callbackContext.success();
@@ -656,14 +639,14 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: Boolean
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     @SuppressWarnings("deprecation")
     private void setSoundEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean soundPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setSoundEnabled(soundPreference);
-        com.urbanairship.cordova.PluginLogger.debug("Settings Sound: %s", soundPreference);
+        PluginLogger.debug("Settings Sound: %s", soundPreference);
         callbackContext.success();
     }
 
@@ -672,14 +655,14 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: Boolean
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     @SuppressWarnings("deprecation")
     private void setVibrateEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean vibrationPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setVibrateEnabled(vibrationPreference);
-        com.urbanairship.cordova.PluginLogger.debug("Settings Vibrate: %s.", vibrationPreference);
+        PluginLogger.debug("Settings Vibrate: %s.", vibrationPreference);
         callbackContext.success();
     }
 
@@ -688,14 +671,14 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: Boolean
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     @SuppressWarnings("deprecation")
     private void setQuietTimeEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean quietPreference = data.getBoolean(0);
         UAirship.shared().getPushManager().setQuietTimeEnabled(quietPreference);
-        com.urbanairship.cordova.PluginLogger.debug("Settings QuietTime: %s", quietPreference);
+        PluginLogger.debug("Settings QuietTime: %s", quietPreference);
         callbackContext.success();
     }
 
@@ -705,7 +688,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * Expected arguments: Number - start hour, Number - start minute,
      * Number - end hour, Number - end minute
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     @SuppressWarnings("deprecation")
@@ -722,7 +705,7 @@ public class UAirshipPlugin extends CordovaPlugin {
         end.set(Calendar.HOUR_OF_DAY, endHour);
         end.set(Calendar.MINUTE, endMinute);
 
-        com.urbanairship.cordova.PluginLogger.debug("Settings QuietTime. Start: %s. End: %s.", start.getTime(), end.getTime());
+        PluginLogger.debug("Settings QuietTime. Start: %s. End: %s.", start.getTime(), end.getTime());
         UAirship.shared().getPushManager().setQuietTimeInterval(start.getTime(), end.getTime());
 
         callbackContext.success();
@@ -738,12 +721,12 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: Boolean
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void setAnalyticsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         boolean enabled = data.getBoolean(0);
-        com.urbanairship.cordova.PluginLogger.debug("Settings analyticsEnabled: %s", enabled);
+        PluginLogger.debug("Settings analyticsEnabled: %s", enabled);
         UAirship.shared().getAnalytics().setEnabled(enabled);
         callbackContext.success();
     }
@@ -751,7 +734,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Checks if analytics is enabled or not.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void isAnalyticsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -766,7 +749,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: String
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void setAssociatedIdentifier(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
@@ -786,11 +769,11 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: String
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getNamedUser(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        String namedUserId = UAirship.shared().getNamedUser().getId();
+        String namedUserId = UAirship.shared().getContact().getNamedUserId();
         namedUserId = namedUserId != null ? namedUserId : "";
         callbackContext.success(namedUserId);
     }
@@ -798,26 +781,25 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Sets the named user ID.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void setNamedUser(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String namedUserId = data.getString(0);
+        PluginLogger.debug("Setting named user: %s", namedUserId);
+
         if (UAStringUtil.isEmpty(namedUserId)) {
-            namedUserId = null;
+            UAirship.shared().getContact().reset();
+        } else {
+            UAirship.shared().getContact().identify(namedUserId);
         }
-
-        com.urbanairship.cordova.PluginLogger.debug("Setting named user: %s", namedUserId);
-
-        UAirship.shared().getNamedUser().setId(namedUserId);
-
         callbackContext.success();
     }
 
     /**
      * Edits the named user tag groups.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void editNamedUserTagGroups(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
@@ -825,7 +807,7 @@ public class UAirshipPlugin extends CordovaPlugin {
 
         PluginLogger.debug("Editing named user tag groups: %s", operations);
 
-        TagGroupsEditor editor = UAirship.shared().getNamedUser().editTagGroups();
+        TagGroupsEditor editor = UAirship.shared().getContact().editTagGroups();
         applyTagGroupOperations(editor, operations);
         editor.apply();
 
@@ -835,13 +817,13 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Edits the channel tag groups.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void editChannelTagGroups(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
 
-        com.urbanairship.cordova.PluginLogger.debug("Editing channel tag groups: %s", operations);
+        PluginLogger.debug("Editing channel tag groups: %s", operations);
 
         TagGroupsEditor editor = UAirship.shared().getChannel().editTagGroups();
         applyTagGroupOperations(editor, operations);
@@ -853,14 +835,14 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Edits the channel subscription lists.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void editChannelSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
 
         JSONArray operations = data.getJSONArray(0);
 
-        com.urbanairship.cordova.PluginLogger.debug("Editing channel subscription lists: %s", operations);
+        PluginLogger.debug("Editing channel subscription lists: %s", operations);
 
         SubscriptionListEditor editor = UAirship.shared().getChannel().editSubscriptionLists();
         for (int i = 0; i < operations.length(); i++) {
@@ -868,10 +850,6 @@ public class UAirshipPlugin extends CordovaPlugin {
 
             String operationType = operation.getString("operation");
             String listId = operation.getString("listId");
-
-            if ((listId == null) || (operationType == null)) {
-                continue;
-            }
 
             if ("subscribe".equals(operationType)) {
                 editor.subscribe(listId);
@@ -888,14 +866,14 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Edits the contact subscription lists.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void editContactSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
 
         JSONArray operations = data.getJSONArray(0);
 
-        com.urbanairship.cordova.PluginLogger.debug("Editing contact subscription lists: %s", operations);
+        PluginLogger.debug("Editing contact subscription lists: %s", operations);
 
         ScopedSubscriptionListEditor editor = UAirship.shared().getContact().editSubscriptionLists();
         for (int i = 0; i < operations.length(); i++) {
@@ -904,11 +882,6 @@ public class UAirshipPlugin extends CordovaPlugin {
             String operationType = operation.getString("operation");
             String listId = operation.getString("listId");
             String scope = operation.getString("scope");
-
-            if ((listId == null) || (operationType == null) || (scope == null)) {
-                continue;
-            }
-
 
             if (!CHANNEL_SCOPE.contains(scope)) {
                 continue;
@@ -927,26 +900,18 @@ public class UAirshipPlugin extends CordovaPlugin {
     }
 
     private Scope getScope(@NonNull String scope) {
-        if (scope == "sms") {
-            return Scope.SMS;
-        } else if (scope == "email") {
-            return Scope.EMAIL;
-        } else if (scope == "app") {
-            return Scope.APP;
-        } else {
-            return Scope.WEB;
-        }
+        return Scope.valueOf(scope.toUpperCase(Locale.ROOT));
     }
 
     /**
      * Returns the current set of the subscription lists for this channel.
      * An empty set indicates that this channel is not subscribed to any lists.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getChannelSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
+        PluginLogger.debug("Fetch channel subscription lists: %s");
         UAirship.shared().getChannel().getSubscriptionLists(true).addResultCallback(new ResultCallback<Set<String>>() {
 
             @Override
@@ -962,28 +927,22 @@ public class UAirshipPlugin extends CordovaPlugin {
      * Returns the current set of the subscription lists for this contact.
      * An empty set indicates that this channel is not subscribed to any lists.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getContactSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        com.urbanairship.cordova.PluginLogger.debug("Fetch channel subscription lists: %s");
+        PluginLogger.debug("Fetch contact subscription lists: %s");
         UAirship.shared().getContact().getSubscriptionLists(true).addResultCallback(new ResultCallback<Map<String, Set<Scope>>>() {
 
             @Override
             public void onResult(@Nullable Map<String, Set<Scope>> contactSubscriptionList) {
-                Map<String, JSONArray> resultMap = new HashMap<String, JSONArray>();
-                for (Map.Entry<String, Set<Scope>> entry : contactSubscriptionList.entrySet()) {
-                    JSONArray scopesArray = new JSONArray();
-                    for (Scope scope : entry.getValue()) {
-                        scopesArray.put(scope.name().toLowerCase(Locale.ROOT));
-                    }
-                    resultMap.put(entry.getKey(), scopesArray);
+                try {
+                    callbackContext.success(new JSONObject(JsonValue.wrap(contactSubscriptionList, JsonMap.EMPTY_MAP.toJsonValue()).toString()));
+                } catch (JSONException e) {
+                    callbackContext.error(e.getMessage());
                 }
-                callbackContext.success(resultMap.toString());
-
             }
         });
-
     }
 
     /**
@@ -991,7 +950,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p>
      * Expected arguments: String - action name, * - the action value
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void runAction(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) throws JSONException {
@@ -1031,7 +990,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Helper method to create the action run error message.
      *
-     * @param name The name of the action.
+     * @param name   The name of the action.
      * @param result The action result.
      * @return The action error message.
      */
@@ -1055,7 +1014,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Helper method to apply tag operations to a TagGroupsEditor.
      *
-     * @param editor The editor.
+     * @param editor     The editor.
      * @param operations The tag operations.
      */
     private static void applyTagGroupOperations(TagGroupsEditor editor, JSONArray operations) throws JSONException {
@@ -1086,13 +1045,13 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Displays the message center.
      *
-     * @param data The call data. The message ID is expected to be the first entry.
+     * @param data            The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      */
     private void displayMessageCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
         String messageId = data.optString(0);
 
-        com.urbanairship.cordova.PluginLogger.debug("Displaying Message Center");
+        PluginLogger.debug("Displaying Message Center");
         if (!UAStringUtil.isEmpty(messageId)) {
             Intent intent = new Intent(cordova.getActivity(), com.urbanairship.cordova.CustomMessageCenterActivity.class)
                     .setAction(MessageCenter.VIEW_MESSAGE_INTENT_ACTION)
@@ -1114,11 +1073,11 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Dismiss the message center.
      *
-     * @param data The call data. The message ID is expected to be the first entry.
+     * @param data            The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      */
     private void dismissMessageCenter(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        com.urbanairship.cordova.PluginLogger.debug("Dismissing Message Center");
+        PluginLogger.debug("Dismissing Message Center");
         Intent intent = new Intent(cordova.getActivity(), com.urbanairship.cordova.CustomMessageCenterActivity.class)
                 .setAction(com.urbanairship.cordova.CustomMessageCenterActivity.CLOSE_INTENT_ACTION);
 
@@ -1130,7 +1089,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Deletes an inbox message.
      *
-     * @param data The call data. The message ID is expected to be the first entry.
+     * @param data            The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
@@ -1150,7 +1109,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Marks an inbox message read.
      *
-     * @param data The call data. The message ID is expected to be the first entry.
+     * @param data            The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
@@ -1170,7 +1129,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Gets the inbox listing.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
@@ -1203,7 +1162,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Displays an inbox message.
      *
-     * @param data The call data. The message ID is expected to be the first entry.
+     * @param data            The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
@@ -1235,12 +1194,12 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Dismiss the inbox message.
      *
-     * @param data The call data. The message ID is expected to be the first entry.
+     * @param data            The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
     private void dismissInboxMessage(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        com.urbanairship.cordova.PluginLogger.debug("Dismissing Inbox Message");
+        PluginLogger.debug("Dismissing Inbox Message");
         Intent intent = new Intent(cordova.getActivity(), com.urbanairship.cordova.CustomMessageActivity.class)
                 .setAction(com.urbanairship.cordova.CustomMessageActivity.CLOSE_INTENT_ACTION)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -1253,7 +1212,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Refreshes the inbox.
      *
-     * @param data The call data. The message ID is expected to be the first entry.
+     * @param data            The call data. The message ID is expected to be the first entry.
      * @param callbackContext The callback context.
      */
     private void refreshInbox(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
@@ -1277,7 +1236,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Checks if app notifications are enabled or not.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void isAppNotificationsEnabled(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
@@ -1288,7 +1247,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Gets currently active notifications.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getActiveNotifications(@NonNull JSONArray data, @NonNull final CallbackContext callbackContext) {
@@ -1306,7 +1265,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                 try {
                     notificationsJSON.put(com.urbanairship.cordova.Utils.notificationObject(pushMessage, tag, id));
                 } catch (Exception e) {
-                    com.urbanairship.cordova.PluginLogger.error(e, "Unable to serialize push message: %s", pushMessage);
+                    PluginLogger.error(e, "Unable to serialize push message: %s", pushMessage);
                 }
             }
 
@@ -1319,7 +1278,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Clears all notifications.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context
      * @throws JSONException
      */
@@ -1360,13 +1319,13 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Edits the channel attributes.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void editChannelAttributes(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
 
-        com.urbanairship.cordova.PluginLogger.debug("Editing channel attributes: %s", operations);
+        PluginLogger.debug("Editing channel attributes: %s", operations);
 
         AttributeEditor editor = UAirship.shared().getChannel().editAttributes();
         applyAttributesOperations(editor, operations);
@@ -1378,15 +1337,15 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Edits the named user attributes.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void editNamedUserAttributes(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         JSONArray operations = data.getJSONArray(0);
 
-        com.urbanairship.cordova.PluginLogger.debug("Editing named user attributes: %s", operations);
+        PluginLogger.debug("Editing named user attributes: %s", operations);
 
-        AttributeEditor editor = UAirship.shared().getNamedUser().editAttributes();
+        AttributeEditor editor = UAirship.shared().getContact().editAttributes();
         applyAttributesOperations(editor, operations);
         editor.apply();
 
@@ -1396,7 +1355,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Helper method to apply attribute operations to an AttributeEditor.
      *
-     * @param editor The attribute editor.
+     * @param editor     The attribute editor.
      * @param operations The attribute operations.
      */
     private static void applyAttributesOperations(AttributeEditor editor, JSONArray operations) throws JSONException {
@@ -1420,7 +1379,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                     // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
                     editor.setAttribute(key, new Date(((Number) value).longValue()));
                 } else {
-                    com.urbanairship.cordova.PluginLogger.warn("Unknown channel attribute type: %s", valueType);
+                    PluginLogger.warn("Unknown channel attribute type: %s", valueType);
                 }
             } else if (ATTRIBUTE_OPERATION_REMOVE.equals(action)) {
                 editor.removeAttribute(key);
@@ -1433,7 +1392,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * <p/>
      * Expected arguments: String
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void trackScreen(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
@@ -1445,7 +1404,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Enables features, adding them to the set of currently enabled features.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
@@ -1462,7 +1421,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Disables features, removing them from the set of currently enabled features.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
@@ -1479,7 +1438,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Sets the current enabled features, replacing any currently enabled features with the given set.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
@@ -1496,7 +1455,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Gets the current enabled features.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getEnabledFeatures(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
@@ -1506,7 +1465,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Checks if all of the given features are enabled.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void isFeatureEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
@@ -1522,7 +1481,7 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Opens the Preference Center with the given preferenceCenterId.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      * @throws JSONException
      */
@@ -1535,178 +1494,72 @@ public class UAirshipPlugin extends CordovaPlugin {
     /**
      * Gets the configuration of the Preference Center with the given Id trough a callback method.
      *
-     * @param data The call data.
+     * @param data            The call data.
      * @param callbackContext The callback context.
      */
     private void getPreferenceCenterConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String preferenceCenterId = data.getString(0);
-        PreferenceCenter.shared().getConfig(preferenceCenterId).addResultCallback(new ResultCallback<PreferenceCenterConfig>() {
-            @Override
-            public void onResult(@Nullable PreferenceCenterConfig configPendingResult) {
-                callbackContext.success(getConfigData(configPendingResult));
+        getConfigJson(preferenceCenterId).addResultCallback(result -> {
+            if (result == null) {
+                callbackContext.success();
+                return;
+            }
+
+            try {
+                callbackContext.success(new JSONObject(result.toString()));
+            } catch (JSONException e) {
+                callbackContext.error(e.getMessage());
             }
         });
     }
 
-    private JSONObject getConfigData(PreferenceCenterConfig configPendingResult) {
-        JSONObject jsonObject = new JSONObject();
+    @SuppressLint("RestrictedApi")
+    private PendingResult<JsonValue> getConfigJson(final String prefCenterId) {
+        PendingResult<JsonValue> result = new PendingResult<>();
 
-        try {
-            if (configPendingResult != null) {
-                //Identifier
-                jsonObject.put(CONFIG_IDENTIFIER_KEY, configPendingResult.getId());
+        UAirship.shared().getRemoteData().payloadsForType("preference_forms")
+                .flatMap((payload) -> {
+                    JsonList forms = payload.getData().opt("preference_forms").optList();
+                    for (JsonValue formJson : forms) {
+                        JsonMap formMap = formJson.optMap().opt("form").optMap();
+                        if (formMap.opt("id").optString().equals(prefCenterId)) {
+                            return Observable.just(formMap.toJsonValue());
+                        }
+                    }
+                    return Observable.empty();
+                }).distinctUntilChanged()
+                .subscribe(new Subscriber<JsonValue>() {
+                    @Override
+                    public void onNext(@NonNull JsonValue value) {
+                        result.setResult(value);
+                    }
 
-                //Sections
-                List<Section> sections = configPendingResult.getSections();
-                if (sections != null) {
-                    jsonObject.put(CONFIG_SECTIONS_KEY, createSections(sections));
-                }
-
-                //Display
-                CommonDisplay configCommonDisplay = configPendingResult.getDisplay();
-                if (configCommonDisplay != null) {
-                    jsonObject.put(CONFIG_DISPLAY_KEY, createDisplay(configCommonDisplay));
-                }
-            }
-
-        } catch (JSONException e) {
-            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
-        }
-
-        return jsonObject;
+                    @Override
+                    public void onError(@NonNull Exception e) {
+                        result.setResult(null);
+                    }
+                });
+        return result;
     }
 
-    private  JSONArray createSections(@NonNull List<Section> sections) {
-        JSONArray sectionArray = new JSONArray();
-        try {
-            for (Section section : sections) {
-                JSONObject sectionMap = new JSONObject();
-
-                //Identifier
-                sectionMap.put(CONFIG_IDENTIFIER_KEY, section.getId());
-
-                //Items
-                List<Item> items = section.getItems();
-                if (items != null) {
-                    sectionMap.put(CONFIG_ITEMS_KEY, createItems(items));
-                }
-
-                //Display
-                CommonDisplay sectionCommonDisplay = section.getDisplay();
-                if (sectionCommonDisplay != null) {
-                    sectionMap.put(CONFIG_DISPLAY_KEY, createDisplay(sectionCommonDisplay));
-                }
-
-                sectionArray.put(sectionMap);
-            }
-        } catch (JSONException e) {
-            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
-        }
-        return sectionArray;
-    }
-
-    private JSONArray createItems(@NonNull List<Item> items) {
-        JSONArray itemArray = new JSONArray();
-        try {
-            for (Item item : items) {
-                JSONObject itemMap = new JSONObject();
-
-                //Identifier
-                itemMap.put(CONFIG_IDENTIFIER_KEY, item.getId());
-
-                //Item
-                if (item instanceof Item.ChannelSubscription) {
-                    Item.ChannelSubscription channelSubscription = (Item.ChannelSubscription) item;
-                    //Subscription Id
-                    itemMap.put(CONFIG_SUBSCRIPTION_IDENTIFIER_KEY, channelSubscription.getSubscriptionId());
-                } else if (item instanceof  Item.ContactSubscription) {
-                    Item.ContactSubscription contactSubscription = (Item.ContactSubscription) item;
-                    //Subscription Id
-                    itemMap.put(CONFIG_SUBSCRIPTION_IDENTIFIER_KEY, contactSubscription.getSubscriptionId());
-                    //Scopes
-                    itemMap.put(CONFIG_SCOPES_KEY, createScopes(contactSubscription.getScopes()));
-                } else if (item instanceof Item.ContactSubscriptionGroup) {
-                    Item.ContactSubscriptionGroup contactSubscriptionGroup = (Item.ContactSubscriptionGroup) item;
-                    //Subscription Id
-                    itemMap.put(CONFIG_SUBSCRIPTION_IDENTIFIER_KEY, contactSubscriptionGroup.getSubscriptionId());
-                    //Components
-                    itemMap.put(CONFIG_COMPONENTS_KEY, createComponents(contactSubscriptionGroup.getComponents()));
-                }
-
-                //Display
-                CommonDisplay commonDisplay = item.getDisplay();
-                if (commonDisplay != null) {
-                    itemMap.put(CONFIG_DISPLAY_KEY, createDisplay(commonDisplay));
-                }
-                itemArray.put(itemMap);
-            }
-        } catch (JSONException e) {
-            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
-        }
-        return itemArray;
-    }
-
-    private JSONArray createComponents(@NonNull List<ContactSubscriptionGroup.Component> components) {
-        JSONArray componentsArray = new JSONArray();
-        try {
-            for (ContactSubscriptionGroup.Component component:components) {
-                JSONObject componentMap = new JSONObject();
-                //Scopes
-                componentMap.put(CONFIG_SCOPES_KEY, createScopes(component.getScopes()));
-                //Display
-                CommonDisplay commonDisplay = component.getDisplay();
-                if (commonDisplay != null) {
-                    componentMap.put(CONFIG_DISPLAY_KEY, createDisplay(commonDisplay));
-                }
-                componentsArray.put(componentMap);
-            }
-        } catch (JSONException e) {
-            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
-        }
-        return componentsArray;
-    }
-
-    private JSONArray createScopes(@NonNull Set<Scope> scopes) {
-        JSONArray scopesArray = new JSONArray();
-        for (Scope scope : scopes) {
-            switch (scope) {
-                case APP:
-                    scopesArray.put(CONFIG_SCOPES_APP_KEY);
-                case EMAIL:
-                    scopesArray.put(CONFIG_SCOPES_EMAIL_KEY);
-                case SMS:
-                    scopesArray.put(CONFIG_SCOPES_SMS_KEY);
-                case WEB:
-                    scopesArray.put(CONFIG_SCOPES_WEB_KEY);
-            }
-        }
-        return scopesArray;
-    }
-
-    private JSONObject createDisplay(@NonNull CommonDisplay commonDisplay) {
-        JSONObject configCommonDisplayMap = new JSONObject();
-        try {
-            configCommonDisplayMap.put(CONFIG_DISPLAY_NAME_KEY, commonDisplay.getName());
-            configCommonDisplayMap.put(CONFIG_DISPLAY_DESCRIPTION_KEY, commonDisplay.getDescription());
-        } catch (JSONException e) {
-            com.urbanairship.cordova.PluginLogger.error(e,"Error constructing preference center config object");
-        }
-        return configCommonDisplayMap;
-    }
     /**
      * Set to true the override the preference center.
+     *
      * @param callbackContext The callback context.
      * @throws JSONException
      */
     private void setUseCustomPreferenceCenterUi(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String preferenceCenterId = data.getString(0);
-        Boolean useCustomUi = data.getBoolean(1);
-        PreferenceManager.getDefaultSharedPreferences(UAirship.getApplicationContext()).edit().putBoolean(preferenceCenterId, useCustomUi).apply();
+        boolean useCustomUi = data.getBoolean(1);
+        pluginManager.editConfig()
+                .setUseCustomPreferenceCenterUi(preferenceCenterId, useCustomUi)
+                .apply();
         callbackContext.success();
     }
 
     /**
      * Helper method to verify if a Feature is authorized.
+     *
      * @param features The String features to verify.
      * @return {@code true} if the provided features are authorized, otherwise {@code false}.
      */
@@ -1725,13 +1578,15 @@ public class UAirshipPlugin extends CordovaPlugin {
 
     /**
      * Helper method to parse a String features JSONArray into {@link PrivacyManager.Feature} int array.
+     *
      * @param features The String features JSONArray to parse.
      * @return The {@link PrivacyManager.Feature} int array.
      */
     @PrivacyManager.Feature
-    private @NonNull int[] stringToFeature(@NonNull JSONArray features) throws JSONException {
+    private @NonNull
+    int[] stringToFeature(@NonNull JSONArray features) throws JSONException {
         @PrivacyManager.Feature
-        int[] intFeatures = new int[features.length() ];
+        int[] intFeatures = new int[features.length()];
 
         for (int i = 0; i < features.length(); i++) {
             intFeatures[i] = (int) AUTHORIZED_FEATURES.get(features.getString(i));
@@ -1741,10 +1596,12 @@ public class UAirshipPlugin extends CordovaPlugin {
 
     /**
      * Helper method to parse a {@link PrivacyManager.Feature} int array into a String features JSONArray.
+     *
      * @param features The {@link PrivacyManager.Feature} int array to parse.
      * @return The String feature JSONArray.
      */
-    private @NonNull JSONArray featureToString(@PrivacyManager.Feature int features) {
+    private @NonNull
+    JSONArray featureToString(@PrivacyManager.Feature int features) {
         List<String> stringFeatures = new ArrayList<String>();
 
         if (features == PrivacyManager.FEATURE_ALL) {

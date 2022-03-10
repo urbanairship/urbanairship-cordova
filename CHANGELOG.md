@@ -1,6 +1,16 @@
 # Cordova Plugin Changelog
 
-## Version 13.3.0 - February 25, 2021
+## Version 14.0.0 - March 10, 2022
+Major release that changes the config returned by `getPreferenceCenterConfig`.
+
+### Changes
+- Updated Android SDK to 16.3.3
+- Removed setting targetSdkVersion
+- Fixed editing subscription lists on iOS
+- Fixed `setUseCustomPreferenceCenterUi` on Android
+- Added new `enableUserNotifications` that returns a boolean result
+
+## Version 13.3.0 - February 25, 2022
 Minor release that updates to latest Airship SDKs and adds support for Preference Center.
 
 ### Changes
@@ -8,13 +18,13 @@ Minor release that updates to latest Airship SDKs and adds support for Preferenc
 - Added preference center methods: `setUseCustomPreferenceCenterUi`, `getPreferenceCenterConfig`, `editChannelSubscriptionLists`, `editContactSubscriptionLists`, `getChannelSubscriptionLists`, `getContactSubscriptionLists`
 - Added `urbanairship.open_preference_center` event
 
-## Version 13.2.0 - February 1, 2021
+## Version 13.2.0 - February 1, 2022
 Minor release that updates the Airship SDKs to 16.2.0
 
 ### Changes
 - Update iOS & Android Airship SDK to 16.2.0
 
-## Version 13.1.1 - January 11, 2021
+## Version 13.1.1 - January 11, 2022
 Patch release that updates to latest Airship SDKs and fixes an opt-in issue
 with iOS when enable_push_onlaunch flag is false/not set.
 

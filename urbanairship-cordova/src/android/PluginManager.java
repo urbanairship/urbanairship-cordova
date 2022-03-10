@@ -149,7 +149,7 @@ public class PluginManager {
     /**
      * Called to open the preference center when use custom UI is disabled.
      *
-     * @param sendPreferenceCenterEvent .
+     * @param preferenceCenterEvent .
      */
     public void sendPreferenceCenterEvent(@NonNull PreferenceCenterEvent preferenceCenterEvent) {
         synchronized (lock) {
@@ -181,19 +181,6 @@ public class PluginManager {
     @Nullable
     public String getDefaultNotificationChannelId() {
         return sharedPreferences.getString(DEFAULT_NOTIFICATION_CHANNEL_ID, null);
-    }
-
-    /**
-     * Sets the default notification channel ID.
-     * @param value The value.
-     */
-    public void setDefaultNotificationChannelId(@Nullable String value) {
-        sharedPreferences.edit().putString(DEFAULT_NOTIFICATION_CHANNEL_ID, value).apply();
-    }
-
-
-    public void setUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId, boolean useCustomUi) {
-        sharedPreferences.edit().putBoolean(useCustomPreferenceCenterUiKey(preferenceCenterId), useCustomUi).apply();
     }
 
      public boolean getUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId) {
@@ -671,6 +658,12 @@ public class PluginManager {
         @NonNull
         public ConfigEditor setCloudSite(String site) {
             editor.putString(CLOUD_SITE, site);
+            return this;
+        }
+
+        @NonNull
+        public ConfigEditor setUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId, boolean useCustomUi) {
+            editor.putBoolean(useCustomPreferenceCenterUiKey(preferenceCenterId), useCustomUi);
             return this;
         }
 
