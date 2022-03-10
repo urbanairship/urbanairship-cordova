@@ -931,7 +931,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      */
     private void getContactSubscriptionLists(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        PluginLogger.debug("Fetch channel subscription lists: %s");
+        PluginLogger.debug("Fetch contact subscription lists: %s");
         UAirship.shared().getContact().getSubscriptionLists(true).addResultCallback(new ResultCallback<Map<String, Set<Scope>>>() {
 
             @Override
