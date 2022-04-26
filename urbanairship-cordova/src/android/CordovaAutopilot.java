@@ -25,6 +25,8 @@ import com.urbanairship.preferencecenter.PreferenceCenter;
 import com.urbanairship.push.NotificationActionButtonInfo;
 import com.urbanairship.push.NotificationInfo;
 import com.urbanairship.push.NotificationListener;
+import com.urbanairship.push.PushListener;
+import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.PushTokenListener;
 
 /**
@@ -97,6 +99,16 @@ public class CordovaAutopilot extends Autopilot {
             @Override
             public void onPushTokenUpdated(@NonNull String pushToken) {
                 PluginLogger.info("Push token updated. Token: %s.", pushToken);
+            }
+        });
+
+        airship.getPushManager().addPushListener(new PushListener() {
+            @Override
+            public void onPushReceived(@NonNull PushMessage message, boolean notificationPosted) {
+                if (!notificationPosted) {
+                    PluginLogger.info("Silent push received.");
+                    PluginManager.shared(context).pushReceived(null, message);
+                }
             }
         });
 
