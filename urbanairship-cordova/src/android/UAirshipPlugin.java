@@ -1499,7 +1499,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      */
     private void getPreferenceCenterConfig(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
         String preferenceCenterId = data.getString(0);
-        getConfigJson(preferenceCenterId).addResultCallback(result -> {
+        PreferenceCenter.shared().getJsonConfig(preferenceCenterId).addResultCallback(result -> {
             if (result == null) {
                 callbackContext.success();
                 return;
@@ -1511,35 +1511,6 @@ public class UAirshipPlugin extends CordovaPlugin {
                 callbackContext.error(e.getMessage());
             }
         });
-    }
-
-    @SuppressLint("RestrictedApi")
-    private PendingResult<JsonValue> getConfigJson(final String prefCenterId) {
-        PendingResult<JsonValue> result = new PendingResult<>();
-
-        UAirship.shared().getRemoteData().payloadsForType("preference_forms")
-                .flatMap((payload) -> {
-                    JsonList forms = payload.getData().opt("preference_forms").optList();
-                    for (JsonValue formJson : forms) {
-                        JsonMap formMap = formJson.optMap().opt("form").optMap();
-                        if (formMap.opt("id").optString().equals(prefCenterId)) {
-                            return Observable.just(formMap.toJsonValue());
-                        }
-                    }
-                    return Observable.empty();
-                }).distinctUntilChanged()
-                .subscribe(new Subscriber<JsonValue>() {
-                    @Override
-                    public void onNext(@NonNull JsonValue value) {
-                        result.setResult(value);
-                    }
-
-                    @Override
-                    public void onError(@NonNull Exception e) {
-                        result.setResult(null);
-                    }
-                });
-        return result;
     }
 
     /**
