@@ -257,7 +257,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
 - (void)enableUserNotifications:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("enableUserNotifications called with command arguments: %@", command.arguments);
-    
+
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [[UAirship push] enableUserPushNotifications:^(BOOL success) {
             completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:success]);
@@ -1097,7 +1097,8 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 - (void)getPreferenceCenterConfig:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("getPreferenceCenterConfig called with command arguments: %@", command.arguments);
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAPreferenceCenter shared] jsonConfigForPreferenceCenterID:preferenceCenterId completionHandler:^(NSDictionary *config) {
+        NSString *preferenceCenterID = [args firstObject];
+        [[UAPreferenceCenter shared] jsonConfigForPreferenceCenterID:preferenceCenterID completionHandler:^(NSDictionary *config) {
             completionHandler(CDVCommandStatus_OK, config);
         }];
     }];
