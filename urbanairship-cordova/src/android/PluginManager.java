@@ -65,7 +65,8 @@ public class PluginManager {
     private static final String FCM_FIREBASE_APP_NAME = "com.urbanairship.fcm_firebase_app_name";
 
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
-    private static final String DEFAULT_NOTIFICATION_CHANNEL_ID  = "com.urbanairship.default_notification_channel_id";
+    private static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "com.urbanairship.default_notification_channel_id";
+    private static final String FOREGROUND_NOTIFICATIONS = "com.urbanairship.foreground_notifications";
 
     private static PluginManager instance;
     private final Object lock = new Object();
@@ -177,6 +178,7 @@ public class PluginManager {
 
     /**
      * Gets the default notification channel ID.
+     *
      * @return The default notification channel ID.
      */
     @Nullable
@@ -184,8 +186,12 @@ public class PluginManager {
         return sharedPreferences.getString(DEFAULT_NOTIFICATION_CHANNEL_ID, null);
     }
 
-     public boolean getUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId) {
+    public boolean getUseCustomPreferenceCenterUi(@NonNull String preferenceCenterId) {
         return sharedPreferences.getBoolean(useCustomPreferenceCenterUiKey(preferenceCenterId), false);
+    }
+
+    public boolean isForegroundNotificationsEnabled() {
+        return sharedPreferences.getBoolean(FOREGROUND_NOTIFICATIONS, true);
     }
 
     private static String useCustomPreferenceCenterUiKey(@NonNull String preferenceCenterId) {
@@ -476,7 +482,7 @@ public class PluginManager {
             try {
                 return Color.parseColor(color);
             } catch (IllegalArgumentException e) {
-                PluginLogger.error( e, "Unable to parse color: %s", color);
+                PluginLogger.error(e, "Unable to parse color: %s", color);
             }
         }
         return defaultColor;
@@ -560,7 +566,7 @@ public class PluginManager {
         @NonNull
         public ConfigEditor setProductionConfig(@NonNull String appKey, @NonNull String appSecret) {
             editor.putString(PRODUCTION_KEY, appKey)
-                  .putString(PRODUCTION_SECRET, appSecret);
+                    .putString(PRODUCTION_SECRET, appSecret);
             return this;
         }
 
@@ -574,7 +580,7 @@ public class PluginManager {
         @NonNull
         public ConfigEditor setDevelopmentConfig(@NonNull String appKey, @NonNull String appSecret) {
             editor.putString(DEVELOPMENT_KEY, appKey)
-                  .putString(DEVELOPMENT_SECRET, appSecret);
+                    .putString(DEVELOPMENT_SECRET, appSecret);
             return this;
         }
 
@@ -651,6 +657,12 @@ public class PluginManager {
         @NonNull
         public ConfigEditor setAutoLaunchMessageCenter(boolean autoLaunchMessageCenter) {
             editor.putString(AUTO_LAUNCH_MESSAGE_CENTER, Boolean.toString(autoLaunchMessageCenter));
+            return this;
+        }
+
+        @NonNull
+        public ConfigEditor setForegroundNotificationsEnabled(boolean allow) {
+            editor.putString(FOREGROUND_NOTIFICATIONS, Boolean.toString(allow));
             return this;
         }
 

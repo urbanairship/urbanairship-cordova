@@ -88,7 +88,8 @@ public class UAirshipPlugin extends CordovaPlugin {
             "deleteInboxMessage", "getInboxMessages", "displayInboxMessage", "refreshInbox", "getDeepLink", "setAssociatedIdentifier",
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
-            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter", "getPreferenceCenterConfig", "setUseCustomPreferenceCenterUi");
+            "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter",
+            "getPreferenceCenterConfig", "setUseCustomPreferenceCenterUi", "setForegroundNotificationsEnabled");
 
     /*
      * These actions are available even if airship is not ready.
@@ -288,6 +289,8 @@ public class UAirshipPlugin extends CordovaPlugin {
                         getPreferenceCenterConfig(data, callbackContext);
                     } else if ("setUseCustomPreferenceCenterUi".equals(action)) {
                         setUseCustomPreferenceCenterUi(data, callbackContext);
+                    } else if ("setForegroundNotificationsEnabled".equals(action)) {
+                        setForegroundNotificationsEnabled(data, callbackContext);
                     } else {
                         PluginLogger.debug("No implementation for action: %s", action);
                         callbackContext.error("No implementation for action " + action);
@@ -1524,6 +1527,14 @@ public class UAirshipPlugin extends CordovaPlugin {
         boolean useCustomUi = data.getBoolean(1);
         pluginManager.editConfig()
                 .setUseCustomPreferenceCenterUi(preferenceCenterId, useCustomUi)
+                .apply();
+        callbackContext.success();
+    }
+
+    private void setForegroundNotificationsEnabled(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        boolean enabled = data.getBoolean(0);
+        pluginManager.editConfig()
+                .setForegroundNotificationsEnabled(enabled)
                 .apply();
         callbackContext.success();
     }
