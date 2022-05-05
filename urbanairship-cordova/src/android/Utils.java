@@ -76,6 +76,7 @@ public class Utils {
         data.putOpt("title", message.getTitle());
         data.putOpt("subtitle", message.getSummary());
         data.putOpt("extras", new JSONObject(extras));
+        data.putOpt("actions", new JSONObject(message.getActions()));
 
         if (notificationId != null) {
             data.putOpt("notification_id", notificationId);
