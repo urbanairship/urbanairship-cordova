@@ -257,7 +257,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
 - (void)enableUserNotifications:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("enableUserNotifications called with command arguments: %@", command.arguments);
-    
+
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [[UAirship push] enableUserPushNotifications:^(BOOL success) {
             completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:success]);
@@ -1096,26 +1096,11 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
 - (void)getPreferenceCenterConfig:(CDVInvokedUrlCommand *)command {
     UA_LTRACE("getPreferenceCenterConfig called with command arguments: %@", command.arguments);
-
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *preferenceCenterID = [args firstObject];
-        UARemoteDataManager *remoteData = (UARemoteDataManager *)[UAirship componentForClassName:@"UARemoteDataManager"];
-
-            __block UADisposable *disposable = [remoteData subscribeWithTypes:@[@"preference_forms"] block:^(NSArray<UARemoteDataPayload *> *payloads) {
-                NSArray *forms = [payloads firstObject].data[@"preference_forms"];
-
-                id result;
-                for (id form in forms) {
-                    NSString *formID = form[@"form"][@"id"];
-                    if ([formID isEqualToString:preferenceCenterID]) {
-                        result = form[@"form"];
-                        break;
-                    }
-                }
-
-                [disposable dispose];
-                completionHandler(CDVCommandStatus_OK, result);
-            }];
+        [[UAPreferenceCenter shared] jsonConfigForPreferenceCenterID:preferenceCenterID completionHandler:^(NSDictionary *config) {
+            completionHandler(CDVCommandStatus_OK, config);
+        }];
     }];
 }
 
