@@ -69,7 +69,7 @@ jobs:
         run: |
           yarn install
           yarn generate-docs
-      - uses: google-github-actions/setup-gcloud@daadedc81d5f9d3c06d2c92f49202a3cc2b919ba # v0.2.1
+      - uses: google-github-actions/setup-gcloud@v0
         with:
           version: '351.0.0'
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
