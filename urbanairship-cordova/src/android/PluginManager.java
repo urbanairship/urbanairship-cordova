@@ -62,6 +62,7 @@ public class PluginManager {
     static final String AUTO_LAUNCH_MESSAGE_CENTER = "com.urbanairship.auto_launch_message_center";
     private static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
     private static final String CLOUD_SITE = "com.urbanairship.site";
+    private static final String FCM_FIREBASE_APP_NAME = "com.urbanairship.fcm_firebase_app_name";
 
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
     private static final String DEFAULT_NOTIFICATION_CHANNEL_ID  = "com.urbanairship.default_notification_channel_id";
@@ -339,7 +340,11 @@ public class PluginManager {
                 .setSite(ConfigUtils.parseCloudSite(getConfigValue(CLOUD_SITE)))
                 .setEnabledFeatures(PrivacyManager.FEATURE_ALL)
                 .setUrlAllowListScopeOpenUrl(new String[]{"*"});
-
+        
+        if (hasConfig(FCM_FIREBASE_APP_NAME)) {
+            builder.setFcmFirebaseAppName(getConfigString(FCM_FIREBASE_APP_NAME, ""));
+        }
+        
         if (hasConfig(IN_PRODUCTION)) {
             builder.setInProduction(getConfigBoolean(IN_PRODUCTION, false));
         } else {
