@@ -662,7 +662,7 @@ public class PluginManager {
 
         @NonNull
         public ConfigEditor setForegroundNotificationsEnabled(boolean allow) {
-            editor.putString(FOREGROUND_NOTIFICATIONS, Boolean.toString(allow));
+            editor.putBoolean(FOREGROUND_NOTIFICATIONS, allow);
             return this;
         }
 

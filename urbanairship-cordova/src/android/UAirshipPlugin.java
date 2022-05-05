@@ -89,7 +89,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
             "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter",
-            "getPreferenceCenterConfig", "setUseCustomPreferenceCenterUi", "setForegroundNotificationsEnabled");
+            "getPreferenceCenterConfig", "setUseCustomPreferenceCenterUi", "setAndroidForegroundNotificationsEnabled");
 
     /*
      * These actions are available even if airship is not ready.
@@ -289,7 +289,7 @@ public class UAirshipPlugin extends CordovaPlugin {
                         getPreferenceCenterConfig(data, callbackContext);
                     } else if ("setUseCustomPreferenceCenterUi".equals(action)) {
                         setUseCustomPreferenceCenterUi(data, callbackContext);
-                    } else if ("setForegroundNotificationsEnabled".equals(action)) {
+                    } else if ("setAndroidForegroundNotificationsEnabled".equals(action)) {
                         setForegroundNotificationsEnabled(data, callbackContext);
                     } else {
                         PluginLogger.debug("No implementation for action: %s", action);

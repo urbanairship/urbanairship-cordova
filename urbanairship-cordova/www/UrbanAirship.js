@@ -1121,9 +1121,9 @@ module.exports = {
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
    */
-   setAndroidForegroundNotificationsEnabled: function(options, success, failure) {
+   setAndroidForegroundNotificationsEnabled: function(enabled, success, failure) {
      argscheck.checkArgs('*FF', 'UAirship.setAndroidForegroundNotificationsEnabled', arguments)
-     callNative(success, failure, "setForegroundNotificationsEnabled", [!!enabled])
+     callNative(success, failure, "setAndroidForegroundNotificationsEnabled", [!!enabled])
    },
 
   /**
