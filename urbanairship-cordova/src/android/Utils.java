@@ -3,6 +3,7 @@
 package com.urbanairship.cordova;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.service.notification.StatusBarNotification;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Utility methods.
@@ -76,7 +78,11 @@ public class Utils {
         data.putOpt("title", message.getTitle());
         data.putOpt("subtitle", message.getSummary());
         data.putOpt("extras", new JSONObject(extras));
-        data.putOpt("actions", new JSONObject(message.getActions()));
+
+        String actions = message.getExtra(PushMessage.EXTRA_ACTIONS);
+        if (actions != null) {
+            data.putOpt("actions", new JSONObject(actions));
+        }
 
         if (notificationId != null) {
             data.putOpt("notification_id", notificationId);
