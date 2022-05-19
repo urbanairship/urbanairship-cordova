@@ -1113,6 +1113,19 @@ module.exports = {
      callNative(success, failure, "setPresentationOptions", [options])
    },
 
+   /**
+   * Enables/Disables foreground notifications display on Android.
+   *
+   * @param {Boolean} enabled true to enable foreground notifications, false to disable.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+   setAndroidForegroundNotificationsEnabled: function(enabled, success, failure) {
+     argscheck.checkArgs('*FF', 'UAirship.setAndroidForegroundNotificationsEnabled', arguments)
+     callNative(success, failure, "setAndroidForegroundNotificationsEnabled", [!!enabled])
+   },
+
   /**
    * Enum for notification types.
    * @readonly

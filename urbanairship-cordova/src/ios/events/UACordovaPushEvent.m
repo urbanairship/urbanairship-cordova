@@ -33,7 +33,7 @@ NSString *const EventPushReceived = @"urbanairship.push";
         [info removeObjectForKey:@"_"];
     }
 
-    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];;
 
     // If there is an aps dictionary in the extras, remove it and set it as a top level object
     if([[info allKeys] containsObject:@"aps"]) {
@@ -63,8 +63,23 @@ NSString *const EventPushReceived = @"urbanairship.push";
         [info removeObjectForKey:@"aps"];
     }
 
+    NSMutableDictionary *actions = [NSMutableDictionary dictionary];
+    for (id key in info.allKeys) {
+        if (![key isKindOfClass:[NSString class]]) {
+            continue;
+        }
+
+        if ([UAirship.shared.actionRegistry registryEntryWithName:key]) {
+            actions[key] = info[key];
+        }
+    }
+
+    result[@"actions"] = actions;
+
     // Set the remaining info as extras
     result[@"extras"] = info;
+
+
 
     return result;
 }

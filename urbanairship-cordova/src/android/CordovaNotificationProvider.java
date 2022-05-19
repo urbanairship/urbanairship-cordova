@@ -7,8 +7,11 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.urbanairship.app.GlobalActivityMonitor;
+import com.urbanairship.push.PushMessage;
 import com.urbanairship.push.notifications.AirshipNotificationProvider;
 import com.urbanairship.push.notifications.NotificationArguments;
+import com.urbanairship.push.notifications.NotificationResult;
 
 /**
  * Notification provider that pulls its config from the {@link PluginManager}.
@@ -33,6 +36,15 @@ public class CordovaNotificationProvider extends AirshipNotificationProvider {
         }
 
         return super.getDefaultNotificationChannelId();
+    }
+
+    @NonNull
+    @Override
+    public NotificationResult onCreateNotification(@NonNull Context context, @NonNull NotificationArguments arguments) {
+        if (!shouldDisplay(context, arguments)) {
+            return NotificationResult.cancel();
+        }
+        return super.onCreateNotification(context, arguments);
     }
 
     @NonNull
@@ -64,5 +76,13 @@ public class CordovaNotificationProvider extends AirshipNotificationProvider {
         int id = pluginManager.getNotificationAccentColor();
 
         return id != 0 ? id : super.getDefaultAccentColor();
+    }
+
+    private boolean shouldDisplay(@NonNull Context context, @NonNull NotificationArguments arguments) {
+        // If push does not define foreground display behavior fallback to plugin
+        if (arguments.getMessage().getExtra(PushMessage.EXTRA_FOREGROUND_DISPLAY) == null) {
+            return pluginManager.isForegroundNotificationsEnabled() || !GlobalActivityMonitor.shared(context).isAppForegrounded();
+        }
+        return true;
     }
 }
