@@ -520,8 +520,11 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE("setNamedUser called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *namedUserID = [args objectAtIndex:0];
-        namedUserID = [namedUserID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString *namedUserID = nil;
+        if ([[args objectAtIndex:0] isKindOfClass:[NSString class]]) {
+            namedUserID = [args objectAtIndex:0];
+            namedUserID = [namedUserID stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        }
 
         if (namedUserID.length) {
             [UAirship.contact identify:namedUserID];

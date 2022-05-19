@@ -788,7 +788,7 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      */
     private void setNamedUser(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
-        String namedUserId = data.getString(0);
+        String namedUserId = data.isNull(0) ? null : data.getString(0);
         PluginLogger.debug("Setting named user: %s", namedUserId);
 
         if (UAStringUtil.isEmpty(namedUserId)) {
