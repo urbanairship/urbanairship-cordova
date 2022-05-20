@@ -1,8 +1,17 @@
 # Cordova Plugin Changelog
 
+## Version 14.2.0 - May 20, 2022
+Minor release updating Android SDK to 16.5.0 and iOS SDK to 16.7.0 and fixing setting named user to null. 
+
+### Changes
+- Updated Android SDK to 16.5.0.
+- Updated iOS SDK to 16.7.0.
+- Fixed setting named user to null.
+
 ## Version 14.1.0 - May 4, 2022
 Minor release that updates Airship Android SDK to 16.4.0, and iOS SDK to 16.6.0. These SDK releases fix several issues with Scenes and Surveys. Apps using Scenes & Surveys should update.
 
+### Changes
 - Added support for randomizing Survey responses.
 - Added subscription list action.
 - Added firebase app name to config.
