@@ -799,7 +799,7 @@ module.exports = {
    * @param {string} failure.message The error message.
    */
   setNamedUser: function(namedUser, success, failure) {
-    argscheck.checkArgs('sFF', 'UAirship.setNamedUser', arguments)
+    argscheck.checkArgs('SFF', 'UAirship.setNamedUser', arguments)
     callNative(success, failure, "setNamedUser", [namedUser])
   },
 
