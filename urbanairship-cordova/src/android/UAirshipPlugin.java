@@ -89,7 +89,7 @@ public class UAirshipPlugin extends CordovaPlugin {
             "isAppNotificationsEnabled", "dismissMessageCenter", "dismissInboxMessage", "setAutoLaunchDefaultMessageCenter",
             "getActiveNotifications", "clearNotification", "editChannelAttributes", "editNamedUserAttributes", "trackScreen",
             "enableFeature", "disableFeature", "setEnabledFeatures", "getEnabledFeatures", "isFeatureEnabled", "openPreferenceCenter",
-            "getPreferenceCenterConfig", "setUseCustomPreferenceCenterUi", "setAndroidForegroundNotificationsEnabled");
+            "getPreferenceCenterConfig", "setUseCustomPreferenceCenterUi", "setAndroidForegroundNotificationsEnabled", "setCurrentLocale", "getCurrentLocale", "clearLocale");
 
     /*
      * These actions are available even if airship is not ready.
@@ -291,6 +291,12 @@ public class UAirshipPlugin extends CordovaPlugin {
                         setUseCustomPreferenceCenterUi(data, callbackContext);
                     } else if ("setAndroidForegroundNotificationsEnabled".equals(action)) {
                         setForegroundNotificationsEnabled(data, callbackContext);
+                    } else if ("setCurrentLocale".equals(action)) {
+                        setCurrentLocale(data, callbackContext);
+                    } else if ("getCurrentLocale".equals(action)) {
+                        getCurrentLocale(data, callbackContext);
+                    } else if ("clearLocale".equals(action)) {
+                        clearLocale(data, callbackContext);
                     } else {
                         PluginLogger.debug("No implementation for action: %s", action);
                         callbackContext.error("No implementation for action " + action);
@@ -1536,6 +1542,39 @@ public class UAirshipPlugin extends CordovaPlugin {
         pluginManager.editConfig()
                 .setForegroundNotificationsEnabled(enabled)
                 .apply();
+        callbackContext.success();
+    }
+    
+    /**
+     * Overriding the locale.
+     *
+     *  @param data  The call data.
+     *  @throws JSONException
+     */
+    private void setCurrentLocale(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        String localeIdentifier = data.getString(0);
+        UAirship.shared().setLocaleOverride(new Locale(localeIdentifier));
+        callbackContext.success();
+    }
+
+    /**
+     * Getting the locale currently used by Airship.
+     *  @param callbackContext The callback context.
+     *  @throws JSONException
+     */
+       
+    private void getCurrentLocale(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        Locale airshipLocale = UAirship.shared().getLocale();
+        callbackContext.success(airshipLocale.getLanguage());
+    }
+
+    /**
+     * Resets the current locale.
+     *  @param callbackContext The callback context.
+     *  @throws JSONException
+     */
+    private void clearLocale(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) throws JSONException {
+        UAirship.shared().setLocaleOverride(null);
         callbackContext.success();
     }
 

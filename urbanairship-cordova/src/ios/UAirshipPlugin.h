@@ -511,4 +511,23 @@
  */
 - (void)getContactSubscriptionLists:(CDVInvokedUrlCommand *)command;
 
+/**
+ * Returns the locale currently used by Airship.
+ * @param command The cordova command.
+ */
+- (void)getCurrentLocale:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Overrides the locale.
+ * @param command The cordova command.
+ */
+- (void)setCurrentLocale:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Resets the current locale.
+ *
+ * @param command The cordova command.
+ */
+- (void)clearLocale:(CDVInvokedUrlCommand *)command ;
+
 @end
