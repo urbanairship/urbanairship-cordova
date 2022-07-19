@@ -1117,6 +1117,31 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
+- (void)getCurrentLocale:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("getCurrentLocale called with command arguments: %@", command.arguments);
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSLocale *airshipLocale = [[UAirship shared].localeManager currentLocale];
+        completionHandler(CDVCommandStatus_OK, airshipLocale.localeIdentifier);
+    }];
+}
+
+- (void)setCurrentLocale:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("setCurrentLocale called with command arguments: %@", command.arguments);
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *localeIdentifier = [args firstObject];
+        [UAirship.shared.localeManager setCurrentLocale:[NSLocale localeWithLocaleIdentifier:localeIdentifier]];
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)clearLocale:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE("clearLocale called with command arguments: %@", command.arguments);
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        [[UAirship shared].localeManager clearLocale];
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
 - (BOOL)isValidFeature:(NSArray *)features {
     if (!features || [features count] == 0) {
         return NO;
