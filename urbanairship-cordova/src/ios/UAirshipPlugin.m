@@ -41,7 +41,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 @implementation UAirshipPlugin
 
 - (void)pluginInitialize {
-    UA_LINFO("Initializing UrbanAirship cordova plugin.");
+    UA_LINFO(@"Initializing UrbanAirship cordova plugin.");
 
     if (!self.pluginManager) {
         self.pluginManager = [UACordovaPluginManager pluginManagerWithDefaultConfig:self.commandDelegate.settings];
@@ -157,7 +157,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 #pragma mark Cordova bridge
 
 - (void)registerListener:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("registerListener called with command: %@ and callback ID:%@", command, command.callbackId);
+    UA_LTRACE(@"registerListener called with command: %@ and callback ID:%@", command, command.callbackId);
 
     self.listenerCallbackID = command.callbackId;
 
@@ -167,7 +167,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)takeOff:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("takeOff called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"takeOff called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command
                      airshipRequired:NO
@@ -204,7 +204,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setAutoLaunchDefaultMessageCenter:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setAutoLaunchDefaultMessageCenter called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setAutoLaunchDefaultMessageCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
@@ -213,7 +213,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 - (void)setNotificationTypes:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setNotificationTypes called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setNotificationTypes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         UANotificationOptions types = [[args objectAtIndex:0] intValue];
@@ -227,7 +227,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setPresentationOptions:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setPresentationOptions called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setPresentationOptions called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         UNNotificationPresentationOptions options = [[args objectAtIndex:0] intValue];
@@ -239,12 +239,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setUserNotificationsEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setUserNotificationsEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setUserNotificationsEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[args objectAtIndex:0] boolValue];
 
-        UA_LTRACE("setUserNotificationsEnabled set to:%@", enabled ? @"true" : @"false");
+        UA_LTRACE(@"setUserNotificationsEnabled set to:%@", enabled ? @"true" : @"false");
 
         [UAirship push].userPushNotificationsEnabled = enabled;
 
@@ -256,7 +256,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)enableUserNotifications:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("enableUserNotifications called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"enableUserNotifications called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [[UAirship push] enableUserPushNotifications:^(BOOL success) {
@@ -266,7 +266,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setAssociatedIdentifier:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setAssociatedIdentifier called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setAssociatedIdentifier called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *key = [args objectAtIndex:0];
@@ -281,7 +281,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setAnalyticsEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setAnalyticsEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setAnalyticsEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSNumber *value = [args objectAtIndex:0];
@@ -297,7 +297,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)isAnalyticsEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("isAnalyticsEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"isAnalyticsEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [[UAirship shared].privacyManager isEnabled:UAFeaturesAnalytics];
@@ -307,7 +307,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)isUserNotificationsEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("isUserNotificationsEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"isUserNotificationsEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [UAirship push].userPushNotificationsEnabled;
@@ -316,7 +316,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)isQuietTimeEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("isQuietTimeEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"isQuietTimeEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL enabled = [UAirship push].quietTimeEnabled;
@@ -325,7 +325,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)isInQuietTime:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("isInQuietTime called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"isInQuietTime called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL inQuietTime;
@@ -353,7 +353,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getLaunchNotification:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getLaunchNotification called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getLaunchNotification called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         id event = self.pluginManager.lastReceivedNotificationResponse;
@@ -367,7 +367,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getDeepLink:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getDeepLink called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getDeepLink called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *deepLink = self.pluginManager.lastReceivedDeepLink;
@@ -381,7 +381,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getChannelID:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getChannelID called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getChannelID called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         completionHandler(CDVCommandStatus_OK, [UAirship channel].identifier ?: @"");
@@ -389,7 +389,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getQuietTime:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getQuietTime called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getQuietTime called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSDictionary *quietTimeDictionary = [UAirship push].quietTime;
@@ -429,7 +429,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getTags:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getTags called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getTags called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         completionHandler(CDVCommandStatus_OK, [UAirship channel].tags ?: [NSArray array]);
@@ -437,7 +437,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getBadgeNumber:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getBadgeNumber called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getBadgeNumber called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         completionHandler(CDVCommandStatus_OK, @([UIApplication sharedApplication].applicationIconBadgeNumber));
@@ -445,7 +445,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getNamedUser:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getNamedUser called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getNamedUser called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         completionHandler(CDVCommandStatus_OK, UAirship.contact.namedUserID ?: @"");
@@ -453,7 +453,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setTags:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setTags called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setTags called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSMutableArray *tags = [NSMutableArray arrayWithArray:[args objectAtIndex:0]];
@@ -464,7 +464,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setQuietTimeEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setQuietTimeEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setQuietTimeEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSNumber *value = [args objectAtIndex:0];
@@ -477,7 +477,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setQuietTime:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setQuietTime called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setQuietTime called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         id startHr = [args objectAtIndex:0];
@@ -493,7 +493,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setAutobadgeEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setAutobadgeEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setAutobadgeEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSNumber *number = [args objectAtIndex:0];
@@ -505,7 +505,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setBadgeNumber:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setBadgeNumber called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setBadgeNumber called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         id number = [args objectAtIndex:0];
@@ -517,7 +517,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setNamedUser:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setNamedUser called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setNamedUser called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *namedUserID = nil;
@@ -536,7 +536,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)editNamedUserTagGroups:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("editNamedUserTagGroups called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"editNamedUserTagGroups called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
@@ -549,7 +549,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)editChannelTagGroups:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("editChannelTagGroups called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"editChannelTagGroups called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
@@ -590,7 +590,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
                 [editor setDate:date attribute:name];
 
             } else {
-                UA_LWARN("Unknown attribute type: %@", valueType);
+                UA_LWARN(@"Unknown attribute type: %@", valueType);
             }
         } else if ([action isEqualToString:@"remove"]) {
             [editor removeAttribute:name];
@@ -599,7 +599,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)editChannelSubscriptionLists:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("editChannelSubscriptionLists called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"editChannelSubscriptionLists called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [UAirship.channel editSubscriptionLists:^(UASubscriptionListEditor *editor) {
@@ -620,7 +620,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)editContactSubscriptionLists:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("editContactSubscriptionLists called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"editContactSubscriptionLists called with command arguments: %@", command.arguments);
 
     NSArray *allChannelScope = @[@"sms", @"email", @"app", @"web"];
 
@@ -672,7 +672,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getChannelSubscriptionLists:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getChannelSubscriptionLists called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getChannelSubscriptionLists called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
@@ -690,7 +690,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getContactSubscriptionLists:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getContactSubscriptionLists called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getContactSubscriptionLists called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
@@ -720,7 +720,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
 
 - (void)resetBadge:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("resetBadge called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"resetBadge called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [[UAirship push] resetBadge];
@@ -731,12 +731,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)trackScreen:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("trackScreen called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"trackScreen called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *screen = [args objectAtIndex:0];
 
-        UA_LTRACE("trackScreen set to:%@", screen);
+        UA_LTRACE(@"trackScreen set to:%@", screen);
 
         [[UAirship analytics] trackScreen:screen];
 
@@ -744,7 +744,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 - (void)runAction:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("runAction called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"runAction called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *actionName = [args firstObject];
@@ -775,7 +775,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)isAppNotificationsEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("isAppNotificationsEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"isAppNotificationsEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         BOOL optedIn = [UAirship push].authorizedNotificationSettings != 0;
@@ -809,7 +809,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
 
 - (void)displayMessageCenter:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("displayMessageCenter called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"displayMessageCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [[UAMessageCenter shared] display];
@@ -818,7 +818,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)dismissMessageCenter:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("dismissMessageCenter called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"dismissMessageCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [[UAMessageCenter shared] dismiss];
@@ -827,7 +827,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getInboxMessages:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getInboxMessages called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getInboxMessages called with command arguments: %@", command.arguments);
     UA_LDEBUG(@"Getting messages");
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
@@ -855,7 +855,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)markInboxMessageRead:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("markInboxMessageRead called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"markInboxMessageRead called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *messageID = [command.arguments firstObject];
@@ -873,7 +873,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)deleteInboxMessage:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("deleteInboxMessage called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"deleteInboxMessage called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *messageID = [command.arguments firstObject];
@@ -891,7 +891,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)displayInboxMessage:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("displayInboxMessage called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"displayInboxMessage called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
@@ -912,7 +912,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)dismissInboxMessage:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("dismissInboxMessage called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"dismissInboxMessage called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
@@ -922,7 +922,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)refreshInbox:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("refreshInbox called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"refreshInbox called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:^{
@@ -934,7 +934,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getActiveNotifications:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getActiveNotifications called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getActiveNotifications called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         if (@available(iOS 10.0, *)) {
@@ -955,7 +955,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)clearNotification:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("clearNotification called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"clearNotification called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         if (@available(iOS 10.0, *)) {
@@ -971,7 +971,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)clearNotifications:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("clearNotifications called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"clearNotifications called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         if (@available(iOS 10.0, *)) {
@@ -983,7 +983,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)editChannelAttributes:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("editChannelAttributes called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"editChannelAttributes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
@@ -994,7 +994,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)editNamedUserAttributes:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("editNamedUserAttributes called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"editNamedUserAttributes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         [UAirship.contact editAttributes:^(UAAttributesEditor *editor) {
@@ -1025,7 +1025,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)enableFeature:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("enableFeature called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"enableFeature called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSArray *features = [args firstObject];
@@ -1039,7 +1039,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)disableFeature:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("disableFeature called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"disableFeature called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSArray *features = [args firstObject];
@@ -1053,7 +1053,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setEnabledFeatures:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setEnabledFeatures called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setEnabledFeatures called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSArray *features = [args firstObject];
@@ -1067,7 +1067,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getEnabledFeatures:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getEnabledFeatures called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getEnabledFeatures called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         completionHandler(CDVCommandStatus_OK, [self featureToString:[UAirship shared].privacyManager.enabledFeatures]);
@@ -1075,7 +1075,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)isFeatureEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("isFeatureEnabled called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"isFeatureEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSArray *features = [args firstObject];
@@ -1088,7 +1088,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)openPreferenceCenter:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("openPreferenceCenter called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"openPreferenceCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *preferenceCenterID = [args firstObject];
@@ -1098,7 +1098,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)getPreferenceCenterConfig:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("getPreferenceCenterConfig called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"getPreferenceCenterConfig called with command arguments: %@", command.arguments);
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *preferenceCenterID = [args firstObject];
         [[UAPreferenceCenter shared] jsonConfigForPreferenceCenterID:preferenceCenterID completionHandler:^(NSDictionary *config) {
@@ -1108,7 +1108,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 - (void)setUseCustomPreferenceCenterUi:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE("setUseCustomPreferenceCenterUi called with command arguments: %@", command.arguments);
+    UA_LTRACE(@"setUseCustomPreferenceCenterUi called with command arguments: %@", command.arguments);
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *preferenceCenterID = [args firstObject];
         BOOL useCustomUI = [[args objectAtIndex:1] boolValue];
@@ -1209,3 +1209,4 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 }
 
 @end
+
