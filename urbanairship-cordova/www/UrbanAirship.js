@@ -1365,9 +1365,9 @@ module.exports = {
     * @param {boolean} useCustomUi The preference center use custom UI.
     */
     setUseCustomPreferenceCenterUi: function(preferenceCenterId, useCustomUi, success, failure) {
-      argscheck.checkArgs("s*FF", "UAirship.setUseCustomPreferenceCenterUi", arguments);
-      callNative(success, failure, "setUseCustomPreferenceCenterUi", [preferenceCenterId, useCustomUi]);
-    }
+      argscheck.checkArgs("s*FF", "UAirship.setUseCustomPreferenceCenterUi", arguments)
+      callNative(success, failure, "setUseCustomPreferenceCenterUi", [preferenceCenterId, useCustomUi])
+    },
 
     /**
       * Overriding the locale.
@@ -1375,9 +1375,9 @@ module.exports = {
       * @param {string} localeIdentifier The locale identifier.
       */
      setCurrentLocale: function(localeIdentifier, success, failure) {
-         argscheck.checkArgs("sFF", "UAirship.setCurrentLocale", arguments);
-         callNative(success, failure, "setCurrentLocale", [localeIdentifier]);
-     }
+         argscheck.checkArgs("sFF", "UAirship.setCurrentLocale", arguments)
+         callNative(success, failure, "setCurrentLocale", [localeIdentifier])
+     },
 
      /**
       * Getting the locale currently used by Airship.
@@ -1388,7 +1388,7 @@ module.exports = {
      getCurrentLocale: function(success, failure) {
          argscheck.checkArgs('fF', 'UAirship.getCurrentLocale', arguments)
          callNative(success, failure, "getCurrentLocale")
-     }
+     },
 
      /**
       * Resets the current locale.
