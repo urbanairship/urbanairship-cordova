@@ -1,5 +1,5 @@
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-accengage:16.6.1'
+    implementation 'com.urbanairship.android:urbanairship-accengage:16.7.4'
 }
 
 cdvPluginPostBuildExtras.push({
