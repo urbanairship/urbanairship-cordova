@@ -24,7 +24,7 @@ jobs:
   ios:
     runs-on: macos-11
     env:
-      DEVELOPER_DIR: /Applications/Xcode_13.0.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
     steps:
       - uses: actions/checkout@v1
       - name: Run CI
