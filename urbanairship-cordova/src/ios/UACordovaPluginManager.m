@@ -36,6 +36,7 @@ NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foregr
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 NSString *const CloudSiteConfigKey = @"com.urbanairship.site";
 NSString *const CloudSiteEUString = @"EU";
+NSString *const InitialConfigURLKey = @"com.urbanairship.initial_config_url";
 
 NSString *const UACordovaPluginVersionKey = @"UACordovaPluginVersion";
 
@@ -170,6 +171,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
     if ([self configValueForKey:EnableAnalyticsConfigKey] != nil) {
         airshipConfig.isAnalyticsEnabled = [[self configValueForKey:EnableAnalyticsConfigKey] boolValue];
+    }
+
+    if ([self configValueForKey:InitialConfigURLKey] != nil) {
+        airshipConfig.initialConfigURL = [self configValueForKey:InitialConfigURLKey];
     }
 
     airshipConfig.enabledFeatures = UAFeaturesAll;
