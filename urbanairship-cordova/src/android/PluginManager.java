@@ -353,7 +353,7 @@ public class PluginManager {
         }
 
         if (hasConfig(INITIAL_CONFIG_URL)) {
-            builder.setInitialConfigUrl(getConfigString(INITIAL_CONFIG_URL, ""));
+            builder.setInitialConfigUrl(getConfigString(INITIAL_CONFIG_URL, null));
         }
         
         if (hasConfig(IN_PRODUCTION)) {
