@@ -1,5 +1,12 @@
 # Cordova Plugin Changelog
 
+## Version 14.6.0 - December 7, 2022
+Minor release updating Android SDK to 16.8.0 and iOS SDK to 16.10.6. 
+
+### Changes
+- Updated Android SDK to 16.8.0.
+- Updated iOS SDK to 16.10.6.
+
 ## Version 14.5.0 - October 10, 2022
 Minor release updating Android SDK to 16.7.5 and iOS SDK to 16.9.4. 
 

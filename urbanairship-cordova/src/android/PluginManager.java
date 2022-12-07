@@ -63,6 +63,7 @@ public class PluginManager {
     private static final String ENABLE_ANALYTICS = "com.urbanairship.enable_analytics";
     private static final String CLOUD_SITE = "com.urbanairship.site";
     private static final String FCM_FIREBASE_APP_NAME = "com.urbanairship.fcm_firebase_app_name";
+    private static final String INITIAL_CONFIG_URL = "com.urbanairship.initial_config_url";
 
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
     private static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "com.urbanairship.default_notification_channel_id";
@@ -349,6 +350,10 @@ public class PluginManager {
         
         if (hasConfig(FCM_FIREBASE_APP_NAME)) {
             builder.setFcmFirebaseAppName(getConfigString(FCM_FIREBASE_APP_NAME, ""));
+        }
+
+        if (hasConfig(INITIAL_CONFIG_URL)) {
+            builder.setInitialConfigUrl(getConfigString(INITIAL_CONFIG_URL, null));
         }
         
         if (hasConfig(IN_PRODUCTION)) {
