@@ -36,6 +36,24 @@
 - (void)setAutoLaunchDefaultMessageCenter:(CDVInvokedUrlCommand *)command;
 
 /**
+ * Sets the message center style config file.
+ *
+ * Expected arguments: String
+ *
+ * @param command The cordova command.
+ */
+- (void)setMessageCenterStyleConfig:(CDVInvokedUrlCommand *)command;
+
+/**
+ * Sets the message center title.
+ *
+ * Expected arguments: String
+ *
+ * @param command The cordova command.
+ */
+- (void)setMessageCenterTitle:(CDVInvokedUrlCommand *)command;
+
+/**
  * Enables or disables user push notifications.
  *
  * Expected arguments: Boolean

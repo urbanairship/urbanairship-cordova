@@ -481,6 +481,7 @@ module.exports = {
    *
    * @param {object}  config The Urban Airship config.
    * @param {string}  config.site Sets the cloud site, must be either EU or US.
+   * @param {string}  config.messageCenterStyleConfig The message center style config file. By default it's "messageCenterStyleConfig"
    * @param {object}  config.development The Urban Airship development config.
    * @param {string}  config.development.appKey The development appKey.
    * @param {string}  config.development.appSecret The development appSecret.
@@ -1111,6 +1112,32 @@ module.exports = {
    setPresentationOptions: function(options, success, failure) {
      argscheck.checkArgs('nFF', 'UAirship.setPresentationOptions', arguments)
      callNative(success, failure, "setPresentationOptions", [options])
+   },
+
+   /**
+   * Sets the message center style config file.
+   *
+   * @param {file} the message center style config file name.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+   setMessageCenterStyleConfig: function(file, success, failure) {
+     argscheck.checkArgs('sFF', 'UAirship.setMessageCenterStyleConfig', arguments)
+     callNative(success, failure, "setMessageCenterStyleConfig", [file])
+   },
+
+   /**
+   * Sets the message center title.
+   *
+   * @param {file} the message center title name.
+   * @param {function} [success] Success callback.
+   * @param {function(message)} [failure] Failure callback.
+   * @param {string} failure.message The error message.
+   */
+   setMessageCenterTitle: function(title, success, failure) {
+      argscheck.checkArgs('sFF', 'UAirship.setMessageCenterStyleConfig', arguments)
+      callNative(success, failure, "setMessageCenterTitle", [title])
    },
 
    /**

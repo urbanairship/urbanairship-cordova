@@ -191,6 +191,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         [self.pluginManager setProductionAppKey:production[@"appKey"] appSecret:production[@"appSecret"]];
 
         [self.pluginManager setCloudSite:config[@"site"]];
+        [self.pluginManager setMessageCenterStyleFile:config[@"messageCenterStyleConfig"]];
 
         if (!self.pluginManager.isAirshipReady) {
             [self.pluginManager attemptTakeOff];
@@ -212,6 +213,27 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
+
+- (void)setMessageCenterStyleConfig:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE(@"setMessageCenterStyleConfig called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *fileName = [args objectAtIndex:0];
+        UAMessageCenter.shared.defaultUI.messageCenterStyle = [UAMessageCenterStyle styleWithContentsOfFile:fileName];
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
+- (void)setMessageCenterTitle:(CDVInvokedUrlCommand *)command {
+    UA_LTRACE(@"setMessageCenterTitle called with command arguments: %@", command.arguments);
+
+    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
+        NSString *title = [args objectAtIndex:0];
+        UAMessageCenter.shared.defaultUI.title = title;
+        completionHandler(CDVCommandStatus_OK, nil);
+    }];
+}
+
 - (void)setNotificationTypes:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"setNotificationTypes called with command arguments: %@", command.arguments);
 
