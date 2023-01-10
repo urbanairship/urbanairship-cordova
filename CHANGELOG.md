@@ -1,5 +1,11 @@
 # Cordova Plugin Changelog
 
+## Version 14.7.0 - January 10, 2023
+Minor release adding support for styling message center. 
+
+### Changes
+- Add new methods `setMessageCenterStyleConfig` and `setMessageCenterTitle`.
+
 ## Version 14.6.0 - December 7, 2022
 Minor release updating Android SDK to 16.8.0 and iOS SDK to 16.10.6. 
 
