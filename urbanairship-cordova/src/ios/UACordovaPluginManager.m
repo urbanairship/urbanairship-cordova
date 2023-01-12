@@ -224,8 +224,8 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     [[NSUserDefaults standardUserDefaults] setValue:site forKey:CloudSiteConfigKey];
 }
 
-- (void)setMessageCenterStyleFile:(NSString *)file {
-    [[NSUserDefaults standardUserDefaults] setValue:file forKey:MessageCenterStyleConfigKey];
+- (void)setMessageCenterStyleFile:(NSString *)fileName {
+    [[NSUserDefaults standardUserDefaults] setValue:fileName forKey:MessageCenterStyleConfigKey];
 }
 
 - (void)setPresentationOptions:(NSUInteger)options {

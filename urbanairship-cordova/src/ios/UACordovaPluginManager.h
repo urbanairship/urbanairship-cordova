@@ -95,9 +95,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Sets the message center style config file.
- * @param file The plist file name that will be used to set the message center style.
+ * @param fileName The plist file name that will be used to set the message center style.
  */
-- (void)setMessageCenterStyleFile:(NSString *)file;
+- (void)setMessageCenterStyleFile:(NSString *)fileName;
 
 /**
  * Sets the presentation options.

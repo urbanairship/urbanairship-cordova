@@ -1130,7 +1130,7 @@ module.exports = {
    /**
    * Sets the message center title.
    *
-   * @param {file} the message center title name.
+   * @param {title} the message center title name.
    * @param {function} [success] Success callback.
    * @param {function(message)} [failure] Failure callback.
    * @param {string} failure.message The error message.
