@@ -55,7 +55,7 @@
 <!-- Urban Airship SDK Site (US or EU) defaults to US) -->
 <preference name="com.urbanairship.site" value="US" />
 <!-- Urban Airship message center config style -->
-<preference name="com.urbanairship.message.center.style.file" value="myCustomStyle" />
+<preference name="com.urbanairship.message.center.style.file" value="myMessageCenterStyleConfig" />
 <!-- Enable Analytics when the application launches -->
 <!-- Warning: Features that depend on analytics being enabled may not work properly if analytics is disabled (reports, location segmentation, region triggers, push to local time). -->
 <preference name="com.urbanairship.enable_analytics" value="true" />
