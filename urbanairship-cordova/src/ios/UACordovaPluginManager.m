@@ -156,10 +156,15 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     airshipConfig.developmentAppKey = [self configValueForKey:DevelopmentAppKeyConfigKey];
     airshipConfig.developmentAppSecret = [self configValueForKey:DevelopmentAppSecretConfigKey];
     airshipConfig.URLAllowListScopeOpenURL = @[@"*"];
-    airshipConfig.messageCenterStyleConfig = [self configValueForKey:MessageCenterStyleConfigKey];
 
     NSString *cloudSite = [self configValueForKey:CloudSiteConfigKey];
     airshipConfig.site = [UACordovaPluginManager parseCloudSiteString:cloudSite];
+
+    NSString* fileName = [self configValueForKey:MessageCenterStyleConfigKey];
+    if (fileName != nil) {
+        fileName = @"messageCenterConfigStyle";
+    }
+    airshipConfig.messageCenterStyleConfig = fileName;
 
     if ([self configValueForKey:ProductionConfigKey] != nil) {
         airshipConfig.inProduction = [[self configValueForKey:ProductionConfigKey] boolValue];
