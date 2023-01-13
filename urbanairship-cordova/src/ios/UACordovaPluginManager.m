@@ -161,7 +161,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     airshipConfig.site = [UACordovaPluginManager parseCloudSiteString:cloudSite];
 
     NSString* fileName = [self configValueForKey:MessageCenterStyleConfigKey];
-    if (fileName != nil) {
+    if (fileName == nil) {
         fileName = @"messageCenterConfigStyle";
     }
     airshipConfig.messageCenterStyleConfig = fileName;
