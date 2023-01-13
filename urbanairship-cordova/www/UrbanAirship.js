@@ -1115,32 +1115,6 @@ module.exports = {
    },
 
    /**
-   * Sets the message center style config file.
-   *
-   * @param {file} the message center style config file name.
-   * @param {function} [success] Success callback.
-   * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The error message.
-   */
-   setMessageCenterStyleConfig: function(file, success, failure) {
-     argscheck.checkArgs('sFF', 'UAirship.setMessageCenterStyleConfig', arguments)
-     callNative(success, failure, "setMessageCenterStyleConfig", [file])
-   },
-
-   /**
-   * Sets the message center title.
-   *
-   * @param {title} the message center title name.
-   * @param {function} [success] Success callback.
-   * @param {function(message)} [failure] Failure callback.
-   * @param {string} failure.message The error message.
-   */
-   setMessageCenterTitle: function(title, success, failure) {
-      argscheck.checkArgs('sFF', 'UAirship.setMessageCenterStyleConfig', arguments)
-      callNative(success, failure, "setMessageCenterTitle", [title])
-   },
-
-   /**
    * Enables/Disables foreground notifications display on Android.
    *
    * @param {Boolean} enabled true to enable foreground notifications, false to disable.
