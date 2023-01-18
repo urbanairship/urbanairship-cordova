@@ -35,6 +35,7 @@ NSString *const NotificationPresentationAlertKey = @"com.urbanairship.ios_foregr
 NSString *const NotificationPresentationBadgeKey = @"com.urbanairship.ios_foreground_notification_presentation_badge";
 NSString *const NotificationPresentationSoundKey = @"com.urbanairship.ios_foreground_notification_presentation_sound";
 NSString *const CloudSiteConfigKey = @"com.urbanairship.site";
+NSString *const MessageCenterStyleConfigKey = @"com.urbanairship.message.center.style.file";
 NSString *const CloudSiteEUString = @"EU";
 NSString *const InitialConfigURLKey = @"com.urbanairship.initial_config_url";
 
@@ -159,6 +160,12 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     NSString *cloudSite = [self configValueForKey:CloudSiteConfigKey];
     airshipConfig.site = [UACordovaPluginManager parseCloudSiteString:cloudSite];
 
+    NSString* fileName = [self configValueForKey:MessageCenterStyleConfigKey];
+    if (fileName == nil) {
+        fileName = @"messageCenterConfigStyle";
+    }
+    airshipConfig.messageCenterStyleConfig = fileName;
+
     if ([self configValueForKey:ProductionConfigKey] != nil) {
         airshipConfig.inProduction = [[self configValueForKey:ProductionConfigKey] boolValue];
     }
@@ -220,6 +227,10 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
 - (void)setCloudSite:(NSString *)site {
     [[NSUserDefaults standardUserDefaults] setValue:site forKey:CloudSiteConfigKey];
+}
+
+- (void)setMessageCenterStyleFile:(NSString *)fileName {
+    [[NSUserDefaults standardUserDefaults] setValue:fileName forKey:MessageCenterStyleConfigKey];
 }
 
 - (void)setPresentationOptions:(NSUInteger)options {

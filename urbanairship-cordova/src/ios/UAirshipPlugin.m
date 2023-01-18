@@ -191,6 +191,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         [self.pluginManager setProductionAppKey:production[@"appKey"] appSecret:production[@"appSecret"]];
 
         [self.pluginManager setCloudSite:config[@"site"]];
+        [self.pluginManager setMessageCenterStyleFile:config[@"messageCenterStyleConfig"]];
 
         if (!self.pluginManager.isAirshipReady) {
             [self.pluginManager attemptTakeOff];
@@ -212,6 +213,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
+
 - (void)setNotificationTypes:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"setNotificationTypes called with command arguments: %@", command.arguments);
 

@@ -481,6 +481,7 @@ module.exports = {
    *
    * @param {object}  config The Urban Airship config.
    * @param {string}  config.site Sets the cloud site, must be either EU or US.
+   * @param {string}  config.messageCenterStyleConfig The message center style config file. By default it's "messageCenterStyleConfig"
    * @param {object}  config.development The Urban Airship development config.
    * @param {string}  config.development.appKey The development appKey.
    * @param {string}  config.development.appSecret The development appSecret.

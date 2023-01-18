@@ -46,6 +46,7 @@ cp "$ROOT_PATH/config_sample.xml" config.xml
 cp "$ROOT_PATH/Example/index.html" www/index.html
 cp "$ROOT_PATH/Example/css/"* www/css
 cp "$ROOT_PATH/Example/js/"* www/js
+cp "$ROOT_PATH/Example/myMessageCenterStyleConfig.plist" myMessageCenterStyleConfig.plist
 
 # copy mock google-services.json
 cp "$ROOT_PATH/scripts/mock-google-services.json"  google-services.json
