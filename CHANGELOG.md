@@ -4,7 +4,7 @@
 Minor release updating Android SDK to 16.9.0 and iOS SDK to 16.11.2. 
 
 ### Changes
-- Updated Android SDK to 16.9.0.
+- Updated Android SDK to 16.9.0 (compileSdkVersion is now 33).
 - Updated iOS SDK to 16.11.2.
 
 ## Version 14.7.0 - January 18, 2023
