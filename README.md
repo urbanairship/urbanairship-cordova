@@ -23,7 +23,7 @@ Please visit http://support.urbanairship.com/ for any issues integrating or usin
 
 #### Android
 - `minSdkVersion` 21+
-- `compileSdkVersion` and `targetSdkVersion` 31+
+- `compileSdkVersion` and `targetSdkVersion` 33+
 - Gradle Plugin version 3.0.0+
 - Java 8
 - Android [FCM Setup](https://docs.airship.com/platform/android/getting-started/#fcm-setup)

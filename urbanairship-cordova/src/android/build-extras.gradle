@@ -1,5 +1,5 @@
 dependencies {
-    def airshipVersion = "16.8.0"
+    def airshipVersion = "16.9.0"
     implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"
@@ -8,7 +8,7 @@ dependencies {
 
 cdvPluginPostBuildExtras.push({
     android {
-        compileSdkVersion 31
+        compileSdkVersion 33
         
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8

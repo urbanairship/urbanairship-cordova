@@ -1,10 +1,10 @@
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-accengage:16.8.0'
+    implementation 'com.urbanairship.android:urbanairship-accengage:16.9.0'
 }
 
 cdvPluginPostBuildExtras.push({
     android {
-        compileSdkVersion 31
+        compileSdkVersion 33
 
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
