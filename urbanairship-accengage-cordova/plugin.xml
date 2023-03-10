@@ -31,7 +31,7 @@
                 <source url="https://github.com/CocoaPods/Specs.git"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship/Accengage" spec="16.10.6" />
+                <pod name="Airship/Accengage" spec="16.11.2" />
             </pods>
         </podspec>
 
