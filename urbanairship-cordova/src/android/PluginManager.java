@@ -713,7 +713,7 @@ public class PluginManager {
 
         @NonNull
         public ConfigEditor setProcessedNotificationsOptedOutFlag(boolean optedNotificationsOut) {
-            editor.putBoolean(FOREGROUND_NOTIFICATIONS, optedNotificationsOut);
+            editor.putBoolean(PROCESSED_NOTIFICATIONS_OPTED_OUT_FLAG, optedNotificationsOut);
             return this;
         }
 
