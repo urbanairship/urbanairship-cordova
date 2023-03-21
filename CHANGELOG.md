@@ -7,6 +7,7 @@ This new flag is useful for preventing a notification permission prompt if the a
 
 ### Changes
 - Added new config flag on Android to disable user notifications on startup.
+- Fixed enableUserNotifications on Android to hand back the actual result of the prompt instead of always `true`. 
 
 ## Version 14.8.0 - March 10, 2023
 Minor release updating Android SDK to 16.9.0 and iOS SDK to 16.11.2. 
