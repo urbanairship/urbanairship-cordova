@@ -2,6 +2,7 @@
 
 package com.urbanairship.cordova;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -31,12 +32,18 @@ import com.urbanairship.util.UAStringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * Plugin manager.
  */
 public class PluginManager {
+
+    enum NotificationsOptedOutFlag {
+        ALWAYS,
+        ONCE
+    }
 
     /**
      * Interface when a new event is received.
@@ -55,6 +62,10 @@ public class PluginManager {
     private static final String DEVELOPMENT_LOG_LEVEL = "com.urbanairship.development_log_level";
     private static final String IN_PRODUCTION = "com.urbanairship.in_production";
     private static final String ENABLE_PUSH_ONLAUNCH = "com.urbanairship.enable_push_onlaunch";
+
+    private static final String DISABLE_ANDROID_NOTIFICATIONS_ON_OPT_OUT = "com.urbanairship.android.disable_user_notifications_on_system_opt_out";
+    private static final String PROCESSED_NOTIFICATIONS_OPTED_OUT_FLAG = "com.urbanairship.PROCESSED_NOTIFICATIONS_OPTED_OUT_FLAG";
+
     private static final String NOTIFICATION_ICON = "com.urbanairship.notification_icon";
     private static final String NOTIFICATION_LARGE_ICON = "com.urbanairship.notification_large_icon";
     private static final String NOTIFICATION_ACCENT_COLOR = "com.urbanairship.notification_accent_color";
@@ -66,6 +77,7 @@ public class PluginManager {
     private static final String INITIAL_CONFIG_URL = "com.urbanairship.initial_config_url";
 
     private static final String NOTIFICATION_OPT_IN_STATUS_EVENT_PREFERENCES_KEY = "com.urbanairship.notification_opt_in_status_preferences";
+
     private static final String DEFAULT_NOTIFICATION_CHANNEL_ID = "com.urbanairship.default_notification_channel_id";
     private static final String FOREGROUND_NOTIFICATIONS = "com.urbanairship.foreground_notifications";
 
@@ -326,6 +338,7 @@ public class PluginManager {
      *
      * @return The airship config if available, or null if the plugin is not configured.
      */
+    @SuppressLint("RestrictedApi")
     @Nullable
     public AirshipConfigOptions getAirshipConfig() {
         if (configOptions != null) {
@@ -377,6 +390,29 @@ public class PluginManager {
      */
     public boolean getEnablePushOnLaunch() {
         return getConfigBoolean(ENABLE_PUSH_ONLAUNCH, false);
+    }
+
+    @Nullable
+    public NotificationsOptedOutFlag getDisableNotificationsOnOptOut() {
+        String disableNotifications = getConfigString(DISABLE_ANDROID_NOTIFICATIONS_ON_OPT_OUT, null);
+        if (UAStringUtil.isEmpty(disableNotifications)) {
+            return null;
+        }
+
+        switch (disableNotifications.toLowerCase(Locale.ROOT).trim()) {
+            case "once":
+                return NotificationsOptedOutFlag.ONCE;
+            case "always":
+                return NotificationsOptedOutFlag.ALWAYS;
+            default:
+                PluginLogger.error("Invalid value for %s: %s", DISABLE_ANDROID_NOTIFICATIONS_ON_OPT_OUT, disableNotifications);
+        }
+
+        return null;
+    }
+
+    boolean getProcessedNotificationOptOutFlag() {
+        return getConfigBoolean(PROCESSED_NOTIFICATIONS_OPTED_OUT_FLAG, false);
     }
 
     /**
@@ -493,6 +529,8 @@ public class PluginManager {
         return defaultColor;
     }
 
+
+
     /**
      * Gets a resource value from the config.
      *
@@ -533,6 +571,8 @@ public class PluginManager {
     private String getConfigValue(@NonNull String key) {
         return sharedPreferences.getString(key, defaultConfigValues.get(key));
     }
+
+
 
     /**
      * Helper method to notify the listener of the event.
@@ -668,6 +708,12 @@ public class PluginManager {
         @NonNull
         public ConfigEditor setForegroundNotificationsEnabled(boolean allow) {
             editor.putBoolean(FOREGROUND_NOTIFICATIONS, allow);
+            return this;
+        }
+
+        @NonNull
+        public ConfigEditor setProcessedNotificationsOptedOutFlag(boolean optedNotificationsOut) {
+            editor.putBoolean(FOREGROUND_NOTIFICATIONS, optedNotificationsOut);
             return this;
         }
 

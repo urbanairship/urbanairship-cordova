@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.XmlRes;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.urbanairship.AirshipConfigOptions;
 import com.urbanairship.Autopilot;
@@ -59,6 +60,23 @@ public class CordovaAutopilot extends Autopilot {
     public void onAirshipReady(@NonNull UAirship airship) {
         final Context context = UAirship.getApplicationContext();
         final PluginManager pluginManager = PluginManager.shared(context);
+
+        PluginManager.NotificationsOptedOutFlag optOutFlag = pluginManager.getDisableNotificationsOnOptOut();
+        if (optOutFlag != null) {
+            if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+                switch(optOutFlag) {
+                    case ONCE:
+                        if (!pluginManager.getProcessedNotificationOptOutFlag()) {
+                            airship.getPushManager().setUserNotificationsEnabled(false);
+                        }
+                        break;
+                    case ALWAYS:
+                        airship.getPushManager().setUserNotificationsEnabled(false);
+                        break;
+                }
+            }
+            pluginManager.editConfig().setProcessedNotificationsOptedOutFlag(true).apply();
+        }
 
         if (pluginManager.getEnablePushOnLaunch()) {
             airship.getPushManager().setUserNotificationsEnabled(true);
