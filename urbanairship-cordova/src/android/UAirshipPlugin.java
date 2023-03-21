@@ -17,6 +17,7 @@ import android.service.notification.StatusBarNotification;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.util.Consumer;
 
 import com.urbanairship.Autopilot;
 import com.urbanairship.PendingResult;
@@ -42,6 +43,9 @@ import com.urbanairship.json.JsonValue;
 import com.urbanairship.messagecenter.Inbox;
 import com.urbanairship.messagecenter.Message;
 import com.urbanairship.messagecenter.MessageCenter;
+import com.urbanairship.permission.Permission;
+import com.urbanairship.permission.PermissionRequestResult;
+import com.urbanairship.permission.PermissionStatus;
 import com.urbanairship.preferencecenter.PreferenceCenter;
 import com.urbanairship.push.PushMessage;
 import com.urbanairship.reactive.Observable;
@@ -476,8 +480,16 @@ public class UAirshipPlugin extends CordovaPlugin {
      * @param callbackContext The callback context.
      */
     private void enableUserNotifications(@NonNull JSONArray data, @NonNull CallbackContext callbackContext) {
-        UAirship.shared().getPushManager().setUserNotificationsEnabled(true);
-        callbackContext.success(1);
+        UAirship.shared().getPermissionsManager().requestPermission(
+                Permission.DISPLAY_NOTIFICATIONS,
+                true,
+                permissionRequestResult -> {
+                    if (permissionRequestResult.getPermissionStatus() == PermissionStatus.GRANTED) {
+                        callbackContext.success(1);
+                    } else {
+                        callbackContext.success(0);
+                    }
+                });
     }
 
     /**
