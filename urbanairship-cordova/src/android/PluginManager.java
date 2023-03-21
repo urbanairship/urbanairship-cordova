@@ -412,7 +412,7 @@ public class PluginManager {
     }
 
     boolean getProcessedNotificationOptOutFlag() {
-        return getConfigBoolean(PROCESSED_NOTIFICATIONS_OPTED_OUT_FLAG, false);
+        return sharedPreferences.getBoolean(PROCESSED_NOTIFICATIONS_OPTED_OUT_FLAG, false);
     }
 
     /**
