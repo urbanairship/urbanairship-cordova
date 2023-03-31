@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 14.9.1 - March 29, 2023
+Patch release that fixing Contact update merging order, improves Scene/Survey accessibility and reporting.
+
+### Changes
+- Updated iOS Airship SDK to 16.11.3
+- Updated Android Airship SDK to 16.9.1
+- Fixed Contact update merge order, resolving a Preference Center bug that could lead to unexpected subscription states in some circumstances.
+- Improved Scene/Survey accessibility and fixed a reporting bug related to form display events.
+
 ## Version 14.9.0 - March 21, 2023
 Minor release that adds a new Android config flag `com.urbanairship.android.disable_user_notifications_on_system_opt_out` that will disable user notifications on Airship if not enabled at the system level during app start. Apps can set this to `always` to always do this check, or `once` to apply a one time disable on Airship. 
 
