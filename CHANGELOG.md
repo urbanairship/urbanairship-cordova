@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 14.9.1 - March 29, 2023
+## Version 14.9.1 - March 31, 2023
 Patch release that fixing Contact update merging order, improves Scene/Survey accessibility and reporting.
 
 ### Changes
