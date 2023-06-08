@@ -9,7 +9,7 @@
 
 @implementation UAMessageViewController
 
-- (void) viewDidLoad {
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     self.airshipMessageViewController = [[UADefaultMessageCenterMessageViewController alloc]
@@ -33,6 +33,15 @@
     }
 }
 
+- (void)viewDidLayoutSubviews {
+    self.airshipMessageViewController.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:UAMessageCenterLocalizedString(@"ua_delete_message")
+                                                                                        style:UIBarButtonItemStylePlain
+                                                                                      target:self
+                                                                                      action:@selector(delete:)];
+    self.airshipMessageViewController.navigationItem.rightBarButtonItem.accessibilityHint = UAMessageCenterLocalizedString(@"ua_delete_message_description");
+
+}
+
 - (void)inboxMessageDone:(id)sender {
     [self dismissViewControllerAnimated:true completion:nil];
 }
@@ -47,6 +56,11 @@
 }
 
 #pragma mark UAMessageCenterMessageViewDelegate
+
+- (void)delete:(nullable id)sender {
+    [self.airshipMessageViewController delete:sender];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 - (void)messageClosed:(NSString *)messageID {
     [self dismissViewControllerAnimated:YES completion:nil];
