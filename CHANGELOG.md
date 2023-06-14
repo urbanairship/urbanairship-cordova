@@ -1,5 +1,13 @@
 # Cordova Plugin Changelog
 
+## Version 14.10.0 - Jun 14, 2023
+Minor release that updates the iOS SDK to 16.12.1 and the Android SDK to 16.11.1.
+
+### Changes
+- Updated iOS Airship SDK to 16.12.1
+- Updated Android Airship SDK to 16.11.1
+- Fixed issue with `Delete` button on the InboxMessageView not dismissing the view
+
 ## Version 14.9.1 - March 31, 2023
 Patch release that fixing Contact update merging order, improves Scene/Survey accessibility and reporting.
 

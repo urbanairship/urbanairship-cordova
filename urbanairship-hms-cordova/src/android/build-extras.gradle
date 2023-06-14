@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.urbanairship.android:urbanairship-hms:16.9.1'
+    implementation 'com.urbanairship.android:urbanairship-hms:16.11.1'
     implementation 'com.huawei.hms:push:6.3.0.304'
 }
 
