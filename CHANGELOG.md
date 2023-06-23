@@ -1,6 +1,12 @@
 # Cordova Plugin Changelog
 
-## Version 14.10.0 - Jun 14, 2023
+## Version 14.10.1 - June 23, 2023
+Patch release that fixes a crash if takeOff is called with invalid config on Android.
+
+### Changes
+- Fix crash due to an invalid config exception on Android
+
+## Version 14.10.0 - June 14, 2023
 Minor release that updates the iOS SDK to 16.12.1 and the Android SDK to 16.11.1.
 
 ### Changes
