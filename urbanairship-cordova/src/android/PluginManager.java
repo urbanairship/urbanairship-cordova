@@ -376,9 +376,12 @@ public class PluginManager {
         }
 
         try {
-            configOptions = builder.build();
+            AirshipConfigOptions config = builder.build();
+            config.validate();
+            configOptions = config;
             return configOptions;
         } catch (IllegalArgumentException e) {
+            PluginLogger.error(e, "Invalid AirshipConfig");
             return null;
         }
     }
