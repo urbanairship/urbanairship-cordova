@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="urbanairship-cordova"
-        version="14.10.1"
+        version="15.0.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -40,7 +40,7 @@
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data
                 android:name="com.urbanairship.cordova.version"
-                android:value="14.10.1"/>
+                android:value="15.0.0"/>
 
             <meta-data
                 android:name="com.urbanairship.autopilot"
@@ -137,6 +137,8 @@
     <!-- ios -->
     <platform name="ios">
 
+        <dependency id="cordova-plugin-add-swift-support" version="2.0.2"/>
+        
         <!-- Background push -->
         <config-file parent="UIBackgroundModes" target="*-Info.plist">
             <array>
@@ -145,7 +147,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
-            <string>14.10.1</string>
+            <string>15.0.0</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
@@ -191,6 +193,7 @@
         <source-file src="src/ios/events/UACordovaShowInboxEvent.m"/>
         <header-file src="src/ios/events/UACordovaPreferenceCenterEvent.h"/>
         <source-file src="src/ios/events/UACordovaPreferenceCenterEvent.m"/>
+        <source-file src="src/ios/AirshipCordova.swift"/>
 
         <!-- Airship library -->
         <podspec>
@@ -198,11 +201,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="Airship/Core" spec="16.12.1" />
-                <pod name="Airship/MessageCenter" spec="16.12.1" />
-                <pod name="Airship/Automation" spec="16.12.1" />
-                <pod name="Airship/ExtendedActions" spec="16.12.1" />
-                <pod name="Airship/PreferenceCenter" spec="16.12.1" />
+                <pod name="AirshipFrameworkProxy" spec="2.0.3" />
             </pods>
         </podspec>
 

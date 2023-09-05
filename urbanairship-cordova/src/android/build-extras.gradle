@@ -1,5 +1,5 @@
 dependencies {
-    def airshipVersion = "16.11.1"
+    def airshipVersion = "17.1.0"
     implementation "com.urbanairship.android:urbanairship-fcm:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-message-center:$airshipVersion"
     implementation "com.urbanairship.android:urbanairship-automation:$airshipVersion"

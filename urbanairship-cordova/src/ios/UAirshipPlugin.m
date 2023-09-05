@@ -1,17 +1,15 @@
 /* Copyright Urban Airship and Contributors */
 
+
+#if __has_include(<cordova_airship/cordova_airship-Swift.h>)
+#import <cordova_airship/cordova_airship-Swift.h>
+#else
+#import "cordova_airship-Swift.h"
+#endif
+
 #import "UAirshipPlugin.h"
 #import "UACordovaPluginManager.h"
 #import "UACordovaPushEvent.h"
-#import "UAMessageViewController.h"
-
-#if __has_include("AirshipLib.h")
-#import "AirshipLib.h"
-#import "AirshipMessageCenterLib.h"
-#import "AirshipAutomationLib.h"
-#else
-@import AirshipKit;
-#endif
 
 NSString *const PreferenceCenterIdKey = @"id";
 NSString *const PreferenceCenterSectionsKey = @"sections";
@@ -32,7 +30,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
 @interface UAirshipPlugin() <UACordovaPluginManagerDelegate>
 @property (nonatomic, copy) NSString *listenerCallbackID;
-@property (nonatomic, weak) UAMessageViewController *messageViewController;
 @property (nonatomic, strong) UACordovaPluginManager *pluginManager;
 @property (nonatomic, weak) UAInAppMessageHTMLAdapter *htmlAdapter;
 @property (nonatomic, assign) BOOL factoryBlockAssigned;
@@ -175,32 +172,34 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         UA_LDEBUG(@"Performing takeOff with args: %@", args);
 
         NSDictionary *config = [args objectAtIndex:0];
+        
         if (!config[@"production"] || !config[@"development"]) {
             completionHandler(CDVCommandStatus_ERROR, @"Invalid config");
             return;
         }
+         
 
         if (self.pluginManager.isAirshipReady) {
             UA_LINFO(@"TakeOff already called. Config will be applied next app start.");
+            completionHandler(CDVCommandStatus_OK, nil);
         }
 
-        NSDictionary *development = config[@"development"];
-        [self.pluginManager setDevelopmentAppKey:development[@"appKey"] appSecret:development[@"appSecret"]];
-
-        NSDictionary *production = config[@"production"];
-        [self.pluginManager setProductionAppKey:production[@"appKey"] appSecret:production[@"appSecret"]];
-
-        [self.pluginManager setCloudSite:config[@"site"]];
-        [self.pluginManager setMessageCenterStyleFile:config[@"messageCenterStyleConfig"]];
-
         if (!self.pluginManager.isAirshipReady) {
-            [self.pluginManager attemptTakeOff];
+            NSError *error;
+            id result = [AirshipReactNative.shared takeOffWithJson:config
+                                                     launchOptions:nil
+                                                             error:&error];
+            if (error) {
+                completionHandler(CDVCommandStatus_ERROR, error);
+            } else {
+                completionHandler(CDVCommandStatus_OK, nil);
+            }
+           
             if (!self.pluginManager.isAirshipReady) {
                 completionHandler(CDVCommandStatus_ERROR, @"Invalid config. Airship unable to takeOff.");
             }
         }
 
-        completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
 
@@ -218,12 +217,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"setNotificationTypes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        UANotificationOptions types = [[args objectAtIndex:0] intValue];
+        UANotificationOptions types = [[args objectAtIndex:0]];
 
+        [AirshipCordova.shared pushSetNotificationOptions:types];
+        
         UA_LDEBUG(@"Setting notification types: %ld", (long)types);
-        [UAirship push].notificationOptions = types;
-        [[UAirship push] updateRegistration];
-
+    
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -232,10 +231,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"setPresentationOptions called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        UNNotificationPresentationOptions options = [[args objectAtIndex:0] intValue];
+        UNNotificationPresentationOptions options = [[args objectAtIndex:0]];
 
         UA_LDEBUG(@"Setting presentation options types: %ld", (long)options);
-        [self.pluginManager setPresentationOptions:(NSUInteger)options];
+        
+        [AirshipCordova.shared pushSetForegroundPresentationOptions:options];
+    
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -248,10 +249,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
         UA_LTRACE(@"setUserNotificationsEnabled set to:%@", enabled ? @"true" : @"false");
 
-        [UAirship push].userPushNotificationsEnabled = enabled;
-
-        //forces a reregistration
-        [[UAirship push] updateRegistration];
+        [AirshipCordova.shared pushSetUserNotificationsEnabled:enabled];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -261,11 +259,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"enableUserNotifications called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship push] enableUserPushNotifications:^(BOOL success) {
+         [AirshipCordova.shared pushEnableUserNotifications:^(BOOL success) {
             completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:success]);
-        }];
+         }];
     }];
 }
+
 
 - (void)setAssociatedIdentifier:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"setAssociatedIdentifier called with command arguments: %@", command.arguments);
@@ -274,37 +273,9 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         NSString *key = [args objectAtIndex:0];
         NSString *identifier = [args objectAtIndex:1];
 
-        UAAssociatedIdentifiers *identifiers = [UAirship.analytics currentAssociatedDeviceIdentifiers];
-        [identifiers setIdentifier:identifier forKey:key];
-        [UAirship.analytics associateDeviceIdentifiers:identifiers];
+        [AirshipCordova.shared analyticsAssociateIdentifier:identifier key:key];
 
         completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
-- (void)setAnalyticsEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE(@"setAnalyticsEnabled called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSNumber *value = [args objectAtIndex:0];
-        BOOL enabled = [value boolValue];
-        if (enabled) {
-            [[UAirship shared].privacyManager enableFeatures:UAFeaturesAnalytics];
-        } else {
-            [[UAirship shared].privacyManager disableFeatures:UAFeaturesAnalytics];
-        }
-
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
-- (void)isAnalyticsEnabled:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE(@"isAnalyticsEnabled called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [[UAirship shared].privacyManager isEnabled:UAFeaturesAnalytics];
-
-        completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
     }];
 }
 
@@ -312,11 +283,11 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"isUserNotificationsEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL enabled = [UAirship push].userPushNotificationsEnabled;
-        completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:enabled]);
+        NSNumber *enabled = [AirshipCordova.shared pushIsUserNotificationsEnabled];
+        completionHandler(CDVCommandStatus_OK, enabled);
     }];
 }
-
+/*
 - (void)isQuietTimeEnabled:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"isQuietTimeEnabled called with command arguments: %@", command.arguments);
 
@@ -353,7 +324,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:inQuietTime]);
     }];
 }
-
+*/
 - (void)getLaunchNotification:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"getLaunchNotification called with command arguments: %@", command.arguments);
 
@@ -386,10 +357,10 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"getChannelID called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, [UAirship channel].identifier ?: @"");
+        completionHandler(CDVCommandStatus_OK, [AirshipCordova.shared channelGetChannelIdOrEmpty] ?: @"");
     }];
 }
-
+/*
 - (void)getQuietTime:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"getQuietTime called with command arguments: %@", command.arguments);
 
@@ -429,12 +400,12 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
                                                   @"endMinute": @(0) });
     }];
 }
-
+*/
 - (void)getTags:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"getTags called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, [UAirship channel].tags ?: [NSArray array]);
+        completionHandler(CDVCommandStatus_OK, [AirshipCordova shared channelGetTags] ?: [NSArray array]);
     }];
 }
 
@@ -442,7 +413,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"getBadgeNumber called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, @([UIApplication sharedApplication].applicationIconBadgeNumber));
+        completionHandler(CDVCommandStatus_OK, [AirshipCordova.shared pushGetBadgeNumber)];
     }];
 }
 
@@ -450,7 +421,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"getNamedUser called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, UAirship.contact.namedUserID ?: @"");
+        completionHandler(CDVCommandStatus_OK, [AirshipCordova.shared contactGetNamedUserIdOrEmtpy] ?: @"");
     }];
 }
 
@@ -459,12 +430,13 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSMutableArray *tags = [NSMutableArray arrayWithArray:[args objectAtIndex:0]];
-        [UAirship channel].tags = tags;
-        [[UAirship channel] updateRegistration];
+        
+        [AirshipCordova channelAddTags:tags];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
 
+/*
 - (void)setQuietTimeEnabled:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"setQuietTimeEnabled called with command arguments: %@", command.arguments);
 
@@ -493,14 +465,14 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
-
+*/
 - (void)setAutobadgeEnabled:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"setAutobadgeEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSNumber *number = [args objectAtIndex:0];
         BOOL enabled = [number boolValue];
-        [UAirship push].autobadgeEnabled = enabled;
+        [AirshipCordova.shared pushSetAutobadgeEnabled:enabled];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -512,7 +484,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         id number = [args objectAtIndex:0];
         NSInteger badgeNumber = [number intValue];
-        [[UAirship push] setBadgeNumber:badgeNumber];
+        [AirshipCordova.shared pushSetBadgeNumber:badgeNumber];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -529,9 +501,9 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         }
 
         if (namedUserID.length) {
-            [UAirship.contact identify:namedUserID];
+            [AirshipCordova.shared contactIdentify:namedUserID];
         } else {
-            [UAirship.contact reset];
+            [AirshipCordova.shared contactReset];
         }
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -542,9 +514,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
-        [UAirship.contact editTagGroups:^(UATagGroupsEditor * editor) {
-            [self applyTagGroupEdits:[args objectAtIndex:0] editor:editor];
-        }];
+        [AirshipCordova.shared contactEditTagGroups:[args objectAtIndex:0]];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -555,67 +525,17 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
-        [UAirship.channel editTagGroups:^(UATagGroupsEditor * editor) {
-            [self applyTagGroupEdits:[args objectAtIndex:0] editor:editor];
-        }];
+        [AirshipCordova.shared channelEditTagGroups:[args objectAtIndex:0]];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
-}
-
-- (void)applyTagGroupEdits:(NSDictionary *)edits editor:(UATagGroupsEditor *)editor {
-    for (NSDictionary *edit in edits) {
-        NSString *group = edit[@"group"];
-        if ([edit[@"operation"] isEqualToString:@"add"]) {
-            [editor addTags:edit[@"tags"] group:group];
-        } else if ([edit[@"operation"] isEqualToString:@"remove"]) {
-            [editor removeTags:edit[@"tags"] group:group];
-        }
-    }
-}
-
-- (void)applyAttributeEdits:(NSDictionary *)edits editor:(UAAttributesEditor *)editor {
-    for (NSDictionary *edit in edits) {
-        NSString *action = edit[@"action"];
-        NSString *name = edit[@"key"];
-
-        if ([action isEqualToString:@"set"]) {
-            id value = edit[@"value"];
-            NSString *valueType = edit[@"type"];
-            if ([valueType isEqualToString:@"string"]) {
-                [editor setString:value attribute:name];
-            } else if ([valueType isEqualToString:@"number"]) {
-                [editor setNumber:value attribute:name];
-            } else if ([valueType isEqualToString:@"date"]) {
-                // JavaScript's date type doesn't pass through the JS to native bridge. Dates are instead serialized as milliseconds since epoch.
-                NSDate *date = [NSDate dateWithTimeIntervalSince1970:[(NSNumber *)value doubleValue] / 1000.0];
-                [editor setDate:date attribute:name];
-
-            } else {
-                UA_LWARN(@"Unknown attribute type: %@", valueType);
-            }
-        } else if ([action isEqualToString:@"remove"]) {
-            [editor removeAttribute:name];
-        }
-    }
 }
 
 - (void)editChannelSubscriptionLists:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"editChannelSubscriptionLists called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [UAirship.channel editSubscriptionLists:^(UASubscriptionListEditor *editor) {
-            for (NSDictionary *edit in [args objectAtIndex:0]) {
-                NSString *listID = edit[@"listId"];
-                NSString *operation = edit[@"operation"];
-
-                if ([operation isEqualToString:@"subscribe"]) {
-                    [editor subscribe:listID];
-                } else if ([operation isEqualToString:@"unsubscribe"]) {
-                    [editor unsubscribe:listID];
-                }
-            }
-        }];
+        [AirshipCordova.shared channelEditSubscriptionLists: [args objectAtIndex:0]];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -624,53 +544,11 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 - (void)editContactSubscriptionLists:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"editContactSubscriptionLists called with command arguments: %@", command.arguments);
 
-    NSArray *allChannelScope = @[@"sms", @"email", @"app", @"web"];
-
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [UAirship.contact editSubscriptionLists:^(UAScopedSubscriptionListEditor *editor) {
-            for (NSDictionary *edit in [args objectAtIndex:0]) {
-                NSString *listID = edit[@"listId"];
-                NSString *scope = edit[@"scope"];
-                NSString *operation = edit[@"operation"];
-
-                if ((listID != nil) & [allChannelScope containsObject:scope]) {
-                    UAChannelScope channelScope = [self getScope:scope];
-                    if ([operation isEqualToString:@"subscribe"]) {
-                        [editor subscribe:listID scope:channelScope];
-                    } else if ([operation isEqualToString:@"unsubscribe"]) {
-                        [editor unsubscribe:listID scope:channelScope];
-                    }
-                }
-            }
-        }];
+        [AirshipCordova.shared contactEditSubscriptionLists: [args objectAtIndex:0]];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
-}
-
-- (UAChannelScope)getScope:(NSString* )scope {
-    if ([scope isEqualToString:@"sms"]) {
-        return UAChannelScopeSms;
-    } else if ([scope isEqualToString:@"email"]) {
-        return UAChannelScopeEmail;
-    } else if ([scope isEqualToString:@"app"]) {
-        return UAChannelScopeApp;
-    } else {
-        return UAChannelScopeWeb;
-    }
-}
-
-- (NSString *)getScopeString:(UAChannelScope )scope {
-    switch (scope) {
-        case UAChannelScopeSms:
-            return @"sms";
-        case UAChannelScopeEmail:
-            return @"email";
-        case UAChannelScopeApp:
-            return @"app";
-        case UAChannelScopeWeb:
-            return @"web";
-    }
 }
 
 - (void)getChannelSubscriptionLists:(CDVInvokedUrlCommand *)command {
@@ -678,7 +556,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
-        [[UAChannel shared] fetchSubscriptionListsWithCompletionHandler:^(NSArray<NSString *> * _Nullable channelSubscriptionLists, NSError * _Nullable error) {
+        [AirshipCordova.shared channelGetSubscriptionListsWithCompletionHandler:^(NSArray<NSString *> * _Nullable channelSubscriptionLists, NSError * _Nullable error) {
             if (error) {
                 completionHandler(CDVCommandStatus_ERROR, error);
             }
@@ -696,7 +574,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
 
-        [[UAContact shared] fetchSubscriptionListsWithCompletionHandler:^(NSDictionary<NSString *,UAChannelScopes *> * _Nullable contactSubscriptionLists, NSError * _Nullable error) {
+        [AirshipCordova.shared contactGetSubscriptionListsWithCompletionHandler:^(NSDictionary<NSString *,UAChannelScopes *> * _Nullable contactSubscriptionLists, NSError * _Nullable error) {
             if (error) {
                 completionHandler(CDVCommandStatus_ERROR, error);
             }
@@ -720,18 +598,6 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     }];
 }
 
-
-- (void)resetBadge:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE(@"resetBadge called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship push] resetBadge];
-        [[UAirship push] updateRegistration];
-
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
 - (void)trackScreen:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"trackScreen called with command arguments: %@", command.arguments);
 
@@ -740,7 +606,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
         UA_LTRACE(@"trackScreen set to:%@", screen);
 
-        [[UAirship analytics] trackScreen:screen];
+        [AirshipCordova.shared analyticsTrackScreen:screen];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -752,35 +618,33 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
         NSString *actionName = [args firstObject];
         id actionValue = args.count >= 2 ? [args objectAtIndex:1] : nil;
 
-        [UAActionRunner runActionWithName:actionName
-                                    value:actionValue
-                                situation:UASituationManualInvocation
-                        completionHandler:^(UAActionResult *actionResult) {
+        [AirshipCordova.shared actionsRunWithActionName:name
+                                                actionValue:value
+                                          completionHandler:^(id result , NSError *error) {
 
-            if (actionResult.status == UAActionStatusCompleted) {
-
-                /*
-                 * We are wrapping the value in an object to be consistent
-                 * with the Android implementation.
-                 */
+            /*
+            if (result.status == UAActionStatusCompleted) {
 
                 NSMutableDictionary *result = [NSMutableDictionary dictionary];
-                [result setValue:actionResult.value forKey:@"value"];
+                [result setValue:result.value forKey:@"value"];
                 completionHandler(CDVCommandStatus_OK, result);
             } else {
-                NSString *error = [self errorMessageForAction:actionName result:actionResult];
+                NSString *error = [self errorMessageForAction:actionName result:result];
                 completionHandler(CDVCommandStatus_ERROR, error);
             }
+             */
+            completionHandler(CDVCommandStatus_OK, nil);
         }];
 
     }];
+ 
 }
 
 - (void)isAppNotificationsEnabled:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"isAppNotificationsEnabled called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        BOOL optedIn = [UAirship push].authorizedNotificationSettings != 0;
+        BOOL optedIn = [AirshipCordova.shared pushGetAuthorizedNotificationSettings] != 0;
         completionHandler(CDVCommandStatus_OK, [NSNumber numberWithBool:optedIn]);
     }];
 }
@@ -792,7 +656,9 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
  * @param actionResult The action result.
  * @return An error message, or nil if no error was found.
  */
+/*
 - (NSString *)errorMessageForAction:(NSString *)actionName result:(UAActionResult *)actionResult {
+    
     switch (actionResult.status) {
         case UAActionStatusActionNotFound:
             return [NSString stringWithFormat:@"Action %@ not found.", actionName];
@@ -808,22 +674,13 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     return [NSString stringWithFormat:@"Action %@ failed with unspecified error", actionName];
 }
-
-
-- (void)displayMessageCenter:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE(@"displayMessageCenter called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAMessageCenter shared] display];
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
+*/
 
 - (void)dismissMessageCenter:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"dismissMessageCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAMessageCenter shared] dismiss];
+        [AirshipCordova.shared messageCenterDismiss];
         completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
@@ -833,44 +690,21 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LDEBUG(@"Getting messages");
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSMutableArray *messages = [NSMutableArray array];
-
-        for (UAInboxMessage *message in [UAMessageCenter shared].messageList.messages) {
-
-            NSDictionary *icons = [message.rawMessageObject objectForKey:@"icons"];
-            NSString *iconUrl = [icons objectForKey:@"list_icon"];
-            NSNumber *sentDate = @([message.messageSent timeIntervalSince1970] * 1000);
-
-            NSMutableDictionary *messageInfo = [NSMutableDictionary dictionary];
-            [messageInfo setValue:message.title forKey:@"title"];
-            [messageInfo setValue:message.messageID forKey:@"id"];
-            [messageInfo setValue:sentDate forKey:@"sentDate"];
-            [messageInfo setValue:iconUrl forKey:@"listIconUrl"];
-            [messageInfo setValue:message.unread ? @NO : @YES  forKey:@"isRead"];
-            [messageInfo setValue:message.extra forKey:@"extras"];
-
-            [messages addObject:messageInfo];
+        NSMutableArray *messages = [AirshipCordova.shared messageCenterGetMessagesWithCompletionHandler:^(NSArray *result, NSError *error) {
+            completionHandler(CDVCommandStatus_OK, result);
         }
-
-        completionHandler(CDVCommandStatus_OK, messages);
     }];
+ 
 }
 
 - (void)markInboxMessageRead:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"markInboxMessageRead called with command arguments: %@", command.arguments);
-
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *messageID = [command.arguments firstObject];
-        UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
-
-        if (!message) {
-            NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
-            completionHandler(CDVCommandStatus_ERROR, error);
-            return;
+        [AirshipCordova.shared messageCenterMarkMessageReadWithMessageId:messageId
+                                                       completionHandler:^(NSError * error) {
+            completionHandler(CDVCommandStatus_OK, nil);
         }
-
-        [[UAMessageCenter shared].messageList markMessagesRead:@[message] completionHandler:nil];
-        completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
 
@@ -879,58 +713,39 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *messageID = [command.arguments firstObject];
-        UAInboxMessage *message = [[UAMessageCenter shared].messageList messageForID:messageID];
-
-        if (!message) {
-            NSString *error = [NSString stringWithFormat:@"Message not found: %@", messageID];
-            completionHandler(CDVCommandStatus_ERROR, error);
-            return;
+        [AirshipCordova.shared messageCenterDeleteMessageWithMessageId:messageId
+                                                     completionHandler:^(NSError * error) {
+            completionHandler(CDVCommandStatus_OK, nil);
         }
-
-        [[UAMessageCenter shared].messageList markMessagesDeleted:@[message] completionHandler:nil];
-        completionHandler(CDVCommandStatus_OK, nil);
     }];
+ 
 }
 
 - (void)displayInboxMessage:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"displayInboxMessage called with command arguments: %@", command.arguments);
-
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
-
-        UAMessageViewController *mvc = [[UAMessageViewController alloc] init];
-        mvc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-        mvc.modalPresentationStyle = UIModalPresentationFullScreen;
-        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:mvc animated:YES completion:nil];
-
-        // Load the message
-        [mvc loadMessageForID:[command.arguments firstObject]];
-
-        // Store a weak reference to the MessageViewController so we can dismiss it later
-        self.messageViewController = mvc;
-
-        completionHandler(CDVCommandStatus_OK, nil);
-    }];
-}
-
-- (void)dismissInboxMessage:(CDVInvokedUrlCommand *)command {
-    UA_LTRACE(@"dismissInboxMessage called with command arguments: %@", command.arguments);
-
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [self.messageViewController dismissViewControllerAnimated:YES completion:nil];
-        self.messageViewController = nil;
-        completionHandler(CDVCommandStatus_OK, nil);
+       
+        
+        [AirshipCordova.shared messageCenterDisplayWithMessageId:[command.arguments firstObject]
+                                                           error:&error];
+        
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK, nil);
+        }
     }];
 }
 
 - (void)refreshInbox:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"refreshInbox called with command arguments: %@", command.arguments);
-
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAMessageCenter shared].messageList retrieveMessageListWithSuccessBlock:^{
-            completionHandler(CDVCommandStatus_OK, nil);
-        } withFailureBlock:^{
-            completionHandler(CDVCommandStatus_ERROR, @"Inbox failed to refresh");
+        [AirshipCordova.shared messageCenterRefreshWithCompletionHandler:^(NSError *error) {
+            if (error) {
+                completionHandler(CDVCommandStatus_ERROR, error);
+            } else {
+                completionHandler(CDVCommandStatus_OK, nil);
+            }
         }];
     }];
 }
@@ -939,20 +754,9 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"getActiveNotifications called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        if (@available(iOS 10.0, *)) {
-            [[UNUserNotificationCenter currentNotificationCenter] getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
-
-                NSMutableArray *result = [NSMutableArray array];
-                for(UNNotification *unnotification in notifications) {
-                    UNNotificationContent *content = unnotification.request.content;
-                    [result addObject:[UACordovaPushEvent pushEventDataFromNotificationContent:content.userInfo]];
-                }
-
-                completionHandler(CDVCommandStatus_OK, result);
-            }];
-        } else {
-            completionHandler(CDVCommandStatus_ERROR, @"Only available on iOS 10+");
-        }
+        [AirshipCordova.shared pushGetActiveNotificationsWithCompletionHandler:^(NSArray<NSDictionary<NSString *,id> *> *result) {
+            completionHandler(CDVCommandStatus_OK, result);
+        }];
     }];
 }
 
@@ -960,15 +764,11 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"clearNotification called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        if (@available(iOS 10.0, *)) {
-            NSString *identifier = command.arguments.firstObject;
+        
+        NSString *identifier = command.arguments.firstObject;
+        [AirshipCordova.shared pushClearNotification:identifier];
 
-            if (identifier) {
-                [[UNUserNotificationCenter currentNotificationCenter] removeDeliveredNotificationsWithIdentifiers:@[identifier]];
-            }
-
-            completionHandler(CDVCommandStatus_OK, nil);
-        }
+        completionHandler(CDVCommandStatus_OK, nil);
     }];
 }
 
@@ -976,9 +776,7 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"clearNotifications called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        if (@available(iOS 10.0, *)) {
-            [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
-        }
+        [AirshipCordova.shared pushClearNotifications];
 
         completionHandler(CDVCommandStatus_OK, nil);
     }];
@@ -988,10 +786,15 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"editChannelAttributes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-
-        [UAirship.channel editAttributes:^(UAAttributesEditor *editor) {
-            [self applyAttributeEdits:[args objectAtIndex:0] editor:editor];
-        }];
+        NSError *error;
+        [AirshipCordova.shared channelEditAttributesWithJson:[args objectAtIndex:0]
+                                                           error:&error];
+        
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK, nil);
+        }
     }];
 }
 
@@ -999,9 +802,14 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"editNamedUserAttributes called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [UAirship.contact editAttributes:^(UAAttributesEditor *editor) {
-            [self applyAttributeEdits:[args objectAtIndex:0] editor:editor];
-        }];
+        NSError *error;
+        [AirshipCordova.shared contactEditAttributesWithJson:[args objectAtIndex:0]
+                                                           error:&error];
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK, nil);
+        }
     }];
 }
 
@@ -1032,8 +840,14 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSArray *features = [args firstObject];
         if ([self isValidFeature:features]) {
-            [[UAirship shared].privacyManager enableFeatures:[self stringToFeature:features]];
-            completionHandler(CDVCommandStatus_OK, nil);
+            NSError *error;
+            [AirshipCordova.shared privacyManagerEnableFeatureWithFeatures:features error:&error];
+            
+            if (error) {
+                completionHandler(CDVCommandStatus_ERROR, error);
+            } else {
+                completionHandler(CDVCommandStatus_OK, nil);
+            }
         } else {
             completionHandler(CDVCommandStatus_ERROR, @"Invalid feature, cancelling the action.");
         }
@@ -1046,8 +860,14 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSArray *features = [args firstObject];
         if ([self isValidFeature:features]) {
-            [[UAirship shared].privacyManager disableFeatures:[self stringToFeature:features]];
-            completionHandler(CDVCommandStatus_OK, nil);
+            NSError *error;
+            [AirshipCordova.shared privacyManagerEnableFeatureWithFeatures:[self stringToFeature:features] error:&error];
+            
+            if (error) {
+                completionHandler(CDVCommandStatus_ERROR, error);
+            } else {
+                completionHandler(CDVCommandStatus_OK, nil);
+            }
         } else {
             completionHandler(CDVCommandStatus_ERROR, @"Invalid feature, cancelling the action.");
         }
@@ -1060,8 +880,15 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSArray *features = [args firstObject];
         if ([self isValidFeature:features]) {
-            [UAirship shared].privacyManager.enabledFeatures = [self stringToFeature:features];
-            completionHandler(CDVCommandStatus_OK, nil);
+            NSError *error;
+            [AirshipCordova.shared privacyManagerSetEnabledFeaturesWithFeatures:[self stringToFeature:features] error:&error];
+                        
+            if (error) {
+                completionHandler(CDVCommandStatus_ERROR, error);
+            } else {
+                completionHandler(CDVCommandStatus_OK, nil);
+            }
+            
         } else {
             completionHandler(CDVCommandStatus_ERROR, @"Invalid feature, cancelling the action.");
         }
@@ -1072,7 +899,14 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"getEnabledFeatures called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        completionHandler(CDVCommandStatus_OK, [self featureToString:[UAirship shared].privacyManager.enabledFeatures]);
+        NSError *error;
+        id result = [AirshipCordova.shared privacyManagerGetEnabledFeaturesAndReturnError:&error];
+
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK, [self featureToString:result]);
+        }
     }];
 }
 
@@ -1082,7 +916,14 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSArray *features = [args firstObject];
         if ([self isValidFeature:features]) {
-            completionHandler(CDVCommandStatus_OK, @([[UAirship shared].privacyManager isEnabled:[self stringToFeature:features]]));
+            NSError *error;
+            id result = [AirshipCordova.shared privacyManagerIsFeatureEnabledWithFeatures:[self stringToFeature:features]
+                                                                                        error:&error];
+            if (error) {
+                completionHandler(CDVCommandStatus_ERROR, error);
+            } else {
+                completionHandler(CDVCommandStatus_OK, result);
+            }
         } else {
             completionHandler(CDVCommandStatus_ERROR, @"Invalid feature, cancelling the action.");
         }
@@ -1093,20 +934,31 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"openPreferenceCenter called with command arguments: %@", command.arguments);
 
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *preferenceCenterID = [args firstObject];
-        [[UAPreferenceCenter shared] openPreferenceCenter:preferenceCenterID];
-        completionHandler(CDVCommandStatus_OK, nil);
+        NSString *preferenceCenterId = [args firstObject];
+        NSError *error;
+        [AirshipCordova.shared preferenceCenterDisplayWithPreferenceCenterId:preferenceCenterId
+                                                                           error:&error];
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK, nil);
+        }
     }];
 }
 
 - (void)getPreferenceCenterConfig:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"getPreferenceCenterConfig called with command arguments: %@", command.arguments);
-    [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSString *preferenceCenterID = [args firstObject];
-        [[UAPreferenceCenter shared] jsonConfigForPreferenceCenterID:preferenceCenterID completionHandler:^(NSDictionary *config) {
-            completionHandler(CDVCommandStatus_OK, config);
-        }];
-    }];
+    NSString *preferenceCenterId = [args firstObject];
+    [AirshipCordova.shared preferenceCenterGetConfigWithPreferenceCenterId:preferenceCenterId
+                                                             completionHandler:^(id result, NSError *error) {
+        
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK, result);
+        }
+        
+    }
 }
 
 - (void)setUseCustomPreferenceCenterUi:(CDVInvokedUrlCommand *)command {
@@ -1122,8 +974,14 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
 - (void)getCurrentLocale:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"getCurrentLocale called with command arguments: %@", command.arguments);
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        NSLocale *airshipLocale = [[UAirship shared].localeManager currentLocale];
-        completionHandler(CDVCommandStatus_OK, airshipLocale.localeIdentifier);
+        NSError *error;
+        NSLocale *airshipLocale = [AirshipCordova.shared localeGetLocaleAndReturnError:&error];
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK,  completionHandler(CDVCommandStatus_OK, airshipLocale.localeIdentifier);
+        }
+
     }];
 }
 
@@ -1131,16 +989,28 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     UA_LTRACE(@"setCurrentLocale called with command arguments: %@", command.arguments);
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
         NSString *localeIdentifier = [args firstObject];
-        [UAirship.shared.localeManager setCurrentLocale:[NSLocale localeWithLocaleIdentifier:localeIdentifier]];
-        completionHandler(CDVCommandStatus_OK, nil);
+        NSError *error;
+        [AirshipCordova.shared localeSetLocaleOverrideWithLocaleIdentifier:localeIdentifier
+                                                                         error:&error];
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK,  completionHandler(CDVCommandStatus_OK, nil);
+        }
+
     }];
 }
 
 - (void)clearLocale:(CDVInvokedUrlCommand *)command {
     UA_LTRACE(@"clearLocale called with command arguments: %@", command.arguments);
     [self performCallbackWithCommand:command withBlock:^(NSArray *args, UACordovaCompletionHandler completionHandler) {
-        [[UAirship shared].localeManager clearLocale];
-        completionHandler(CDVCommandStatus_OK, nil);
+        NSError *error;
+        [AirshipCordova.shared localeClearLocaleOverrideAndReturnError:&error];
+        if (error) {
+            completionHandler(CDVCommandStatus_ERROR, error);
+        } else {
+            completionHandler(CDVCommandStatus_OK, nil);
+        }
     }];
 }
 
@@ -1201,11 +1071,9 @@ typedef void (^UACordovaExecutionBlock)(NSArray *args, UACordovaCompletionHandle
     [authorizedFeatures setValue:@(UAFeaturesInAppAutomation) forKey:@"FEATURE_IN_APP_AUTOMATION"];
     [authorizedFeatures setValue:@(UAFeaturesMessageCenter) forKey:@"FEATURE_MESSAGE_CENTER"];
     [authorizedFeatures setValue:@(UAFeaturesPush) forKey:@"FEATURE_PUSH"];
-    [authorizedFeatures setValue:@(UAFeaturesChat) forKey:@"FEATURE_CHAT"];
     [authorizedFeatures setValue:@(UAFeaturesAnalytics) forKey:@"FEATURE_ANALYTICS"];
     [authorizedFeatures setValue:@(UAFeaturesTagsAndAttributes) forKey:@"FEATURE_TAGS_AND_ATTRIBUTES"];
     [authorizedFeatures setValue:@(UAFeaturesContacts) forKey:@"FEATURE_CONTACTS"];
-    [authorizedFeatures setValue:@(UAFeaturesLocation) forKey:@"FEATURE_LOCATION"];
     [authorizedFeatures setValue:@(UAFeaturesAll) forKey:@"FEATURE_ALL"];
     return authorizedFeatures;
 }

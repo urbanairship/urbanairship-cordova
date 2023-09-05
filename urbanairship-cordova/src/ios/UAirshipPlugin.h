@@ -3,14 +3,6 @@
 #import <Foundation/Foundation.h>
 #import <Cordova/CDVPlugin.h>
 
-#if __has_include("AirshipLib.h")
-#import "AirshipLib.h"
-#import "AirshipMessageCenterLib.h"
-#import "AirshipAutomationLib.h"
-#else
-@import AirshipKit;
-#endif
-
 /**
  * The Urban Airship Cordova plugin.
  */

@@ -2,11 +2,10 @@
 
 #import "UACordovaPluginManager.h"
 
-#if __has_include("AirshipLib.h")
-#import "AirshipLib.h"
-#import "AirshipMessageCenterLib.h"
+#if __has_include(<cordova_airship/cordova_airship-Swift.h>)
+#import <cordova_airship/cordova_airship-Swift.h>
 #else
-@import AirshipKit;
+#import "cordova_airship-Swift.h"
 #endif
 
 #import "UACordovaEvent.h"
@@ -58,16 +57,18 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
                                                       object:nil
                                                        queue:nil usingBlock:^(NSNotification * _Nonnull note) {
 
-        [self attemptTakeOffWithLaunchOptions:note.userInfo];
+        [AirshipCordova.shared attemptTakeOffWithLaunchOptions:note.userInfo];
     }];
 }
 
 - (void)dealloc {
+    /*
     [UAirship push].pushNotificationDelegate = nil;
     [UAirship push].registrationDelegate = nil;
     [UAMessageCenter shared].displayDelegate = nil;
     [UAPreferenceCenter shared].openDelegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+     */
 }
 
 - (instancetype)initWithDefaultConfig:(NSDictionary *)defaultConfig {
@@ -85,6 +86,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
     return [[UACordovaPluginManager alloc] initWithDefaultConfig:defaultConfig];
 }
 
+/*
 - (void)attemptTakeOff {
     [self attemptTakeOffWithLaunchOptions:nil];
 }
@@ -112,11 +114,13 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
     [self loadCustomNotificationCategories];
 
+    /*
     [UAirship push].pushNotificationDelegate = self;
     [UAirship push].registrationDelegate = self;
     [UAMessageCenter shared].displayDelegate = self;
     [UAirship shared].deepLinkDelegate = self;
     [UAPreferenceCenter shared].openDelegate = self;
+     
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(inboxUpdated)
@@ -137,7 +141,8 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
     self.isAirshipReady = YES;
 }
-
+*/
+/*
 - (void)loadCustomNotificationCategories {
     NSString *categoriesPath = [[NSBundle mainBundle] pathForResource:CategoriesPlistPath ofType:@"plist"];
     NSSet *customNotificationCategories = [UANotificationCategories createCategoriesFromFile:categoriesPath];
@@ -148,7 +153,8 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
         [[UAirship push] updateRegistration];
     }
 }
-
+ */
+/*
 - (UAConfig *)createAirshipConfig {
     UAConfig *airshipConfig = [UAConfig config];
     airshipConfig.productionAppKey = [self configValueForKey:ProductionAppKeyConfigKey];
@@ -188,6 +194,7 @@ NSString *const CategoriesPlistPath = @"UACustomNotificationCategories";
 
     return airshipConfig;
 }
+ */
 
 - (void)registerCordovaPluginVersion {
     NSString *version = [NSBundle mainBundle].infoDictionary[UACordovaPluginVersionKey] ?: @"0.0.0";
