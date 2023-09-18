@@ -3,11 +3,9 @@
 import Foundation
 import AirshipKit
 import AirshipFrameworkProxy
-//import React
 
 @objc
 public class AirshipCordova: NSObject {
-    
     @objc
     public static let pendingEventsEventName = "com.airship.pending_events"
 
@@ -48,7 +46,7 @@ public class AirshipCordova: NSObject {
         Task {
             if let notifier = notifier {
                 await eventNotifier.setNotifier({
-                    notifier(AirshipReactNative.pendingEventsEventName, [:])
+                    notifier(AirshipCordova.pendingEventsEventName, [:])
                 })
                 
                 if await AirshipProxyEventEmitter.shared.hasAnyEvents() {
@@ -67,7 +65,7 @@ public class AirshipCordova: NSObject {
                         self.pendingPresentationRequests[requestID] = request
                     }
                     notifier(
-                        AirshipReactNative.overridePresentationOptionsEventName,
+                        AirshipCordova.overridePresentationOptionsEventName,
                         [
                             "pushPayload": request.pushPayload,
                             "requestId": requestID
@@ -112,7 +110,7 @@ public class AirshipCordova: NSObject {
             }
         }
     }
-
+/*
     @objc
     public func onListenerAdded(eventName: String) {
         guard let type = try? AirshipProxyEventType.fromReactName(eventName) else {
@@ -136,7 +134,7 @@ public class AirshipCordova: NSObject {
             type: type
         ).map { $0.body }
     }
-
+*/
 
     @objc
     @MainActor
@@ -265,7 +263,7 @@ public extension AirshipCordova {
 
     @objc
     func pushGetNotificationStatus() async throws -> [String: Any] {
-        return try await AirshipProxy.shared.push.getNotificationStatus()
+        return try AirshipProxy.shared.push.getNotificationStatus()
     }
 
     @objc
@@ -295,13 +293,8 @@ public extension AirshipCordova {
     }
 
     @objc
-    func pushGetAuthorizedNotificationStatus() throws -> String {
-        return try AirshipProxy.shared.push.getAuthroizedNotificationStatus()
-    }
-
-    @objc
-    func pushGetAuthorizedNotificationSettings() throws -> [String] {
-        return try AirshipProxy.shared.push.getAuthorizedNotificationSettings()
+    func pushGetAuthorizedNotificationStatus() throws -> [String : Any] {
+        return try AirshipProxy.shared.push.getNotificationStatus()
     }
 
     @objc
@@ -326,7 +319,7 @@ public extension AirshipCordova {
     func actionsRun(actionName: String, actionValue: Any?) async throws-> Any? {
         return try await AirshipProxy.shared.action.runAction(
             actionName,
-            value: try AirshipJSON.wrap(actionValue)
+            actionValue: try AirshipJSON.wrap(actionValue)
         )
     }
 }
@@ -363,7 +356,7 @@ public extension AirshipCordova {
 
     @objc
     func contactGetNamedUserIdOrEmtpy() async throws -> String {
-        return try await AirshipProxy.shared.contact.getNamedUser() ?? ""
+        return try AirshipProxy.shared.contact.getNamedUser() ?? ""
     }
 
     @objc
@@ -441,7 +434,7 @@ public extension AirshipCordova {
 
     @objc
     func messageCenterGetMessages() async throws -> [Any] {
-        return try await AirshipProxy.shared.messageCenter.getMessagesJSON()
+        return try AirshipProxy.shared.messageCenter.getMessagesJSON()
     }
 
     @objc
@@ -540,26 +533,6 @@ public extension AirshipCordova {
 }
 
 
-extension AirshipCordova: AirshipProxyDelegate {
-    public func migrateData(store: ProxyStore) {
-        ProxyDataMigrator().migrateData(store: store)
-    }
-
-    public func loadDefaultConfig() -> AirshipConfig {
-        let config = AirshipConfig.default()
-        config.requireInitialRemoteConfigEnabled = true
-        return config
-    }
-
-    public func onAirshipReady() {
-        Airship.analytics.registerSDKExtension(
-            .reactNative,
-            version: AirshipReactNative.version
-        )
-    }
-}
-
-
 private actor EventNotifier {
     private var notifier: (() -> Void)?
     func setNotifier(_ notifier: (() -> Void)?) {
@@ -571,26 +544,46 @@ private actor EventNotifier {
     }
 }
 
+/*
+ extension AirshipProxyEventType {
+ private static let nameMap: [String: AirshipProxyEventType] = [
+ "com.airship.deep_link": .deepLinkReceived,
+ "com.airship.channel_created": .channelCreated,
+ "com.airship.push_token_received": .pushTokenReceived,
+ "com.airship.message_center_updated": .messageCenterUpdated,
+ "com.airship.display_message_center": .displayMessageCenter,
+ "com.airship.display_preference_center": .displayPreferenceCenter,
+ "com.airship.notification_response": .notificationResponseReceived,
+ "com.airship.push_received": .pushReceived,
+ "com.airship.notification_status_changed": .notificationStatusChanged,
+ "com.airship.authorized_notification_settings_changed": .authorizedNotificationSettingsChanged
+ ]
+ 
+ public static func fromReactName(_ name: String) throws -> AirshipProxyEventType {
+ guard let type = AirshipProxyEventType.nameMap[name] else {
+ throw AirshipErrors.error("Invalid type: \(self)")
+ }
+ 
+ return type
+ }
+ }
+ */
 
-extension AirshipProxyEventType {
-    private static let nameMap: [String: AirshipProxyEventType] = [
-        "com.airship.deep_link": .deepLinkReceived,
-        "com.airship.channel_created": .channelCreated,
-        "com.airship.push_token_received": .pushTokenReceived,
-        "com.airship.message_center_updated": .messageCenterUpdated,
-        "com.airship.display_message_center": .displayMessageCenter,
-        "com.airship.display_preference_center": .displayPreferenceCenter,
-        "com.airship.notification_response": .notificationResponseReceived,
-        "com.airship.push_received": .pushReceived,
-        "com.airship.notification_status_changed": .notificationStatusChanged,
-        "com.airship.authorized_notification_settings_changed": .authorizedNotificationSettingsChanged
-    ]
+extension AirshipCordova: AirshipProxyDelegate {
+    public func migrateData(store: ProxyStore) {
+        //ProxyDataMigrator().migrateData(store: store)
+    }
 
-    public static func fromReactName(_ name: String) throws -> AirshipProxyEventType {
-        guard let type = AirshipProxyEventType.nameMap[name] else {
-            throw AirshipErrors.error("Invalid type: \(self)")
-        }
+    public func loadDefaultConfig() -> AirshipConfig {
+        let config = AirshipConfig.default()
+        config.requireInitialRemoteConfigEnabled = true
+        return config
+    }
 
-        return type
+    public func onAirshipReady() {
+        Airship.analytics.registerSDKExtension(
+            .reactNative,
+            version: AirshipCordova.version
+        )
     }
 }
