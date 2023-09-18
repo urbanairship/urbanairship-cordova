@@ -201,7 +201,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="AirshipFrameworkProxy" spec="4.2.0" />
+                <pod name="AirshipFrameworkProxy" spec="4.0.0" />
             </pods>
         </podspec>
 

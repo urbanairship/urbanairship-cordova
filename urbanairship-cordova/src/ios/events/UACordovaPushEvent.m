@@ -1,7 +1,7 @@
 /* Copyright Urban Airship and Contributors */
 
 #import "UACordovaPushEvent.h"
-
+/*
 NSString *const EventPushReceived = @"urbanairship.push";
 
 @implementation UACordovaPushEvent
@@ -85,3 +85,4 @@ NSString *const EventPushReceived = @"urbanairship.push";
 }
 
 @end
+*/

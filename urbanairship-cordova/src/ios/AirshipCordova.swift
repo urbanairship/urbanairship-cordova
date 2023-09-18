@@ -104,7 +104,7 @@ public class AirshipCordova: NSObject {
         try? AirshipProxy.shared.attemptTakeOff(launchOptions: launchOptions)
 
         Task {
-            let stream = await AirshipProxyEventEmitter.shared.pendingEventTypeAdded
+            let stream = await AirshipProxyEventEmitter.shared.pendingEventAdded
             for await _ in stream {
                 await self.eventNotifier.notifyPendingEvents()
             }
@@ -263,7 +263,7 @@ public extension AirshipCordova {
 
     @objc
     func pushGetNotificationStatus() async throws -> [String: Any] {
-        return try AirshipProxy.shared.push.getNotificationStatus()
+        return try await AirshipProxy.shared.push.getNotificationStatus()
     }
 
     @objc
@@ -293,8 +293,8 @@ public extension AirshipCordova {
     }
 
     @objc
-    func pushGetAuthorizedNotificationStatus() throws -> [String : Any] {
-        return try AirshipProxy.shared.push.getNotificationStatus()
+    func pushGetAuthorizedNotificationStatus() async throws -> [String : Any] {
+        return try await AirshipProxy.shared.push.getNotificationStatus()
     }
 
     @objc
@@ -319,7 +319,7 @@ public extension AirshipCordova {
     func actionsRun(actionName: String, actionValue: Any?) async throws-> Any? {
         return try await AirshipProxy.shared.action.runAction(
             actionName,
-            actionValue: try AirshipJSON.wrap(actionValue)
+            value: try AirshipJSON.wrap(actionValue)
         )
     }
 }
@@ -356,7 +356,7 @@ public extension AirshipCordova {
 
     @objc
     func contactGetNamedUserIdOrEmtpy() async throws -> String {
-        return try AirshipProxy.shared.contact.getNamedUser() ?? ""
+        return try await AirshipProxy.shared.contact.getNamedUser() ?? ""
     }
 
     @objc
@@ -434,7 +434,7 @@ public extension AirshipCordova {
 
     @objc
     func messageCenterGetMessages() async throws -> [Any] {
-        return try AirshipProxy.shared.messageCenter.getMessagesJSON()
+        return try await AirshipProxy.shared.messageCenter.getMessagesJSON()
     }
 
     @objc
