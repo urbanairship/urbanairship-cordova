@@ -194,6 +194,7 @@
         <header-file src="src/ios/events/UACordovaPreferenceCenterEvent.h"/>
         <source-file src="src/ios/events/UACordovaPreferenceCenterEvent.m"/>
         <source-file src="src/ios/AirshipCordova.swift"/>
+        <header-file src="cordova_airship-Swift.h" type="BridgingHeader" />
 
         <!-- Airship library -->
         <podspec>
