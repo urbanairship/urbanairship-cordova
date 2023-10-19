@@ -1,11 +1,13 @@
 /* Copyright Urban Airship and Contributors */
 
 
-#if __has_include(<cordova_airship/cordova_airship-Swift.h>)
-#import <cordova_airship/cordova_airship-Swift.h>
+#if __has_include(<urbanairship-cordova/cordova_airship-Swift.h>)
+#import <urbanairship-cordova/cordova_airship-Swift.h>
 #else
 #import "cordova_airship-Swift.h"
 #endif
+
+
 
 #import "UAirshipPlugin.h"
 #import "UACordovaPluginManager.h"

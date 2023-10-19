@@ -137,7 +137,6 @@
     <!-- ios -->
     <platform name="ios">
 
-        <dependency id="cordova-plugin-add-swift-support" version="2.0.2"/>
         
         <!-- Background push -->
         <config-file parent="UIBackgroundModes" target="*-Info.plist">
@@ -194,7 +193,7 @@
         <header-file src="src/ios/events/UACordovaPreferenceCenterEvent.h"/>
         <source-file src="src/ios/events/UACordovaPreferenceCenterEvent.m"/>
         <source-file src="src/ios/AirshipCordova.swift"/>
-        <header-file src="cordova_airship-Swift.h" type="BridgingHeader" />
+        <header-file src="src/ios/cordova_airship-Swift.h"/>
 
         <!-- Airship library -->
         <podspec>
@@ -205,6 +204,8 @@
                 <pod name="AirshipFrameworkProxy" spec="4.0.0" />
             </pods>
         </podspec>
+        
+        <dependency id="cordova-plugin-add-swift-support" version="2.0.2"/>
 
     </platform>
 </plugin>
