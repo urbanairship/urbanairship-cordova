@@ -15,6 +15,7 @@ public class AirshipCordova: CDVPlugin {
     
     var lock = AirshipLock()
     var pendingPresentationRequests: [String: PresentationOptionsOverridesRequest] = [:]
+    private let eventNotifier = EventNotifier()
     
     @objc
     public var overridePresentationOptionsEnabled: Bool = false {
@@ -40,51 +41,6 @@ public class AirshipCordova: CDVPlugin {
 
     @objc
     public static let shared: AirshipCordova = AirshipCordova()
-
-    @objc
-    public func setNotifier(_ notifier: ((String, [String: Any]) -> Void)?) {
-        Task {
-            if let notifier = notifier {
-                await eventNotifier.setNotifier({
-                    notifier(AirshipCordova.pendingEventsEventName, [:])
-                })
-                
-                if await AirshipProxyEventEmitter.shared.hasAnyEvents() {
-                    await eventNotifier.notifyPendingEvents()
-                }
-                
-                
-                AirshipProxy.shared.push.presentationOptionOverrides = { request in
-                    guard self.overridePresentationOptionsEnabled else {
-                        request.result(options: nil)
-                        return
-                    }
-                    
-                    let requestID = UUID().uuidString
-                    self.lock.sync {
-                        self.pendingPresentationRequests[requestID] = request
-                    }
-                    notifier(
-                        AirshipCordova.overridePresentationOptionsEventName,
-                        [
-                            "pushPayload": request.pushPayload,
-                            "requestId": requestID
-                        ]
-                    )
-                }
-            } else {
-                await eventNotifier.setNotifier(nil)
-                AirshipProxy.shared.push.presentationOptionOverrides = nil
-                
-                lock.sync {
-                    self.pendingPresentationRequests.values.forEach { request in
-                        request.result(options: nil)
-                    }
-                    self.pendingPresentationRequests.removeAll()
-                }
-            }
-        }
-    }
     
     @objc
     public func presentationOptionOverridesResult(requestID: String, presentationOptions: [String]?) {
@@ -147,6 +103,76 @@ public extension AirshipCordova {
 // Channel
 @objc
 public extension AirshipCordova {
+    
+    
+    public func setNotifier(_ notifier: ((String, [String: Any]) -> Void)?) {
+        Task {
+            if let notifier = notifier {
+                await eventNotifier.setNotifier({
+                    notifier(pendingEventsEventName, [:])
+                })
+                
+                if await AirshipProxyEventEmitter.shared.hasAnyEvents() {
+                    await eventNotifier.notifyPendingEvents()
+                }
+                
+                
+                AirshipProxy.shared.push.presentationOptionOverrides = { request in
+                    guard self.overridePresentationOptionsEnabled else {
+                        request.result(options: nil)
+                        return
+                    }
+                    
+                    let requestID = UUID().uuidString
+                    self.lock.sync {
+                        self.pendingPresentationRequests[requestID] = request
+                    }
+                    notifier(
+                        overridePresentationOptionsEventName,
+                        [
+                            "pushPayload": request.pushPayload,
+                            "requestId": requestID
+                        ]
+                    )
+                }
+            } else {
+                await eventNotifier.setNotifier(nil)
+                AirshipProxy.shared.push.presentationOptionOverrides = nil
+                
+                lock.sync {
+                    self.pendingPresentationRequests.values.forEach { request in
+                        request.result(options: nil)
+                    }
+                    self.pendingPresentationRequests.removeAll()
+                }
+            }
+        }
+    }
+    
+   
+    public func onListenerAdded(eventName: String) {
+        guard let type = try? AirshipProxyEventType.fromName(eventName) else {
+            return
+        }
+        
+        Task {
+            if (await AirshipProxyEventEmitter.shared.hasEvent(type: type)) {
+                await self.eventNotifier.notifyPendingEvents()
+            }
+        }
+    }
+    
+    
+    public func takePendingEvents(eventName: String) async -> [Any] {
+        guard let type = try? AirshipProxyEventType.fromName(eventName) else {
+            return []
+        }
+        
+        return await AirshipProxyEventEmitter.shared.takePendingEvents(
+            type: type
+        ).map { $0.body }
+    }
+
     
     func setTags(command: CDVInvokedUrlCommand) {
         let args = command.arguments
