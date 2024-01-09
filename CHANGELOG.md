@@ -1,5 +1,11 @@
 # Cordova Plugin Changelog
 
+## Version 14.10.2 - January 12, 2024
+Patch release that removes an error message on Huawei devices that have the Play Store installed.
+
+### Changes
+- Removes an error message Huawei devices that have the Play Store installed.
+
 ## Version 14.10.1 - June 23, 2023
 Patch release that fixes a crash if takeOff is called with invalid config on Android.
 
