@@ -147,11 +147,6 @@ public class UAirshipPlugin extends CordovaPlugin {
         super.onResume(multitasking);
 
         if (pluginManager.isAirshipAvailable()) {
-            // Handle any Google Play services errors
-            if (PlayServicesUtils.isGooglePlayStoreAvailable(cordova.getActivity())) {
-                PlayServicesUtils.handleAnyPlayServicesError(cordova.getActivity());
-            }
-
             pluginManager.checkOptInStatus();
         }
     }
