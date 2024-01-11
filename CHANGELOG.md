@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 14.11.0 - January 12, 2024
+## Version 14.11.0 - January 11, 2024
 Minor release that updates iOS SDK to 16.12.5 and removes an error message on Huawei devices that have the Play Store installed.
 
 ### Changes
