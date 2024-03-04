@@ -10,3 +10,5 @@ out/*
 node_modules/*
 scripts/update_cordova/node_modules/*
 config_sample.xml
+cordova-airship/docs
+google-services.json

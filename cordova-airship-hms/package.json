@@ -1,0 +1,38 @@
+{
+  "name": "@ua/cordova-airship-hms",
+  "version": "15.0.0",
+  "description": "Airship HMS Cordova plugin",
+  "cordova": {
+    "id": "cordova-airship-hms",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urbanairship/urbanairship-cordova.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "urbanairship",
+    "hms",
+    "huawei",
+    "cordova-android"
+  ],
+  "engines": [
+    {
+      "name": "cordova-android",
+      "version": ">=11.0.0"
+    },
+    {
+      "name": "cordova-plugman",
+      "version": ">=4.2.0"
+    }
+  ],
+  "author": "Urban Airship",
+  "license": "Apache 2.0",
+  "homepage": "https://github.com/urbanairship/urbanairship-cordova.git",
+  "bugs": {
+    "url": "https://github.com/urbanairship/urbanairship-cordova/issues"
+  }
+}

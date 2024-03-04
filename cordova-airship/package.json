@@ -1,0 +1,47 @@
+{
+  "name": "@ua/cordova-airship",
+  "version": "15.0.0",
+  "description": "Airship Cordova plugin",
+  "cordova": {
+    "id": "airship-cordova",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/urbanairship/urbanairship-cordova.git"
+  },
+  "keywords": [
+    "cordova",
+    "urbanairship",
+    "airship",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova-android",
+      "version": ">=11.0.0"
+    },
+    {
+      "name": "cordova-ios",
+      "version": ">=7.0.0"
+    },
+    {
+      "name": "cordova-plugman",
+      "version": ">=4.2.0"
+    }
+  ],
+  "author": "Airship",
+  "license": "Apache 2.0",
+  "homepage": "https://github.com/urbanairship/urbanairship-cordova.git",
+  "devDependencies": {
+    "typedoc": "0.23.24"
+  },
+  "scripts": {
+    "generate-docs": "typedoc types/index.d.ts"
+  }
+}

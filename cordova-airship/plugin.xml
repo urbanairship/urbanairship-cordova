@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin id="cordova-airship"
+        version="15.0.0"
+        xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <name>Airship</name>
+    <description>Airship Cordova plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,urbanairship,airship</keywords>
+    <repo>https://github.com/urbanairship/urbanairship-cordova.git</repo>
+
+    <engines>
+        <engine name="cordova-android" version=">=11.0.0"/>
+        <engine name="cordova-ios" version=">=7.0.0"/>
+        <engine name="cordova" version=">=9.0.1"/>
+    </engines>
+
+    <js-module name="Airship" src="www/Airship.js">
+        <clobbers target="Airship"/>
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="config.xml" parent="/*">
+            <preference name="GradlePluginKotlinEnabled" value="true" />
+            <preference name="GradlePluginGoogleServicesEnabled" value="true" />
+            <preference name="GradlePluginGoogleServicesVersion" value="4.3.15" />
+        </config-file>
+        <config-file parent="/widget" target="res/xml/config.xml">
+            <feature name="AirshipCordova">
+                <param
+                    name="android-package"
+                    value="com.urbanairship.cordova.AirshipCordova"/>
+                <param
+                    name="onload"
+                    value="true"/>
+            </feature>
+        </config-file>
+
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <meta-data
+                android:name="com.urbanairship.autopilot"
+                android:value="com.urbanairship.cordova.CordovaAutopilot"/>
+
+            <meta-data
+                android:name="com.urbanairship.webview.ENABLE_LOCAL_STORAGE"
+                android:value="true" />
+
+            <activity
+                android:name="com.urbanairship.android.framework.proxy.CustomMessageCenterActivity"
+                android:label="@string/ua_message_center_title"
+                android:launchMode="singleTask"
+                android:exported="false">
+                <intent-filter>
+                    <action android:name="com.urbanairship.VIEW_RICH_PUSH_INBOX" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                </intent-filter>
+            </activity>
+
+            <activity
+                android:name="com.urbanairship.android.framework.proxy.CustomMessageActivity"
+                android:exported="false">
+                <intent-filter>
+                    <action android:name="com.urbanairship.VIEW_RICH_PUSH_MESSAGE" />
+                    <data android:scheme="message" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                </intent-filter>
+            </activity>
+
+        </config-file>
+
+        <source-file src="src/android/AirshipCordova.kt" target-dir="java/com/urbanairship/cordova"/>
+        <source-file src="src/android/AirshipCordovaVersion.kt" target-dir="java/com/urbanairship/cordova"/>
+        <source-file src="src/android/CordovaAutopilot.kt" target-dir="java/com/urbanairship/cordova"/>
+        <source-file src="src/android/CordovaSettings.kt" target-dir="java/com/urbanairship/cordova"/>
+        <source-file src="src/android/ProxyDataMigrator.kt" target-dir="java/com/urbanairship/cordova"/>
+        
+        <framework
+            custom="true"
+            src="src/android/build-extras.gradle"
+            type="gradleReference"/>
+
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+
+        
+        <!-- Background push -->
+        <config-file parent="UIBackgroundModes" target="*-Info.plist">
+            <array>
+                <string>remote-notification</string>
+            </array>
+        </config-file>
+
+        <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
+            <string>15.0.0</string>
+        </config-file>
+
+        <config-file parent="/widget" target="config.xml">
+            <feature name="AirshipCordova">
+                <param
+                    name="ios-package"
+                    value="AirshipCordova"/>
+                <param
+                    name="onload"
+                    value="true"/>
+            </feature>
+        </config-file>
+
+        <config-file parent="aps-environment" target="*/Entitlements-Debug.plist">
+            <string>development</string>
+        </config-file>
+
+        <config-file parent="aps-environment" target="*/Entitlements-Release.plist">
+            <string>production</string>
+        </config-file>
+
+        <!-- Plugin -->
+        <source-file src="src/ios/AirshipCordovaAutopilot.swift"/>
+        <source-file src="src/ios/AirshipCordovaVersion.swift"/>
+        <source-file src="src/ios/AirshipCordova.swift"/>
+        <source-file src="src/ios/AirshipCordovaPluginSettings.swift"/>
+        <source-file src="src/ios/AirshipCordovaProxyDataMigrator.swift"/>
+        <source-file src="src/ios/AirshipCordovaBootstrap.m" />
+        <header-file src="src/ios/AirshipCordovaBootstrap.h" />
+        <header-file src="src/ios/AirshipCordova-Bridging-Header.h" type="BridgingHeader"/>
+
+        <!-- Airship library -->
+        <podspec>
+            <config>
+                <source url="https://cdn.cocoapods.org/"/>
+            </config>
+            <pods use-frameworks="true">
+                <pod name="AirshipFrameworkProxy" spec="5.2.1" />
+            </pods>
+        </podspec>
+    </platform>
+</plugin>

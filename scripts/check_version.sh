@@ -4,9 +4,9 @@ set -x
 
 ROOT_PATH=`dirname "${0}"`/..
 
-VERSION=$(node -p "require('$ROOT_PATH/urbanairship-cordova/package.json').version")
+version=$(node -p "require('$ROOT_PATH/cordova-airship/package.json').version")
 
-if [ $1 = $VERSION ]; then
+if [ $1 = $version ]; then
  exit 0
 else
  exit 1

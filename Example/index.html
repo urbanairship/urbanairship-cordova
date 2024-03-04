@@ -17,69 +17,39 @@
       var onDeviceReady = function() {
         console.log("Device ready!")
 
-        // Incoming message callback
-        var onPushReceived = function(event) {
-          if (event.message) {
-            console.log("Received push: " + event.message)
-          } else {
-            console.log("No incoming message")
-          }
-        }
+ 
 
-         // Notification opened callback
-        var notificationOpened = function(event) {
-          if (event.message) {
-            console.log("Notification opened: " + event.message)
-          } else {
-            console.log("No incoming message")
-          }
-        }
+        Airship.onDeepLink(function(event) {
+          console.log("onDeepLink: " + JSON.stringify(event))
+        })
 
-        // Registration callback
-        var onRegistration = function(event)  {
-          if (!event.error) {
-            console.log("Reg Success: " + event.channelID)
-            $('#id').text(event.channelID)
-          } else {
-            console.log(event.error)
-          }
-        }
+        Airship.push.onPushReceived(function(event) {
+          console.log("onPushReceived: " + JSON.stringify(event))
+        })
 
-        // Deep link callback
-        var handleDeepLink = function(event)  {
-            console.log("Deep link: " + event.deepLink)
-        }
+        Airship.push.onNotificationResponse(function(event) {
+          console.log("onNotificationResponse: " + JSON.stringify(event))
+        })
 
-        // Deep link callback
-        var handleOpenPreferenceCenter = function(event)  {
-            console.log("Open preference Center: " + event.PreferenceCenterLink)
-        }
+        Airship.channel.onChannelCreated(function(event) {
+          console.log("onChannelCreated: " + JSON.stringify(event))
+          $('#id').text(event.channelId)
+        })
 
-        // Register for any urban airship events
-        document.addEventListener("urbanairship.registration", onRegistration, false)
-        document.addEventListener("urbanairship.push", onPushReceived, false)
-        document.addEventListener("urbanairship.notification_opened", notificationOpened, false)
-        document.addEventListener("urbanairship.deep_link", handleDeepLink, false)
-        document.addEventListener("urbanairship.open_preference_center", handleOpenPreferenceCenter, false)
+        Airship.push.onNotificationStatusChanged(function(event) {
+          console.log("onNotificationStatusChanged: " + JSON.stringify(event))
+        })
 
         // Handle resume
         document.addEventListener("resume", function() {
           console.log("Device resume!")
 
-          UAirship.resetBadge()
-
-          // Reregister for urbanairship events if they were removed in pause event
-          document.addEventListener("urbanairship.registration", onRegistration, false)
-          document.addEventListener("urbanairship.push", onPushReceived, false)
+          Airship.push.ios.resetBadge()
         }, false)
 
         // Handle pause
         document.addEventListener("pause", function() {
           console.log("Device pause!")
-
-          // Remove urbanairship events.  Important on android to not receive push in the background.
-          document.removeEventListener("urbanairship.registration", onRegistration, false)
-          document.removeEventListener("urbanairship.push", onPushReceived, false)
         }, false)
 
         // Initiate the UI
@@ -102,10 +72,10 @@
             $tag.remove()
 
             // Remove the tag from the current list of tags
-            UAirship.getTags(function(tags) {
+            Airship.channel.getTags(function(tags) {
               console.log("Removing tag: " + tag)
               tags.splice(tags.indexOf(tag), 1)
-              UAirship.setTags(tags)
+              Airship.channel.setTags(tags)
             })
           })
         }
@@ -116,94 +86,113 @@
           $("#setNamedUserField").val("")
         }
 
-        // Vibrate and Sound is only available on Android
-        if (device.platform != "Android") {
-          $("#soundEnabledSection").hide()
-          $("#vibrateEnabledSection").hide()
+        if (device.platform != "iOS") {
+          $("#quietTimeEnabled").hide()
+          $("#quietTimeEnabledSection").hide()
+        } else {
+          Airship.push.ios.isQuietTimeEnabled(function(isEnabled) {
+            $('#quietTimeEnabled').val(isEnabled ? 'on' : 'off').change()
+          })
+
+
+          $('#quietTimeEnabled').change(function() {
+            var isEnabled = ($('#pushEnabled').val() == "on")
+            Airship.push.ios.setQuietTimeEnabled(isEnabled)
+          }
+
+          Airship.push.ios.getQuietTime(function(obj) {
+            $("#startHour").val(obj.startHour)
+            $("#startMinute").val(obj.startMinute)
+            $("#endHour").val(obj.endHour)
+            $("#endMinute").val(obj.endMinute)
+          })
+
+          $("#setQuietTimeButton").click(function(ev) {
+            var settings = {
+              "startHour": parseInt($("#startHour").val()),
+              "startMinute": parseInt($("#startMinute").val()),
+              "endHour": parseInt($("#endHour").val()),
+              "endMinute": parseInt($("#endMinute").val()),
+            }
+
+            Airship.push.ios.setQuietTime(settings, function() {
+              console.log("Set quiet time from JS")
+            })
+          })
         }
 
         // Update the interface with the current UA settings
-        UAirship.isUserNotificationsEnabled(function(isEnabled) {
+        Airship.push.isUserNotificationsEnabled(function(isEnabled) {
           $('#pushEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        UAirship.isFeatureEnabled([UAirship.FEATURE_ALL], function(isEnabled) {
+        Airship.privacyManager.isFeaturesEnabled(["all"], function(isEnabled) {
           $('#allFeaturesEnabled').val(isEnabled ? 'on' : 'off').change()
         })
 
-        UAirship.isQuietTimeEnabled(function(isEnabled) {
-          $('#quietTimeEnabled').val(isEnabled ? 'on' : 'off').change()
-        })
-
-
-        UAirship.getChannelID(function(id) {
+        Airship.channel.getChannelId(function(id) {
           if(id) {
              console.log("Got channel ID: " + id)
              $('#id').text(id)
           }
         })
 
-        UAirship.getNamedUser(function(namedUser) {
+        Airship.contact.getNamedUser(function(namedUser) {
           if(namedUser) {
             console.log("Got namedUser: " + namedUser)
             setNamedUser(namedUser)
           }
         })
 
-        UAirship.getTags(function(tags) {
+        Airship.channel.getTags(function(tags) {
           tags.forEach(function(tag) {
             addTag(tag)
           })
         })
 
-        UAirship.getQuietTime(function(obj) {
-          $("#startHour").val(obj.startHour)
-          $("#startMinute").val(obj.startMinute)
-          $("#endHour").val(obj.endHour)
-          $("#endMinute").val(obj.endMinute)
-        })
+       
 
         // Set up change callbacks for the UI elements
         $('#pushEnabled').change(function() {
           var isEnabled = ($('#pushEnabled').val() == "on")
-          UAirship.setUserNotificationsEnabled(isEnabled)
+          Airship.push.setUserNotificationsEnabled(isEnabled)
         })
 
         $('#allFeaturesEnabled').change(function() {
           var isEnabled = ($('#allFeaturesEnabled').val() == "on")
           if (isEnabled) {
             console.log("Enables all Features")
-            UAirship.setEnabledFeatures([UAirship.FEATURE_ALL])
+            Airship.privacyManager.setEnabledFeatures(["all"])
           } else {
             console.log("Disables all Features")
             console.log("Displaying Message Center")
-            UAirship.setEnabledFeatures([UAirship.FEATURE_NONE])
+            Airship.privacyManager.setEnabledFeatures([])
           }
         })
 
         $("#displayMessageCenterButton").click(function(ev) {
           console.log("Displaying Message Center")
-          UAirship.displayMessageCenter()
-          UAirship.trackScreen("Message Center")
+          Airship.messageCenter.display()
+          Airship.analytics.trackScreen("Message Center")
 
           })
 
         $("#openPreferenceCenterButton").click(function(ev) {
           console.log("Opening Preference Center")
-          UAirship.openPreferenceCenter("test")
-          UAirship.trackScreen("Preference Center")
+          Airship.preferenceCenter.display("test")
+          Airship.analytics.trackScreen("Preference Center")
         })
 
         $("#addTagButton").click(function(ev) {
           var tag = $("#addTagField").val()
           console.log("Adding new tag: " + tag)
 
-          UAirship.getTags(function(tags) {
+          Airship.channel.getTags(function(tags) {
             if(tags.indexOf(tag) == -1) {
               console.log("Valid tag: " + tag)
               tags = tags.concat([tag])
 
-              UAirship.setTags(tags, function() {
+              Airship.channel.setTags(tags, function() {
                 addTag(tag)
                 $("#addTagField").val('')
               })
@@ -211,20 +200,11 @@
           })
         })
 
-        $("#setQuietTimeButton").click(function(ev) {
-          var startHour = parseInt($("#startHour").val())
-          var startMinute = parseInt($("#startMinute").val())
-          var endHour = parseInt($("#endHour").val())
-          var endMinute = parseInt($("#endMinute").val())
-
-          UAirship.setQuietTime(startHour, startMinute, endHour, endMinute, function() {
-            console.log("Set quiet time from JS")
-          })
-        })
+      
 
         $("#setNamedUserButton").click(function(ev) {
           var namedUser = $("#setNamedUserField").val()
-          UAirship.setNamedUser(namedUser, function() {
+          Airship.contact.identify(namedUser, function() {
             setNamedUser(namedUser)
           })
         })

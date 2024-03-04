@@ -3,20 +3,12 @@
   "workspaces": {
     "packages": [
       "urbanairship-cordova",
-      "urbanairship-accengage-cordova",
       "urbanairship-hms-cordova"
     ]
   },
   "scripts": {
-    "generate-docs": "yarn workspace urbanairship-cordova run generate-docs",
-    "create-sample": "bash ./scripts/create_sample.sh ../cordova-sample",
-    "build-android": "cd ../cordova-sample/test; cordova build android",
-    "build-ios": "cd ../cordova-sample/test; cordova build ios",
-    "run-android": "cd ../cordova-sample/test; cordova run android",
-    "run-ios": "cd ../cordova-sample/test; cordova run ios",
-    "add-accengage-module": "cd ../cordova-sample/test; cordova plugin add ../../urbanairship-cordova/urbanairship-accengage-cordova",
-    "remove-accengage-module": "cd ../cordova-sample/test; cordova plugin rm urbanairship-accengage-cordova",
-    "add-hms-module": "cd ../cordova-sample/test; cordova plugin add ../../urbanairship-cordova/urbanairship-hms-cordova",
-    "remove-hms-module": "cd ../cordova-sample/test; cordova plugin rm urbanairship-hms-cordova"
+    "bootstrap": "npm ci && npm --prefix urbanairship-cordova ci && npm --prefix urbanairship-hms-cordova ci",
+    "generate-docs": "npm run --prefix urbanairship-cordova generate-docs",
+    "create-sample": "bash ./scripts/create_sample.sh ../cordova-sample"    
   }
 }
