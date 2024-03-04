@@ -8,7 +8,20 @@
 - cordova-ios: 7.x
 - Xcode: 15.2+
 
-### Package changes
+### Config.xml Changes
+
+In config.xml, you must set the min deployment target for iOS to 14 and enable swift support:
+
+```
+<!-- Deployment target must be >= iOS 14  -->
+<preference name="deployment-target" value="14.0" />
+
+<!-- Must be 5.0 -->
+<preference name="SwiftVersion" value="5.0" />
+```
+
+
+### Package Changes
 
 The npm packages are now published under new names:
 
