@@ -1,213 +1,192 @@
 # Migration Guide
 
-## 7.x to 8.0.0
-Due to changes to the iOS SDK, iOS location services now require an additional dependency on
-AirshipLocationKit. AirshipLocationKit can be linked to your project by adding the airship-location-cordova
-plugin. See the [location](https://docs.airship.com/platform/cordova/location) documentation for more
-details.
+## 14.x to 15.x
 
-Note: Version 8.0.0 requires the use of Cordova CLI version >= 9.0.1 and cordova-ios >= 5.0.1.
+### Requirements
 
-## 7.x to 7.5.0
+- cordova-android: 12.x
+- cordova-ios: 7.x
+- Xcode: 15.2+
 
-If you specified the minimum Android sdk version to be 16 (see 5.x to 6.0.0 migration below), please remove that from your config.xml or change it to be a minimum of 19. A minimum of 19 is required for new versions of Cordova.
+### Package changes
 
-## 6.x to 7.0.0
+The npm packages are now published under new names:
 
-The method `setDisplayASAPEnabled` has been removed.
-
-## 6.x to 6.3.0
-
-### Cocoapods
-
-This plugin uses cocoapods which is supported in cordova-ios 4.3.0. Ensure
-cocoapods is installed and the pod repo is updated via `pod repo update`. If
-using Xcode directly, open the xcworkspace instead of the xcodeproj.
-
-## 5.x to 6.0.0
-
-### Android Minimum SDK Version
-
-Urban Airship Android 8.0.0 SDK requires the minimum sdk version to be 16.
-Modify the config.xml file to contain:
-
-    <platform name="android">
-        <preference name="android-minSdkVersion" value="16" />
-    </platform>
-
-### Location Changes
-
-The method `recordCurrentLocation` has been removed.
-
-## 4.x to 5.0.0
+| 14.x                           | 15.x                    | Notes                                                                                            |
+|--------------------------------|-------------------------|--------------------------------------------------------------------------------------------------|
+| urbanairship-cordova           | @ua/cordova-airship     | The plugin id is `cordova-airship`.                                                              |
+| urbanairship-cordova-hms       | @ua/cordova-airhsip-hms | The plugin id is `cordova-airship-hms`.                                                          |
+| urbanairship-accengage-cordova | removed                 | Package is no longer needed. It was only needed during the transition from Accengage to Airship. |
 
 
-All functions now take an optional failure callback.
+### API
 
+The public API has been rewritten. Most methods have a one off replacement. See the table below for the method mapping.
 
-### Run Action
+| 14.x                                              | 15.x                                                          | Notes                                                                                                                  |
+|---------------------------------------------------|---------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| UAirship.takeOff                                  | Airship.takeOff                                               | The option `messageCenterStyleConfig` moved to AirshipConfig.ios.messageCenterStyleConfig.                             |
+| UAirship.setAndroidNotificationConfig             | Airship.push.android.setNotificationConfig                    | You can now also android notification config during takeOff                                                            |
+| UAirship.setAutoLaunchDefaultMessageCenter        | Airship.messageCenter.setAutoLaunchDefaultMessageCenter       |                                                                                                                        |
+| UAirship.displayMessageCenter                     | Airship.messageCenter.display                                 | If `setAutoLaunchDefaultMessageCenter` is enabled, this will show a message center UI. If no, it will generate events. |
+| UAirship.dismissMessageCenter                     | Airship.messageCenter.dismiss                                 |                                                                                                                        |
+| UAirship.dismissInboxMessage                      | Airship.messageCenter.dismiss                                 |                                                                                                                        |
+| UAirship.getInboxMessages                         | Airship.messageCenter.getMessages                             |                                                                                                                        |
+| UAirship.markInboxMessageRead                     | Airship.messageCenter.markMessageRead                         |                                                                                                                        |
+| UAirship.deleteInboxMessage                       | Airship.messageCenter.deleteMessage                           |                                                                                                                        |
+| UAirship.displayInboxMessage                      | Airship.messageCenter.showMessageView                         |                                                                                                                        |
+| UAirship.refreshInbox                             | Airship.messageCenter.refreshMessages                         |                                                                                                                        |
+| UAirship.setUserNotificationsEnabled              | Airship.push.setUserNotificationsEnabled                      |                                                                                                                        |
+| UAirship.isUserNotificationsEnabled               | Airship.push.isUserNotificationsEnabled                       |                                                                                                                        |
+| UAirship.enableUserNotifications                  | Airship.push.enableUserNotifications                          |                                                                                                                        |
+| UAirship.isAppNotificationsEnabled                | Airship.push.getNotificationStatus                            | Use the flag `areNotificationsAllowed` on the status object                                                            |
+| UAirship.isQuietTimeEnabled                       | Airship.push.isQuietTimeEnabled                               |                                                                                                                        |
+| UAirship.setQuietTimeEnabled                      | Airship.push.setQuietTimeEnabled                              |                                                                                                                        |
+| UAirship.isInQuietTime                            | No replacement                                                | If needed please file a github issue with usage.                                                                       |
+| UAirship.setQuietTime                             | Airship.push.setQuietTime                                     | API now takes an object with startHour, endHour, startMinute, endMinute                                                |
+| UAirship.getQuietTime                             | Airship.push.getQuietTime                                     |                                                                                                                        |
+| UAirship.clearNotification                        | Airship.push.clearNotification                                |                                                                                                                        |
+| UAirship.clearNotifications                       | Airship.push.clearNotifications                               |                                                                                                                        |
+| UAirship.getActiveNotifications                   | Airship.push.getActiveNotifications                           |                                                                                                                        |
+| UAirship.setAutobadgeEnabled                      | Airship.push.ios.setAutobadgeEnabled                          |                                                                                                                        |
+| UAirship.setBadgeNumber                           | Airship.push.ios.setBadgeNumber                               |                                                                                                                        |
+| UAirship.setBadgeNumber                           | Airship.push.ios.setBadgeNumber                               |                                                                                                                        |
+| UAirship.getBadgeNumber                           | Airship.push.ios.getBadgeNumber                               |                                                                                                                        |
+| UAirship.resetBadge                               | Airship.push.ios.resetBadge                                   |                                                                                                                        |
+| UAirship.setNotificationTypes                     | Airship.push.ios.setNotificationOptions                       |                                                                                                                        |
+| UAirship.setPresentationOptions                   | Airship.push.ios.setForegroundPresentationOptions             |                                                                                                                        |
+| UAirship.setAndroidForegroundNotificationsEnabled | Airship.push.android.setForegroundNotificationsEnabled        |                                                                                                                        |
+| UAirship.isSoundEnabled                           | No replacement                                                | Use notification categories/channel instead                                                                            |
+| UAirship.setSoundEnabled                          | No replacement                                                | Use notification categories/channel instead                                                                            |
+| UAirship.isVibrateEnabled                         | No replacement                                                | Use notification categories/channel instead                                                                            |
+| UAirship.setVibrateEnabled                        | No replacement                                                | Use notification categories/channel instead                                                                            |
+| UAirship.setAnalyticsEnabled                      | Airship.privacyManager.enable/disable                         | Enable/disable "analytics" flag on privacy manager                                                                     |
+| UAirship.isAnalyticsEnabled                       | Airship.privacyManager.isFeaturesEnabled("analytics")         |                                                                                                                        |
+| UAirship.setAssociatedIdentifier                  | Airship.analytics.setAssociatedIdentifier                     |                                                                                                                        |
+| UAirship.addCustomEvent                           | Airship.analytics.addCustomEvent                              | The field `name` is now `eventName`, `value` is `eventValue`, `properties` can be any valid json object.               |
+| UAirship.trackScreen                              | Airship.analytics.trackScreen                                 |                                                                                                                        |
+| UAirship.getChannelID                             | Airship.channel.getChannelId                                  |                                                                                                                        |
+| UAirship.getTags                                  | Airship.channel.getTags                                       |                                                                                                                        |
+| UAirship.setTags                                  | Airship.channel.editTags                                      | Use the editor to add and remove tags                                                                                  |
+| UAirship.editChannelTagGroups                     | Airship.channel.editTagGroups                                 |                                                                                                                        |
+| UAirship.editChannelAttributes                    | Airship.channel.editAttributes                                |                                                                                                                        |
+| UAirship.editChannelSubscriptionLists             | Airship.channel.editSubscriptionLists                         |                                                                                                                        |
+| UAirship.getChannelSubscriptionLists              | Airship.channel.getSubscriptionLists                          |                                                                                                                        |
+| UAirship.getAlias                                 | Airship.contact.getNamedUserId                                |                                                                                                                        |
+| UAirship.setAlias                                 | Airship.contact.identify                                      |                                                                                                                        |
+| UAirship.getNamedUser                             | Airship.contact.getNamedUserId                                |                                                                                                                        |
+| UAirship.setNamedUser                             | Airship.contact.identify/reset                                | Use identify to set the named user, reset to clear it                                                                  |
+| UAirship.editNamedUserTagGroups                   | Airship.contact.editTagGroups                                 |                                                                                                                        |
+| UAirship.editNamedUserAttributes                  | Airship.contact.editAttributes                                |                                                                                                                        |
+| UAirship.editContactSubscriptionLists             | Airship.contact.editSubscriptionLists                         |                                                                                                                        |
+| UAirship.getContactSubscriptionLists              | Airship.contact.getSubscriptionLists                          |                                                                                                                        |
+| UAirship.getLaunchNotification                    | No replacement                                                | Use the Airship.push.onNotificationResponse listener                                                                   |
+| UAirship.getDeepLink                              | No replacement                                                | Use the Airship.onDeepLink listener                                                                                    |
+| UAirship.runAction                                | Airship.actions.run                                           |                                                                                                                        |
+| UAirship.enableFeature                            | Airship.privacyManager.enableFeature                          | Feature constants, see below for more info.                                                                            |
+| UAirship.disableFeature                           | Airship.privacyManager.disableFeature                         | Feature constants, see below for more info.                                                                            |
+| UAirship.setEnabledFeatures                       | Airship.privacyManager.setEnabledFeatures                     | Feature constants, see below for more info.                                                                            |
+| UAirship.getEnabledFeatures                       | Airship.privacyManager.getEnabledFeatures                     | Feature constants, see below for more info.                                                                            |
+| UAirship.isFeatureEnabled                         | Airship.privacyManager.isFeatureEnabled                       | Feature constants, see below for more info.                                                                            |
+| UAirship.openPreferenceCenter                     | Airship.preferenceCenter.display                              |                                                                                                                        |
+| UAirship.getPreferenceCenterConfig                | Airship.preferenceCenter.getConfig                            |                                                                                                                        |
+| UAirship.setUseCustomPreferenceCenterUi           | Airship.preferenceCenter.setAutoLaunchDefaultPreferenceCenter |                                                                                                                        |
+| UAirship.setCurrentLocale                         | Airship.locale.setLocaleOverride                              |                                                                                                                        |
+| UAirship.getCurrentLocale                         | Airship.locale.getLocale                                      |                                                                                                                        |
+| UAirship.clearLocale                              | Airship.locale.clearLocaleOverride                            |                                                                                                                        |
+| UAirship.reattach                                 | No replacement				                                | Events are no longer sent on the document. See events for replacements                                                 |
 
-The method ``runAction`` now returns the result's value in the success callback
-and the result's error in the failure callback.
+### Privacy Manager Flags
 
-4.x example:
+The flag constants are no longer all uppercase and some options have been removed. The 15.x flags are:
 
-    UAirship.runAction("some_action", "some value", function (result) {
-      if (result.error) {
-         console.log("action failed": + result.error);
-      } else {
-         console.log("action finished": + result.value);
-      }
-    });
-
-5.x example:
-
-    UAirship.runAction("some_action", "some value", function (value) {
-        console.log("action finished": + value);
-    }, function (error) {
-         console.log("action failed": + error);
-    });
-
-
-## 3.6.0 to 4.0.0
-
-### Installation changes:
-
-Now requires Cordova 5.4.0+, Cordova Android 4.1.0, and Cordova iOS 3.9.0.
-The iOS Airship library is bitcode enabled for Xcode 7+.
-
-## 2.8.x to 3.0.0
-
-### Plugin Access:
-
-The plugin is now attached to the window as `UAirship` instead of `PushNotification`.
-
-### Installation changes
-
-Plugin ID has been changed from `com.urbanairship.phonegap.PushNotification` to `com.urbanairship.cordova`. The old version
-may need to be uninstalled manually before updating to the new version.
-
-### Push Changes
-
-To enable or disable push, use `setUserNotificationsEnabled` instead of `enablePush` or `disablePush`. The app will
-continue to not prompt for push until user notifications is enabled. `registerNotificationTypes` has been renamed to
-`setNotificationTypes`. Its only required to be called if the app only wants to register for specific types of notifications.
-If it is not set, the app will register for all types - alert, sound, and vibrate.
-
-The method `getPushID` has been replaced with `getChannelID`. It now returns the channel ID for both Android and iOS.
-
-To access the launch notification, call `getLaunchNotification` instead of `getIncoming`. `getLaunchNotification` no longer
-clears the notification on first access, instead it takes a flag as the first parameter to clear the notification or not.
-
-Example:
-
-	UAirship.getLaunchNotification(true, callback)
-
-
-Fetching tags no longer returns an object with a tag array, instead it now returns just the tags.
-
-Example:
-
-	UAirship.getTags(function(tags) {
-		tags.forEach(function(tag) {
-			console.log("tag: " + tag);
-		})
-	})
-
-
-### Location Changes:
-
-To enable or disable location, use `setLocationEnabled` instead of `enableLocation` or `disableLocation`. Similarly with
-background location, use `setBackgroundLocationEnabled`.
-
-
-## 2.5.x to 2.6.0
-
-### Android Installation changes:
-
-Android plugin now requires Google Play Services and the Android Support v4 library. If the plugin was manually installed,
-remove the old urbanairship.jar file and follow the manual setup instructions again in the README.
-
-The custom_rules.xml file in the root of the android project needs to be deleted due to bug https://code.google.com/p/android/issues/detail?id=23271 and https://issues.apache.org/jira/browse/CB-7675.
-
-## 2.3.x to 2.4.0
-
-### Installation changes:
-
-For iOS, make sure you update your iOS project to Cordova iOS version 3.4.1 before installing the phonegap-ua-push plugin.
-For example:
 ```
-1. cordova platform update ios
-iOS project is now at version 3.4.1
-2. phonegap local plugin add https://github.com/urbanairship/phonegap-ua-push.git
+/**
+ * Enum of authorized Features.
+ */
+export enum Feature {
+    InAppAutomation = 'in_app_automation',
+    MessageCenter = 'message_center',
+    Push = 'push',
+    Analytics = 'analytics',
+    TagsAndAttributes = 'tags_and_attributes',
+    Contacts = 'contacts',
+}
 ```
 
-## 2.2.x to 2.3.0
+### Events
 
-### Config Changes:
+Events are no longer sent as document events. Events are also now queued up until a listener is added, so there is no longer a need to return `launchNotification` or `deepLink` since its now possible for the app to receive those when ready.
 
-In 2.2.x, push was enabled by default and would prompt the user to allow push before the application
-was ready to prompt the user for push.  In 2.3.0, push is now disabled by default and will be enabled
-when enablePush is called in javascript.  This allows the application to determine when to
-prompt the user for push.
+| 14.x                                                                           | 15.x                                          | Notes                                           |
+|--------------------------------------------------------------------------------|-----------------------------------------------|-------------------------------------------------|
+| document.addEventListener("urbanairship.deep_link", callback)                  | Airship.onDeepLink(callback)                  |                                                 |
+| document.addEventListener("urbanairship.registration", callback)               | Airship.channel.onChannelCreated(callback)    | For channel ID. Use `event.channelId`           |
+| document.addEventListener("urbanairship.registration", callback)               | Airship.push.onPushTokenReceived(callback)    | For push token.  Use `event.pushToken`          |
+| document.addEventListener("urbanairship.push", callback)                       | Airship.push.onPushReceived(callback)         | The event has changed, see below for more info. |
+| document.addEventListener("urbanairship.notification_opened", callback)        | Airship.push.onNotificationReceived(callback) | The event has changed, see below for more info. |
+| document.addEventListener("urbanairship.notification_opt_in_status", callback) | Airship.onNotificationStatusChanged(callback) | The event has changed, see below for more info. |
+| document.addEventListener("urbanairship.inbox_updated", callback)              | Airship.messageCenter.onUpdated(callback)     |                                                 |
+| document.addEventListener("urbanairship.show_inbox", callback)                 | Airship.messageCenter.onDisplay(callback)     |                                                 |
+| document.addEventListener("urbanairship.open_preference_center", callback)     | Airship.preferenceCenter.onDisplay(callback)  |                                                 |
 
-To keep the old 2.2.x behavior, you can set the config option 'com.urbanairship.enable_push_onlaunch'
-to 'true' in the config.xml.
+#### Push Received
 
+The push payload is now grouped under the `pushPayload` field. The old `message` field has been renamed to `alert` (`pushPayload.alert`). 
 
-## 2.1.x to 2.2.0
+#### Push Response
 
-### Installation changes:
-
-The PushNotification.js no longer sets the PushNotification plugin at window.plugins.PushNotification 
-and instead uses module.exports.  Instead of including the PushNotification.js script, at the top of the 
-javascript file that the plugin is being used, include the following:
-
-	var PushNotification = require('<Path to PushNotification.js>')
-
-**Note:** If you are using automatic integration, the required step is done automatically.
-
-
-### Event changes
-
-Registration events and incoming push events are now standard dom events.
-
-PushNotification.registerEvents is now removed.  The "registration" and "push" events
-can now be accessed by listening for events on the document:
-
-Events:
-
-  	Name: 'urbanairship.registration'
-
-	Event object: 
-	{
-	  error: <Error message if registration failed>,
-	  pushID: <Push address>
-	}
-	
-	Name: 'urbanairship.push'
-	
-	Event object: 
-	{
-	  message: <Alert message>,
-	  extras: <Alert extras>
-	}
-
-Example:
-
-	document.addEventListener("urbanairship.registration", function (event) {
-		if (event.error) {
-			console.log('there was an error registering for push notifications');
-		} else {
-			console.log("Registered with ID: " + event.pushID);
-		} 
-	}, false)
-	
-	document.addEventListener("urbanairship.push", function (event) {
-		console.log("Incoming push: " + event.message)
-	}, false)
+The push payload is now grouped under the `pushPayload` field. The old `message` field has been renamed to `alert` (`pushPayload.alert`). The field `actionID` has been renamed to `actionId`.
 
 
-**Note:** If your application supports Android and it listens to any of the events, you should start 
-listening for events on both 'deviceReady' and 'resume' and stop listening for events on 'pause'. 
-This will prevent the events from being handled in the background.
+#### Notification Opt In Status Event
+
+Notification status event now provides an object with several flags that you can use to determine the exact reason why the device is opted out:
+
+```
+/**
+ * Push notification status.
+ */
+export interface PushNotificationStatus {
+    /**
+     * If user notifications are enabled on [Airship.push].
+     */
+    isUserNotificationsEnabled: boolean;
+
+    /**
+     * If notifications are allowed at the system level for the application.
+     */
+    areNotificationsAllowed: boolean;
+
+    /**
+     * If the push feature is enabled on [Airship.privacyManager].
+     */
+    isPushPrivacyFeatureEnabled: boolean;
+
+    /*
+     * If push registration was able to generate a token.
+     */
+    isPushTokenRegistered: boolean;
+
+    /*
+     * If Airship is able to send and display a push notification.
+     */
+    isOptedIn: boolean;
+
+    /*
+     * Checks for isUserNotificationsEnabled, areNotificationsAllowed, and isPushPrivacyFeatureEnabled. If this flag
+     * is true but `isOptedIn` is false, that means push token was not able to be registered. 
+     */
+    isUserOptedIn: boolean;
+}
+
+/**
+ * Event fired when the notification status changes.
+ */
+export interface PushNotificationStatusChangedEvent {
+    /**
+     * The push notification status.
+     */
+    status: PushNotificationStatus
+}
+```
