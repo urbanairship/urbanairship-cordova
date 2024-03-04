@@ -1,5 +1,22 @@
 # Cordova Plugin Changelog
 
+## Version 15.0.0  March 5, 2024
+Major release with several breaking changes. Apps should use the migration guide to update [Migration Guide](https://github.com/urbanairship/urbanairship-cordova/blob/main/MIGRATION.md)
+
+### Changes
+- Requires cordova-android 12.0.0+, cordova-ios 7.0.0+, and Xcode 15.2+\
+- Updated to iOS SDK 17.7.3
+- Updated to Android SDK 17.7.3
+- Renamed package from `urbanairship-cordova` to `@ua/cordova-airship`
+- Renamed package from `urbanairship-hms-cordova` to `@ua/cordova-airship-hms`
+- Removed package from `urbanairship-accengage-cordova`
+- Replaces `UAirship` with `Airship` as the root instance.
+- Grouped functional apis under new components under the Airship instance: Airship.channel, Airship.push, Airship.push.ios, etc...
+- Added types
+- Added feature flag support
+- Added new events for notification status
+
+
 ## Version 14.11.0 - January 11, 2024
 Minor release that updates iOS SDK to 16.12.5 and removes an error message on Huawei devices that have the Play Store installed.
 
