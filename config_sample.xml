@@ -38,39 +38,10 @@
 
 <preference name="AndroidXEnabled" value="true" />
 
-<!-- Urban Airship app credentials -->
-<preference name="com.urbanairship.production_app_key" value="APP_KEY_PLACEHOLDER" />
-<preference name="com.urbanairship.production_app_secret" value="APP_SECRET_PLACEHOLDER" />
-<preference name="com.urbanairship.development_app_key" value="APP_KEY_PLACEHOLDER" />
-<preference name="com.urbanairship.development_app_secret" value="APP_SECRET_PLACEHOLDER" />
-<!-- If the app is in production or not -->
-<preference name="com.urbanairship.in_production" value="false" />
+<!-- Deployment target must be >= iOS 14  -->
+<preference name="deployment-target" value="14.0" />
 
-<!-- Deployment target must be >= iOS 11  -->
-<preference name="deployment-target" value="11.0" />
-
-<!-- Optional config values -->
-<!-- Enable push when the application launches -->
-<preference name="com.urbanairship.enable_push_onlaunch" value="true" />
-<!-- Urban Airship SDK Site (US or EU) defaults to US) -->
-<preference name="com.urbanairship.site" value="US" />
-<!-- Urban Airship message center config style -->
-<preference name="com.urbanairship.message.center.style.file" value="myMessageCenterStyleConfig" />
-<!-- Enable Analytics when the application launches -->
-<!-- Warning: Features that depend on analytics being enabled may not work properly if analytics is disabled (reports, location segmentation, region triggers, push to local time). -->
-<preference name="com.urbanairship.enable_analytics" value="true" />
-<preference name="com.urbanairship.development_log_level" value="debug" />
-<!-- Override the Android notification icon -->
-<preference name="com.urbanairship.notification_icon" value="ic_notification" />
-<!-- Specify the notification accent color for Android API 21+ (Lollipop) -->
-<preference name="com.urbanairship.notification_accent_color" value="#0000ff" />
-<!-- Clear the iOS badge on launch -->
-<preference name="com.urbanairship.clear_badge_onlaunch" value="true" />
-<!-- Alert foreground notification presentation option -->
-<preference name="com.urbanairship.ios_foreground_notification_presentation_alert" value="true"/>
-<!-- Badge foreground notification presentation option -->
-<preference name="com.urbanairship.ios_foreground_notification_presentation_badge" value="true"/>
-<!-- Sound foreground notification presentation option -->
-<preference name="com.urbanairship.ios_foreground_notification_presentation_sound" value="true"/>
+<!-- Must be 5.0 -->
+<preference name="SwiftVersion" value="5.0" />
 
 </widget>

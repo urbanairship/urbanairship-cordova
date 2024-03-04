@@ -1,31 +1,23 @@
 #!/bin/bash -ex
 VERSION=$1
 
+ROOT_PATH=`dirname "${0}"`/..
+CORE_PACKAGE_PATH="$ROOT_PATH/cordova-airship"
+HMS_PACKAGE_PATH="$ROOT_PATH/cordova-airship-hms"
+ANDROID_VERISON_PATH="$ROOT_PATH/cordova-airship/src/android/AirshipCordovaVersion.kt"
+IOS_VERISON_PATH="$ROOT_PATH/cordova-airship/src/ios/AirshipCordovaVersion.swift"
+HMS_PLUGIN_XML_PATH="$ROOT_PATH/cordova-airship-hms/plugin.xml"
+
+
 if [ -z "$1" ]
   then
     echo "No version number supplied"
     exit
 fi
 
-BASE_MODULE=urbanairship-cordova
-SUBMODULES=(
-  urbanairship-accengage-cordova
-  urbanairship-hms-cordova
-)
 
-for MODULE in ${BASE_MODULE} ${SUBMODULES[@]}
-do
-  # Updates the module version in package.json
-  sed -i '' "s/\version\": \".*\",/\version\": \"$VERSION\",/g" ${MODULE}/package.json
-
-  # Updates the module version in plugin.xml
-  sed -E -i '' "s/\version=\"[0-9]+\.[0-9]+\.[0-9]+.*\"/\version=\"$VERSION\"/g" ${MODULE}/plugin.xml
-  sed -E -i '' "s/\android:value=\"[0-9]+\.[0-9]+\.[0-9]+.*\"/\android:value=\"$VERSION\"/g" ${MODULE}/plugin.xml
-  sed -E -i '' "s/\<string>[0-9]+\.[0-9]+\.[0-9]+.*<\/string>/\<string>$VERSION<\/string>/g" ${MODULE}/plugin.xml
-done
-
-for MODULE in ${SUBMODULES[@]}
-do
-  # Updates the dependency version in plugin.xml
-  sed -E -i '' "s/\<dependency id=\"${BASE_MODULE}\" version=\".*[0-9]+\.[0-9]+\.[0-9]+.*\"/<dependency id=\"${BASE_MODULE}\" version=\"$VERSION\"/g" ${MODULE}/plugin.xml
-done
+sed -i '' "s/var version = \"[-0-9.a-zA-Z]*\"/var version = \"$VERSION\"/" $ANDROID_VERISON_PATH
+sed -i '' "s/static let version = \"[-0-9.a-zA-Z]*\"/static let version = \"$VERSION\"/" $IOS_VERISON_PATH
+sed -i '' '/<dependency id="cordova-airship" version="[^"]*"\/>/s/version="[^"]*"/version="'$VERSION'"/' $HMS_PLUGIN_XML_PATH
+npm --prefix $CORE_PACKAGE_PATH version $VERSION
+npm --prefix $HMS_PACKAGE_PATH version $VERSION

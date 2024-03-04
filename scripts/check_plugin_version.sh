@@ -1,40 +1,32 @@
 #!/bin/bash
 set -e
-set -x
 
 ROOT_PATH=`dirname "${0}"`/..
 
-# Get version from package.json file
-packageJSONFilePath="$ROOT_PATH/urbanairship-cordova/package.json"
-packageJSONVersionRegex='"version": ?"[0-9]+\.[0-9]+\.[0-9]+"'
-packageJSONVersion=$(grep -E "$packageJSONVersionRegex" $packageJSONFilePath | cut -f4 -d \")
+CORE_PACKAGE_PATH="$ROOT_PATH/cordova-airship/package.json"
+HMS_PACKAGE_PATH="$ROOT_PATH/cordova-airship-hms/package.json"
+ANDROID_VERISON_PATH="$ROOT_PATH/cordova-airship/src/android/AirshipCordovaVersion.kt"
+IOS_VERISON_PATH="$ROOT_PATH/cordova-airship/src/ios/AirshipCordovaVersion.swift"
+HMS_PLUGIN_XML_PATH="$ROOT_PATH/cordova-airship-hms/plugin.xml"
 
-# Get version from plugin.xml file
-pluginXMLFilePath="$ROOT_PATH/urbanairship-cordova/plugin.xml"
+coreVersion=$(node -p "require('$CORE_PACKAGE_PATH').version")
+echo "core package version: $coreVersion"
 
-# Get plugin version
-pluginXMLFileVersionRegex='version= ?"[0-9]+\.[0-9]+\.[0-9]+"'
-pluginXMLFileVersion=$(grep -E "$pluginXMLFileVersionRegex" $pluginXMLFilePath | cut -f2 -d \")
+hmsVersion=$(node -p "require('$HMS_PACKAGE_PATH').version")
+echo "hms package version: $hmsVersion"
 
-if [ "$pluginXMLFileVersion" != "$packageJSONVersion" ]; then
-	echo "BUILD FAILED: The plugin version is not correct in the plugin.xml file. The version should be the same as the one in the package.json file."
-	exit 1
-fi
+androidVersion=$(grep "var version" $ANDROID_VERISON_PATH | awk -F'"' '{print $2}')
+echo "android: $androidVersion"
 
-# Get plugin version for android config
-pluginXMLAndroidConfigVersionRegex='android:value= ?"[0-9]+\.[0-9]+\.[0-9]+"'
-pluginXMLAndroidConfigVersion=$(grep -E "$pluginXMLAndroidConfigVersionRegex" $pluginXMLFilePath | cut -f2 -d \")
+iosVersion=$(grep "static let version" $IOS_VERISON_PATH | awk -F'"' '{print $2}')
+echo "ios: $iosVersion"
 
-if [ "$pluginXMLAndroidConfigVersion" != "$packageJSONVersion" ]; then
-	echo "BUILD FAILED: The plugin version in the Android Config is not correct in the plugin.xml file. The version should be the same as the one in the package.json file."
-	exit 1
-fi
+hmsDependencyVersion=$(grep '<dependency id="cordova-airship"' $HMS_PLUGIN_XML_PATH | awk -F 'version="' '{print $2}' | awk -F '"' '{print $1}')
+echo "hms core dependency: $hmsDependencyVersion"
 
-# Get plugin version for iOS config
-pluginXMLiOSConfigVersionRegex='<string>[0-9]+\.[0-9]+\.[0-9]+'
-pluginXMLiOSConfigVersion=$(grep -E "$pluginXMLiOSConfigVersionRegex" $pluginXMLFilePath | cut -f2 -d \> | cut -f1 -d \<)
-
-if [ "$pluginXMLiOSConfigVersion" != "$packageJSONVersion" ]; then
-	echo "BUILD FAILED: The plugin version in the iOS Config is not correct in the plugin.xml file. The version should be the same as the one in the package.json file."
+if [ "$coreVersion" = "$hmsVersion" ] && [ "$coreVersion" = "$androidVersion" ] && [ "$coreVersion" = "$iosVersion" ] && [ "$coreVersion" = "$hmsDependencyVersion" ]; then
+    echo "All versions are equal :)"
+else
+    echo "Version mismatch!"
 	exit 1
 fi

@@ -7,36 +7,27 @@ on:
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-13-xlarge
+    timeout-minutes: 20
     env:
-      DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_15.2.app/Contents/Developer
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Check Version
         run: bash ./scripts/check_version.sh ${GITHUB_REF/refs\/tags\//}
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         with:
           type: ${{ job.status }}
           job_name: "Airship Cordova Plugin Release Started!"
           url: ${{ secrets.SLACK_WEBHOOK }}
-        # Build tools 31.0.0 doesn't include dx (only d8), which Cordova expects to find.
-        # Uninstalling causes automatic build-tools resolution to fall back to an older
-        # version that does include dx.
-      - name: Workaround "Build-tool 31.0.0 is missing DX" error
-        run: bash $ANDROID_SDK_ROOT/tools/bin/sdkmanager --uninstall 'build-tools;31.0.0'
-        # Build tools 32.0.0 doesn't include dx (only d8), which Cordova expects to find.
-        # Uninstalling causes automatic build-tools resolution to fall back to an older
-        # version that does include dx.
-      - name: Workaround "Build-tool 32.0.0 is missing DX" error
-        run: bash $ANDROID_SDK_ROOT/tools/bin/sdkmanager --uninstall 'build-tools;32.0.0'
       - name: Run CI
         run: |
           bash ./scripts/run_ci_tasks.sh -a -i
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         if: failure()
         with:
           type: ${{ job.status }}
@@ -46,9 +37,11 @@ jobs:
   deploy:
     needs: [build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
@@ -71,32 +64,33 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - name: Generate documentation
-        run: |
-          yarn install
-          yarn generate-docs
       - uses: google-github-actions/setup-gcloud@v0
         with:
           version: '351.0.0'
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-      - name: Upload docs
-        run: bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} jsdoc_out
-      - name: Publish modules
+          service_account_key: ${{ secrets.GCP_SA_KEY }}          
+
+      - name: Docs
         run: |
           cd urbanairship-cordova/
-          yarn publish
+          npm install
+          npm run generate-docs
           cd -
-          cd urbanairship-accengage-cordova/
-          yarn publish
+          bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} ./urbanairship-cordova/docs
+
+      - name: Publish modules
+        run: |
+          cd cordova-airship/
+          npm publish
           cd -
-          cd urbanairship-hms-cordova/
-          yarn publish
+          cd cordova-airship-hms/
+          npm publish
           cd -
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
       - name: Github Release
-        uses: actions/create-release@v1.0.1
+        id: create_release
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -106,13 +100,13 @@ jobs:
           draft: false
           prerelease: false
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         with:
           type: ${{ job.status }}
           job_name: "Airship Cordova Plugin Released!"
           url: ${{ secrets.SLACK_WEBHOOK }}
       - name: Slack Notification
-        uses: homoluctus/slatify@master
+        uses: lazy-actions/slatify@master
         if: failure()
         with:
           type: ${{ job.status }}
