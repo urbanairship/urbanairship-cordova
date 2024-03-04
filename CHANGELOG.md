@@ -4,7 +4,7 @@
 Major release with several breaking changes. Apps should use the migration guide to update [Migration Guide](https://github.com/urbanairship/urbanairship-cordova/blob/main/MIGRATION.md)
 
 ### Changes
-- Requires cordova-android 12.0.0+, cordova-ios 7.0.0+, and Xcode 15.2+\
+- Requires cordova-android 12.0.0+, cordova-ios 7.0.0+, and Xcode 15.2+
 - Updated to iOS SDK 17.7.3
 - Updated to Android SDK 17.7.3
 - Renamed package from `urbanairship-cordova` to `@ua/cordova-airship`
