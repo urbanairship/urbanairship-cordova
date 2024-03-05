@@ -36,6 +36,7 @@
         <allow-intent href="itms-apps:*" />
     </platform>
 
+<preference name="AndroidGradlePluginGoogleServicesEnabled" value="true" />
 <preference name="AndroidXEnabled" value="true" />
 
 <!-- Deployment target must be >= iOS 14  -->

@@ -239,7 +239,7 @@ class AirshipCordova : CordovaPlugin() {
             "messageCenter#markMessageRead" -> callback.resolveResult(method) { proxy.messageCenter.markMessageRead(arg.requireString()) }
             "messageCenter#deleteMessage" -> callback.resolveResult(method) { proxy.messageCenter.deleteMessage(arg.requireString()) }
             "messageCenter#getUnreadMessageCount" -> callback.resolveResult(method) { proxy.messageCenter.getUnreadMessagesCount() }
-            "messageCenter#setAutoLaunch" -> callback.resolveResult(method) { proxy.messageCenter.setAutoLaunchDefaultMessageCenter(arg.requireBoolean()) }
+            "messageCenter#setAutoLaunchDefaultMessageCenter" -> callback.resolveResult(method) { proxy.messageCenter.setAutoLaunchDefaultMessageCenter(arg.requireBoolean()) }
             "messageCenter#refreshMessages" -> callback.resolveDeferred(method) { resolveCallback ->
                 proxy.messageCenter.refreshInbox().addResultCallback {
                     if (it == true) {
@@ -253,7 +253,7 @@ class AirshipCordova : CordovaPlugin() {
             // Preference Center
             "preferenceCenter#display" -> callback.resolveResult(method) { proxy.preferenceCenter.displayPreferenceCenter(arg.requireString()) }
             "preferenceCenter#getConfig" -> callback.resolvePending(method) { proxy.preferenceCenter.getPreferenceCenterConfig(arg.requireString()) }
-            "preferenceCenter#setAutoLaunch" -> callback.resolveResult(method) {
+            "preferenceCenter#setAutoLaunchPreferenceCenter" -> callback.resolveResult(method) {
                 val autoLaunchArgs = arg.requireList()
                 proxy.preferenceCenter.setAutoLaunchPreferenceCenter(
                     autoLaunchArgs.get(0).requireString(),

@@ -20,6 +20,11 @@ In config.xml, you must set the min deployment target for iOS to 14 and enable s
 <preference name="SwiftVersion" value="5.0" />
 ```
 
+For Android to enable FCM, enable the Google Services plugin:
+```
+<preference name="AndroidGradlePluginGoogleServicesEnabled" value="true" />
+```
+
 
 ### Package Changes
 

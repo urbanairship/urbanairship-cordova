@@ -444,7 +444,7 @@ public final class AirshipCordova: CDVPlugin {
             try await AirshipProxy.shared.messageCenter.refresh()
             return nil
 
-        case "messageCenter#setAutoLaunch":
+        case "messageCenter#setAutoLaunchDefaultMessageCenter":
             AirshipProxy.shared.messageCenter.setAutoLaunchDefaultMessageCenter(
                 try command.requireBooleanArg()
             )
@@ -462,7 +462,7 @@ public final class AirshipCordova: CDVPlugin {
                 preferenceCenterID: try command.requireStringArg()
             )
 
-        case "preferenceCenter#setAutoLaunch":
+        case "preferenceCenter#setAutoLaunchPreferenceCenter":
             let args = try command.requireArrayArg()
             guard
                 args.count == 2,
