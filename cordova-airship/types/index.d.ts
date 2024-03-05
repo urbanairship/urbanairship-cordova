@@ -483,6 +483,12 @@ export interface AirshipConfig {
          * The message center style plist path.
          */
         messageCenterStyleConfig?: string;
+
+        /**
+         * If set to `true`, the SDK will use the preferred locale. Otherwise it will use the current locale.
+         * Defaults to false. 
+         */
+        useUserPreferredLocale?: boolean;
     };
 
     /**
