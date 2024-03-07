@@ -12,6 +12,10 @@
     "type": "git",
     "url": "git+https://github.com/urbanairship/urbanairship-cordova.git"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "keywords": [
     "ecosystem:cordova",
     "urbanairship",
