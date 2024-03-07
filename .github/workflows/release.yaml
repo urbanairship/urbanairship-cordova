@@ -72,11 +72,11 @@ jobs:
 
       - name: Docs
         run: |
-          cd urbanairship-cordova/
-          npm install
+          cd cordova-airship/
+          npm ci
           npm run generate-docs
           cd -
-          bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} ./urbanairship-cordova/docs
+          bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} ./cordova-airship/docs
 
       - name: Publish modules
         run: |
