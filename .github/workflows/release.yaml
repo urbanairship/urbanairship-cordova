@@ -73,10 +73,10 @@ jobs:
       - name: Publish modules
         run: |
           cd cordova-airship/
-          npm publish
+          npm publish --access public
           cd -
           cd cordova-airship-hms/
-          npm publish
+          npm publish --access public
           cd -
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
