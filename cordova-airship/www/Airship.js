@@ -579,8 +579,8 @@ airship.preferenceCenter.getConfig = function (preferenceCenterId, success, fail
 }
 
 airship.preferenceCenter.setAutoLaunchDefaultPreferenceCenter = function (preferenceCenterId, autoLaunch, success, failure) {
-    argscheck.checkArgs('s*FF', 'Airship.preferenceCenter.getConfig', arguments)
-    perform("preferenceCenter#getConfig", [preferenceCenterId, !!autoLaunch], success, failure)
+    argscheck.checkArgs('s*FF', 'Airship.preferenceCenter.setAutoLaunchDefaultPreferenceCenter', arguments)
+    perform("preferenceCenter#setAutoLaunchDefaultPreferenceCenter", [preferenceCenterId, !!autoLaunch], success, failure)
 }
 
 airship.preferenceCenter.onDisplay = function (callback) {

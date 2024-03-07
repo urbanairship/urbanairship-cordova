@@ -11,49 +11,19 @@
 
 ## Development
 
-The example is set up to reference the modules using a yarn workspace.
+Basic setup:
 
-1) Install yarn and watchman, if necessary
-
-```
-brew install yarn
-```
+1) Install everything
 
 ```
-brew install watchman
+npm run bootstrap
 ```
 
-2) Install modules
-
-Execute the following command in the root directory
+2) Create a sample app
 
 ```
-yarn install
+npm run create-sample
 ```
 
-3) Create a sample app
 
-Execute the following command in the root directory.
-That will create a sample in the parent directory with our cordova modules
-
-```
-yarn create-sample
-```
-
-4) Build and Run
-
-Execute the following commands in the root directory to build and run the sample app for a given OS
-
-```
-yarn build-ios
-yarn build-android
-```
-
-```
-yarn run-ios
-yarn run-android
-```
-
-## Android limitations
-
-- We need to stay compatible with Java 1.6. Try to not use `<>` and Strings in a switch statement.
+When working with the plugin, you most likely will use the sample app. After making the changes you need you will copy the files back to the plugin. 
