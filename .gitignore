@@ -12,3 +12,5 @@ scripts/update_cordova/node_modules/*
 config_sample.xml
 cordova-airship/docs
 google-services.json
+cordova-airship/node_modules/*
+cordova-airship-hms/node_modules/*

@@ -7,7 +7,7 @@
     ]
   },
   "scripts": {
-    "bootstrap": "npm ci && npm --prefix urbanairship-cordova ci && npm --prefix urbanairship-hms-cordova ci",
+    "bootstrap": "npm ci && npm --prefix urbanairship-cordova ci",
     "generate-docs": "npm run --prefix urbanairship-cordova generate-docs",
     "create-sample": "bash ./scripts/create_sample.sh ../cordova-sample"    
   }
