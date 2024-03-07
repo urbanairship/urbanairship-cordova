@@ -70,14 +70,6 @@ jobs:
           service_account_email: ${{ secrets.GCP_SA_EMAIL }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}          
 
-      - name: Docs
-        run: |
-          cd cordova-airship/
-          npm ci
-          npm run generate-docs
-          cd -
-          bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} ./cordova-airship/docs
-
       - name: Publish modules
         run: |
           cd cordova-airship/
@@ -88,6 +80,16 @@ jobs:
           cd -
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+      - name: Docs
+        run: |
+          cd cordova-airship/
+          npm ci
+          npm run generate-docs
+          cd -
+          bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} ./cordova-airship/docs
+
+
       - name: Github Release
         id: create_release
         uses: softprops/action-gh-release@v1
@@ -99,12 +101,14 @@ jobs:
           body: ${{ steps.get_release_notes.outputs.NOTES }}
           draft: false
           prerelease: false
+
       - name: Slack Notification
         uses: lazy-actions/slatify@master
         with:
           type: ${{ job.status }}
           job_name: "Airship Cordova Plugin Released!"
           url: ${{ secrets.SLACK_WEBHOOK }}
+
       - name: Slack Notification
         uses: lazy-actions/slatify@master
         if: failure()
