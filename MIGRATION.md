@@ -32,8 +32,8 @@ The npm packages are now published under new names:
 
 | 14.x                           | 15.x                    | Notes                                                                                            |
 |--------------------------------|-------------------------|--------------------------------------------------------------------------------------------------|
-| urbanairship-cordova           | @ua/cordova-airship     | The plugin id is `cordova-airship`.                                                              |
-| urbanairship-cordova-hms       | @ua/cordova-airhsip-hms | The plugin id is `cordova-airship-hms`.                                                          |
+| urbanairship-cordova           | @ua/cordova-airship     | The plugin id is `@ua/cordova-airship`.                                                              |
+| urbanairship-cordova-hms       | @ua/cordova-airship-hms | The plugin id is `@ua/cordova-airship-hms`.                                                          |
 | urbanairship-accengage-cordova | removed                 | Package is no longer needed. It was only needed during the transition from Accengage to Airship. |
 
 

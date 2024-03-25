@@ -18,6 +18,6 @@ fi
 
 sed -i '' "s/var version = \"[-0-9.a-zA-Z]*\"/var version = \"$VERSION\"/" $ANDROID_VERISON_PATH
 sed -i '' "s/static let version = \"[-0-9.a-zA-Z]*\"/static let version = \"$VERSION\"/" $IOS_VERISON_PATH
-sed -i '' '/<dependency id="cordova-airship" version="[^"]*"\/>/s/version="[^"]*"/version="'$VERSION'"/' $HMS_PLUGIN_XML_PATH
+sed -i '' '/<dependency id="@ua/cordova-airship" version="[^"]*"\/>/s/version="[^"]*"/version="'$VERSION'"/' $HMS_PLUGIN_XML_PATH
 npm --prefix $CORE_PACKAGE_PATH version $VERSION
 npm --prefix $HMS_PACKAGE_PATH version $VERSION

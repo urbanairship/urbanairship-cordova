@@ -3,7 +3,7 @@
   "version": "15.0.0",
   "description": "Airship HMS Cordova plugin",
   "cordova": {
-    "id": "cordova-airship-hms",
+    "id": "@ua/cordova-airship-hms",
     "platforms": [
       "android"
     ]

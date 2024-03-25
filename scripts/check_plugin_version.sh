@@ -21,7 +21,7 @@ echo "android: $androidVersion"
 iosVersion=$(grep "static let version" $IOS_VERISON_PATH | awk -F'"' '{print $2}')
 echo "ios: $iosVersion"
 
-hmsDependencyVersion=$(grep '<dependency id="cordova-airship"' $HMS_PLUGIN_XML_PATH | awk -F 'version="' '{print $2}' | awk -F '"' '{print $1}')
+hmsDependencyVersion=$(grep '<dependency id="@ua/cordova-airship"' $HMS_PLUGIN_XML_PATH | awk -F 'version="' '{print $2}' | awk -F '"' '{print $1}')
 echo "hms core dependency: $hmsDependencyVersion"
 
 if [ "$coreVersion" = "$hmsVersion" ] && [ "$coreVersion" = "$androidVersion" ] && [ "$coreVersion" = "$iosVersion" ] && [ "$coreVersion" = "$hmsDependencyVersion" ]; then
