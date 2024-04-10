@@ -254,10 +254,6 @@ airship.channel.getTags = function (success, failure) {
     perform("channel#getTags", null, success, failure)
 }
 
-airship.channel.setTags = function (tags, success, failure) {
-    argscheck.checkArgs('aFF', 'Airship.channel.setTags', arguments)
-    perform("channel#setTags", tags, success, failure)
-}
 
 airship.channel.editTags = function () {
     return new TagEditor('Airship.channel.editTags', 'channel#editTags')
@@ -280,20 +276,20 @@ airship.channel.onChannelCreated = function (callback) {
     return registerListener("airship.event.channel_created", callback)
 }
 
-airship.channel.enableChannelCreation = function () {
+airship.channel.enableChannelCreation = function (success, failure) {
     argscheck.checkArgs('FF', 'Airship.channel.enableChannelCreation', arguments)
     perform("channel#enableChannelCreation", null, success, failure)
 }
 
 // Contact
 
-airship.contact.getNamedUser = function (success, failure) {
-    argscheck.checkArgs('fF', 'Airship.contact.getNamedUser', arguments)
-    perform("contact#getNamedUser", null, success, failure)
+airship.contact.getNamedUserId = function (success, failure) {
+    argscheck.checkArgs('fF', 'Airship.contact.getNamedUserId', arguments)
+    perform("contact#getNamedUserId", null, success, failure)
 }
 
 airship.contact.identify = function (namedUserId, success, failure) {
-    argscheck.checkArgs('SFF', 'Airship.contact.getNamedUser', arguments)
+    argscheck.checkArgs('SFF', 'Airship.contact.identify', arguments)
     perform("contact#identify", namedUserId, success, failure)
 }
 
@@ -386,6 +382,11 @@ airship.push.onNotificationResponse = function (callback) {
     return registerListener("airship.event.notification_response", callback)
 }
 
+airship.push.onNotificationReceived = function (callback) {
+    argscheck.checkArgs('F', 'Airship.push.onNotificationReceived', arguments)
+    // return registerListener("airship.event.<TODO>>", callback)
+}
+
 // Push Android
 
 airship.push.android.setForegroundNotificationsEnabled = function (enabled, success, failure) {
@@ -471,7 +472,7 @@ airship.push.ios.getAuthorizedNotificationStatus = function (success, failure) {
 }
 
 airship.push.ios.resetBadge = function (success, failure) {
-    argscheck.checkArgs('*FF', 'Airship.push.resetBadge', arguments)
+    argscheck.checkArgs('*FF', 'Airship.push.ios.resetBadge', arguments)
     perform("push#ios#resetBadge", null, success, failure)
 }
 

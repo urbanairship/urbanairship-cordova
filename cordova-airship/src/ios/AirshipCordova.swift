@@ -322,7 +322,7 @@ public final class AirshipCordova: CDVPlugin {
         case "push#ios#isAutobadgeEnabled":
             return try AirshipProxy.shared.push.isAutobadgeEnabled()
 
-        case "push#ios#resetBadgeNumber":
+        case "push#ios#resetBadge":
             try AirshipProxy.shared.push.setBadgeNumber(0)
             return nil
 
