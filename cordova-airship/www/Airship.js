@@ -382,11 +382,6 @@ airship.push.onNotificationResponse = function (callback) {
     return registerListener("airship.event.notification_response", callback)
 }
 
-airship.push.onNotificationReceived = function (callback) {
-    argscheck.checkArgs('F', 'Airship.push.onNotificationReceived', arguments)
-    // return registerListener("airship.event.<TODO>>", callback)
-}
-
 // Push Android
 
 airship.push.android.setForegroundNotificationsEnabled = function (enabled, success, failure) {

@@ -142,7 +142,7 @@ Events are no longer sent as document events. Events are also now queued up unti
 | document.addEventListener("urbanairship.registration", callback)               | Airship.channel.onChannelCreated(callback)    | For channel ID. Use `event.channelId`           |
 | document.addEventListener("urbanairship.registration", callback)               | Airship.push.onPushTokenReceived(callback)    | For push token.  Use `event.pushToken`          |
 | document.addEventListener("urbanairship.push", callback)                       | Airship.push.onPushReceived(callback)         | The event has changed, see below for more info. |
-| document.addEventListener("urbanairship.notification_opened", callback)        | Airship.push.onNotificationReceived(callback) | The event has changed, see below for more info. |
+| document.addEventListener("urbanairship.notification_opened", callback)        | Airship.push.onNotificationResponse(callback) | The event has changed, see below for more info. |
 | document.addEventListener("urbanairship.notification_opt_in_status", callback) | Airship.onNotificationStatusChanged(callback) | The event has changed, see below for more info. |
 | document.addEventListener("urbanairship.inbox_updated", callback)              | Airship.messageCenter.onUpdated(callback)     |                                                 |
 | document.addEventListener("urbanairship.show_inbox", callback)                 | Airship.messageCenter.onDisplay(callback)     |                                                 |
