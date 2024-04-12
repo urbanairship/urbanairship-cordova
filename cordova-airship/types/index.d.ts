@@ -1765,7 +1765,7 @@ export interface AirshipChannel {
      * @param error Error callback.
      */
     enableChannelCreation(
-        success?: (result: JsonValue) => void,
+        success?: () => void,
         error?: (err: string) => void
     ): void
 
