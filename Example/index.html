@@ -15,6 +15,13 @@
 
 
       var onDeviceReady = function() {
+        // Workaround: console log for ios
+        if (device.platform === 'iOS') {
+          var i = document.createElement('iframe');
+          i.style.display = 'none';
+          document.body.appendChild(i);
+          window.console = i.contentWindow.console;
+        }
         console.log("Device ready!")
 
 
@@ -101,6 +108,9 @@
           })
 
           Airship.push.ios.getQuietTime(function(obj) {
+            if(obj === null){
+              return;
+            }
             $("#startHour").val(obj.startHour)
             $("#startMinute").val(obj.startMinute)
             $("#endHour").val(obj.endHour)
