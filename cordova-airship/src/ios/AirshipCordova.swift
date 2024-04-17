@@ -230,7 +230,6 @@ public final class AirshipCordova: CDVPlugin {
 
         case "channel#enableChannelCreation": 
             return try AirshipProxy.shared.channel.enableChannelCreation()
-            return nil
 
         // Contact
         case "contact#editTagGroups":
