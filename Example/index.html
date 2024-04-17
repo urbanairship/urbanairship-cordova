@@ -15,9 +15,16 @@
 
 
       var onDeviceReady = function() {
+        // Workaround: console log for ios
+        if (device.platform === 'iOS') {
+          var i = document.createElement('iframe');
+          i.style.display = 'none';
+          document.body.appendChild(i);
+          window.console = i.contentWindow.console;
+        }
         console.log("Device ready!")
 
- 
+
 
         Airship.onDeepLink(function(event) {
           console.log("onDeepLink: " + JSON.stringify(event))
@@ -75,7 +82,7 @@
             Airship.channel.getTags(function(tags) {
               console.log("Removing tag: " + tag)
               tags.splice(tags.indexOf(tag), 1)
-              Airship.channel.setTags(tags)
+              Airship.channel.editTags().removeTags([tag]).apply(console.log, console.error)
             })
           })
         }
@@ -98,9 +105,12 @@
           $('#quietTimeEnabled').change(function() {
             var isEnabled = ($('#pushEnabled').val() == "on")
             Airship.push.ios.setQuietTimeEnabled(isEnabled)
-          }
+          })
 
           Airship.push.ios.getQuietTime(function(obj) {
+            if(obj === null){
+              return;
+            }
             $("#startHour").val(obj.startHour)
             $("#startMinute").val(obj.startMinute)
             $("#endHour").val(obj.endHour)
@@ -137,7 +147,7 @@
           }
         })
 
-        Airship.contact.getNamedUser(function(namedUser) {
+        Airship.contact.getNamedUserId(function(namedUser) {
           if(namedUser) {
             console.log("Got namedUser: " + namedUser)
             setNamedUser(namedUser)
@@ -150,7 +160,7 @@
           })
         })
 
-       
+
 
         // Set up change callbacks for the UI elements
         $('#pushEnabled').change(function() {
@@ -191,11 +201,10 @@
             if(tags.indexOf(tag) == -1) {
               console.log("Valid tag: " + tag)
               tags = tags.concat([tag])
-
-              Airship.channel.setTags(tags, function() {
+              Airship.channel.editTags().addTags(tags).apply(function (result){
                 addTag(tag)
                 $("#addTagField").val('')
-              })
+              }, console.error)
             }
           })
         })

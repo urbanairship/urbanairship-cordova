@@ -540,6 +540,7 @@ export namespace Android {
  * Enum of authorized Features.
  */
 export enum Feature {
+    All = 'all',
     InAppAutomation = 'in_app_automation',
     MessageCenter = 'message_center',
     Push = 'push',
@@ -551,7 +552,8 @@ export enum Feature {
 /**
  * All available features.
  */
-export const FEATURES_ALL = Object.values(Feature);
+// Error: TS1254: A const initializer in an ambient context must be a string or numeric literal or literal enum reference.
+// export const FEATURES_ALL = Object.values(Feature);
 
 /**
  * Custom event
@@ -956,7 +958,7 @@ export interface AirshipPush {
     /**
      * iOS only push methods.
      */
-    readonly iOS: AirshipPushIOS;
+    readonly ios: AirshipPushIOS;
 
 
     /**
@@ -1175,6 +1177,16 @@ export interface AirshipPushIOS {
     ): void
 
     /**
+     * Reset the badge number.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    resetBadge(
+        success?: (result) => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
      * Gets the list of authorized notification settings.
      * @param success Success callback.
      * @param error Error callback.
@@ -1224,7 +1236,7 @@ export interface AirshipPushIOS {
      * @param success Success callback.
      * @param error Error callback.
      */
-    setQuietTimeEnabled(
+    setQuietTime(
         quietTime: iOS.QuietTime,
         success?: () => void,
         error?: (err: string) => void
