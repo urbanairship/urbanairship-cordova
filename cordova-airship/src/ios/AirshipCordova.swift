@@ -4,7 +4,7 @@ import Foundation
 import AirshipKit
 import AirshipFrameworkProxy
 
-@objc
+@objc(AirshipCordova)
 public final class AirshipCordova: CDVPlugin {
 
     struct Listener {
