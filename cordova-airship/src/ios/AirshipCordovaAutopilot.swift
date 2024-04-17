@@ -50,7 +50,10 @@ extension AirshipCordovaAutopilot: AirshipProxyDelegate {
         )
 
         if settings?.clearBadgeOnLaunch == true {
-            Airship.push.resetBadge()
+            Task {
+                try? await Airship.push.resetBadge()
+            }
+
         }
 
         if settings?.enablePushOnLaunch == true {
