@@ -7,7 +7,7 @@ Minor release with several bug fixes.
 - Updated Airship Android SDK to 17.8.0
 - Updated Airship iOS SDK to 18.1.0
 - Fixed `Airship.push.ios.resetBadge` method binding
-- Fixed 'Airship.contact.getNamedUserId` method binding
+- Fixed `Airship.contact.getNamedUserId` method binding
 - Fixed plugin not found issue if the app contains a space in the name
 
 
