@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin id="@ua/cordova-airship"
-        version="15.0.0"
+        version="15.1.0"
         xmlns="http://apache.org/cordova/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
@@ -95,7 +95,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
-            <string>15.0.0</string>
+            <string>15.1.0</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
@@ -133,7 +133,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="AirshipFrameworkProxy" spec="5.3.0" />
+                <pod name="AirshipFrameworkProxy" spec="6.0.0" />
             </pods>
         </podspec>
     </platform>

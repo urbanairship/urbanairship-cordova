@@ -1,5 +1,16 @@
 # Cordova Plugin Changelog
 
+## Version 15.1.0 April 18, 2024
+Minor release with several bug fixes.
+
+### Changes
+- Updated Airship Android SDK to 17.8.0
+- Updated Airship iOS SDK to 18.1.0
+- Fixed `Airship.push.ios.resetBadge` method binding
+- Fixed `Airship.contact.getNamedUserId` method binding
+- Fixed plugin not found issue if the app contains a space in the name
+
+
 ## Version 15.0.0  March 6, 2024
 Major release with several breaking changes. Apps should use the migration guide to update [Migration Guide](https://github.com/urbanairship/urbanairship-cordova/blob/main/MIGRATION.md)
 

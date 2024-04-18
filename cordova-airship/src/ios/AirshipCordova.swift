@@ -4,7 +4,7 @@ import Foundation
 import AirshipKit
 import AirshipFrameworkProxy
 
-@objc
+@objc(AirshipCordova)
 public final class AirshipCordova: CDVPlugin {
 
     struct Listener {
@@ -230,7 +230,6 @@ public final class AirshipCordova: CDVPlugin {
 
         case "channel#enableChannelCreation": 
             return try AirshipProxy.shared.channel.enableChannelCreation()
-            return nil
 
         // Contact
         case "contact#editTagGroups":
@@ -308,7 +307,7 @@ public final class AirshipCordova: CDVPlugin {
             return try AirshipProxy.shared.push.getBadgeNumber()
 
         case "push#ios#setBadgeNumber":
-            try AirshipProxy.shared.push.setBadgeNumber(
+            try await AirshipProxy.shared.push.setBadgeNumber(
                 try command.requireIntArg()
             )
             return nil
@@ -323,7 +322,7 @@ public final class AirshipCordova: CDVPlugin {
             return try AirshipProxy.shared.push.isAutobadgeEnabled()
 
         case "push#ios#resetBadge":
-            try AirshipProxy.shared.push.setBadgeNumber(0)
+            try await AirshipProxy.shared.push.setBadgeNumber(0)
             return nil
 
         case "push#ios#setNotificationOptions":
@@ -354,8 +353,14 @@ public final class AirshipCordova: CDVPlugin {
             return try AirshipProxy.shared.push.isQuietTimeEnabled()
 
         case "push#ios#setQuietTime":
+            let proxySettings: CodableQuietTimeSettings = try command.requireCodableArg()
             try AirshipProxy.shared.push.setQuietTime(
-                try command.requireCodableArg()
+                QuietTimeSettings(
+                    startHour: proxySettings.startHour,
+                    startMinute: proxySettings.startMinute,
+                    endHour: proxySettings.endHour,
+                    endMinute: proxySettings.endMinute
+                )
             )
             return nil
 
@@ -702,4 +707,11 @@ extension AirshipProxyEventEmitter {
             return true
         }
     }
+}
+
+public struct CodableQuietTimeSettings: Codable {
+    let startHour: UInt
+    let startMinute: UInt
+    let endHour: UInt
+    let endMinute: UInt
 }

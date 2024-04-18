@@ -1,5 +1,5 @@
 dependencies {
-    api "com.urbanairship.android:airship-framework-proxy:5.3.0"
+    api "com.urbanairship.android:airship-framework-proxy:6.0.0"
 }
 
 cdvPluginPostBuildExtras.push({
