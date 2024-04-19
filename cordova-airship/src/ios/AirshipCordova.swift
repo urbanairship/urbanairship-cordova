@@ -353,14 +353,8 @@ public final class AirshipCordova: CDVPlugin {
             return try AirshipProxy.shared.push.isQuietTimeEnabled()
 
         case "push#ios#setQuietTime":
-            let proxySettings: CodableQuietTimeSettings = try command.requireCodableArg()
             try AirshipProxy.shared.push.setQuietTime(
-                QuietTimeSettings(
-                    startHour: proxySettings.startHour,
-                    startMinute: proxySettings.startMinute,
-                    endHour: proxySettings.endHour,
-                    endMinute: proxySettings.endMinute
-                )
+                try command.requireCodableArg()
             )
             return nil
 
@@ -595,7 +589,6 @@ extension CDVInvokedUrlCommand {
         return try args.map { try parse($0) }
     }
 
-
     func requireStringArrayArg() throws -> [String] {
         guard
             self.arguments.count >= 2,
@@ -629,7 +622,6 @@ extension CDVInvokedUrlCommand {
     }
 
     func requireStringArg() throws -> String {
-        
         guard
             self.arguments.count >= 2,
             let args = self.arguments[1] as? String
@@ -661,7 +653,6 @@ extension CDVInvokedUrlCommand {
     func requireDoubleArg() throws -> Double {
         let value = try requireAnyArg()
 
-
         if let double = value as? Double {
             return double
         }
@@ -673,7 +664,6 @@ extension CDVInvokedUrlCommand {
         if let number = value as? NSNumber {
             return number.doubleValue
         }
-
 
         throw AirshipErrors.error("Argument must be a double")
     }
@@ -707,11 +697,4 @@ extension AirshipProxyEventEmitter {
             return true
         }
     }
-}
-
-public struct CodableQuietTimeSettings: Codable {
-    let startHour: UInt
-    let startMinute: UInt
-    let endHour: UInt
-    let endMinute: UInt
 }
