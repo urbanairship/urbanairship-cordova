@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 15.2.0 April 22, 2024
+Minor release with several bug fixes.
+
+### Changes
+- Added `isForeground` to push received events to indicate the application state when the push was received.
+- Fixed cordova-airship-hms plugin ID mismatch.
+- Fixed Android background push received and background notification response events.
+- Fixed null result handling on Android to be null instead of the OK status.
+
 ## Version 15.1.0 April 18, 2024
 Minor release with several bug fixes.
 
