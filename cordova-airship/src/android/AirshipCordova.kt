@@ -2,13 +2,16 @@
 
 package com.urbanairship.cordova
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import com.urbanairship.Autopilot
 import com.urbanairship.PendingResult
 import com.urbanairship.UALog
 import com.urbanairship.actions.ActionResult
 import com.urbanairship.android.framework.proxy.EventType
+import com.urbanairship.android.framework.proxy.Utils
 import com.urbanairship.android.framework.proxy.events.EventEmitter
 import com.urbanairship.android.framework.proxy.proxies.AirshipProxy
 import com.urbanairship.android.framework.proxy.proxies.FeatureFlagProxy
@@ -16,6 +19,10 @@ import com.urbanairship.json.JsonList
 import com.urbanairship.json.JsonMap
 import com.urbanairship.json.JsonSerializable
 import com.urbanairship.json.JsonValue
+import com.urbanairship.json.jsonMapOf
+import com.urbanairship.push.NotificationInfo
+import com.urbanairship.push.PushManager
+import com.urbanairship.push.PushMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,6 +44,7 @@ class AirshipCordova : CordovaPlugin() {
     )
 
     private var listeners: MutableMap<EventType, MutableList<Listener>> = mutableMapOf()
+    private val notificationStack: MutableMap<EventType, MutableList<NotificationInfo>> = mutableMapOf()
 
     companion object {
         private val EVENT_NAME_MAP = mapOf(
@@ -87,6 +95,33 @@ class AirshipCordova : CordovaPlugin() {
                 notifyPendingEvents()
             }
         }
+
+        cordova.getThreadPool().execute {
+            try {
+                notifyListeners(
+                    EventType.BACKGROUND_NOTIFICATION_RESPONSE_RECEIVED,
+                    cordova.getActivity().intent
+                )
+            } catch (e: java.lang.Exception) {
+                val msg = e.toString()
+                UALog.e { msg }
+            }
+        }
+
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        try {
+            super.onNewIntent(intent)
+            notifyListeners(
+                EventType.BACKGROUND_NOTIFICATION_RESPONSE_RECEIVED,
+                intent!!
+            )
+        } catch (e: java.lang.Exception) {
+            val msg = e.toString()
+            UALog.e { msg }
+
+        }
     }
 
     override fun onReset() {
@@ -97,6 +132,34 @@ class AirshipCordova : CordovaPlugin() {
     override fun onDestroy() {
         super.onDestroy()
         this.listeners.clear()
+        this.notificationStack.clear()
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun notifyListeners(eventType: EventType, intent: Intent) {
+        val data = intent.extras
+        if (data != null && data.containsKey(PushManager.EXTRA_PUSH_MESSAGE_BUNDLE)) {
+            val dataString = data.toString();
+            UALog.i { "Notification message on new intent: $dataString" }
+            val message = PushMessage.fromIntent(intent) ?: return
+            val id: Int = intent.getIntExtra(PushManager.EXTRA_NOTIFICATION_ID, -1)
+            val tag: String? = intent.getStringExtra(PushManager.EXTRA_NOTIFICATION_TAG)
+            val notificationInfo = NotificationInfo(message, id, tag)
+            val listeners = this.listeners[eventType];
+            val pluginResult = jsonMapOf(
+                "pushPayload" to Utils.notificationMap(
+                    notificationInfo.message,
+                ),
+            ).pluginResult()
+            if (listeners?.isNotEmpty() == true) {
+                listeners.forEach { listener ->
+                    pluginResult.keepCallback = true
+                    listener.callbackContext.sendPluginResult(pluginResult)
+                }
+            } else {
+                this.notificationStack.getOrPut(eventType) { mutableListOf() }.add(notificationInfo)
+            }
+        }
     }
 
     private fun addListener(args: JSONArray, callbackContext: CallbackContext) {
@@ -117,6 +180,18 @@ class AirshipCordova : CordovaPlugin() {
         )
 
         this.listeners.getOrPut(event) { mutableListOf() }.add(listener)
+
+        this.notificationStack[event]?.forEach { notificationInfo ->
+            val pluginResult = jsonMapOf(
+                "pushPayload" to Utils.notificationMap(
+                    notificationInfo.message,
+                ),
+            ).pluginResult()
+            pluginResult.keepCallback = true
+            listener.callbackContext.sendPluginResult(pluginResult)
+            this.notificationStack[event]?.remove(notificationInfo)
+        }
+
         notifyPendingEvents()
     }
 
