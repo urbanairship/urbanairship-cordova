@@ -382,7 +382,7 @@ internal fun JsonSerializable.pluginResult(): PluginResult {
     val json = this.toJsonValue()
 
     return when {
-        json.isNull -> PluginResult(PluginResult.Status.OK)
+        json.isNull -> PluginResult(PluginResult.Status.OK,  null as String?)
         json.isString -> PluginResult(PluginResult.Status.OK, json.requireString())
         json.isBoolean -> PluginResult(PluginResult.Status.OK, json.requireBoolean())
         json.isInteger -> PluginResult(PluginResult.Status.OK, json.getInt(0))
