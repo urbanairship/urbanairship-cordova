@@ -377,6 +377,11 @@ airship.push.onPushReceived = function (callback) {
     return registerListener("airship.event.push_received", callback)
 }
 
+airship.push.onBackgroundPushReceived = function (callback) {
+    argscheck.checkArgs('F', 'Airship.push.onBackgroundPushReceived', arguments)
+    return registerListener("airship.event.background_push_received", callback)
+}
+
 airship.push.onNotificationResponse = function (callback) {
     argscheck.checkArgs('F', 'Airship.push.onNotificationResponse', arguments)
     return registerListener("airship.event.notification_response", callback)

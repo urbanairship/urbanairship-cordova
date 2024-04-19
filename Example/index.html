@@ -34,6 +34,10 @@
           console.log("onPushReceived: " + JSON.stringify(event))
         })
 
+        Airship.push.onBackgroundPushReceived(function(event) {
+          console.log("onBackgroundPushReceived: " + JSON.stringify(event))
+        })
+
         Airship.push.onNotificationResponse(function(event) {
           console.log("onNotificationResponse: " + JSON.stringify(event))
         })

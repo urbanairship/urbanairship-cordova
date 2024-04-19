@@ -1083,6 +1083,16 @@ export interface AirshipPush {
     ): Cancellable
 
     /**
+     * Background push received listener.
+     *
+     * @param callback The callback.
+     * @return A cancellable that can be used to cancel the listener.
+     */
+    onBackgroundPushReceived(
+        callback: (event: PushReceivedEvent) => void
+    ): Cancellable
+
+    /**
      * Notification response listener.
      *
      * @param callback The callback.
