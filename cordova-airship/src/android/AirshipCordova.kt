@@ -36,7 +36,7 @@ class AirshipCordova : CordovaPlugin() {
         val callbackContext: CallbackContext
     )
 
-    private var listeners: MutableMap<EventType, MutableList<Listener>> = mutableMapOf()
+    private var listeners: MutableMap<String, MutableList<Listener>> = mutableMapOf()
 
     companion object {
         private val EVENT_NAME_MAP = mapOf(
@@ -49,7 +49,7 @@ class AirshipCordova : CordovaPlugin() {
             EventType.MESSAGE_CENTER_UPDATED to "airship.event.message_center_updated",
             EventType.PUSH_TOKEN_RECEIVED to "airship.event.push_token_received",
             EventType.FOREGROUND_PUSH_RECEIVED to "airship.event.push_received",
-            EventType.BACKGROUND_PUSH_RECEIVED to "airship.event.background_push_received",
+            EventType.BACKGROUND_PUSH_RECEIVED to "airship.event.push_received",
             EventType.NOTIFICATION_STATUS_CHANGED to "airship.event.notification_status_changed"
         )
     }
@@ -103,20 +103,13 @@ class AirshipCordova : CordovaPlugin() {
         val jsonArgs = JsonValue.wrap(args).requireList()
 
         val eventName = jsonArgs.get(0).requireString()
-        val event: EventType = EVENT_NAME_MAP.firstNotNullOf {
-            if (it.value == eventName) {
-                it.key
-            } else {
-                null
-            }
-        }
 
         val listener = Listener(
             listenerId = jsonArgs.get(1).requireInt(),
             callbackContext = callbackContext
         )
 
-        this.listeners.getOrPut(event) { mutableListOf() }.add(listener)
+        this.listeners.getOrPut(eventName) { mutableListOf() }.add(listener)
         notifyPendingEvents()
     }
 
@@ -124,23 +117,16 @@ class AirshipCordova : CordovaPlugin() {
         val jsonArgs = JsonValue.wrap(args).requireList()
 
         val eventName = jsonArgs.get(0).requireString()
-        val event: EventType = EVENT_NAME_MAP.firstNotNullOf {
-            if (it.value == eventName) {
-                it.key
-            } else {
-                null
-            }
-        }
 
         val listenerId = jsonArgs.get(1).requireInt()
-        this.listeners[event]?.removeAll {
+        this.listeners[eventName]?.removeAll {
             it.listenerId == listenerId
         }
     }
 
     private fun notifyPendingEvents() {
         EventType.values().forEach { eventType ->
-            val listeners = this.listeners[eventType]
+            val listeners = this.listeners[EVENT_NAME_MAP[eventType]]
             if (listeners?.isNotEmpty() == true) {
                 EventEmitter.shared().processPending(listOf(eventType)) { event ->
                     listeners.forEach { listeners ->
@@ -396,7 +382,7 @@ internal fun JsonSerializable.pluginResult(): PluginResult {
     val json = this.toJsonValue()
 
     return when {
-        json.isNull -> PluginResult(PluginResult.Status.OK)
+        json.isNull -> PluginResult(PluginResult.Status.OK,  null as String?)
         json.isString -> PluginResult(PluginResult.Status.OK, json.requireString())
         json.isBoolean -> PluginResult(PluginResult.Status.OK, json.requireBoolean())
         json.isInteger -> PluginResult(PluginResult.Status.OK, json.getInt(0))
