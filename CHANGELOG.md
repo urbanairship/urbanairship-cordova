@@ -1,5 +1,11 @@
 # Cordova Plugin Changelog
 
+## Version 15.2.1 April 30, 2024
+Patch release that updates the iOS SDK to 18.1.2
+
+### Changes
+- Updated iOS SDK to 18.1.2.
+
 ## Version 15.2.0 April 23, 2024
 Minor release with several bug fixes.
 
