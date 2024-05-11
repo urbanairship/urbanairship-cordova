@@ -205,7 +205,7 @@ class AirshipCordova : CordovaPlugin() {
             "inApp#getDisplayInterval" -> callback.resolveResult(method) { proxy.inApp.getDisplayInterval() }
 
             // Analytics
-            "analytics#trackScreen" -> callback.resolveResult(method) { proxy.analytics.trackScreen(arg.optString()) }
+            "analytics#trackScreen" -> callback.resolveResult(method) { proxy.analytics.trackScreen(arg.string) }
             "analytics#addCustomEvent" -> callback.resolveResult(method) { proxy.analytics.addEvent(arg) }
             "analytics#associateIdentifier" -> {
                 val associatedIdentifierArgs = arg.requireStringList()
@@ -220,7 +220,7 @@ class AirshipCordova : CordovaPlugin() {
                 JsonValue.wrapOpt(proxy.messageCenter.getMessages())
             }
             "messageCenter#dismiss" -> callback.resolveResult(method) { proxy.messageCenter.dismiss() }
-            "messageCenter#display" -> callback.resolveResult(method) { proxy.messageCenter.display(arg.optString()) }
+            "messageCenter#display" -> callback.resolveResult(method) { proxy.messageCenter.display(arg.string) }
             "messageCenter#showMessageView" -> callback.resolveResult(method) { proxy.messageCenter.showMessageView(arg.requireString()) }
             "messageCenter#markMessageRead" -> callback.resolveResult(method) { proxy.messageCenter.markMessageRead(arg.requireString()) }
             "messageCenter#deleteMessage" -> callback.resolveResult(method) { proxy.messageCenter.deleteMessage(arg.requireString()) }
