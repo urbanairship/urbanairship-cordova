@@ -130,7 +130,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="AirshipFrameworkProxy" spec="6.1.2" />
+                <pod name="AirshipFrameworkProxy" spec="6.2.0" />
             </pods>
         </podspec>
     </platform>
