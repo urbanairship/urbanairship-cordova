@@ -43,6 +43,7 @@
   "license": "Apache 2.0",
   "homepage": "https://github.com/urbanairship/urbanairship-cordova.git",
   "devDependencies": {
+    "typescript": "~4.8.0",
     "typedoc": "0.23.24"
   },
   "scripts": {
