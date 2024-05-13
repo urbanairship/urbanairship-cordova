@@ -1,5 +1,13 @@
 # Cordova Plugin Changelog
 
+## Version 15.2.1 April 13, 2024
+Patch release that updates to latest Airship SDKs and fixes issues with methods that take an optional string parameter on Android.
+
+### Changes
+- Updated iOS SDK to 18.2.0
+- Updated iOS SDK to 17.8.1
+- Fixed `Airship.messageCenter.display(null)` and `Airship.analytics.trackScreen(null)` on Android
+
 ## Version 15.2.0 April 23, 2024
 Minor release with several bug fixes.
 
