@@ -1,5 +1,12 @@
 # Cordova Plugin Changelog
 
+## Version 15.2.3 June 20, 2024
+Patch release with several bug fixes.
+
+### Changes
+- Updated iOS SDK to 18.4.0.
+- Fixed compatibility with cordova-android@13.
+
 ## Version 15.2.2 May 16, 2024
 Patch release that updates to latest Airship SDKs.
 
