@@ -1,5 +1,12 @@
 # Cordova Plugin Changelog
 
+## Version 15.2.4 June 21, 2024
+Patch release to fix a regression on iOS with In-App Automations, Scenes, and Surveys ignoring screen, version, and custom event triggers. Apps using those triggers that are on 15.2.3 should update.
+
+### Changes
+- Updated iOS SDK to 18.4.1
+- Fixed regression with triggers
+
 ## Version 15.2.3 June 20, 2024
 Patch release with several bug fixes.
 
