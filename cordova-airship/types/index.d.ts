@@ -368,6 +368,18 @@ export interface ConfigEnvironment {
      * Optional log level.
      */
     logLevel?: LogLevel;
+
+    /**
+     * Optional iOS config
+     */
+    ios?: {
+        /**
+         * Log privacy level. By default it logs at `private`, not logging anything lower than info to the console
+         * and redacting logs with string interpolation. `public` will log all configured log levels to the console
+         * without redacting any of the log lines.
+         */
+        logPrivacyLevel?: "private" | "public"
+    }
 }
 
 /**

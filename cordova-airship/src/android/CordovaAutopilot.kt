@@ -9,7 +9,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.edit
 import com.urbanairship.AirshipConfigOptions
 import com.urbanairship.UAirship
-import com.urbanairship.analytics.Analytics
+import com.urbanairship.analytics.Extension
 import com.urbanairship.android.framework.proxy.BaseAutopilot
 import com.urbanairship.android.framework.proxy.ProxyStore
 
@@ -40,7 +40,7 @@ class CordovaAutopilot : BaseAutopilot() {
 
         Log.i("CordovaAutopilot", "onAirshipReady")
 
-        airship.analytics.registerSDKExtension(Analytics.EXTENSION_CORDOVA, AirshipCordovaVersion.version);
+        airship.analytics.registerSDKExtension(Extension.CORDOVA, AirshipCordovaVersion.version);
         val settings = settings(context)
         val preferences = preferences(context)
 

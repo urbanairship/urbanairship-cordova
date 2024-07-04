@@ -52,7 +52,8 @@ struct AirshipCordovaProxyDataMigrator {
             production = ProxyConfig.Environment(
                 logLevel: nil,
                 appKey: productionAppKey,
-                appSecret: productionAppSecret
+                appSecret: productionAppSecret,
+                ios: nil
             )
         }
 
@@ -61,7 +62,8 @@ struct AirshipCordovaProxyDataMigrator {
             development = ProxyConfig.Environment(
                 logLevel: nil,
                 appKey: developmentAppKey,
-                appSecret: developmentAppSecret
+                appSecret: developmentAppSecret,
+                ios: nil
             )
         }
 

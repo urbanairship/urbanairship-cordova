@@ -1,6 +1,6 @@
 {
   "name": "@ua/cordova-airship",
-  "version": "15.2.4",
+  "version": "16.0.0",
   "description": "Airship Cordova plugin",
   "cordova": {
     "id": "@ua/cordova-airship",
@@ -28,7 +28,7 @@
   "engines": [
     {
       "name": "cordova-android",
-      "version": ">=11.0.0"
+      "version": ">=13.0.0"
     },
     {
       "name": "cordova-ios",
