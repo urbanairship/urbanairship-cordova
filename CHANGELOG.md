@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 15.3.0 July 3, 2024
+## Version 16.0.0 July 3, 2024
 Minor release that updates dependencies and adds a new config option for logging on iOS.
 
 ### Changes
