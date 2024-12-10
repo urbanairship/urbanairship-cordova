@@ -75,8 +75,6 @@ else
     NEW_ENTRY+="$RELEASE_TYPE release."
 fi
 
-NEW_ENTRY+="\n"
-
 # Create temporary file with new content
 TEMP_FILE=$(mktemp)
 
