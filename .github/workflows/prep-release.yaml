@@ -1,0 +1,121 @@
+name: Prepare Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      cordova_version:
+        description: 'Cordova Version (x.y.z)'
+        required: true
+        pattern: '^\d+\.\d+\.\d+$'
+      proxy_version:
+        description: 'Airship Framework Proxy Version (x.y.z)'
+        required: true
+        pattern: '^\d+\.\d+\.\d+$'
+      ios_version:
+        description: 'iOS SDK Version (x.y.z)'
+        required: false
+        pattern: '^\d+\.\d+\.\d+$'
+      android_version:
+        description: 'Android SDK Version (x.y.z)'
+        required: false
+        pattern: '^\d+\.\d+\.\d+$'
+      draft:
+        description: 'Create as draft PR'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare-release:
+    runs-on: macos-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Updates
+        run: |
+          ./scripts/update_version.sh "${{ github.event.inputs.cordova_version }}" || exit 1
+          if [ -n "${{ github.event.inputs.proxy_version }}" ]; then
+            ./scripts/update_proxy_version.sh "${{ github.event.inputs.proxy_version }}" || exit 1
+          fi
+          ./scripts/update_changelog.sh "${{ github.event.inputs.cordova_version }}" \
+            $([ -n "${{ github.event.inputs.ios_version }}" ] && echo "--ios ${{ github.event.inputs.ios_version }}") \
+            $([ -n "${{ github.event.inputs.android_version }}" ] && echo "--android ${{ github.event.inputs.android_version }}") || exit 1
+
+      - name: Verify Changes
+        id: verify
+        run: |
+          CHANGED_FILES=$(git diff --name-only)
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No files were changed!"
+            exit 1
+          fi
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: |
+            Release ${{ github.event.inputs.cordova_version }}
+          title: "Release ${{ github.event.inputs.cordova_version }}"
+          body: |
+            - Framework Proxy: ${{ github.event.inputs.proxy_version }}
+            - iOS SDK: ${{ github.event.inputs.ios_version }}
+            - Android SDK: ${{ github.event.inputs.android_version }}
+
+            ## Changed Files:
+            ```
+            ${{ steps.verify.outputs.changed_files }}
+            ```
+          branch: cordova-${{ github.event.inputs.cordova_version }}
+          base: main
+          labels: |
+            release
+            automated pr
+          draft: ${{ github.event.inputs.draft }}
+          delete-branch: true
+
+      - name: Handle Success
+        if: success() && steps.create-pr.outputs.pull-request-number
+        run: |
+          echo "Pull request created successfully"
+          echo "PR Number: ${{ steps.create-pr.outputs.pull-request-number }}"
+          echo "PR URL: ${{ steps.create-pr.outputs.pull-request-url }}"
+
+      - name: Slack Notification (Success)
+        if: success() && steps.create-pr.outputs.pull-request-number
+        uses: homoluctus/slatify@master
+        with:
+          type: success
+          job_name: ":tada: Cordova plugin release pull request generated :tada:"
+          message: "@mobile-team A new Cordova plugin release pull request for (v${{ github.event.inputs.cordova_version }}) is ready! :rocket:"
+          url: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
+
+      - name: Handle Failure
+        if: failure()
+        run: |
+          echo "::error::Release preparation failed. Please check the logs above for details."
+          exit 1
+
+      - name: Slack Notification (Failure)
+        if: failure()
+        uses: homoluctus/slatify@master
+        with:
+          type: failure
+          job_name: ":disappointed: Cordova Plugin Release Failed :disappointed:"
+          message: "@crow The release preparation failed. Please check the workflow logs. :sob:"
+          url: ${{ secrets.MOBILE_SLACK_WEBHOOK }}
