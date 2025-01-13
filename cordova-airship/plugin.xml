@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin id="@ua/cordova-airship" version="16.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+<plugin id="@ua/cordova-airship" version="16.0.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     
     <name>Airship</name>
     <description>Airship Cordova plugin</description>
@@ -130,7 +130,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="AirshipFrameworkProxy" spec="7.0.0" />
+                <pod name="AirshipFrameworkProxy" spec="11.2.2" />
             </pods>
         </podspec>
     </platform>
