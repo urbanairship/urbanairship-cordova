@@ -5,7 +5,6 @@ package com.urbanairship.cordova
 import android.content.Context
 import android.os.Build
 import com.urbanairship.Autopilot
-import com.urbanairship.PendingResult
 import com.urbanairship.UALog
 import com.urbanairship.actions.ActionResult
 import com.urbanairship.android.framework.proxy.EventType
@@ -125,7 +124,7 @@ class AirshipCordova : CordovaPlugin() {
     }
 
     private fun notifyPendingEvents() {
-        EventType.values().forEach { eventType ->
+        EventType.entries.forEach { eventType ->
             val listeners = this.listeners[EVENT_NAME_MAP[eventType]]
             if (listeners?.isNotEmpty() == true) {
                 EventEmitter.shared().processPending(listOf(eventType)) { event ->
@@ -150,64 +149,64 @@ class AirshipCordova : CordovaPlugin() {
         scope.launch {
             when (method) {
                 // Airship
-                "takeOff" -> callback.resolveResult(method) { proxy.takeOff(arg) }
-                "isFlying" -> callback.resolveResult(method) { proxy.isFlying() }
+                "takeOff" -> callback.resolve(scope, method) { proxy.takeOff(arg) }
+                "isFlying" -> callback.resolve(scope, method) { proxy.isFlying() }
 
                 // Channel
-                "channel#getChannelId" -> callback.resolveResult(method) { proxy.channel.getChannelId() }
+                "channel#getChannelId" -> callback.resolve(scope, method) { proxy.channel.getChannelId() }
 
-                "channel#editTags" -> callback.resolveResult(method) { proxy.channel.editTags(arg) }
-                "channel#getTags" -> callback.resolveResult(method) { proxy.channel.getTags().toList() }
-                "channel#editTagGroups" -> callback.resolveResult(method) { proxy.channel.editTagGroups(arg) }
-                "channel#editSubscriptionLists" -> callback.resolveResult(method) { proxy.channel.editSubscriptionLists(arg) }
-                "channel#editAttributes" -> callback.resolveResult(method) { proxy.channel.editAttributes(arg) }
-                "channel#getSubscriptionLists" -> callback.resolvePending(method) { proxy.channel.getSubscriptionLists() }
-                "channel#enableChannelCreation" -> callback.resolveResult(method) { proxy.channel.enableChannelCreation() }
+                "channel#editTags" -> callback.resolve(scope, method) { proxy.channel.editTags(arg) }
+                "channel#getTags" -> callback.resolve(scope, method) { proxy.channel.getTags().toList() }
+                "channel#editTagGroups" -> callback.resolve(scope, method) { proxy.channel.editTagGroups(arg) }
+                "channel#editSubscriptionLists" -> callback.resolve(scope, method) { proxy.channel.editSubscriptionLists(arg) }
+                "channel#editAttributes" -> callback.resolve(scope, method) { proxy.channel.editAttributes(arg) }
+                "channel#getSubscriptionLists" -> callback.resolve(scope, method) { proxy.channel.getSubscriptionLists() }
+                "channel#enableChannelCreation" -> callback.resolve(scope, method) { proxy.channel.enableChannelCreation() }
 
                 // Contact
-                "contact#reset" -> callback.resolveResult(method) { proxy.contact.reset() }
-                "contact#notifyRemoteLogin" -> callback.resolveResult(method) { proxy.contact.notifyRemoteLogin() }
-                "contact#identify" -> callback.resolveResult(method) { proxy.contact.identify(arg.requireString()) }
-                "contact#getNamedUserId" -> callback.resolveResult(method) { proxy.contact.getNamedUserId() }
-                "contact#editTagGroups" -> callback.resolveResult(method) { proxy.contact.editTagGroups(arg) }
-                "contact#editSubscriptionLists" -> callback.resolveResult(method) { proxy.contact.editSubscriptionLists(arg) }
-                "contact#editAttributes" -> callback.resolveResult(method) { proxy.contact.editAttributes(arg) }
-                "contact#getSubscriptionLists" -> callback.resolvePending(method) { proxy.contact.getSubscriptionLists() }
+                "contact#reset" -> callback.resolve(scope, method) { proxy.contact.reset() }
+                "contact#notifyRemoteLogin" -> callback.resolve(scope, method) { proxy.contact.notifyRemoteLogin() }
+                "contact#identify" -> callback.resolve(scope, method) { proxy.contact.identify(arg.requireString()) }
+                "contact#getNamedUserId" -> callback.resolve(scope, method) { proxy.contact.getNamedUserId() }
+                "contact#editTagGroups" -> callback.resolve(scope, method) { proxy.contact.editTagGroups(arg) }
+                "contact#editSubscriptionLists" -> callback.resolve(scope, method) { proxy.contact.editSubscriptionLists(arg) }
+                "contact#editAttributes" -> callback.resolve(scope, method) { proxy.contact.editAttributes(arg) }
+                "contact#getSubscriptionLists" -> callback.resolve(scope, method) { proxy.contact.getSubscriptionLists() }
 
                 // Push
-                "push#setUserNotificationsEnabled" -> callback.resolveResult(method) { proxy.push.setUserNotificationsEnabled(arg.requireBoolean()) }
-                "push#enableUserNotifications" -> callback.resolvePending(method) { proxy.push.enableUserPushNotifications() }
-                "push#isUserNotificationsEnabled" -> callback.resolveResult(method) { proxy.push.isUserNotificationsEnabled() }
-                "push#getNotificationStatus" -> callback.resolveResult(method) { proxy.push.getNotificationStatus() }
-                "push#getActiveNotifications" -> callback.resolveResult(method) { proxy.push.getActiveNotifications() }
-                "push#clearNotification" -> callback.resolveResult(method) { proxy.push.clearNotification(arg.requireString()) }
-                "push#clearNotifications" -> callback.resolveResult(method) { proxy.push.clearNotifications() }
-                "push#getPushToken" -> callback.resolveResult(method) { proxy.push.getRegistrationToken() }
-                "push#android#isNotificationChannelEnabled" -> callback.resolveResult(method) {
+                "push#setUserNotificationsEnabled" -> callback.resolve(scope, method) { proxy.push.setUserNotificationsEnabled(arg.requireBoolean()) }
+                "push#enableUserNotifications" -> callback.resolve(scope, method) { proxy.push.enableUserPushNotifications() }
+                "push#isUserNotificationsEnabled" -> callback.resolve(scope, method) { proxy.push.isUserNotificationsEnabled() }
+                "push#getNotificationStatus" -> callback.resolve(scope, method) { proxy.push.getNotificationStatus() }
+                "push#getActiveNotifications" -> callback.resolve(scope, method) { proxy.push.getActiveNotifications() }
+                "push#clearNotification" -> callback.resolve(scope, method) { proxy.push.clearNotification(arg.requireString()) }
+                "push#clearNotifications" -> callback.resolve(scope, method) { proxy.push.clearNotifications() }
+                "push#getPushToken" -> callback.resolve(scope, method) { proxy.push.getRegistrationToken() }
+                "push#android#isNotificationChannelEnabled" -> callback.resolve(scope, method) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         proxy.push.isNotificationChannelEnabled(arg.requireString())
                     } else {
                         true
                     }
                 }
-                "push#android#setNotificationConfig" -> callback.resolveResult(method) { proxy.push.setNotificationConfig(arg) }
-                "push#android#setForegroundNotificationsEnabled" -> callback.resolveResult(method) {
+                "push#android#setNotificationConfig" -> callback.resolve(scope, method) { proxy.push.setNotificationConfig(arg) }
+                "push#android#setForegroundNotificationsEnabled" -> callback.resolve(scope, method) {
                     proxy.push.isForegroundNotificationsEnabled = arg.requireBoolean()
-                    return@resolveResult Unit
+                    return@resolve Unit
                 }
-                "push#android#isForegroundNotificationsEnabled" -> callback.resolveResult(method) {
+                "push#android#isForegroundNotificationsEnabled" -> callback.resolve(scope, method) {
                     proxy.push.isForegroundNotificationsEnabled
                 }
 
                 // In-App
-                "inApp#setPaused" -> callback.resolveResult(method) { proxy.inApp.setPaused(arg.getBoolean(false)) }
-                "inApp#isPaused" -> callback.resolveResult(method) { proxy.inApp.isPaused() }
-                "inApp#setDisplayInterval" -> callback.resolveResult(method) { proxy.inApp.setDisplayInterval(arg.getLong(0)) }
-                "inApp#getDisplayInterval" -> callback.resolveResult(method) { proxy.inApp.getDisplayInterval() }
+                "inApp#setPaused" -> callback.resolve(scope, method) { proxy.inApp.setPaused(arg.getBoolean(false)) }
+                "inApp#isPaused" -> callback.resolve(scope, method) { proxy.inApp.isPaused() }
+                "inApp#setDisplayInterval" -> callback.resolve(scope, method) { proxy.inApp.setDisplayInterval(arg.getLong(0)) }
+                "inApp#getDisplayInterval" -> callback.resolve(scope, method) { proxy.inApp.getDisplayInterval() }
 
                 // Analytics
-                "analytics#trackScreen" -> callback.resolveResult(method) { proxy.analytics.trackScreen(arg.string) }
-                "analytics#addCustomEvent" -> callback.resolveResult(method) { proxy.analytics.addEvent(arg) }
+                "analytics#trackScreen" -> callback.resolve(scope, method) { proxy.analytics.trackScreen(arg.string) }
+                "analytics#addCustomEvent" -> callback.resolve(scope, method) { proxy.analytics.addEvent(arg) }
                 "analytics#associateIdentifier" -> {
                     val associatedIdentifierArgs = arg.requireStringList()
                     proxy.analytics.associateIdentifier(
@@ -217,30 +216,31 @@ class AirshipCordova : CordovaPlugin() {
                 }
 
                 // Message Center
-                "messageCenter#getMessages" -> callback.resolveResult(method) {
+                "messageCenter#getMessages" -> callback.resolve(scope, method) {
                     JsonValue.wrapOpt(proxy.messageCenter.getMessages())
                 }
-                "messageCenter#dismiss" -> callback.resolveResult(method) { proxy.messageCenter.dismiss() }
-                "messageCenter#display" -> callback.resolveResult(method) { proxy.messageCenter.display(arg.string) }
-                "messageCenter#showMessageView" -> callback.resolveResult(method) { proxy.messageCenter.showMessageView(arg.requireString()) }
-                "messageCenter#markMessageRead" -> callback.resolveResult(method) { proxy.messageCenter.markMessageRead(arg.requireString()) }
-                "messageCenter#deleteMessage" -> callback.resolveResult(method) { proxy.messageCenter.deleteMessage(arg.requireString()) }
-                "messageCenter#getUnreadMessageCount" -> callback.resolveResult(method) { proxy.messageCenter.getUnreadMessagesCount() }
-                "messageCenter#setAutoLaunchDefaultMessageCenter" -> callback.resolveResult(method) { proxy.messageCenter.setAutoLaunchDefaultMessageCenter(arg.requireBoolean()) }
-                "messageCenter#refreshMessages" -> callback.resolveDeferred(method) { resolveCallback ->
-                    proxy.messageCenter.refreshInbox().addResultCallback {
-                        if (it == true) {
-                            resolveCallback(null, null)
-                        } else {
-                            resolveCallback(null, Exception("Failed to refresh"))
-                        }
+                "messageCenter#dismiss" -> callback.resolve(scope, method) { proxy.messageCenter.dismiss() }
+                "messageCenter#display" -> callback.resolve(scope, method) { proxy.messageCenter.display(arg.string) }
+                "messageCenter#showMessageView" -> callback.resolve(scope, method) { proxy.messageCenter.showMessageView(arg.requireString()) }
+                "messageCenter#markMessageRead" -> callback.resolve(scope, method) { proxy.messageCenter.markMessageRead(arg.requireString()) }
+                "messageCenter#deleteMessage" -> callback.resolve(scope, method) { proxy.messageCenter.deleteMessage(arg.requireString()) }
+                "messageCenter#getUnreadMessageCount" -> callback.resolve(scope, method) { proxy.messageCenter.getUnreadMessagesCount() }
+                "messageCenter#setAutoLaunchDefaultMessageCenter" -> callback.resolve(scope, method) { proxy.messageCenter.setAutoLaunchDefaultMessageCenter(arg.requireBoolean()) }
+                "messageCenter#refreshMessages" -> callback.resolve(scope, method) {
+                    if (!proxy.messageCenter.refreshInbox()) {
+                        throw Exception("Failed to refresh")
                     }
+                    return@resolve Unit
                 }
 
                 // Preference Center
-                "preferenceCenter#display" -> callback.resolveResult(method) { proxy.preferenceCenter.displayPreferenceCenter(arg.requireString()) }
-                "preferenceCenter#getConfig" -> callback.resolvePending(method) { proxy.preferenceCenter.getPreferenceCenterConfig(arg.requireString()) }
-                "preferenceCenter#setAutoLaunchPreferenceCenter" -> callback.resolveResult(method) {
+                "preferenceCenter#display" -> callback.resolve(scope, method) { proxy.preferenceCenter.displayPreferenceCenter(arg.requireString()) }
+                "preferenceCenter#getConfig" -> callback.resolve(scope, method) {
+                    proxy.preferenceCenter.getPreferenceCenterConfig(
+                        arg.requireString()
+                    )
+                }
+                "preferenceCenter#setAutoLaunchPreferenceCenter" -> callback.resolve(scope, method) {
                     val autoLaunchArgs = arg.requireList()
                     proxy.preferenceCenter.setAutoLaunchPreferenceCenter(
                         autoLaunchArgs.get(0).requireString(),
@@ -249,56 +249,45 @@ class AirshipCordova : CordovaPlugin() {
                 }
 
                 // Privacy Manager
-                "privacyManager#setEnabledFeatures" -> callback.resolveResult(method) { proxy.privacyManager.setEnabledFeatures(arg.requireStringList()) }
-                "privacyManager#getEnabledFeatures" -> callback.resolveResult(method) { proxy.privacyManager.getFeatureNames() }
-                "privacyManager#enableFeatures" -> callback.resolveResult(method) { proxy.privacyManager.enableFeatures(arg.requireStringList()) }
-                "privacyManager#disableFeatures" -> callback.resolveResult(method) { proxy.privacyManager.disableFeatures(arg.requireStringList()) }
-                "privacyManager#isFeaturesEnabled" -> callback.resolveResult(method) { proxy.privacyManager.isFeatureEnabled(arg.requireStringList()) }
+                "privacyManager#setEnabledFeatures" -> callback.resolve(scope, method) { proxy.privacyManager.setEnabledFeatures(arg.requireStringList()) }
+                "privacyManager#getEnabledFeatures" -> callback.resolve(scope, method) { proxy.privacyManager.getFeatureNames() }
+                "privacyManager#enableFeatures" -> callback.resolve(scope, method) { proxy.privacyManager.enableFeatures(arg.requireStringList()) }
+                "privacyManager#disableFeatures" -> callback.resolve(scope, method) { proxy.privacyManager.disableFeatures(arg.requireStringList()) }
+                "privacyManager#isFeaturesEnabled" -> callback.resolve(scope, method) { proxy.privacyManager.isFeatureEnabled(arg.requireStringList()) }
 
                 // Locale
-                "locale#setLocaleOverride" -> callback.resolveResult(method) { proxy.locale.setCurrentLocale(arg.requireString()) }
-                "locale#getCurrentLocale" -> callback.resolveResult(method) { proxy.locale.getCurrentLocale() }
-                "locale#clearLocaleOverride" -> callback.resolveResult(method) { proxy.locale.clearLocale() }
+                "locale#setLocaleOverride" -> callback.resolve(scope, method) { proxy.locale.setCurrentLocale(arg.requireString()) }
+                "locale#getCurrentLocale" -> callback.resolve(scope, method) { proxy.locale.getCurrentLocale() }
+                "locale#clearLocaleOverride" -> callback.resolve(scope, method) { proxy.locale.clearLocale() }
 
                 // Actions
-                "actions#run" -> callback.resolveDeferred(method) { resolveCallback ->
+                "actions#run" -> callback.resolve(scope, method) {
                     val actionArgs = arg.requireList()
-                    val name= actionArgs.get(0).requireString()
-                    val value: JsonValue? = if (actionArgs.size() == 2) { actionArgs.get(1) } else { null }
+                    val name = actionArgs.get(0).requireString()
+                    val value: JsonValue? = if (actionArgs.size() == 2) {
+                        actionArgs.get(1)
+                    } else {
+                        null
+                    }
 
-                    proxy.actions.runAction(name, value)
-                        .addResultCallback { actionResult ->
-                            if (actionResult != null && actionResult.status == ActionResult.STATUS_COMPLETED) {
-                                resolveCallback(actionResult.value, null)
-                            } else {
-                                resolveCallback(null, Exception("Action failed ${actionResult?.status}"))
-                            }
-                        }
-                }
-
-                // Feature Flag
-                "featureFlagManager#flag" -> callback.resolveDeferred(method) { resolveCallback ->
-                    scope.launch {
-                        try {
-                            val flag = proxy.featureFlagManager.flag(arg.requireString())
-                            resolveCallback(flag, null)
-                        } catch (e: Exception) {
-                            resolveCallback(null, e)
-                        }
+                    val result = proxy.actions.runAction(name, value)
+                    if (result.status == ActionResult.STATUS_COMPLETED) {
+                        result.value
+                    } else {
+                        throw Exception("Action failed ${result.status}")
                     }
                 }
 
+
+                // Feature Flag
+                "featureFlagManager#flag" -> callback.resolve(scope, method) {
+                    proxy.featureFlagManager.flag(arg.requireString())
+                }
+
                 "featureFlagManager#trackInteraction" -> {
-                    callback.resolveDeferred(method) { resolveCallback ->
-                        scope.launch {
-                            try {
-                                val featureFlagProxy = FeatureFlagProxy(arg)
-                                proxy.featureFlagManager.trackInteraction(flag = featureFlagProxy)
-                                resolveCallback(null, null)
-                            } catch (e: Exception) {
-                                resolveCallback(null, e)
-                            }
-                        }
+                    callback.resolve(scope, method) {
+                        val featureFlagProxy = FeatureFlagProxy(arg)
+                        proxy.featureFlagManager.trackInteraction(flag = featureFlagProxy)
                     }
                 }
 
@@ -310,59 +299,43 @@ class AirshipCordova : CordovaPlugin() {
 }
 
 
-internal fun CallbackContext.resolveResult(method: String, function: () -> Any?) {
-    resolveDeferred(method) { callback -> callback(function(), null) }
-}
 
 internal fun CallbackContext.error(method: String, exception: java.lang.Exception) {
     this.error("AIRSHIP_ERROR(method=$method, exception=$exception)")
 }
 
-internal fun <T> CallbackContext.resolveDeferred(method: String, function: ((T?, Exception?) -> Unit) -> Unit) {
-    try {
-        function { result, error ->
-            if (error != null) {
-                this.error(method, error)
-            } else {
-                try {
-                    when (result) {
-                        is Unit -> {
-                            this.success()
-                        }
-                        is Int -> {
-                            this.success(result)
-                        }
-                        is String -> {
-                            this.success(result)
-                        }
-                        is Boolean -> {
-                            sendPluginResult(
-                                PluginResult(
-                                    PluginResult.Status.OK,
-                                    result
-                                )
-                            )
-                        }
-                        else -> {
-                            sendPluginResult(
-                                JsonValue.wrap(result).pluginResult()
-                            )
-                        }
-                    }
-                } catch (e: Exception) {
-                    this.error(method, e)
+internal fun CallbackContext.resolve(scope: CoroutineScope, method: String, function: suspend () -> Any?) {
+    scope.launch {
+        try {
+            when (val result = function()) {
+                is Unit -> {
+                    this@resolve.success()
+                }
+
+                is Int -> {
+                    this@resolve.success(result)
+                }
+
+                is String -> {
+                    this@resolve.success(result)
+                }
+
+                is Boolean -> {
+                    sendPluginResult(
+                        PluginResult(
+                            PluginResult.Status.OK,
+                            result
+                        )
+                    )
+                }
+                else -> {
+                    sendPluginResult(
+                        JsonValue.wrap(result).pluginResult()
+                    )
                 }
             }
-        }
-    } catch (e: Exception) {
-        this.error(method, e)
-    }
-}
-
-internal fun <T> CallbackContext.resolvePending(method: String, function: () -> PendingResult<T>) {
-    resolveDeferred(method) { callback ->
-        function().addResultCallback {
-            callback(it, null)
+        } catch (e: Exception) {
+            this@resolve.error(method, e)
         }
     }
 }
