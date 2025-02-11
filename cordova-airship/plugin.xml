@@ -9,7 +9,7 @@
 
     <engines>
         <engine name="cordova-android" version=">=13.0.0"/>
-        <engine name="cordova-ios" version=">=7.0.0"/>
+        <engine name="cordova-ios" version=">=7.1.0"/>
         <engine name="cordova" version=">=9.0.1"/>
     </engines>
 
