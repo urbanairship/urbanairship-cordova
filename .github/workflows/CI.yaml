@@ -13,6 +13,9 @@ jobs:
     env:
       DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
     steps:
+      - name: Install Android Build Tools
+        run: |
+          echo "y" | $ANDROID_HOME/bin/sdkmanager "build-tools;34.0.0"
       - uses: actions/checkout@v4
       - name: Run CI
         run: bash ./scripts/run_ci_tasks.sh -a
