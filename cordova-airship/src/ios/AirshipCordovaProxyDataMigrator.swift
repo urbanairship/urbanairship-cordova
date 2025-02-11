@@ -26,6 +26,7 @@ struct AirshipCordovaProxyDataMigrator {
     private static let notificationPresentationSoundKey = "com.urbanairship.ios_foreground_notification_presentation_sound"
 
 
+    @MainActor
     func migrateData(store: ProxyStore) {
         migrateConfig(store: store)
         migrateAutoLaunchMessageCenter(store: store)
@@ -33,8 +34,8 @@ struct AirshipCordovaProxyDataMigrator {
         migratePresentationOptions(store: store)
     }
 
+    @MainActor
     private func migrateConfig(store: ProxyStore) {
-
         let productionAppKey = defaults.string(forKey: Self.productionAppKey)
         let productionAppSecret = defaults.string(forKey: Self.productionAppSecret)
         let developmentAppKey = defaults.string(forKey: Self.developmentAppKey)
@@ -90,6 +91,7 @@ struct AirshipCordovaProxyDataMigrator {
         }
     }
 
+    @MainActor
     private func migrateAutoLaunchMessageCenter(store: ProxyStore) {
         guard
             let autoLaunchMessageCenter = defaults.object(
@@ -103,6 +105,7 @@ struct AirshipCordovaProxyDataMigrator {
         defaults.removeObject(forKey: Self.autoLaunchMessageCenterKey)
     }
 
+    @MainActor
     private func migrateAutoLaunchPreferenceCenter(store: ProxyStore) {
         // Preference center
         defaults.dictionaryRepresentation().keys.forEach { key in
@@ -129,6 +132,7 @@ struct AirshipCordovaProxyDataMigrator {
         }
     }
 
+    @MainActor
     private func migratePresentationOptions(store: ProxyStore) {
         let alert = defaults.object(forKey: Self.notificationPresentationAlertKey) as? Bool
         let badge = defaults.object(forKey: Self.notificationPresentationBadgeKey) as? Bool

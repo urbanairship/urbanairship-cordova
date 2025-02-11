@@ -133,50 +133,52 @@ struct AirshipCordovaPluginSettings: Decodable, Sendable {
 
         self.presentationOptions = presentationOptions
     }
+}
 
-    func apply(config: AirshipConfig) {
-        if let appSecret = self.developmentAppSecret {
-            config.developmentAppSecret = appSecret
+extension AirshipConfig {
+    mutating func applyPluginSettings(_ settings: AirshipCordovaPluginSettings) {
+        if let appSecret = settings.developmentAppSecret {
+            self.developmentAppSecret = appSecret
         }
 
-        if let appKey = self.developmentAppKey {
-            config.developmentAppKey = appKey
+        if let appKey = settings.developmentAppKey {
+            self.developmentAppKey = appKey
         }
 
-        if let logLevel = self.developmentLogLevel {
-            config.developmentLogLevel = logLevel.airshipValue
+        if let logLevel = settings.developmentLogLevel {
+            self.developmentLogLevel = logLevel.airshipValue
         }
 
-        if let appSecret = self.productionAppSecret {
-            config.productionAppSecret = appSecret
+        if let appSecret = settings.productionAppSecret {
+            self.productionAppSecret = appSecret
         }
 
-        if let appKey = self.productionAppKey {
-            config.productionAppKey = appKey
+        if let appKey = settings.productionAppKey {
+            self.productionAppKey = appKey
         }
 
-        if let logLevel = self.productionLogLevel {
-            config.productionLogLevel = logLevel.airshipValue
+        if let logLevel = settings.productionLogLevel {
+            self.productionLogLevel = logLevel.airshipValue
         }
 
-        if let site = self.site {
-            config.site = site.airshipValue
+        if let site = settings.site {
+            self.site = site.airshipValue
         }
 
-        if let inProduction = self.inProduction {
-            config.inProduction = inProduction
+        if let inProduction = settings.inProduction {
+            self.inProduction = inProduction
         }
 
-        if let initialConfigURL = self.initialConfigURL {
-            config.initialConfigURL = initialConfigURL
+        if let initialConfigURL = settings.initialConfigURL {
+            self.initialConfigURL = initialConfigURL
         }
 
-        if let analyticsEnabled = self.analyticsEnabled {
-            config.isAnalyticsEnabled = analyticsEnabled
+        if let analyticsEnabled = settings.analyticsEnabled {
+            self.isAnalyticsEnabled = analyticsEnabled
         }
 
-        if let messageCenterStyleConfig = self.messageCenterStyleConfig {
-            config.messageCenterStyleConfig = messageCenterStyleConfig
+        if let messageCenterStyleConfig = settings.messageCenterStyleConfig {
+            self.messageCenterStyleConfig = messageCenterStyleConfig
         }
     }
 }
