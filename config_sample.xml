@@ -35,6 +35,10 @@
         <allow-intent href="itms-apps:*" />
     </platform>
 
+<preference name="android-minSdkVersion" value="23" />
+<preference name="android-targetSdkVersion" value="35" />
+<preference name="android-compileSdkVersion" value="35" />
+
 <preference name="AndroidGradlePluginGoogleServicesEnabled" value="true" />
 <preference name="AndroidXEnabled" value="true" />
 
