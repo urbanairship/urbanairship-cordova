@@ -15,7 +15,7 @@ jobs:
     steps:
       - name: Install Android Build Tools
         run: |
-          echo "y" | $ANDROID_HOME/bin/sdkmanager "build-tools;34.0.0"
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0"
       - uses: actions/checkout@v4
       - name: Run CI
         run: bash ./scripts/run_ci_tasks.sh -a
