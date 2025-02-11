@@ -17,7 +17,7 @@ jobs:
       - name: Run CI
         run: bash ./scripts/run_ci_tasks.sh -a
   ios:
-    runs-on: macos-14-xlarge
+    runs-on: macos-15-xlarge
     timeout-minutes: 10
     env:
       DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
