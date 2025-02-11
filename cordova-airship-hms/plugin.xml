@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="@ua/cordova-airship-hms" version="16.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+<plugin id="@ua/cordova-airship-hms" version="17.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     
     <name>Airship HMS</name>
     <description>Airship HMS Cordova plugin</description>
@@ -12,7 +12,7 @@
         <engine name="cordova" version=">=9.0.1"/>
     </engines>
 
-    <dependency id="@ua/cordova-airship" version="16.0.0"/>
+    <dependency id="@ua/cordova-airship" version="17.0.0"/>
 
     <!-- android -->
     <platform name="android">
