@@ -16,13 +16,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Check Version
-        run: bash ./scripts/check_version.sh ${GITHUB_REF/refs\/tags\//}
+        run: bash ./scripts/check_version.sh ${GITHUB_REF/refs\/tags\//}        
       - name: Slack Notification
         uses: lazy-actions/slatify@master
         with:
           type: ${{ job.status }}
           job_name: "Airship Cordova Plugin Release Started!"
           url: ${{ secrets.SLACK_WEBHOOK }}
+      - name: Install Android Build Tools
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0"
       - name: Run CI
         run: |
           bash ./scripts/run_ci_tasks.sh -a -i
