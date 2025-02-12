@@ -9,13 +9,6 @@ Major release that updates the Android Airship SDK to 19.1.0 and iOS Airship SDK
 - iOS requires Xcode 16.2, iOS 15+, and cordova-ios 7.1.0+
 - Android requires compileSdkVersion 35+, minSdkVersion 23+, and cordova-android 13.0+
 
-
-### Changes
-- Updated Airship Android SDK to 18.1.1
-- Updated Airship iOS SDK to 18.5.0
-- Added iOS logPrivacyLevel that can be set in the environments when calling takeOff
-
-
 ## Version 16.0.0 July 3, 2024
 Major release that requires Android Cordova 13.
 
