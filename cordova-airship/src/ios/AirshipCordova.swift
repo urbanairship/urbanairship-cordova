@@ -37,7 +37,7 @@ public final class AirshipCordova: CDVPlugin {
         AirshipCordovaAutopilot.shared.pluginInitialized(settings: settings)
 
         Task {
-            for await _ in await AirshipProxyEventEmitter.shared.pendingEventAdded {
+            for await _ in AirshipProxyEventEmitter.shared.pendingEventAdded {
                 await self.notifyPendingEvents()
             }
         }
@@ -109,7 +109,7 @@ public final class AirshipCordova: CDVPlugin {
         let listeners = self.eventListeners
 
         for eventType in AirshipProxyEventType.allCases {
-            await AirshipProxyEventEmitter.shared.sendPendingEvents(
+            AirshipProxyEventEmitter.shared.sendPendingEvents(
                 eventType: eventType,
                 listeners: listeners[eventType],
                 commandDelegate: self.commandDelegate
@@ -122,7 +122,7 @@ public final class AirshipCordova: CDVPlugin {
         Task {
             do {
                 let result = try await self.handle(command: command)
-                let pluginResult = try self.successResult(value: result)
+                let pluginResult = try CDVPluginResult.successResult(value: result)
                 self.commandDelegate?.send(pluginResult, callbackId: command.callbackId)
             } catch {
                 let pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR, messageAs: error.localizedDescription)
@@ -131,54 +131,10 @@ public final class AirshipCordova: CDVPlugin {
         }
     }
 
-    private func successResult(value: Any?, fallbackJSON: Bool = true) throws -> CDVPluginResult {
-        guard let value = value else {
-            return CDVPluginResult(status: CDVCommandStatus_OK)
-        }
 
-        if let string = value as? String {
-            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: string)
-        }
-
-        if let bool = value as? Bool {
-            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: bool)
-        }
-
-        if let int = value as? Int {
-            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: int)
-        }
-
-        if let int = value as? UInt {
-            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: int)
-        }
-
-        if let number = value as? NSNumber {
-            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: number.doubleValue)
-        }
-
-        if let array = value as? Array<Any> {
-            return CDVPluginResult(
-                status: CDVCommandStatus_OK,
-                messageAs: try AirshipJSON.wrap(array).unWrap() as? Array<Any>
-            )
-        }
-
-        if let dictionary = value as? [String: Any] {
-            return CDVPluginResult(
-                status: CDVCommandStatus_OK,
-                messageAs: try AirshipJSON.wrap(dictionary).unWrap() as? [String: Any]
-            )
-        }
-
-        if fallbackJSON {
-            return try successResult(value: try AirshipJSON.wrap(value).unWrap(), fallbackJSON: false)
-        } else {
-            throw AirshipErrors.error("Invalid result \(value)")
-        }
-    }
 
     @MainActor
-    private func handle(command: CDVInvokedUrlCommand) async throws -> Any? {
+    private func handle(command: CDVInvokedUrlCommand) async throws -> (any Sendable)? {
         guard let method = command.arguments[0] as? String else {
             throw AirshipErrors.error("Invalid command \(command)")
         }
@@ -196,37 +152,37 @@ public final class AirshipCordova: CDVPlugin {
 
         // Channel
         case "channel#getChannelId":
-            return try AirshipProxy.shared.channel.getChannelId()
+            return try AirshipProxy.shared.channel.channelID
 
         case "channel#editTags":
             try AirshipProxy.shared.channel.editTags(
-                json: try command.requireAnyArg()
+                operations: try command.requireCodableArg()
             )
             return nil
 
         case "channel#getTags":
-            return try AirshipProxy.shared.channel.getTags()
+            return try AirshipProxy.shared.channel.tags
 
         case "channel#editTagGroups":
             try AirshipProxy.shared.channel.editTagGroups(
-                json: try command.requireAnyArg()
+                operations: try command.requireCodableArg()
             )
             return nil
 
         case "channel#editSubscriptionLists":
             try AirshipProxy.shared.channel.editSubscriptionLists(
-                json: try command.requireAnyArg()
+                operations: try command.requireCodableArg()
             )
             return nil
 
         case "channel#editAttributes":
             try AirshipProxy.shared.channel.editAttributes(
-                json: try command.requireAnyArg()
+                operations: try command.requireCodableArg()
             )
             return nil
 
         case "channel#getSubscriptionLists":
-            return try await AirshipProxy.shared.channel.getSubscriptionLists()
+            return try await AirshipProxy.shared.channel.fetchSubscriptionLists()
 
         case "channel#enableChannelCreation": 
             return try AirshipProxy.shared.channel.enableChannelCreation()
@@ -234,19 +190,19 @@ public final class AirshipCordova: CDVPlugin {
         // Contact
         case "contact#editTagGroups":
             try AirshipProxy.shared.contact.editTagGroups(
-                json: try command.requireAnyArg()
+                operations: try command.requireCodableArg()
             )
             return nil
 
         case "contact#editSubscriptionLists":
             try AirshipProxy.shared.contact.editSubscriptionLists(
-                json: try command.requireAnyArg()
+                operations: try command.requireCodableArg()
             )
             return nil
 
         case "contact#editAttributes":
             try AirshipProxy.shared.contact.editAttributes(
-                json: try command.requireAnyArg()
+                operations: try command.requireCodableArg()
             )
             return nil
 
@@ -268,7 +224,7 @@ public final class AirshipCordova: CDVPlugin {
             return nil
 
         case "contact#getNamedUserId":
-            return try await AirshipProxy.shared.contact.getNamedUser()
+            return try await AirshipProxy.shared.contact.namedUserID
 
 
         // Push
@@ -288,10 +244,10 @@ public final class AirshipCordova: CDVPlugin {
             return try AirshipProxy.shared.push.isUserNotificationsEnabled()
 
         case "push#getNotificationStatus":
-            return try await AirshipProxy.shared.push.getNotificationStatus()
+            return try await AirshipProxy.shared.push.notificationStatus
 
         case "push#getActiveNotifications":
-            return await AirshipProxy.shared.push.getActiveNotifications()
+            return try await AirshipProxy.shared.push.getActiveNotifications()
 
         case "push#clearNotification":
             AirshipProxy.shared.push.clearNotification(
@@ -359,7 +315,7 @@ public final class AirshipCordova: CDVPlugin {
             return nil
 
         case "push#ios#getQuietTime":
-            return try AirshipProxy.shared.push.getQuietTime()
+            return try AirshipJSON.wrap(try AirshipProxy.shared.push.getQuietTime())
 
         // In-App
         case "inApp#setPaused":
@@ -373,7 +329,7 @@ public final class AirshipCordova: CDVPlugin {
 
         case "inApp#setDisplayInterval":
             try AirshipProxy.shared.inApp.setDisplayInterval(
-                try command.requireIntArg()
+                milliseconds: try command.requireIntArg()
             )
             return nil
 
@@ -406,7 +362,7 @@ public final class AirshipCordova: CDVPlugin {
 
         // Message Center
         case "messageCenter#getMessages":
-            return try? await AirshipProxy.shared.messageCenter.getMessages()
+            return try await AirshipProxy.shared.messageCenter.messages
 
         case "messageCenter#display":
             try AirshipProxy.shared.messageCenter.display(
@@ -437,7 +393,7 @@ public final class AirshipCordova: CDVPlugin {
             return nil
 
         case "messageCenter#getUnreadMessageCount":
-            return try await AirshipProxy.shared.messageCenter.getUnreadCount()
+            return try await AirshipProxy.shared.messageCenter.unreadCount
 
         case "messageCenter#refreshMessages":
             try await AirshipProxy.shared.messageCenter.refresh()
@@ -516,7 +472,7 @@ public final class AirshipCordova: CDVPlugin {
             return nil
 
         case "locale#getCurrentLocale":
-            return try AirshipProxy.shared.locale.getCurrentLocale()
+            return try AirshipProxy.shared.locale.currentLocale
 
         // Actions
         case "actions#run":
@@ -529,11 +485,10 @@ public final class AirshipCordova: CDVPlugin {
             }
 
             let arg = try? AirshipJSON.wrap(args[1])
-            let result = try await AirshipProxy.shared.action.runAction(
+            return try await AirshipProxy.shared.action.runAction(
                 actionName,
                 value: args.count == 2 ? arg : nil
-            ) as? AirshipJSON
-            return result?.unWrap()
+            )
 
         // Feature Flag
         case "featureFlagManager#flag":
@@ -556,7 +511,7 @@ public final class AirshipCordova: CDVPlugin {
 
 extension CDVInvokedUrlCommand {
 
-    func requireCodableArg<T: Codable>() throws -> T  {
+    func requireCodableArg<T: Decodable>() throws -> T  {
         guard
             self.arguments.count >= 2
         else {
@@ -684,10 +639,7 @@ extension AirshipProxyEventEmitter {
         }
 
         self.processPendingEvents(type: eventType) { event in
-            let result = CDVPluginResult(
-                status: CDVCommandStatus_OK,
-                messageAs: event.body
-            )
+            let result = try? CDVPluginResult.successResult(value: event.body)
             result?.keepCallback = true
 
             listeners.forEach { listener in
@@ -695,6 +647,63 @@ extension AirshipProxyEventEmitter {
             }
 
             return true
+        }
+    }
+}
+
+fileprivate extension Encodable {
+    func unwrapped<T>() throws -> T {
+        guard let value = try AirshipJSON.wrap(self).unWrap() as? T else {
+            throw AirshipErrors.error("Failed to unwrap codable")
+        }
+        return value
+    }
+}
+
+fileprivate extension CDVPluginResult {
+    static func successResult(value: Any?, fallbackJSON: Bool = true) throws -> CDVPluginResult {
+        guard let value = value else {
+            return CDVPluginResult(status: CDVCommandStatus_OK)
+        }
+
+        if let string = value as? String {
+            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: string)
+        }
+
+        if let bool = value as? Bool {
+            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: bool)
+        }
+
+        if let int = value as? Int {
+            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: int)
+        }
+
+        if let int = value as? UInt {
+            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: int)
+        }
+
+        if let number = value as? NSNumber {
+            return CDVPluginResult(status: CDVCommandStatus_OK, messageAs: number.doubleValue)
+        }
+
+        if let array = value as? Array<Any> {
+            return CDVPluginResult(
+                status: CDVCommandStatus_OK,
+                messageAs: try AirshipJSON.wrap(array).unWrap() as? Array<Any>
+            )
+        }
+
+        if let dictionary = value as? [String: Any] {
+            return CDVPluginResult(
+                status: CDVCommandStatus_OK,
+                messageAs: try AirshipJSON.wrap(dictionary).unWrap() as? [String: Any]
+            )
+        }
+
+        if fallbackJSON {
+            return try successResult(value: try AirshipJSON.wrap(value).unWrap(), fallbackJSON: false)
+        } else {
+            throw AirshipErrors.error("Invalid result \(value)")
         }
     }
 }

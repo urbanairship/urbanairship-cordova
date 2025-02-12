@@ -5,6 +5,7 @@ package com.urbanairship.cordova
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.edit
 import com.urbanairship.AirshipConfigOptions
@@ -13,6 +14,7 @@ import com.urbanairship.analytics.Extension
 import com.urbanairship.android.framework.proxy.BaseAutopilot
 import com.urbanairship.android.framework.proxy.ProxyStore
 
+@Keep
 class CordovaAutopilot : BaseAutopilot() {
 
     companion object {
@@ -33,11 +35,7 @@ class CordovaAutopilot : BaseAutopilot() {
         ).also { _preferences = it }
     }
 
-    override fun onAirshipReady(airship: UAirship) {
-        super.onAirshipReady(airship)
-
-        val context = UAirship.getApplicationContext()
-
+    override fun onReady(context: Context, airship: UAirship) {
         Log.i("CordovaAutopilot", "onAirshipReady")
 
         airship.analytics.registerSDKExtension(Extension.CORDOVA, AirshipCordovaVersion.version);

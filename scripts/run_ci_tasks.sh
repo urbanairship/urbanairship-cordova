@@ -73,8 +73,10 @@ if [ "$ANDROID" = "true" ]; then
 fi
 
 if [ "$IOS" = "true" ]; then
+  npx cordova run ios --list
+  
   # Build ios
-  npx cordova build ios --emulator 2>&1 | tee -a /tmp/CORDOVA-$$.out
+  npx cordova build ios --target="iPhone-16-Pro, 18.2" --emulator 2>&1 | tee -a /tmp/CORDOVA-$$.out
 
   # check for failures
   if grep "BUILD FAILED" /tmp/CORDOVA-$$.out; then

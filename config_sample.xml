@@ -35,11 +35,15 @@
         <allow-intent href="itms-apps:*" />
     </platform>
 
+<preference name="android-minSdkVersion" value="23" />
+<preference name="android-targetSdkVersion" value="35" />
+<preference name="android-compileSdkVersion" value="35" />
+
 <preference name="AndroidGradlePluginGoogleServicesEnabled" value="true" />
 <preference name="AndroidXEnabled" value="true" />
 
-<!-- Deployment target must be >= iOS 14  -->
-<preference name="deployment-target" value="14.0" />
+<!-- Deployment target must be >= iOS 15  -->
+<preference name="deployment-target" value="15.0" />
 
 <!-- Must be 5.0 -->
 <preference name="SwiftVersion" value="5.0" />

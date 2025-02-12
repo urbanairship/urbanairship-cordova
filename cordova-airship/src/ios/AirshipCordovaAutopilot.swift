@@ -3,30 +3,56 @@
 import AirshipKit
 import AirshipFrameworkProxy
 
+@objc(AirshipPluginLoader)
+@MainActor
+public class AirshipPluginLoader: NSObject, AirshipPluginLoaderProtocol {
+    @objc
+    public static var disabled: Bool = false
+
+    public static func onApplicationDidFinishLaunching(
+        launchOptions: [UIApplication.LaunchOptionsKey : Any]?
+    ) {
+        AirshipCordovaAutopilot.shared.onLoad(launchOptions: launchOptions)
+    }
+}
+
+@MainActor
 final class AirshipCordovaAutopilot {
 
     public static let shared: AirshipCordovaAutopilot = AirshipCordovaAutopilot()
     private var launchOptions: [UIApplication.LaunchOptionsKey : Any]?
     private var settings: AirshipCordovaPluginSettings?
+    private var pluginInitialized: Bool = false
+    private var onLoad: Bool = false
 
-    @MainActor
     func pluginInitialized(settings: AirshipCordovaPluginSettings?) {
+        self.pluginInitialized = true
         self.settings = settings
         AirshipProxy.shared.delegate = self
-        AirshipCordovaBootstrap.onLaunch = { launchOptions in
-            self.launchOptions = launchOptions as? [UIApplication.LaunchOptionsKey : Any]
-            try? AirshipProxy.shared.attemptTakeOff(launchOptions: self.launchOptions)
+
+        if pluginInitialized, onLoad {
+            try? AirshipProxy.shared.attemptTakeOff(
+                launchOptions: self.launchOptions
+            )
         }
     }
 
-    @MainActor
+    func onLoad(launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
+        self.onLoad = true
+        self.launchOptions = launchOptions
+        if pluginInitialized, onLoad {
+            try? AirshipProxy.shared.attemptTakeOff(
+                launchOptions: self.launchOptions
+            )
+        }
+    }
+
     func attemptTakeOff(json: Any) throws -> Bool {
         return try AirshipProxy.shared.takeOff(
             json: json,
             launchOptions: self.launchOptions
         )
     }
-    
 }
 
 extension AirshipCordovaAutopilot: AirshipProxyDelegate {
@@ -37,9 +63,11 @@ extension AirshipCordovaAutopilot: AirshipProxyDelegate {
     }
     
     public func loadDefaultConfig() -> AirshipConfig {
-        let config = AirshipConfig.default()
-        settings?.apply(config: config)
-        return config
+        var airshipConfig = (try? AirshipConfig.default()) ?? AirshipConfig()
+        if let settings {
+            airshipConfig.applyPluginSettings(settings)
+        }
+        return airshipConfig
     }
     
     @MainActor
@@ -53,7 +81,6 @@ extension AirshipCordovaAutopilot: AirshipProxyDelegate {
             Task {
                 try? await Airship.push.resetBadge()
             }
-
         }
 
         if settings?.enablePushOnLaunch == true {
