@@ -1,3 +1,3 @@
 dependencies {
-    api "com.urbanairship.android:airship-framework-proxy:13.0.1"
+    api "com.urbanairship.android:airship-framework-proxy:13.3.0"
 }
