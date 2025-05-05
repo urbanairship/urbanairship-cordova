@@ -954,11 +954,36 @@ export interface AttributeEditor {
     ): AttributeEditor
 
     /**
+     * Adds a JSON attribute.
+     * 
+     * @param name The attribute name.
+     * @param value The attribute value.
+     * @param instanceId The instance ID.
+     * @param json The json value. Must not contain `exp` as top level key.
+     * @param expiration: Optional expiration.  
+     * @return The attribute editor instance.
+     */
+    setJsonAttribute(
+        name: string,
+        instanceId: string,
+        json: Record<string, any>,
+        expiration?: Date,
+    ): AttributeEditor
+
+    /**
      * Removes an attribute.
      * @param name The name of the attribute to remove.
      * @return The attribute editor instance.
      */
     removeAttribute(name: string): AttributeEditor
+
+    /**
+     * Removes a JSON attribute.
+     * @param name The name of the attribute to remove.
+     * @param instanceId The instance ID.
+     * @return The attribute editor instance.
+     */
+    removeJsonAttribute(name: string, instanceId: string): AttributeEditor
 
     /**
      * Applies the attribute operations.
@@ -1809,6 +1834,18 @@ export interface AirshipChannel {
      */
     getChannelId(
         success: (channelId: string | null | undefined) => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Returns the channel ID. If the channel ID is not yet created the function it will wait for it before returning. After
+     * the channel ID is created, this method functions the same as `getChannelId()`.
+     * 
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    public waitForChannelId(
+        success: (channelId: string) => void,
         error?: (err: string) => void
     ): void
 

@@ -154,6 +154,7 @@ class AirshipCordova : CordovaPlugin() {
 
                 // Channel
                 "channel#getChannelId" -> callback.resolve(scope, method) { proxy.channel.getChannelId() }
+                "channel#waitForChannelId" -> callback.resolve(scope, method) { proxy.channel.waitForChannelId() }
 
                 "channel#editTags" -> callback.resolve(scope, method) { proxy.channel.editTags(arg) }
                 "channel#getTags" -> callback.resolve(scope, method) { proxy.channel.getTags().toList() }
