@@ -154,6 +154,9 @@ public final class AirshipCordova: CDVPlugin {
         case "channel#getChannelId":
             return try AirshipProxy.shared.channel.channelID
 
+        case "channel#waitForChannelId":
+            return try await AirshipProxy.shared.channel.waitForChannelID()
+
         case "channel#editTags":
             try AirshipProxy.shared.channel.editTags(
                 operations: try command.requireCodableArg()
