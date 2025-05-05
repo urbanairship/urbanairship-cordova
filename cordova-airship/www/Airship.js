@@ -204,6 +204,36 @@ function AttributesEditor(methodPrefix, nativeMethod) {
         return editor
     }
 
+    editor.setJsonAttribute = function(
+        name,
+        instanceId,
+        json,
+        expiration
+    ) { 
+        argscheck.checkArgs('ss*', methodPrefix + "#setJsonAttribute", arguments)
+        var operation = {
+          "action": 'set',
+          "value": json,
+          "key": name,
+          "instance_id": instanceId,
+          "type": 'json'
+        }
+    
+        if (expiration != null) {
+          operation["expiration_milliseconds"] = expiration.getTime()
+        }
+    
+        operations.push(operation)
+        return editor
+    }
+
+    editor.removeJsonAttribute = function (name, instanceId) {
+        argscheck.checkArgs('ss', methodPrefix + "#removeJsonAttribute", arguments)
+        var operation = { "action": "remove", "key": name, "instance_id": instanceId }
+        operations.push(operation)
+        return editor
+    }
+
     editor.removeAttribute = function (name) {
         argscheck.checkArgs('s', methodPrefix + "#removeAttribute", arguments)
         var operation = { "action": "remove", "key": name }
@@ -242,6 +272,11 @@ airship.onDeepLink = function (callback) {
 airship.channel.getChannelId = function (success, failure) {
     argscheck.checkArgs('fF', 'Airship.channel.getChannelId', arguments)
     perform("channel#getChannelId", null, success, failure)
+}
+
+airship.channel.waitForChannelId = function (success, failure) {
+    argscheck.checkArgs('fF', 'Airship.channel.waitForChannelId', arguments)
+    perform("channel#waitForChannelId", null, success, failure)
 }
 
 airship.channel.getSubscriptionLists = function (success, failure) {
