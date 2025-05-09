@@ -1,5 +1,11 @@
 # Cordova Plugin Changelog
 
+## Version 17.2.1 - May 9, 2025
+Patch release that updates iOS SDK to 19.3.2
+
+### Changes
+- Updated iOS SDK to [19.3.2](https://github.com/urbanairship/ios-library/releases/tag/19.3.2)
+
 ## Version 17.2.0 - May 5, 2025
 Minor release that updates the Android SDK to 19.6.2 and the iOS SDK to 19.3.1.
 
