@@ -86,6 +86,10 @@ class CordovaAutopilot : BaseAutopilot() {
 
             settings.developmentLogLevel?.apply { builder.setDevelopmentLogLevel(this) }
             settings.productionLogLevel?.apply { builder.setProductionLogLevel(this) }
+            settings.logPrivacyLevel?.apply {
+                builder.setDevelopmentLogPrivacyLevel(this)
+                builder.setProductionLogPrivacyLevel(this)
+            }
             settings.inProduction?.apply { builder.setInProduction(this) }
             settings.enableAnalytics?.apply { builder.setAnalyticsEnabled(this) }
             settings.cloudSite?.apply { builder.setSite(this) }
