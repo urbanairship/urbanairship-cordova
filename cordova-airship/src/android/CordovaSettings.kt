@@ -28,7 +28,8 @@ internal data class CordovaSettings(
     val fcmFirebaseAppName: String?,
     val initialConfigUrl: String?,
     val defaultChannelId: String?,
-    val disableNotificationsOnOptOut: OptOutFrequency?
+    val disableNotificationsOnOptOut: OptOutFrequency?,
+    val logPrivacyLevel: AirshipConfigOptions.PrivacyLevel?
 ) {
 
     enum class OptOutFrequency {
@@ -63,6 +64,7 @@ internal data class CordovaSettings(
         private const val CLOUD_SITE = "com.urbanairship.site"
         private const val FCM_FIREBASE_APP_NAME = "com.urbanairship.fcm_firebase_app_name"
         private const val INITIAL_CONFIG_URL = "com.urbanairship.initial_config_url"
+        private const val LOG_PRIVACY_LEVEL = "com.urbanairship.log_privacy_level"
 
         fun fromConfig(context: Context): CordovaSettings {
             val config = parseConfigXml(context)
@@ -84,7 +86,8 @@ internal data class CordovaSettings(
                 fcmFirebaseAppName = config[FCM_FIREBASE_APP_NAME],
                 initialConfigUrl = config[INITIAL_CONFIG_URL],
                 defaultChannelId = config[DEFAULT_NOTIFICATION_CHANNEL_ID],
-                disableNotificationsOnOptOut = parseFrequency(config[DISABLE_ANDROID_NOTIFICATIONS_ON_OPT_OUT])
+                disableNotificationsOnOptOut = parseFrequency(config[DISABLE_ANDROID_NOTIFICATIONS_ON_OPT_OUT]),
+                logPrivacyLevel = parseLogPrivacyLevel(config[LOG_PRIVACY_LEVEL])
             )
         }
 
@@ -95,6 +98,18 @@ internal data class CordovaSettings(
             } catch(e: IllegalArgumentException) {
                 UALog.e("Invalid frequency $value", e)
                 return null
+            }
+        }
+
+        private fun parseLogPrivacyLevel(privacyLevel: String?): AirshipConfigOptions.PrivacyLevel? {
+            if (privacyLevel.isNullOrEmpty()) { return null }
+            return when (privacyLevel.lowercase()) {
+                "public" -> AirshipConfigOptions.PrivacyLevel.PUBLIC
+                "private" -> AirshipConfigOptions.PrivacyLevel.PRIVATE
+                else -> {
+                    UALog.e("Invalid log privacy level: $privacyLevel")
+                    null
+                }
             }
         }
 
