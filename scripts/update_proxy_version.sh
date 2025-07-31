@@ -16,5 +16,8 @@ sed -i.bak -E "s/(pod name=\"AirshipFrameworkProxy\" spec=\")[^\"]*\"/\1$PROXY_V
 # Update Android build-extras.gradle
 sed -i.bak -E "s/(api \"com.urbanairship.android:airship-framework-proxy:)[^\"]*\"/\1$PROXY_VERSION\"/" "$ROOT_PATH/cordova-airship/src/android/build-extras.gradle"
 
+# Update HMS build-extras.gradle
+sed -i.bak -E "s/(implementation \"com.urbanairship.android:airship-framework-proxy-hms:)[^\"]*\"/\1$PROXY_VERSION\"/" "$ROOT_PATH/cordova-airship-hms/src/android/build-extras.gradle"
+
 # Clean up backup files
 find "$ROOT_PATH" -name "*.bak" -delete
