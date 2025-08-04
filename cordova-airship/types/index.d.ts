@@ -564,6 +564,7 @@ export enum Feature {
     Analytics = 'analytics',
     TagsAndAttributes = 'tags_and_attributes',
     Contacts = 'contacts',
+    FeatureFlags = 'feature_flags',
 }
 
 /**
