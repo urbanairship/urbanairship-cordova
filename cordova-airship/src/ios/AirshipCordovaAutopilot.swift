@@ -12,7 +12,7 @@ public class AirshipPluginLoader: NSObject, AirshipPluginLoaderProtocol {
     public static func onApplicationDidFinishLaunching(
         launchOptions: [UIApplication.LaunchOptionsKey : Any]?
     ) {
-        AirshipCordovaAutopilot.shared.onLoad(launchOptions: launchOptions)
+        AirshipCordovaAutopilot.shared.onLoad()
     }
 }
 
@@ -20,7 +20,6 @@ public class AirshipPluginLoader: NSObject, AirshipPluginLoaderProtocol {
 final class AirshipCordovaAutopilot {
 
     public static let shared: AirshipCordovaAutopilot = AirshipCordovaAutopilot()
-    private var launchOptions: [UIApplication.LaunchOptionsKey : Any]?
     private var settings: AirshipCordovaPluginSettings?
     private var pluginInitialized: Bool = false
     private var onLoad: Bool = false
@@ -31,26 +30,20 @@ final class AirshipCordovaAutopilot {
         AirshipProxy.shared.delegate = self
 
         if pluginInitialized, onLoad {
-            try? AirshipProxy.shared.attemptTakeOff(
-                launchOptions: self.launchOptions
-            )
+            try? AirshipProxy.shared.attemptTakeOff()
         }
     }
 
-    func onLoad(launchOptions: [UIApplication.LaunchOptionsKey : Any]?) {
+    func onLoad() {
         self.onLoad = true
-        self.launchOptions = launchOptions
         if pluginInitialized, onLoad {
-            try? AirshipProxy.shared.attemptTakeOff(
-                launchOptions: self.launchOptions
-            )
+            try? AirshipProxy.shared.attemptTakeOff()
         }
     }
 
     func attemptTakeOff(json: Any) throws -> Bool {
         return try AirshipProxy.shared.takeOff(
-            json: json,
-            launchOptions: self.launchOptions
+            json: json
         )
     }
 }
