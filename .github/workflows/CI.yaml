@@ -11,7 +11,7 @@ jobs:
     runs-on: macos-15-xlarge
     timeout-minutes: 10
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
     steps:
       - name: Install Android Build Tools
         run: |
@@ -23,7 +23,7 @@ jobs:
     runs-on: macos-15-xlarge
     timeout-minutes: 10
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.2.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
     steps:
       - uses: actions/checkout@v4
       - name: Run CI
