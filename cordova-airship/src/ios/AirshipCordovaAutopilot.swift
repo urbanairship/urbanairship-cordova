@@ -22,21 +22,21 @@ final class AirshipCordovaAutopilot {
     public static let shared: AirshipCordovaAutopilot = AirshipCordovaAutopilot()
     private var settings: AirshipCordovaPluginSettings?
     private var pluginInitialized: Bool = false
-    private var onLoad: Bool = false
+    private var loaded: Bool = false
 
     func pluginInitialized(settings: AirshipCordovaPluginSettings?) {
         self.pluginInitialized = true
         self.settings = settings
         AirshipProxy.shared.delegate = self
 
-        if pluginInitialized, onLoad {
+        if pluginInitialized, loaded {
             try? AirshipProxy.shared.attemptTakeOff()
         }
     }
 
     func onLoad() {
-        self.onLoad = true
-        if pluginInitialized, onLoad {
+        self.loaded = true
+        if pluginInitialized, loaded {
             try? AirshipProxy.shared.attemptTakeOff()
         }
     }
