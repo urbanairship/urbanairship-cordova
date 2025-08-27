@@ -1,6 +1,6 @@
 {
   "name": "@ua/cordova-airship-hms",
-  "version": "17.4.0",
+  "version": "17.5.0",
   "description": "Airship HMS Cordova plugin",
   "cordova": {
     "id": "@ua/cordova-airship-hms",

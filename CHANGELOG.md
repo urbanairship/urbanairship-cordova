@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 17.5.0 - August 27, 2025
+
+Patch release that updates the Android SDK to 19.11.0 and the iOS SDK to 19.8.3
+
+### Changes
+- Updated Android SDK to [19.11.0](https://github.com/urbanairship/android-library/releases/tag/19.11.0)
+- Updated iOS SDK to [19.8.3](https://github.com/urbanairship/ios-library/releases/tag/19.8.3)
+- Updated HMS to 6.13.0.300
+
 ## Version 17.4.0 - July 31, 2025
 
 Minor release that updates the Android SDK to 19.10.0 and the iOS SDK to 19.7.0

@@ -3,5 +3,5 @@
 package com.urbanairship.cordova
 
 object AirshipCordovaVersion {
-    var version = "17.4.0"
+    var version = "17.5.0"
 }
