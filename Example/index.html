@@ -24,7 +24,32 @@
         }
         console.log("Device ready!")
 
+        // One-time tag clearing
+        if (!localStorage.getItem('airship_tags_cleared')) {
+          Airship.channel.getTags(function(tags) {
+            Airship.channel.editTags()
+              .removeTags(tags)
+              .apply(function() {
+                localStorage.setItem('airship_tags_cleared', 'true')
+              })
+          })
+        }
 
+        // OPTIONAL: Contact tag groups (uncomment and configure if needed)
+        // if (!localStorage.getItem('airship_tags_cleared')) {
+        //   Airship.channel.getTags(function(tags) {
+        //     Airship.channel.editTags()
+        //       .removeTags(tags)
+        //       .apply(function() {
+        //         Airship.contact.editTagGroups()
+        //           .setTags('interests', [])
+        //           .setTags('preferences', [])
+        //           .apply(function() {
+        //             localStorage.setItem('airship_tags_cleared', 'true')
+        //           })
+        //       })
+        //   })
+        // }
 
         Airship.onDeepLink(function(event) {
           console.log("onDeepLink: " + JSON.stringify(event))
