@@ -2,7 +2,7 @@
 
 ## Version 17.5.1 - November 14, 2025
 
-Patch release that updates the Android SDK to 19.13.6 and the iOS SDK to 19.11.2
+Patch release that fixes YouTube video playback in In-App Automation and Scenes. Applications that use YouTube videos in Scenes and non-html In-App Automations (IAA) must update to resolve playback errors.
 
 ### Changes
 - Updated Android SDK to [19.13.6](https://github.com/urbanairship/android-library/releases/tag/19.13.6)
