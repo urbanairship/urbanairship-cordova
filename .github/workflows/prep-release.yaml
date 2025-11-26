@@ -40,15 +40,14 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run Updates
-        run: |
-          ./scripts/update_version.sh "${{ github.event.inputs.cordova_version }}" || exit 1
-          if [ -n "${{ github.event.inputs.proxy_version }}" ]; then
-            ./scripts/update_proxy_version.sh "${{ github.event.inputs.proxy_version }}" || exit 1
-          fi
-          ./scripts/update_changelog.sh "${{ github.event.inputs.cordova_version }}" \
-            $([ -n "${{ github.event.inputs.ios_version }}" ] && echo "--ios ${{ github.event.inputs.ios_version }}") \
-            $([ -n "${{ github.event.inputs.android_version }}" ] && echo "--android ${{ github.event.inputs.android_version }}") || exit 1
+      - name: Prepare Release
+        run: ./scripts/prep_release.sh
+        env:
+          PLUGIN_VERSION: ${{ github.event.inputs.cordova_version }}
+          PROXY_VERSION: ${{ github.event.inputs.proxy_version }}
+          IOS_VERSION: ${{ github.event.inputs.ios_version }}
+          ANDROID_VERSION: ${{ github.event.inputs.android_version }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Verify Changes
         id: verify
@@ -95,6 +94,65 @@ jobs:
           echo "Pull request created successfully"
           echo "PR Number: ${{ steps.create-pr.outputs.pull-request-number }}"
           echo "PR URL: ${{ steps.create-pr.outputs.pull-request-url }}"
+
+      - name: Gemini PR Review
+        if: success() && steps.create-pr.outputs.pull-request-number && env.GEMINI_API_KEY != ''
+        continue-on-error: true
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          # Get PR diff
+          PR_DIFF=$(git diff main...cordova-${{ github.event.inputs.cordova_version }})
+
+          # Create review prompt
+          PROMPT="Review this Cordova Airship plugin release PR. Check for:
+          1. Version consistency across plugin.xml, package.json, and version files
+          2. Changelog format and completeness
+          3. SDK version links are correct
+          4. Proxy version is updated correctly in both core and HMS packages
+
+          PR Details:
+          - Plugin version: ${{ github.event.inputs.cordova_version }}
+          - Proxy version: ${{ github.event.inputs.proxy_version }}
+          - iOS SDK: ${{ github.event.inputs.ios_version }}
+          - Android SDK: ${{ github.event.inputs.android_version }}
+
+          Diff:
+          \`\`\`
+          ${PR_DIFF}
+          \`\`\`
+
+          Provide a concise review with any issues or suggestions."
+
+          # Call Gemini API
+          RESPONSE=$(curl -s -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"contents\": [{
+                \"parts\": [{\"text\": $(echo "$PROMPT" | jq -Rs .)}]
+              }],
+              \"generationConfig\": {
+                \"temperature\": 0.3,
+                \"maxOutputTokens\": 2048
+              }
+            }")
+
+          # Extract review text
+          REVIEW=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
+
+          if [ -n "$REVIEW" ]; then
+            # Post review as PR comment
+            gh pr comment ${{ steps.create-pr.outputs.pull-request-number }} \
+              --body "## 🤖 Gemini AI Review
+
+          ${REVIEW}
+
+          ---
+          *This is an automated review. Please verify all changes manually.*"
+          else
+            echo "Gemini review failed or returned empty response"
+          fi
 
       - name: Slack Notification (Success)
         if: success() && steps.create-pr.outputs.pull-request-number
