@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 17.5.2 - December 16, 2025
+
+Patch release that updates the Android SDK to  and the iOS SDK to .
+
+### Changes
+- Updated Android SDK to [](https://github.com/urbanairship/android-library/releases/tag/)
+- Updated iOS SDK to [](https://github.com/urbanairship/ios-library/releases/tag/)
+
+
 ## Version 17.5.1 - November 14, 2025
 
 Patch release that fixes YouTube video playback in In-App Automation and Scenes. Applications that use YouTube videos in Scenes and non-html In-App Automations (IAA) must update to resolve playback errors.
@@ -170,7 +179,7 @@ Patch release that fixing Contact update merging order, improves Scene/Survey ac
 - Improved Scene/Survey accessibility and fixed a reporting bug related to form display events.
 
 ## Version 14.9.0 - March 21, 2023
-Minor release that adds a new Android config flag `com.urbanairship.android.disable_user_notifications_on_system_opt_out` that will disable user notifications on Airship if not enabled at the system level during app start. Apps can set this to `always` to always do this check, or `once` to apply a one time disable on Airship. 
+Minor release that adds a new Android config flag `com.urbanairship.android.disable_user_notifications_on_system_opt_out` that will disable user notifications on Airship if not enabled at the system level during app start. Apps can set this to `always` to always do this check, or `once` to apply a one time disable on Airship.
 
 This new flag is useful for preventing a notification permission prompt if the app previously enabled Airship user notifications on plugin 14.2.0 or older on a Android 33+ device. Most apps should use `once` value in order for Airship to still be able to send user notifications if the end user ops back in through system settings instead of through the app without the App needing to enable user notification on Airship again.
 
@@ -181,34 +190,34 @@ This new flag is useful for preventing a notification permission prompt if the a
 - Fixed enableUserNotifications on Android to hand back the actual result of the prompt instead of always `true`.
 
 ## Version 14.7.0 - January 18, 2023
-Minor release adding support for styling message center. 
+Minor release adding support for styling message center.
 
 ### Changes
 - Add support for `messageCenterStyleConfig` from takeOff and `"com.urbanairship.message.center.style.file"` from config.xml.
 
 ## Version 14.6.0 - December 7, 2022
-Minor release updating Android SDK to 16.8.0 and iOS SDK to 16.10.6. 
+Minor release updating Android SDK to 16.8.0 and iOS SDK to 16.10.6.
 
 ### Changes
 - Updated Android SDK to 16.8.0.
 - Updated iOS SDK to 16.10.6.
 
 ## Version 14.5.0 - October 10, 2022
-Minor release updating Android SDK to 16.7.5 and iOS SDK to 16.9.4. 
+Minor release updating Android SDK to 16.7.5 and iOS SDK to 16.9.4.
 
 ### Changes
 - Updated Android SDK to 16.7.5.
 - Updated iOS SDK to 16.9.4.
 
 ## Version 14.4.0 - September 21, 2022
-Minor release updating Android SDK to 16.7.4 and iOS SDK to 16.9.3. 
+Minor release updating Android SDK to 16.7.4 and iOS SDK to 16.9.3.
 
 ### Changes
 - Updated Android SDK to 16.7.4.
 - Updated iOS SDK to 16.9.3.
 
 ## Version 14.3.0 - July 19, 2022
-Minor release updating Android SDK to 16.6.1 and iOS SDK to 16.8.0. 
+Minor release updating Android SDK to 16.6.1 and iOS SDK to 16.8.0.
 
 ### Changes
 - Updated Android SDK to 16.6.1.
@@ -216,7 +225,7 @@ Minor release updating Android SDK to 16.6.1 and iOS SDK to 16.8.0.
 - Adds locale override methods: setCurrentLocale, getCurrentLocale and resetLocale.
 
 ## Version 14.2.0 - May 23, 2022
-Minor release updating Android SDK to 16.5.0 and iOS SDK to 16.7.0 and fixing setting named user to null. 
+Minor release updating Android SDK to 16.5.0 and iOS SDK to 16.7.0 and fixing setting named user to null.
 
 ### Changes
 - Updated Android SDK to 16.5.0.
