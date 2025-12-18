@@ -1,5 +1,15 @@
 # Cordova Plugin Changelog
 
+## Version 18.0.0 - December 19, 2025
+
+Major release that updates to iOS SDK 20.0.2 and Android SDK 20.0.6.
+
+### Changes
+- Updated Android SDK to [20.0.6](https://github.com/urbanairship/android-library/releases/tag/20.0.6)
+- Updated iOS SDK to [20.0.2](https://github.com/urbanairship/ios-library/releases/tag/20.0.2)
+- iOS requires iOS 16+, Xcode 26+, and cordova-ios 7.1.0+
+- Android requires compileSdkVersion 36+, minSdkVersion 23+, and cordova-android 13.0+
+
 ## Version 17.5.1 - November 14, 2025
 
 Patch release that fixes YouTube video playback in In-App Automation and Scenes. Applications that use YouTube videos in Scenes and non-html In-App Automations (IAA) must update to resolve playback errors.

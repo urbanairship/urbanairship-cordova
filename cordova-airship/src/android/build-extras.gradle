@@ -1,3 +1,14 @@
 dependencies {
-    api "com.urbanairship.android:airship-framework-proxy:14.10.1"
+    api "com.urbanairship.android:airship-framework-proxy:15.0.2"
+}
+
+// Pin AndroidX versions compatible with AGP 8.7.3 (cordova-android 14.0.x)
+// Newer versions require AGP 8.9.1+
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.activity:activity:1.9.3'
+        force 'androidx.activity:activity-ktx:1.9.3'
+        force 'androidx.core:core:1.15.0'
+        force 'androidx.core:core-ktx:1.15.0'
+    }
 }

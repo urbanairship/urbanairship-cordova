@@ -2,6 +2,7 @@
 set -e
 
 ROOT_PATH=`dirname "${0}"`/..
+ROOT_PATH=$(cd "$ROOT_PATH" && pwd)
 
 CORE_PACKAGE_PATH="$ROOT_PATH/cordova-airship/package.json"
 HMS_PACKAGE_PATH="$ROOT_PATH/cordova-airship-hms/package.json"

@@ -36,16 +36,20 @@
     </platform>
 
 <preference name="android-minSdkVersion" value="23" />
-<preference name="android-targetSdkVersion" value="35" />
-<preference name="android-compileSdkVersion" value="35" />
+<preference name="android-targetSdkVersion" value="36" />
+<preference name="android-compileSdkVersion" value="36" />
 
 <preference name="AndroidGradlePluginGoogleServicesEnabled" value="true" />
 <preference name="AndroidXEnabled" value="true" />
 
-<!-- Deployment target must be >= iOS 15  -->
-<preference name="deployment-target" value="15.0" />
+<!-- Deployment target must be >= iOS 16  -->
+<preference name="deployment-target" value="16.0" />
 
 <!-- Must be 5.0 -->
 <preference name="SwiftVersion" value="5.0" />
+
+<!-- Kotlin version must be 2.0+ for Airship SDK 20.x -->
+<preference name="GradlePluginKotlinEnabled" value="true" />
+<preference name="GradlePluginKotlinVersion" value="2.0.21" />
 
 </widget>

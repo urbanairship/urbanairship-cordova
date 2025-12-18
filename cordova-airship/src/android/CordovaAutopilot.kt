@@ -9,7 +9,7 @@ import androidx.annotation.Keep
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.edit
 import com.urbanairship.AirshipConfigOptions
-import com.urbanairship.UAirship
+import com.urbanairship.Airship
 import com.urbanairship.analytics.Extension
 import com.urbanairship.android.framework.proxy.BaseAutopilot
 import com.urbanairship.android.framework.proxy.ProxyStore
@@ -35,10 +35,10 @@ class CordovaAutopilot : BaseAutopilot() {
         ).also { _preferences = it }
     }
 
-    override fun onReady(context: Context, airship: UAirship) {
+    override fun onReady(context: Context) {
         Log.i("CordovaAutopilot", "onAirshipReady")
 
-        airship.analytics.registerSDKExtension(Extension.CORDOVA, AirshipCordovaVersion.version);
+        Airship.analytics.registerSDKExtension(Extension.CORDOVA, AirshipCordovaVersion.version);
         val settings = settings(context)
         val preferences = preferences(context)
 
@@ -46,12 +46,12 @@ class CordovaAutopilot : BaseAutopilot() {
             if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
                 when (it) {
                     CordovaSettings.OptOutFrequency.ALWAYS -> {
-                        airship.pushManager.userNotificationsEnabled = false
+                        Airship.push.userNotificationsEnabled = false
                     }
 
                     CordovaSettings.OptOutFrequency.ONCE -> {
                         if (!preferences.getBoolean(PROCESSED_NOTIFICATIONS_OPTED_OUT_FLAG, false)) {
-                            airship.pushManager.userNotificationsEnabled = false
+                            Airship.push.userNotificationsEnabled = false
                         }
                     }
                 }
@@ -60,7 +60,7 @@ class CordovaAutopilot : BaseAutopilot() {
         }
 
         if (settings.enablePushOnLaunch == true) {
-            airship.pushManager.userNotificationsEnabled = true
+            Airship.push.userNotificationsEnabled = true
         }
     }
 

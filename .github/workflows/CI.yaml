@@ -8,10 +8,10 @@ concurrency:
   
 jobs:
   android:
-    runs-on: macos-15-xlarge
+    runs-on: macos-26-xlarge
     timeout-minutes: 10
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.1.1.app/Contents/Developer
     steps:
       - name: Install Android Build Tools
         run: |
@@ -20,10 +20,10 @@ jobs:
       - name: Run CI
         run: bash ./scripts/run_ci_tasks.sh -a
   ios:
-    runs-on: macos-15-xlarge
+    runs-on: macos-26-xlarge
     timeout-minutes: 10
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_26.1.1.app/Contents/Developer
     steps:
       - uses: actions/checkout@v4
       - name: Run CI
