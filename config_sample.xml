@@ -39,6 +39,9 @@
 <preference name="android-targetSdkVersion" value="35" />
 <preference name="android-compileSdkVersion" value="35" />
 
+<!-- AGP 8.13+ required for Kotlin 2.2+ metadata support in Airship SDK 20.x -->
+<preference name="AndroidGradlePluginVersion" value="8.13.2" />
+
 <preference name="AndroidGradlePluginGoogleServicesEnabled" value="true" />
 <preference name="AndroidXEnabled" value="true" />
 
