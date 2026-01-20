@@ -7,8 +7,8 @@ import android.os.Build
 import com.urbanairship.Autopilot
 import com.urbanairship.UALog
 import com.urbanairship.actions.ActionResult
-import com.urbanairship.android.framework.proxy.EventType
 import com.urbanairship.android.framework.proxy.events.EventEmitter
+import com.urbanairship.android.framework.proxy.events.EventType
 import com.urbanairship.android.framework.proxy.proxies.AirshipProxy
 import com.urbanairship.android.framework.proxy.proxies.FeatureFlagProxy
 import com.urbanairship.json.JsonList
@@ -272,7 +272,7 @@ class AirshipCordova : CordovaPlugin() {
                     }
 
                     val result = proxy.actions.runAction(name, value)
-                    if (result.status == ActionResult.STATUS_COMPLETED) {
+                    if (result.status == ActionResult.Status.COMPLETED) {
                         result.value
                     } else {
                         throw Exception("Action failed ${result.status}")

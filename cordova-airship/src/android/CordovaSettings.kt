@@ -5,19 +5,18 @@ package com.urbanairship.cordova
 import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.Color
-import android.util.Log
 import androidx.annotation.ColorInt
 import com.urbanairship.AirshipConfigOptions
 import com.urbanairship.UALog
 
 internal data class CordovaSettings(
-    val cloudSite: String?,
+    val cloudSite: AirshipConfigOptions.Site?,
     val productionAppKey: String?,
     val productionAppSecret: String?,
-    val productionLogLevel: Int?,
+    val productionLogLevel: AirshipConfigOptions.LogLevel?,
     val developmentAppKey: String?,
     val developmentAppSecret: String?,
-    val developmentLogLevel: Int?,
+    val developmentLogLevel: AirshipConfigOptions.LogLevel?,
     val autoLaunchMessageCenter: Boolean?,
     val enablePushOnLaunch: Boolean?,
     val enableAnalytics: Boolean?,
@@ -113,15 +112,15 @@ internal data class CordovaSettings(
             }
         }
 
-        private fun parseLogLevel(logLevel: String?): Int? {
+        private fun parseLogLevel(logLevel: String?): AirshipConfigOptions.LogLevel? {
             if (logLevel.isNullOrEmpty()) { return null }
             return when (logLevel.lowercase()) {
-                "verbose" -> Log.VERBOSE
-                "debug" -> Log.DEBUG
-                "info" ->  Log.INFO
-                "warn" ->  Log.WARN
-                "error" -> Log.ERROR
-                "none" -> Log.ASSERT
+                "verbose" -> AirshipConfigOptions.LogLevel.VERBOSE
+                "debug" -> AirshipConfigOptions.LogLevel.DEBUG
+                "info" ->  AirshipConfigOptions.LogLevel.INFO
+                "warn" ->  AirshipConfigOptions.LogLevel.WARN
+                "error" -> AirshipConfigOptions.LogLevel.ERROR
+                "none" -> AirshipConfigOptions.LogLevel.NONE
                 else -> {
                     UALog.e("Unexpected log level $logLevel")
                     null
@@ -129,12 +128,11 @@ internal data class CordovaSettings(
             }
         }
 
-        @AirshipConfigOptions.Site
-        private fun parseCloudSite(site: String?): String? {
+        private fun parseCloudSite(site: String?): AirshipConfigOptions.Site? {
             if (site.isNullOrEmpty()) { return null }
             return when (site.uppercase()) {
-                AirshipConfigOptions.SITE_EU -> AirshipConfigOptions.SITE_EU
-                AirshipConfigOptions.SITE_US -> AirshipConfigOptions.SITE_US
+                "EU" -> AirshipConfigOptions.Site.EU
+                "US" -> AirshipConfigOptions.Site.US
                 else -> {
                     UALog.e("Unexpected site $site")
                     null
