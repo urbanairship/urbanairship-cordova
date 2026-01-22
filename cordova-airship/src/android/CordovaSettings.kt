@@ -120,7 +120,7 @@ internal data class CordovaSettings(
                 "info" ->  AirshipConfigOptions.LogLevel.INFO
                 "warn" ->  AirshipConfigOptions.LogLevel.WARN
                 "error" -> AirshipConfigOptions.LogLevel.ERROR
-                "none" -> AirshipConfigOptions.LogLevel.NONE
+                "assert" -> AirshipConfigOptions.LogLevel.ASSERT
                 else -> {
                     UALog.e("Unexpected log level $logLevel")
                     null
@@ -131,8 +131,8 @@ internal data class CordovaSettings(
         private fun parseCloudSite(site: String?): AirshipConfigOptions.Site? {
             if (site.isNullOrEmpty()) { return null }
             return when (site.uppercase()) {
-                "EU" -> AirshipConfigOptions.Site.EU
-                "US" -> AirshipConfigOptions.Site.US
+                "EU" -> AirshipConfigOptions.Site.SITE_EU
+                "US" -> AirshipConfigOptions.Site.SITE_US
                 else -> {
                     UALog.e("Unexpected site $site")
                     null
