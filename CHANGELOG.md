@@ -1,15 +1,20 @@
 # Cordova Plugin Changelog
 
-## Version 18.0.0 - January 15, 2026
+## Version 18.0.0 - January 22, 2026
 
-Major release that includes several fixes and improvements for Scenes, In-App Automations, and notification handling.
+Major release that updates to native SDK 20.1 with accessibility improvements and bug fixes.
 
 ### Changes
-- Updated Android SDK to [20.1.0](https://github.com/urbanairship/android-library/releases/tag/20.1.0)
-- Updated iOS SDK to [20.0.3](https://github.com/urbanairship/ios-library/releases/tag/20.0.3)
+- Updated Android SDK to [20.1.1](https://github.com/urbanairship/android-library/releases/tag/20.1.1)
+- Updated iOS SDK to [20.1.1](https://github.com/urbanairship/ios-library/releases/tag/20.1.1)
 - Added support for Story pause/resume and back/next controls in Scenes on Android.
 - Added support for additional text styles and markdown in Scenes on Android.
+- Added support for sizing inactive segments in Story view progress indicators on iOS.
+- Improved VoiceOver focus handling for Message Center on iOS.
+- Fixed a potential crash in Scenes with specific images and display settings on Android.
 - Fixed safe area handling during keyboard presentation in Scenes on iOS.
+- iOS requires Xcode 26+, iOS 16+, and cordova-ios 7.1.0+
+- Android requires cordova-android 14.0.1+, AGP 8.13+, and compileSdkVersion 36+
 
 
 ## Version 17.5.1 - November 14, 2025

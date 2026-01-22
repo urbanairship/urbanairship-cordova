@@ -36,17 +36,17 @@
     </platform>
 
 <preference name="android-minSdkVersion" value="23" />
-<preference name="android-targetSdkVersion" value="35" />
-<preference name="android-compileSdkVersion" value="35" />
+<preference name="android-targetSdkVersion" value="36" />
+<preference name="android-compileSdkVersion" value="36" />
 
-<!-- AGP 8.13+ required for Kotlin 2.2+ metadata support in Airship SDK 20.x -->
+<!-- AGP 8.13+ and Kotlin 2.2+ required for Airship SDK 20.x -->
 <preference name="AndroidGradlePluginVersion" value="8.13.2" />
+<preference name="GradlePluginKotlinVersion" value="2.2.20" />
 
 <preference name="AndroidGradlePluginGoogleServicesEnabled" value="true" />
 <preference name="AndroidXEnabled" value="true" />
 
-<!-- Deployment target must be >= iOS 15  -->
-<preference name="deployment-target" value="15.0" />
+<preference name="deployment-target" value="16.0" />
 
 <!-- Must be 5.0 -->
 <preference name="SwiftVersion" value="5.0" />
