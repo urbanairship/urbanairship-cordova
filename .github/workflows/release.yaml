@@ -7,16 +7,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15-xlarge
-    timeout-minutes: 20
-    env:
-      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+    runs-on: macos-26-xlarge
+    timeout-minutes: 25
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Check Version
-        run: bash ./scripts/check_version.sh ${GITHUB_REF/refs\/tags\//}        
+        run: bash ./scripts/check_version.sh ${GITHUB_REF/refs\/tags\//}
       - name: Slack Notification
         uses: lazy-actions/slatify@master
         with:

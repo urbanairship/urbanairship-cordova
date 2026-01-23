@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<plugin id="@ua/cordova-airship" version="17.5.1" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+<plugin id="@ua/cordova-airship" version="18.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     
     <name>Airship</name>
     <description>Airship Cordova plugin</description>
@@ -8,9 +8,9 @@
     <repo>https://github.com/urbanairship/urbanairship-cordova.git</repo>
 
     <engines>
-        <engine name="cordova-android" version=">=13.0.0"/>
+        <engine name="cordova-android" version=">=14.0.0"/>
         <engine name="cordova-ios" version=">=7.1.0"/>
-        <engine name="cordova" version=">=9.0.1"/>
+        <engine name="cordova" version=">=12.0.0"/>
     </engines>
 
     <js-module name="Airship" src="www/Airship.js">
@@ -94,7 +94,7 @@
         </config-file>
 
         <config-file target="*-Info.plist" parent="UACordovaPluginVersion">
-            <string>17.3.0</string>
+            <string>18.0.0</string>
         </config-file>
 
         <config-file parent="/widget" target="config.xml">
@@ -130,7 +130,7 @@
                 <source url="https://cdn.cocoapods.org/"/>
             </config>
             <pods use-frameworks="true">
-                <pod name="AirshipFrameworkProxy" spec="14.10.1" />
+                <pod name="AirshipFrameworkProxy" spec="15.2.0" />
             </pods>
         </podspec>
     </platform>
