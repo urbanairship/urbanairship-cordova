@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 18.1.0 - March 4, 2026
+
+Minor release that updates the Android SDK to 20.4.0 and the iOS SDK to 20.4.0.
+
+### Changes
+- Updated Android SDK to [20.4.0](https://github.com/urbanairship/android-library/releases/tag/20.4.0)
+- Updated iOS SDK to [20.4.0](https://github.com/urbanairship/ios-library/releases/tag/20.4.0)
+
+
 ## Version 18.1.0 - February 19, 2026
 
 Minor release that fixes Airship failing to take off on iOS due to a plugin loader compatibility issue and updates the iOS SDK to 20.3.1 and the Android SDK to 20.2.2.
