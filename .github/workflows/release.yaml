@@ -5,6 +5,10 @@ on:
     tags:
       - "[0-9]+.[0-9]+.[0-9]+*"
 
+permissions:
+  id-token: write
+  contents: write
+
 jobs:
   build:
     runs-on: macos-26-xlarge
@@ -38,8 +42,6 @@ jobs:
   deploy:
     needs: [build]
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -61,9 +63,9 @@ jobs:
           python-version: '3.9'
       - name: Export gcloud related env variable
         run: export CLOUDSDK_PYTHON="/usr/bin/python3"
-      - uses: actions/setup-node@master
+      - uses: actions/setup-node@v4
         with:
-          node-version: 14
+          node-version: 24
           registry-url: https://registry.npmjs.org/
       - uses: google-github-actions/setup-gcloud@v0
         with:
@@ -79,8 +81,6 @@ jobs:
           cd cordova-airship-hms/
           npm publish --access public
           cd -
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
 
       - name: Docs
         run: |
@@ -98,7 +98,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
-          release_name: ${{ steps.get_version.outputs.VERSION }}
+          name: ${{ steps.get_version.outputs.VERSION }}
           body: ${{ steps.get_release_notes.outputs.NOTES }}
           draft: false
           prerelease: false
