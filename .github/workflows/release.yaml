@@ -90,6 +90,10 @@ jobs:
           cd -
           bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} ./cordova-airship/docs
 
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: cordova-airship/docs
 
       - name: Github Release
         id: create_release
@@ -117,3 +121,18 @@ jobs:
           type: ${{ job.status }}
           job_name: "Airship Cordova Plugin Release Failed :("
           url: ${{ secrets.SLACK_WEBHOOK }}
+
+  deploy-docs:
+    needs: deploy
+    runs-on: ubuntu-latest
+    continue-on-error: true # Remove when migration to GH Pages is complete
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
