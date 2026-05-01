@@ -5,7 +5,10 @@ on: [pull_request]
 concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
-  
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_26.4.app/Contents/Developer
+
 jobs:
   android:
     runs-on: macos-15-xlarge
