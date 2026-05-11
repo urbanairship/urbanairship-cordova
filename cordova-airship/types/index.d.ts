@@ -177,6 +177,254 @@ export interface DisplayPreferenceCenterEvent {
 }
 
 /**
+ * Event fired when Live Activities are updated. iOS only.
+ */
+export interface LiveActivitiesUpdatedEvent {
+    /**
+     * The Live Activities.
+     */
+    activities: LiveActivity[];
+}
+
+/**
+ * Live Activity info. iOS only.
+ */
+export interface LiveActivity {
+    /**
+     * The activity ID.
+     */
+    id: string;
+    /**
+     * The attribute types.
+     */
+    attributeTypes: string;
+    /**
+     * The content.
+     */
+    content: LiveActivityContent;
+    /**
+     * The attributes.
+     */
+    attributes: JsonObject;
+}
+
+/**
+ * Live Activity content. iOS only.
+ */
+export interface LiveActivityContent {
+    /**
+     * The content state.
+     */
+    state: JsonObject;
+    /**
+     * Optional ISO 8601 date string that defines when the Live Activity will be stale.
+     */
+    staleDate?: string;
+    /**
+     * The relevance score.
+     */
+    relevanceScore: number;
+}
+
+/**
+ * Base Live Activity request. iOS only.
+ */
+export interface LiveActivityRequest {
+    /**
+     * Attributes type. This should match the Activity type of your Live Activity.
+     */
+    attributesType: string;
+}
+
+/**
+ * Live Activity list request. iOS only.
+ */
+export interface LiveActivityListRequest extends LiveActivityRequest {}
+
+/**
+ * Live Activity start request. iOS only.
+ */
+export interface LiveActivityStartRequest extends LiveActivityRequest {
+    /**
+     * Dynamic content.
+     */
+    content: LiveActivityContent;
+    /**
+     * Fixed attributes.
+     */
+    attributes: JsonObject;
+}
+
+/**
+ * Live Activity update request. iOS only.
+ */
+export interface LiveActivityUpdateRequest extends LiveActivityRequest {
+    /**
+     * The Live Activity ID to update.
+     */
+    activityId: string;
+    /**
+     * Dynamic content.
+     */
+    content: LiveActivityContent;
+}
+
+/**
+ * Live Activity end request. iOS only.
+ */
+export interface LiveActivityEndRequest extends LiveActivityRequest {
+    /**
+     * The Live Activity ID to end.
+     */
+    activityId: string;
+    /**
+     * Dynamic content.
+     */
+    content?: LiveActivityContent;
+    /**
+     * Dismissal policy. Defaults to `LiveActivityDismissalPolicyDefault`.
+     */
+    dismissalPolicy?: LiveActivityDismissalPolicy;
+}
+
+export type LiveActivityDismissalPolicy =
+    | LiveActivityDismissalPolicyImmediate
+    | LiveActivityDismissalPolicyDefault
+    | LiveActivityDismissalPolicyAfterDate;
+
+/**
+ * Dismissal policy to immediately dismiss the Live Activity on end.
+ */
+export interface LiveActivityDismissalPolicyImmediate {
+    type: 'immediate';
+}
+
+/**
+ * Dismissal policy to dismiss the Live Activity after the expiration.
+ */
+export interface LiveActivityDismissalPolicyDefault {
+    type: 'default';
+}
+
+/**
+ * Dismissal policy to dismiss the Live Activity after a given date.
+ */
+export interface LiveActivityDismissalPolicyAfterDate {
+    type: 'after';
+    /**
+     * ISO 8601 date string.
+     */
+    date: string;
+}
+
+/**
+ * Live Update info. Android only.
+ */
+export interface LiveUpdate {
+    /**
+     * The Live Update name.
+     */
+    name: string;
+    /**
+     * The Live Update type.
+     */
+    type: string;
+    /**
+     * Dynamic content.
+     */
+    content: JsonObject;
+    /**
+     * ISO 8601 date string of the last content update.
+     */
+    lastContentUpdateTimestamp: string;
+    /**
+     * ISO 8601 date string of the last state update.
+     */
+    lastStateChangeTimestamp: string;
+    /**
+     * Optional ISO 8601 date string that defines when to end this Live Update.
+     */
+    dismissTimestamp?: string;
+}
+
+/**
+ * Live Update list request. Android only.
+ */
+export interface LiveUpdateListRequest {
+    type: string;
+}
+
+/**
+ * Live Update start request. Android only.
+ */
+export interface LiveUpdateStartRequest {
+    /**
+     * The Live Update name.
+     */
+    name: string;
+    /**
+     * The Live Update type.
+     */
+    type: string;
+    /**
+     * Dynamic content.
+     */
+    content: JsonObject;
+    /**
+     * Optional ISO 8601 date string, used to filter out of order updates.
+     */
+    timestamp?: string;
+    /**
+     * Optional ISO 8601 date string that defines when to end this Live Update.
+     */
+    dismissTimestamp?: string;
+}
+
+/**
+ * Live Update update request. Android only.
+ */
+export interface LiveUpdateUpdateRequest {
+    /**
+     * The Live Update name.
+     */
+    name: string;
+    /**
+     * Dynamic content.
+     */
+    content: JsonObject;
+    /**
+     * Optional ISO 8601 date string, used to filter out of order updates.
+     */
+    timestamp?: string;
+    /**
+     * Optional ISO 8601 date string that defines when to end this Live Update.
+     */
+    dismissTimestamp?: string;
+}
+
+/**
+ * Live Update end request. Android only.
+ */
+export interface LiveUpdateEndRequest {
+    /**
+     * The Live Update name.
+     */
+    name: string;
+    /**
+     * Dynamic content.
+     */
+    content?: JsonObject;
+    /**
+     * Optional ISO 8601 date string, used to filter out of order updates.
+     */
+    timestamp?: string;
+    /**
+     * Optional ISO 8601 date string that defines when to end this Live Update.
+     */
+    dismissTimestamp?: string;
+}
+
+/**
  * iOS options
  */
 export namespace iOS {
@@ -1954,6 +2202,154 @@ export interface AirshipActions {
     ): void
 }
 
+/**
+ * Live Activity manager. iOS only.
+ */
+export interface AirshipLiveActivityManager {
+
+    /**
+     * Lists any Live Activities for the request.
+     * @param request The request options.
+     * @param success Success callback with the list.
+     * @param error Error callback.
+     */
+    list(
+        request: LiveActivityListRequest,
+        success: (activities: LiveActivity[]) => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Lists all Live Activities.
+     * @param success Success callback with the list.
+     * @param error Error callback.
+     */
+    listAll(
+        success: (activities: LiveActivity[]) => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Starts a Live Activity.
+     * @param request The request options.
+     * @param success Success callback with the started activity.
+     * @param error Error callback.
+     */
+    start(
+        request: LiveActivityStartRequest,
+        success: (activity: LiveActivity) => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Updates a Live Activity.
+     * @param request The request options.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    update(
+        request: LiveActivityUpdateRequest,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Ends a Live Activity.
+     * @param request The request options.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    end(
+        request: LiveActivityEndRequest,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Live Activities updated listener.
+     *
+     * @param callback The callback.
+     * @return A cancellable that can be used to cancel the listener.
+     */
+    onLiveActivitiesUpdated(
+        callback: (event: LiveActivitiesUpdatedEvent) => void
+    ): Cancellable
+}
+
+/**
+ * Live Update manager. Android only.
+ */
+export interface AirshipLiveUpdateManager {
+
+    /**
+     * Lists any Live Updates for the request.
+     * @param request The request options.
+     * @param success Success callback with the list.
+     * @param error Error callback.
+     */
+    list(
+        request: LiveUpdateListRequest,
+        success: (updates: LiveUpdate[]) => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Lists all Live Updates.
+     * @param success Success callback with the list.
+     * @param error Error callback.
+     */
+    listAll(
+        success: (updates: LiveUpdate[]) => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Starts a Live Update.
+     * @param request The request options.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    start(
+        request: LiveUpdateStartRequest,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Updates a Live Update.
+     * @param request The request options.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    update(
+        request: LiveUpdateUpdateRequest,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Ends a Live Update.
+     * @param request The request options.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    end(
+        request: LiveUpdateEndRequest,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Clears all Live Updates.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    clearAll(
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+}
+
 export interface Airship {
     readonly actions: AirshipActions;
     readonly analytics: AirshipAnalytics;
@@ -1966,6 +2362,8 @@ export interface Airship {
     readonly privacyManager: AirshipPrivacyManager;
     readonly push: AirshipPush;
     readonly featureFlagManager: AirshipFeatureFlagManager;
+    readonly liveActivityManager: AirshipLiveActivityManager;
+    readonly liveUpdateManager: AirshipLiveUpdateManager;
 
     /**
      * Calls takeOff. If Airship is already configured for

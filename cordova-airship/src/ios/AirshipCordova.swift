@@ -26,7 +26,8 @@ public final class AirshipCordova: CDVPlugin {
         .displayPreferenceCenter: "airship.event.display_preference_center",
         .notificationResponseReceived: "airship.event.notification_response",
         .pushReceived: "airship.event.push_received",
-        .notificationStatusChanged: "airship.event.notification_status_changed"
+        .notificationStatusChanged: "airship.event.notification_status_changed",
+        .liveActivitiesUpdated: "airship.event.ios_live_activities_updated"
     ]
 
     @MainActor
@@ -506,6 +507,53 @@ public final class AirshipCordova: CDVPlugin {
             )
 
             return nil
+
+        // Live Activity Manager
+        case "liveActivityManager#list":
+            if #available(iOS 16.1, *) {
+                return try await LiveActivityManager.shared.list(
+                    try command.requireCodableArg()
+                )
+            } else {
+                throw AirshipErrors.error("Live Activities only available on 16.1+")
+            }
+
+        case "liveActivityManager#listAll":
+            if #available(iOS 16.1, *) {
+                return try await LiveActivityManager.shared.listAll()
+            } else {
+                throw AirshipErrors.error("Live Activities only available on 16.1+")
+            }
+
+        case "liveActivityManager#start":
+            if #available(iOS 16.1, *) {
+                return try await LiveActivityManager.shared.start(
+                    try command.requireCodableArg()
+                )
+            } else {
+                throw AirshipErrors.error("Live Activities only available on 16.1+")
+            }
+
+        case "liveActivityManager#update":
+            if #available(iOS 16.1, *) {
+                try await LiveActivityManager.shared.update(
+                    try command.requireCodableArg()
+                )
+            } else {
+                throw AirshipErrors.error("Live Activities only available on 16.1+")
+            }
+            return nil
+
+        case "liveActivityManager#end":
+            if #available(iOS 16.1, *) {
+                try await LiveActivityManager.shared.end(
+                    try command.requireCodableArg()
+                )
+            } else {
+                throw AirshipErrors.error("Live Activities only available on 16.1+")
+            }
+            return nil
+
         default:
             throw AirshipErrors.error("Unavailable command \(method)")
         }
