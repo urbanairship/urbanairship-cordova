@@ -11,6 +11,7 @@ import com.urbanairship.android.framework.proxy.events.EventEmitter
 import com.urbanairship.android.framework.proxy.events.EventType
 import com.urbanairship.android.framework.proxy.proxies.AirshipProxy
 import com.urbanairship.android.framework.proxy.proxies.FeatureFlagProxy
+import com.urbanairship.android.framework.proxy.proxies.LiveUpdateRequest
 import com.urbanairship.json.JsonList
 import com.urbanairship.json.JsonMap
 import com.urbanairship.json.JsonSerializable
@@ -290,6 +291,26 @@ class AirshipCordova : CordovaPlugin() {
                         val featureFlagProxy = FeatureFlagProxy(arg)
                         proxy.featureFlagManager.trackInteraction(flag = featureFlagProxy)
                     }
+                }
+
+                // Live Update
+                "liveUpdateManager#list" -> callback.resolve(scope, method) {
+                    proxy.liveUpdateManager.list(LiveUpdateRequest.List.fromJson(arg))
+                }
+                "liveUpdateManager#listAll" -> callback.resolve(scope, method) {
+                    proxy.liveUpdateManager.listAll()
+                }
+                "liveUpdateManager#start" -> callback.resolve(scope, method) {
+                    proxy.liveUpdateManager.start(LiveUpdateRequest.Start.fromJson(arg))
+                }
+                "liveUpdateManager#update" -> callback.resolve(scope, method) {
+                    proxy.liveUpdateManager.update(LiveUpdateRequest.Update.fromJson(arg))
+                }
+                "liveUpdateManager#end" -> callback.resolve(scope, method) {
+                    proxy.liveUpdateManager.end(LiveUpdateRequest.End.fromJson(arg))
+                }
+                "liveUpdateManager#clearAll" -> callback.resolve(scope, method) {
+                    proxy.liveUpdateManager.clearAll()
                 }
 
                 else -> callback.error("Not implemented")

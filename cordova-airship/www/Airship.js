@@ -17,7 +17,9 @@ var cordova = require("cordova"),
         },
         privacyManager: {},
         actions: {},
-        inApp: {}
+        inApp: {},
+        liveActivityManager: {},
+        liveUpdateManager: {}
     }
 
 // Argcheck values:
@@ -694,6 +696,70 @@ airship.locale.clearLocaleOverride = function (success, failure) {
 airship.locale.getLocale = function (success, failure) {
     argscheck.checkArgs('fF', 'Airship.locale.getLocale', arguments)
     perform("locale#getLocale", null, success, failure)
+}
+
+// Live Activity Manager (iOS)
+
+airship.liveActivityManager.list = function (request, success, failure) {
+    argscheck.checkArgs('ofF', 'Airship.liveActivityManager.list', arguments)
+    perform("liveActivityManager#list", request, success, failure)
+}
+
+airship.liveActivityManager.listAll = function (success, failure) {
+    argscheck.checkArgs('fF', 'Airship.liveActivityManager.listAll', arguments)
+    perform("liveActivityManager#listAll", null, success, failure)
+}
+
+airship.liveActivityManager.start = function (request, success, failure) {
+    argscheck.checkArgs('ofF', 'Airship.liveActivityManager.start', arguments)
+    perform("liveActivityManager#start", request, success, failure)
+}
+
+airship.liveActivityManager.update = function (request, success, failure) {
+    argscheck.checkArgs('oFF', 'Airship.liveActivityManager.update', arguments)
+    perform("liveActivityManager#update", request, success, failure)
+}
+
+airship.liveActivityManager.end = function (request, success, failure) {
+    argscheck.checkArgs('oFF', 'Airship.liveActivityManager.end', arguments)
+    perform("liveActivityManager#end", request, success, failure)
+}
+
+airship.liveActivityManager.onLiveActivitiesUpdated = function (callback) {
+    argscheck.checkArgs('F', 'Airship.liveActivityManager.onLiveActivitiesUpdated', arguments)
+    return registerListener("airship.event.ios_live_activities_updated", callback)
+}
+
+// Live Update Manager (Android)
+
+airship.liveUpdateManager.list = function (request, success, failure) {
+    argscheck.checkArgs('ofF', 'Airship.liveUpdateManager.list', arguments)
+    perform("liveUpdateManager#list", request, success, failure)
+}
+
+airship.liveUpdateManager.listAll = function (success, failure) {
+    argscheck.checkArgs('fF', 'Airship.liveUpdateManager.listAll', arguments)
+    perform("liveUpdateManager#listAll", null, success, failure)
+}
+
+airship.liveUpdateManager.start = function (request, success, failure) {
+    argscheck.checkArgs('oFF', 'Airship.liveUpdateManager.start', arguments)
+    perform("liveUpdateManager#start", request, success, failure)
+}
+
+airship.liveUpdateManager.update = function (request, success, failure) {
+    argscheck.checkArgs('oFF', 'Airship.liveUpdateManager.update', arguments)
+    perform("liveUpdateManager#update", request, success, failure)
+}
+
+airship.liveUpdateManager.end = function (request, success, failure) {
+    argscheck.checkArgs('oFF', 'Airship.liveUpdateManager.end', arguments)
+    perform("liveUpdateManager#end", request, success, failure)
+}
+
+airship.liveUpdateManager.clearAll = function (success, failure) {
+    argscheck.checkArgs('FF', 'Airship.liveUpdateManager.clearAll', arguments)
+    perform("liveUpdateManager#clearAll", null, success, failure)
 }
 
 module.exports = airship;
