@@ -114,10 +114,10 @@ fi
 if [ -n "$PROXY_VERSION" ]; then
     echo "[2/4] Updating proxy version..."
     if [ "$DRY_RUN" = "false" ]; then
-        sed -i '' -E "s/(pod name=\"AirshipFrameworkProxy\" spec=\")[^\"]*\"/\1$PROXY_VERSION\"/" "$CORE_PLUGIN_XML_PATH"
+        sed -i '' -E "s|(airship-mobile-framework-proxy\.git\", from: \")[^\"]*\"|\1$PROXY_VERSION\"|" "$REPO_ROOT/cordova-airship/Package.swift"
         sed -i '' -E "s/(api \"com.urbanairship.android:airship-framework-proxy:)[^\"]*\"/\1$PROXY_VERSION\"/" "$REPO_ROOT/cordova-airship/src/android/build-extras.gradle"
         sed -i '' -E "s/(implementation \"com.urbanairship.android:airship-framework-proxy-hms:)[^\"]*\"/\1$PROXY_VERSION\"/" "$REPO_ROOT/cordova-airship-hms/src/android/build-extras.gradle"
-        echo "  ✓ Updated plugin.xml and build-extras.gradle"
+        echo "  ✓ Updated Package.swift and build-extras.gradle"
     else
         echo "  Would update proxy version to $PROXY_VERSION"
     fi
@@ -206,7 +206,7 @@ if [ "$DRY_RUN" = "false" ]; then
     fi
 
     if [ -n "$PROXY_VERSION" ]; then
-        if grep -q "pod name=\"AirshipFrameworkProxy\" spec=\"$PROXY_VERSION\"" "$CORE_PLUGIN_XML_PATH"; then
+        if grep -q "airship-mobile-framework-proxy.git\", from: \"$PROXY_VERSION\"" "$REPO_ROOT/cordova-airship/Package.swift"; then
             echo "  ✓ Proxy version verified"
         else
             echo "  ✗ Proxy version mismatch"

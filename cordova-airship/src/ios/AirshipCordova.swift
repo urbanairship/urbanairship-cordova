@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipKit
+import Cordova
+import AirshipCore
 import AirshipFrameworkProxy
 
 @objc(AirshipCordova)
@@ -31,7 +32,7 @@ public final class AirshipCordova: CDVPlugin {
     @MainActor
     public override func pluginInitialize() {
         let settings = AirshipCordovaPluginSettings.from(
-            settings: self.commandDelegate.settings
+            settings: (self.commandDelegate.settings as NSDictionary) as? [AnyHashable: Any]
         )
 
         AirshipCordovaAutopilot.shared.pluginInitialized(settings: settings)
@@ -642,8 +643,10 @@ extension AirshipProxyEventEmitter {
         }
 
         self.processPendingEvents(type: eventType) { event in
-            let result = try? CDVPluginResult.successResult(value: event.body)
-            result?.keepCallback = true
+            guard let result = try? CDVPluginResult.successResult(value: event.body) else {
+                return true
+            }
+            result.keepCallback = true
 
             listeners.forEach { listener in
                 commandDelegate.send(result, callbackId: listener.callbackID)
@@ -692,14 +695,14 @@ fileprivate extension CDVPluginResult {
         if let array = value as? Array<Any> {
             return CDVPluginResult(
                 status: CDVCommandStatus_OK,
-                messageAs: try AirshipJSON.wrap(array).unWrap() as? Array<Any>
+                messageAs: (try AirshipJSON.wrap(array).unWrap() as? Array<Any>) ?? []
             )
         }
 
         if let dictionary = value as? [String: Any] {
             return CDVPluginResult(
                 status: CDVCommandStatus_OK,
-                messageAs: try AirshipJSON.wrap(dictionary).unWrap() as? [String: Any]
+                messageAs: (try AirshipJSON.wrap(dictionary).unWrap() as? [String: Any]) ?? [:]
             )
         }
 

@@ -10,8 +10,8 @@ if [ -z "$PROXY_VERSION" ]; then
     exit 1
 fi
 
-# Update plugin.xml
-sed -i.bak -E "s/(pod name=\"AirshipFrameworkProxy\" spec=\")[^\"]*\"/\1$PROXY_VERSION\"/" "$ROOT_PATH/cordova-airship/plugin.xml"
+# Update Package.swift
+sed -i.bak -E "s|(airship-mobile-framework-proxy\.git\", from: \")[^\"]*\"|\1$PROXY_VERSION\"|" "$ROOT_PATH/cordova-airship/Package.swift"
 
 # Update Android build-extras.gradle
 sed -i.bak -E "s/(api \"com.urbanairship.android:airship-framework-proxy:)[^\"]*\"/\1$PROXY_VERSION\"/" "$ROOT_PATH/cordova-airship/src/android/build-extras.gradle"

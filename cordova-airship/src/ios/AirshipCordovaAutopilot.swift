@@ -1,6 +1,7 @@
 /* Copyright Airship and Contributors */
 
-import AirshipKit
+import Foundation
+import AirshipCore
 import AirshipFrameworkProxy
 
 @objc(AirshipPluginLoader)
