@@ -9,10 +9,10 @@ ANDROID_VERISON_PATH="$ROOT_PATH/cordova-airship/src/android/AirshipCordovaVersi
 IOS_VERISON_PATH="$ROOT_PATH/cordova-airship/src/ios/AirshipCordovaVersion.swift"
 HMS_PLUGIN_XML_PATH="$ROOT_PATH/cordova-airship-hms/plugin.xml"
 
-coreVersion=$(node -p "require('$CORE_PACKAGE_PATH').version")
+coreVersion=$(node -p "require('./$CORE_PACKAGE_PATH').version")
 echo "core package version: $coreVersion"
 
-hmsVersion=$(node -p "require('$HMS_PACKAGE_PATH').version")
+hmsVersion=$(node -p "require('./$HMS_PACKAGE_PATH').version")
 echo "hms package version: $hmsVersion"
 
 androidVersion=$(grep "var version" $ANDROID_VERISON_PATH | awk -F'"' '{print $2}')

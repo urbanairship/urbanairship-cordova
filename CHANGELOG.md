@@ -1,5 +1,13 @@
 # Cordova Plugin Changelog
 
+## Version 19.0.0 - May 11, 2026
+
+Major release that migrates iOS to Swift Package Manager, drops CocoaPods support, and bumps the minimum Cordova platform versions.
+
+### Changes
+- iOS now uses Swift Package Manager instead of CocoaPods. Requires `cordova-ios` 8.0.0 or newer.
+- Android now requires `cordova-android` 15.0.0 or newer.
+
 ## Version 18.2.0 - May 1, 2026
 
 Minor release that updates the Android SDK to 20.7.0 and the iOS SDK to 20.7.0.

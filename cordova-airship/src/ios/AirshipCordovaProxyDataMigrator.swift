@@ -3,7 +3,7 @@
 import Foundation
 import AirshipFrameworkProxy
 import UserNotifications
-import AirshipKit
+import AirshipCore
 
 struct AirshipCordovaProxyDataMigrator {
 

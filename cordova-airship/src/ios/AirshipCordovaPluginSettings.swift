@@ -1,7 +1,8 @@
 /* Copyright Airship and Contributors */
 
 import Foundation
-import AirshipKit
+import UserNotifications
+import AirshipCore
 import AirshipFrameworkProxy
 
 enum AirshipCordovaSite: String, Decodable, Sendable {
