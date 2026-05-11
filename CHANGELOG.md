@@ -2,11 +2,13 @@
 
 ## Version 19.0.0 - May 11, 2026
 
-Major release that migrates iOS to Swift Package Manager, drops CocoaPods support, and bumps the minimum Cordova platform versions.
+Major release that migrates iOS to Swift Package Manager, drops CocoaPods support, bumps the minimum Cordova platform versions, and adds Live Activity (iOS) and Live Update (Android) JS hooks.
 
 ### Changes
 - iOS now uses Swift Package Manager instead of CocoaPods. Requires `cordova-ios` 8.0.0 or newer.
 - Android now requires `cordova-android` 15.0.0 or newer.
+- Added `Airship.liveActivityManager` (iOS) with `list`, `listAll`, `start`, `update`, `end`, and `onLiveActivitiesUpdated` listener. Requires iOS 16.1+ and a host-app call to `LiveActivityManager.shared.setup` to register `ActivityAttributes` types.
+- Added `Airship.liveUpdateManager` (Android) with `list`, `listAll`, `start`, `update`, `end`, and `clearAll`.
 
 ## Version 18.2.0 - May 1, 2026
 
