@@ -5,6 +5,8 @@
 
 The official Airship Cordova plugin for iOS and Android.
 
+> **Using Capacitor?** See the [capacitor-airship](https://github.com/urbanairship/capacitor-airship) plugin instead.
+
 ## Features
 
 - **Push Notifications** - Rich, interactive push notifications with deep linking
