@@ -4,14 +4,9 @@
 
 Major release that migrates iOS to Swift Package Manager, drops CocoaPods support, and bumps the minimum Cordova platform versions.
 
-### Breaking changes
+### Changes
 - iOS now uses Swift Package Manager instead of CocoaPods. Requires `cordova-ios` 8.0.0 or newer.
 - Android now requires `cordova-android` 15.0.0 or newer.
-- Removed the iOS bridging header; plugin now imports `Cordova` and `AirshipCore` directly.
-
-### Changes
-- Migrated iOS dependency on `AirshipFrameworkProxy` 15.8.0 to SPM via `https://github.com/urbanairship/airship-mobile-framework-proxy`.
-- Updated iOS source for cordova-ios 8 API tightening (non-null `CDVPluginResult` parameters, `CDVSettingsDictionary` cast).
 
 ## Version 18.2.0 - May 1, 2026
 
