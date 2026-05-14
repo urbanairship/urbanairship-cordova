@@ -1,0 +1,70 @@
+name: Publish Docs
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+    secrets:
+      GCP_SA_KEY:
+        required: true
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag to publish docs for (e.g. 12.0.0)'
+        required: true
+        type: string
+
+jobs:
+  release-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.version }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup GCP Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Build docs
+        run: |
+          cd cordova-airship/
+          npm ci
+          npm run generate-docs
+          cd -
+
+      - name: Upload docs
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          bash ./scripts/upload_docs.sh "$VERSION" ./cordova-airship/docs
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: cordova-airship/docs
+
+  deploy-docs:
+    needs: release-docs
+    runs-on: ubuntu-latest
+    continue-on-error: true # Remove when migration to GH Pages is complete
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

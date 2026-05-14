@@ -6,7 +6,6 @@ on:
       - "[0-9]+.[0-9]+.[0-9]+*"
 
 permissions:
-  id-token: write
   contents: write
 
 jobs:
@@ -19,25 +18,12 @@ jobs:
         uses: actions/checkout@v4
       - name: Check Version
         run: bash ./scripts/check_version.sh ${GITHUB_REF/refs\/tags\//}
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        with:
-          type: ${{ job.status }}
-          job_name: "Airship Cordova Plugin Release Started!"
-          url: ${{ secrets.SLACK_WEBHOOK }}
       - name: Install Android Build Tools
         run: |
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;34.0.0"
       - name: Run CI
         run: |
           bash ./scripts/run_ci_tasks.sh -a -i
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        if: failure()
-        with:
-          type: ${{ job.status }}
-          job_name: "Airship Cordova Plugin Release Failed :("
-          url: ${{ secrets.SLACK_WEBHOOK }}
 
   deploy:
     needs: [build]
@@ -47,31 +33,21 @@ jobs:
         uses: actions/checkout@v4
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
       - name: Get the release notes
         id: get_release_notes
         run: |
           VERSION=${{ steps.get_version.outputs.VERSION }}
-          NOTES="$(awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md)"
-          NOTES="${NOTES//'%'/'%25'}"
-          NOTES="${NOTES//$'\n'/'%0A'}"
-          NOTES="${NOTES//$'\r'/'%0D'}"
-          echo ::set-output name=NOTES::"$NOTES"
-      - name: Setup python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-      - name: Export gcloud related env variable
-        run: export CLOUDSDK_PYTHON="/usr/bin/python3"
+          delimiter="$(openssl rand -hex 8)"
+          {
+            echo "NOTES<<${delimiter}"
+            awk "/## Version $VERSION/{flag=1;next}/## Version/{flag=0}flag" CHANGELOG.md
+            echo "${delimiter}"
+          } >> $GITHUB_OUTPUT
       - uses: actions/setup-node@v4
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org/
-      - uses: google-github-actions/setup-gcloud@v0
-        with:
-          version: '351.0.0'
-          service_account_email: ${{ secrets.GCP_SA_EMAIL }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}          
 
       - name: Publish modules
         run: |
@@ -81,19 +57,6 @@ jobs:
           cd cordova-airship-hms/
           npm publish --access public
           cd -
-
-      - name: Docs
-        run: |
-          cd cordova-airship/
-          npm ci
-          npm run generate-docs
-          cd -
-          bash ./scripts/upload_docs.sh ${GITHUB_REF/refs\/tags\//} ./cordova-airship/docs
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: cordova-airship/docs
 
       - name: Github Release
         id: create_release
@@ -107,32 +70,25 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        with:
-          type: ${{ job.status }}
-          job_name: "Airship Cordova Plugin Released!"
-          url: ${{ secrets.SLACK_WEBHOOK }}
-
-      - name: Slack Notification
-        uses: lazy-actions/slatify@master
-        if: failure()
-        with:
-          type: ${{ job.status }}
-          job_name: "Airship Cordova Plugin Release Failed :("
-          url: ${{ secrets.SLACK_WEBHOOK }}
-
-  deploy-docs:
-    needs: deploy
-    runs-on: ubuntu-latest
-    continue-on-error: true # Remove when migration to GH Pages is complete
+  publish-docs:
+    needs: [deploy]
     permissions:
+      contents: read
       pages: write
       id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    uses: ./.github/workflows/publish-docs.yml
+    with:
+      version: ${{ github.ref_name }}
+    secrets: inherit
+
+  notify-release:
+    needs: [build, deploy, publish-docs]
+    if: always()
+    runs-on: ubuntu-latest
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Slack Notification
+        uses: lazy-actions/slatify@master
+        with:
+          type: ${{ (contains(needs.*.result, 'failure') && 'failure') || (contains(needs.*.result, 'cancelled') && 'cancelled') || 'success' }}
+          job_name: "Cordova Release"
+          url: ${{ secrets.SLACK_WEBHOOK }}
