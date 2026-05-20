@@ -357,6 +357,16 @@ airship.contact.editSubscriptionLists = function () {
     return new ScopedSubscriptionListEditor('Airship.contact.editSubscriptionLists', 'contact#editSubscriptionLists')
 }
 
+airship.contact.registerEmail = function (email, options, success, failure) {
+    argscheck.checkArgs('soFF', 'Airship.contact.registerEmail', arguments)
+    perform("contact#registerEmail", { address: email, options: options }, success, failure)
+}
+
+airship.contact.registerSMS = function (msisdn, options, success, failure) {
+    argscheck.checkArgs('soFF', 'Airship.contact.registerSMS', arguments)
+    perform("contact#registerSMS", { msisdn: msisdn, options: options }, success, failure)
+}
+
 // Push
 
 airship.push.enableUserNotifications = function (success, failure) {

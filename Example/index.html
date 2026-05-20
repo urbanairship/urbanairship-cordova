@@ -217,6 +217,72 @@
             setNamedUser(namedUser)
           })
         })
+
+        var setContactChannelStatus = function(message, isError) {
+          var $status = $("#contactChannelStatus")
+          $status.text(message)
+          $status.css("color", isError ? "#c00" : "#060")
+          console.log(isError ? "Contact channel error: " + message : "Contact channel: " + message)
+        }
+
+        $("#registerEmailOptionsSection").hide()
+        $("#registerEmailWithOptions").change(function() {
+          if ($("#registerEmailWithOptions").val() === "on") {
+            $("#registerEmailOptionsSection").show()
+          } else {
+            $("#registerEmailOptionsSection").hide()
+          }
+        })
+
+        $("#registerEmailButton").click(function(ev) {
+          var email = $("#registerEmailField").val().trim()
+          if (!email) {
+            setContactChannelStatus("Email address is required", true)
+            return
+          }
+
+          var onSuccess = function() {
+            setContactChannelStatus("Registered email: " + email, false)
+          }
+          var onError = function(err) {
+            setContactChannelStatus("registerEmail failed: " + err, true)
+          }
+
+          if ($("#registerEmailWithOptions").val() === "on") {
+            var options = {
+              transactionalOptedIn: Date.now(),
+              properties: { source: "cordova-example" }
+            }
+            if ($("#registerEmailDoubleOptIn").val() === "on") {
+              options.doubleOptIn = true
+            }
+            if ($("#registerEmailCommercialOptIn").val() === "on") {
+              options.commercialOptedIn = Date.now()
+            }
+            Airship.contact.registerEmail(email, options, onSuccess, onError)
+          } else {
+            Airship.contact.registerEmail(email, {}, onSuccess, onError)
+          }
+        })
+
+        $("#registerSMSButton").click(function(ev) {
+          var msisdn = $("#registerSMSField").val().trim()
+          var senderId = $("#registerSMSSenderIdField").val().trim()
+          if (!msisdn) {
+            setContactChannelStatus("MSISDN is required", true)
+            return
+          }
+          if (!senderId) {
+            setContactChannelStatus("Sender ID is required", true)
+            return
+          }
+
+          Airship.contact.registerSMS(msisdn, { senderId: senderId }, function() {
+            setContactChannelStatus("Registered SMS: " + msisdn, false)
+          }, function(err) {
+            setContactChannelStatus("registerSMS failed: " + err, true)
+          })
+        })
       }
 
       document.addEventListener("deviceready", onDeviceReady, false)
@@ -243,6 +309,49 @@
             <label>NamedUser: </label>
             <span name="namedUser" id="namedUser"></span><hr />
             <input type="text" name="setNamedUserField" id="setNamedUserField" style="width:96.5%;" /> <input type="button" id="setNamedUserButton" value="Set namedUser" />
+          </div>
+
+          <center><h3>Contact Channels</h3></center>
+          <div data-role="fieldcontain">
+            <label for="registerEmailField">Email</label>
+            <input type="email" name="registerEmailField" id="registerEmailField" style="width:96.5%;" placeholder="your@example.com" />
+            <div data-role="controlgroup">
+              <label for="registerEmailWithOptions">Use custom options</label>
+              <select name="registerEmailWithOptions" id="registerEmailWithOptions" data-role="slider" data-theme="c" data-track-theme="c">
+                <option value="off">Off</option>
+                <option value="on">On</option>
+              </select>
+            </div>
+            <div id="registerEmailOptionsSection">
+              <div data-role="controlgroup">
+                <label for="registerEmailCommercialOptIn">Commercial opt-in date</label>
+                <select name="registerEmailCommercialOptIn" id="registerEmailCommercialOptIn" data-role="slider" data-theme="c" data-track-theme="c">
+                  <option value="off">Off</option>
+                  <option value="on">On</option>
+                </select>
+              </div>
+              <div data-role="controlgroup">
+                <label for="registerEmailDoubleOptIn">Double opt-in</label>
+                <select name="registerEmailDoubleOptIn" id="registerEmailDoubleOptIn" data-role="slider" data-theme="c" data-track-theme="c">
+                  <option value="off">Off</option>
+                  <option value="on">On</option>
+                </select>
+              </div>
+            </div>
+            <input type="button" id="registerEmailButton" value="Register email" />
+          </div>
+
+          <div data-role="fieldcontain">
+            <label for="registerSMSField">MSISDN</label>
+            <input type="tel" name="registerSMSField" id="registerSMSField" style="width:96.5%;" placeholder="+15551234567" />
+            <label for="registerSMSSenderIdField">Sender ID</label>
+            <input type="text" name="registerSMSSenderIdField" id="registerSMSSenderIdField" style="width:96.5%;" placeholder="senderId" />
+            <input type="button" id="registerSMSButton" value="Register SMS" />
+          </div>
+
+          <div data-role="fieldcontain">
+            <label>Status</label>
+            <span id="contactChannelStatus" style="word-wrap: break-word;"></span>
           </div>
 
           <div data-role="controlgroup">
