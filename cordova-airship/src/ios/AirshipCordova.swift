@@ -231,6 +231,15 @@ public final class AirshipCordova: CDVPlugin {
         case "contact#getNamedUserId":
             return try await AirshipProxy.shared.contact.namedUserID
 
+        case "contact#registerEmail":
+            let args: RegisterEmailArgs = try command.requireCodableArg()
+            try AirshipProxy.shared.contact.registerEmail(args.address, options: args.options)
+            return nil
+
+        case "contact#registerSMS":
+            let args: RegisterSMSArgs = try command.requireCodableArg()
+            try AirshipProxy.shared.contact.registerSMS(args.msisdn, options: args.options)
+            return nil
 
         // Push
         case "push#getPushToken":
@@ -560,6 +569,15 @@ public final class AirshipCordova: CDVPlugin {
     }
 }
 
+private struct RegisterEmailArgs: Decodable {
+    let address: String
+    let options: EmailRegistrationProxyOptions
+}
+
+private struct RegisterSMSArgs: Decodable {
+    let msisdn: String
+    let options: SMSRegistrationProxyOptions
+}
 
 extension CDVInvokedUrlCommand {
 

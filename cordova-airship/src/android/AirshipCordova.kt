@@ -174,6 +174,14 @@ class AirshipCordova : CordovaPlugin() {
                 "contact#editSubscriptionLists" -> callback.resolve(scope, method) { proxy.contact.editSubscriptionLists(arg) }
                 "contact#editAttributes" -> callback.resolve(scope, method) { proxy.contact.editAttributes(arg) }
                 "contact#getSubscriptionLists" -> callback.resolve(scope, method) { proxy.contact.getSubscriptionLists() }
+                "contact#registerEmail" -> callback.resolve(scope, method) {
+                    val args = RegisterEmailArgs.fromJson(arg)
+                    proxy.contact.registerEmail(args.address, args.options)
+                }
+                "contact#registerSMS" -> callback.resolve(scope, method) {
+                    val args = RegisterSMSArgs.fromJson(arg)
+                    proxy.contact.registerSms(args.msisdn, args.options)
+                }
 
                 // Push
                 "push#setUserNotificationsEnabled" -> callback.resolve(scope, method) { proxy.push.setUserNotificationsEnabled(arg.requireBoolean()) }
@@ -321,6 +329,36 @@ class AirshipCordova : CordovaPlugin() {
 }
 
 
+
+internal data class RegisterEmailArgs(
+    val address: String,
+    val options: JsonValue,
+) {
+    companion object {
+        fun fromJson(json: JsonValue): RegisterEmailArgs {
+            val map = json.optMap()
+            return RegisterEmailArgs(
+                address = map.opt("address").getString(""),
+                options = map.opt("options"),
+            )
+        }
+    }
+}
+
+internal data class RegisterSMSArgs(
+    val msisdn: String,
+    val options: JsonValue,
+) {
+    companion object {
+        fun fromJson(json: JsonValue): RegisterSMSArgs {
+            val map = json.optMap()
+            return RegisterSMSArgs(
+                msisdn = map.opt("msisdn").getString(""),
+                options = map.opt("options"),
+            )
+        }
+    }
+}
 
 internal fun CallbackContext.error(method: String, exception: java.lang.Exception) {
     this.error("AIRSHIP_ERROR(method=$method, exception=$exception)")

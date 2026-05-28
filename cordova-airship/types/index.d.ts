@@ -1968,6 +1968,41 @@ export interface AirshipFeatureFlagManager {
 }
 
 /**
+ * Options for email channel registration.
+ */
+export interface EmailRegistrationOptions {
+    /**
+     * Transactional opt-in date as milliseconds since epoch.
+     */
+    transactionalOptedIn?: number;
+
+    /**
+     * Commercial opt-in date as milliseconds since epoch.
+     */
+    commercialOptedIn?: number;
+
+    /**
+     * Custom properties for the email channel.
+     */
+    properties?: Record<string, string>;
+
+    /**
+     * Request double opt-in for commercial messages when `commercialOptedIn` is not set.
+     */
+    doubleOptIn?: boolean;
+}
+
+/**
+ * Options for SMS channel registration.
+ */
+export interface SmsRegistrationOptions {
+    /**
+     * The sender ID.
+     */
+    senderId: string;
+}
+
+/**
  * Airship contact.
  */
 export interface AirshipContact {
@@ -2041,6 +2076,34 @@ export interface AirshipContact {
      * @returns A subscription list editor.
      */
     editSubscriptionLists(): ScopedSubscriptionListEditor
+
+    /**
+     * Registers an email channel for the contact.
+     * @param email The email address.
+     * @param options Registration options.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    registerEmail(
+        email: string,
+        options: EmailRegistrationOptions,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+     * Registers an SMS channel for the contact.
+     * @param msisdn The MSISDN, including country code.
+     * @param options Registration options.
+     * @param success Success callback.
+     * @param error Error callback.
+     */
+    registerSMS(
+        msisdn: string,
+        options: SmsRegistrationOptions,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
 }
 /**
  * Airship channel.
