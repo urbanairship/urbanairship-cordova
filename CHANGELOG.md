@@ -1,5 +1,14 @@
 # Cordova Plugin Changelog
 
+## Version 20.0.0 - June 12, 2026
+
+Major release that updates the Android SDK to 20.7.4 and the iOS SDK to 20.7.2.
+
+### Changes
+- Updated Android SDK to [20.7.4](https://github.com/urbanairship/android-library/releases/tag/20.7.4)
+- Updated iOS SDK to [20.7.2](https://github.com/urbanairship/ios-library/releases/tag/20.7.2)
+
+
 ## Version 19.0.0 - May 11, 2026
 
 Major release that migrates iOS to Swift Package Manager, drops CocoaPods support, bumps the minimum Cordova platform versions, and adds Live Activity (iOS) and Live Update (Android) JS hooks.
