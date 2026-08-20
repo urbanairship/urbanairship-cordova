@@ -3,5 +3,5 @@
 import Foundation
 
 class AirshipCordovaVersion {
-    static let version = "19.1.0"
+    static let version = "19.2.0"
 }
