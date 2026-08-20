@@ -1,5 +1,13 @@
 # Cordova Plugin Changelog
 
+## Version 19.2.0 - August 19, 2026
+
+Minor release that updates the Android SDK to 20.11.1.
+
+### Changes
+- Updated Android SDK to [20.11.1](https://github.com/urbanairship/android-library/releases/tag/20.11.1)
+
+
 ## Version 19.1.0 - July 23, 2026
 
 Minor release that updates the Android SDK to 20.10.0 and the iOS SDK to 20.11.0.
