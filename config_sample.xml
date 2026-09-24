@@ -35,11 +35,11 @@
         <allow-intent href="itms-apps:*" />
     </platform>
 
-<preference name="android-minSdkVersion" value="23" />
+<preference name="android-minSdkVersion" value="26" />
 <preference name="android-targetSdkVersion" value="36" />
 <preference name="android-compileSdkVersion" value="36" />
 
-<!-- AGP 8.13+ and Kotlin 2.2+ required for Airship SDK 20.x -->
+<!-- AGP 8.13+ and Kotlin 2.2+ required for Airship SDK 21.x -->
 <preference name="AndroidGradlePluginVersion" value="8.13.2" />
 <preference name="GradlePluginKotlinVersion" value="2.2.20" />
 

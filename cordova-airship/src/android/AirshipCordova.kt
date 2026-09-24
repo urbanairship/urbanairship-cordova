@@ -50,7 +50,8 @@ class AirshipCordova : CordovaPlugin() {
             EventType.PUSH_TOKEN_RECEIVED to "airship.event.push_token_received",
             EventType.FOREGROUND_PUSH_RECEIVED to "airship.event.push_received",
             EventType.BACKGROUND_PUSH_RECEIVED to "airship.event.push_received",
-            EventType.NOTIFICATION_STATUS_CHANGED to "airship.event.notification_status_changed"
+            EventType.NOTIFICATION_STATUS_CHANGED to "airship.event.notification_status_changed",
+            EventType.FEATURE_FLAG_STATUS_CHANGED to "airship.event.feature_flag_status_changed"
         )
     }
 
@@ -299,6 +300,11 @@ class AirshipCordova : CordovaPlugin() {
                         val featureFlagProxy = FeatureFlagProxy(arg)
                         proxy.featureFlagManager.trackInteraction(flag = featureFlagProxy)
                     }
+                }
+
+                "featureFlagManager#status" -> callback.resolve(scope, method) { proxy.featureFlagManager.status }
+                "featureFlagManager#waitRefresh" -> callback.resolve(scope, method) {
+                    proxy.featureFlagManager.waitRefresh(if (arg.isNull) null else arg.getLong(0))
                 }
 
                 // Live Update

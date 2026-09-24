@@ -1055,6 +1055,24 @@ export interface FeatureFlag {
     readonly _internal: unknown
 }
 
+/**
+ * The freshness of the feature flag data used to resolve flags.
+ * - `up_to_date` - The data is current.
+ * - `stale` - The data is out of date, but flags can still be resolved.
+ * - `out_of_date` - The data is out of date and flags should not be resolved.
+ */
+export type FeatureFlagStatus = 'up_to_date' | 'stale' | 'out_of_date'
+
+/**
+ * Event fired when the feature flag data status changes.
+ */
+export interface FeatureFlagStatusChangedEvent {
+    /**
+     * The feature flag data status.
+     */
+    status: FeatureFlagStatus
+}
+
 
 /**
  * Editor for tag groups.
@@ -1965,6 +1983,37 @@ export interface AirshipFeatureFlagManager {
         success?: () => void,
         error?: (err: string) => void
     ): void
+
+    /**
+      * Retrieves the freshness of the feature flag data used to resolve flags.
+      * @param success Success callback.
+      * @param error Error callback.
+      */
+    status(
+        success: (status: FeatureFlagStatus) => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+      * Suspends until the feature flag data is refreshed, or the given time elapses.
+      * @param maxTimeMs The max time to wait, in milliseconds. If not provided,
+      *   waits until the data is refreshed with no timeout.
+      * @param success Success callback.
+      * @param error Error callback.
+      */
+    waitRefresh(
+        maxTimeMs?: number,
+        success?: () => void,
+        error?: (err: string) => void
+    ): void
+
+    /**
+      * Adds a listener for feature flag data status changes.
+      * @param callback The callback.
+      */
+    onStatusChanged(
+        callback: (event: FeatureFlagStatusChangedEvent) => void
+    ): Cancellable
 }
 
 /**

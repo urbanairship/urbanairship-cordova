@@ -667,6 +667,21 @@ airship.featureFlagManager.trackInteraction = function (flag, success, failure) 
     perform("featureFlagManager#trackInteraction", flag, success, failure)
 }
 
+airship.featureFlagManager.status = function (success, failure) {
+    argscheck.checkArgs('fF', 'Airship.featureFlagManager.status', arguments)
+    perform("featureFlagManager#status", null, success, failure)
+}
+
+airship.featureFlagManager.waitRefresh = function (maxTimeMs, success, failure) {
+    argscheck.checkArgs('NFF', 'Airship.featureFlagManager.waitRefresh', arguments)
+    perform("featureFlagManager#waitRefresh", maxTimeMs, success, failure)
+}
+
+airship.featureFlagManager.onStatusChanged = function (callback) {
+    argscheck.checkArgs('F', 'Airship.featureFlagManager.onStatusChanged', arguments)
+    return registerListener("airship.event.feature_flag_status_changed", callback)
+}
+
 /// In App
 
 airship.inApp.setPaused = function (paused, success, failure) {

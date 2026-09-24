@@ -1,5 +1,17 @@
 # Cordova Plugin Changelog
 
+## Version 20.0.0 - September 23, 2026
+
+Major release that updates the Android SDK to 21.0.2 and the iOS SDK to 21.0.2, and adds feature flag status/refresh APIs.
+
+- **Breaking:** Android `minSdkVersion` increased from 23 to 26, required by the Android SDK update.
+- **Breaking:** iOS now requires Xcode 27+ to build, required by the iOS SDK update.
+
+### Changes
+- Updated Android SDK to [21.0.2](https://github.com/urbanairship/android-library/releases/tag/21.0.2)
+- Updated iOS SDK to [21.0.2](https://github.com/urbanairship/ios-library/releases/tag/21.0.2)
+- Added `Airship.featureFlagManager.status`/`waitRefresh` to check and wait on feature flag data freshness, and `Airship.featureFlagManager.onStatusChanged` for freshness-change events
+
 ## Version 19.2.0 - August 19, 2026
 
 Minor release that updates the Android SDK to 20.11.1.
