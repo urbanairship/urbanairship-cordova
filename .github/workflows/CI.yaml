@@ -21,7 +21,7 @@ jobs:
       - name: Run CI
         run: bash ./scripts/run_ci_tasks.sh -a
   ios:
-    runs-on: macos-26-xlarge
+    runs-on: xcode-27-xlarge
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
