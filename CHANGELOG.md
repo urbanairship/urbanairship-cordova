@@ -1,6 +1,6 @@
 # Cordova Plugin Changelog
 
-## Version 20.0.0 - September 23, 2026
+## Version 20.0.0 - October 6, 2026
 
 Major release that updates the Android SDK to 21.0.2 and the iOS SDK to 21.0.2, and adds feature flag status/refresh APIs.
 
