@@ -2,7 +2,7 @@
 
 import Foundation
 import UserNotifications
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import AirshipFrameworkProxy
 
 enum AirshipCordovaSite: String, Decodable, Sendable {

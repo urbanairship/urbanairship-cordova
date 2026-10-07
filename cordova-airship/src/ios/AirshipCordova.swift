@@ -2,7 +2,7 @@
 
 import Foundation
 import Cordova
-import AirshipCore
+@_spi(AirshipInternal) import AirshipCore
 import AirshipFrameworkProxy
 
 @objc(AirshipCordova)
@@ -27,7 +27,8 @@ public final class AirshipCordova: CDVPlugin {
         .notificationResponseReceived: "airship.event.notification_response",
         .pushReceived: "airship.event.push_received",
         .notificationStatusChanged: "airship.event.notification_status_changed",
-        .liveActivitiesUpdated: "airship.event.ios_live_activities_updated"
+        .liveActivitiesUpdated: "airship.event.ios_live_activities_updated",
+        .featureFlagStatusChanged: "airship.event.feature_flag_status_changed"
     ]
 
     @MainActor
@@ -53,7 +54,7 @@ public final class AirshipCordova: CDVPlugin {
             let listenerID = command.arguments.last as? NSNumber,
             let eventName = command.arguments.first as? String
         else {
-            AirshipLogger.error("Failed to add listener, invalid command \(command)")
+            AirshipLogger.error("Failed to remove listener, invalid command \(command)")
             return
         }
 
@@ -62,7 +63,7 @@ public final class AirshipCordova: CDVPlugin {
                 value == eventName
             })?.key
         else {
-            AirshipLogger.error("Failed to add listener, invalid name \(eventName)")
+            AirshipLogger.error("Failed to remove listener, invalid name \(eventName)")
             return
         }
 
@@ -513,6 +514,17 @@ public final class AirshipCordova: CDVPlugin {
         case "featureFlagManager#trackInteraction":
             try AirshipProxy.shared.featureFlagManager.trackInteraction(
                 flag: command.requireCodableArg()
+            )
+
+            return nil
+
+        case "featureFlagManager#status":
+            return try await AirshipProxy.shared.featureFlagManager.status
+
+        case "featureFlagManager#waitRefresh":
+            // Proxy takes seconds; the public API is in milliseconds like the rest of the plugin.
+            try await AirshipProxy.shared.featureFlagManager.waitRefresh(
+                maxTime: (try? command.requireDoubleArg()).map { $0 / 1000.0 }
             )
 
             return nil
