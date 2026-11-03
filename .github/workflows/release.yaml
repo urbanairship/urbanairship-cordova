@@ -47,7 +47,7 @@ jobs:
           } >> $GITHUB_OUTPUT
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 26.13.0
           registry-url: https://registry.npmjs.org/
 
       - name: Publish modules
