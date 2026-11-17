@@ -1,5 +1,15 @@
 # Cordova Plugin Changelog
 
+## Version 20.1.0 - November 16, 2026
+
+Minor release that updates the Android and iOS SDKs to 21.2.0, which fixes reporting for Scenes launched from a push, and reduces Android startup work.
+
+### Changes
+- Updated Android SDK to [21.2.0](https://github.com/urbanairship/android-library/releases/tag/21.2.0)
+- Updated iOS SDK to [21.2.0](https://github.com/urbanairship/ios-library/releases/tag/21.2.0)
+- Reduced repeated work on Android before Airship takes off, which could contribute to ANRs
+
+
 ## Version 20.0.0 - October 6, 2026
 
 Major release that updates the Android SDK to 21.0.2 and the iOS SDK to 21.0.2, and adds feature flag status/refresh APIs.
