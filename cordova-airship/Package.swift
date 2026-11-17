@@ -15,8 +15,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apache/cordova-ios.git", branch: "master"),
-        .package(url: "https://github.com/urbanairship/airship-mobile-framework-proxy.git", from: "16.0.1"),
-        .package(url: "https://github.com/urbanairship/ios-library.git", from: "21.0.2"),
+        .package(url: "https://github.com/urbanairship/airship-mobile-framework-proxy.git", from: "16.1.0"),
+        .package(url: "https://github.com/urbanairship/ios-library.git", from: "21.2.0"),
     ],
     targets: [
         .target(
